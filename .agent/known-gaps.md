@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-08T08:21:49-04:00`
+**Updated:** `2026-07-08T10-01-57-04-00`
 
 ## Architecture gaps
 
@@ -10,13 +10,14 @@
 - Module-level `state` and `currentScene` are mutated directly.
 - There is no command envelope for inspection, continuation, load, save, or reset.
 - There are no stable accepted/rejected result records.
-- There are no stable reason codes for invalid or duplicate commands.
+- There are no stable reason codes for invalid, duplicate, repeat, premature, malformed, or prototype-complete commands.
 - Repeat hotspot inspection is a direct UI branch, not a typed repeated-inspection result.
 - The clue ledger mutates directly through `grantClues`.
 - Scene completion is calculated directly in the host runtime without a result contract.
 - Interlude progression mutates route state directly through `nextScene`.
 - Save writes happen directly from the same code path as UI projection.
 - The debug notebook is a live projection, not a stable diagnostics API.
+- `window.GameHost.getState()` is not yet exposed as an additive diagnostics seam.
 
 ## Fixture and validation gaps
 
@@ -28,6 +29,7 @@
 - No fixture matrix exists for continue-before-complete rejection.
 - No fixture matrix exists for save/load/reset parity.
 - No validation exists for malformed or missing scene descriptors.
+- No validation exists for duplicate scene ids.
 - No validation exists for duplicate hotspot ids.
 - No validation exists for `requiresToComplete` values that are never granted.
 - No validation exists for unavailable next scenes.
@@ -42,6 +44,7 @@
 - There is no stage descriptor validation before rendering.
 - Hotspot meshes are invisible boxes, but the system does not separately expose hotspot descriptor validation.
 - Post-process settings are applied directly as uniform updates, not as a renderer handoff contract.
+- StageKit render facts are not yet projected into stable diagnostics.
 
 ## Product gaps
 
@@ -71,6 +74,7 @@
 - Root `.agent/trackers/` did not have a scheduled breakdown entry.
 - A central-ledger readback pass added `.agent/central-ledger-audit/publish-ledger-comparison.md`.
 - A later central report pass added `TheUnmappedHouse` into `status-summary.json` publish-game rollup state.
+- A story command/result acceptance pass added exact command names, reason codes, result names, and fixture cases.
 
 ## Documentation gaps fixed by this pass
 
@@ -80,17 +84,17 @@
 - Refreshed `.agent/next-steps.md`.
 - Refreshed `.agent/validation.md`.
 - Refreshed `.agent/kit-registry.json`.
-- Added `.agent/architecture-audit/2026-07-08T08-21-49-04-00-dsk-domain-breakdown.md`.
-- Added `.agent/render-audit/2026-07-08T08-21-49-04-00-stage-render-readback.md`.
-- Added `.agent/interaction-audit/2026-07-08T08-21-49-04-00-story-command-result-acceptance-ledger.md`.
-- Added `.agent/trackers/2026-07-08T08-21-49-04-00/project-breakdown.md`.
-- Added `.agent/turn-ledger/2026-07-08T08-21-49-04-00.md`.
+- Added `.agent/architecture-audit/2026-07-08T10-01-57-04-00-story-authority-dsk-breakdown.md`.
+- Added `.agent/render-audit/2026-07-08T10-01-57-04-00-stage-result-readback.md`.
+- Added `.agent/interaction-audit/2026-07-08T10-01-57-04-00-story-authority-source-wire-map.md`.
+- Added `.agent/trackers/2026-07-08T10-01-57-04-00/project-breakdown.md`.
+- Added `.agent/turn-ledger/2026-07-08T10-01-57-04-00.md`.
 - Updated central ledger/change-log state for this follow-up.
 
 ## Primary unresolved ledge
 
 ```txt
-TheUnmappedHouse Story Command Result Acceptance Ledger
+TheUnmappedHouse Story Authority Source Wire Map
 ```
 
 The next source change should add command/result authority and DOM-free replay without changing story copy, route shape, StageKit visuals, localStorage key, or Pages workflow.
