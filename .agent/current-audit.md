@@ -2,15 +2,15 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Audit timestamp:** `2026-07-08T05:28:26-04:00`
+**Audit timestamp:** `2026-07-08T08:21:49-04:00`
 
 ## Summary
 
-`TheUnmappedHouse` is a compact fixed-camera anime horror prototype with a clear point-and-click inspection loop and a reusable-looking Three.js `StageKit`.
+`TheUnmappedHouse` is a compact fixed-camera anime point-and-click horror prototype with a clear inspection, clue, room-completion, and interlude loop.
 
-The root `.agent/` state exists. This pass is a documentation integrity follow-up: it re-compares the full accessible `LuminaryLabs-Publish` repo list against central tracking, confirms no currently observed non-excluded Publish repo is fully new or missing root `.agent/START_HERE.md` state, and closes the stale repo-local claim that `TheUnmappedHouse` is still outside the central status-summary publish-game rollup.
+This pass re-compared the accessible `LuminaryLabs-Publish` organization list against central `LuminaryLabs-Dev/LuminaryLabs` ledger state. No checked non-Cavalry repo was fully new, absent from the central ledger, missing root `.agent/START_HERE.md`, or recently added but undocumented.
 
-The next architecture move should still preserve the visible route while extracting story command authority, result contracts, fixtures, and descriptor validation.
+`TheUnmappedHouse` was selected as an oldest eligible fallback follow-up because its remaining source-backed blocker is still story command authority. The stale central status-summary rollup gap is already closed and is not used as the current selection reason.
 
 ## Full repo-list comparison result
 
@@ -25,29 +25,33 @@ PhantomCommand        tracked; root .agent state observed
 PrehistoricRush       tracked; root .agent state observed
 TheCavalryOfRome      excluded by standing rule
 TheOpenAbove          tracked; root .agent state observed
-TheUnmappedHouse      selected for stale central-rollup-gap cleanup
+TheUnmappedHouse      selected fallback: story command/result acceptance ledger
 ZombieOrchard         tracked; root .agent state observed
 ```
 
 Selection reason:
 
 ```txt
-TheUnmappedHouse was selected because all checked non-excluded Publish repos have at least root .agent state, and this repo still carried stale local/central docs saying status-summary publish-game rollup inclusion was pending.
+No checked non-Cavalry Publish repo was new, central-ledger absent, missing root .agent state, or recently added but undocumented.
 
-The central status summary now records TheUnmappedHouse in known_repos, active_products, and publish_game_map_from_direct_ledgers under schema 1.18.0.
-
-This is not a root-agent-missing pass and not a product-code pass. It is a follow-up documentation integrity pass to keep repo-local .agent state and central ledger state aligned.
+TheUnmappedHouse remains an eligible documented repo with the oldest unresolved story-authority implementation ledge visible in this pass. It was selected to add a concrete command/result acceptance ledger rather than to revisit the closed central rollup gap.
 ```
 
-## Product surface
+## Source-backed product surface
 
 ```txt
 README.md
   -> fixed-camera anime point-and-click horror prototype
+  -> Stage Kit scope covers locked-camera scenes, text-first hotspot inspection, story state, procedural props, anime shader materials, and WebGL post-processing
+
+package.json
+  -> browser-only static module project
+  -> npm run check validates src/game.js, src/stage-kit.js, and src/story-data.js with node --check
 
 index.html
+  -> static page shell
   -> loads ./src/game.js
-  -> declares the stage root, story panel, hotspot list, notebook debug panel, hover label, and interlude overlay
+  -> declares stage root, story panel, hotspot list, notebook debug panel, hover label, and interlude overlay
 
 src/game.js
   -> owns state load/save
@@ -55,6 +59,7 @@ src/game.js
   -> owns hotspot inspection behavior
   -> owns scene completion and interlude progression
   -> projects UI and notebook debug state
+  -> KeyR clears localStorage and reloads
 
 src/stage-kit.js
   -> owns Three.js renderer setup
@@ -66,14 +71,13 @@ src/story-data.js
   -> owns three scene descriptors
   -> defines camera, stage layers, props, post settings, hotspots, clue grants, completion requirements, and interlude text
 
-src/styles.css
-  -> owns dark responsive panel, hotspot buttons, hover label, and interlude styling
-
 .github/workflows/deploy.yml
   -> deploys the static site to GitHub Pages from main
 ```
 
 ## Interaction loop
+
+Current player loop:
 
 ```txt
 open static route
@@ -91,6 +95,37 @@ open static route
   -> KeyR clears save and reloads
 ```
 
+Current source loop:
+
+```txt
+StageKit click or side-panel button
+  -> inspectHotspot(hotspot)
+  -> direct inspected-state mutation
+  -> direct clue mutation through grantClues
+  -> direct text/log mutation
+  -> direct sceneComplete check
+  -> setTimeout(showInterlude, 450) when complete
+  -> renderUi()
+  -> saveState()
+```
+
+Target authority loop:
+
+```txt
+UI event
+  -> StoryCommandEnvelope
+  -> StorySourceSnapshot + StoryStateSnapshot
+  -> validateStoryCommand
+  -> applyStoryCommand
+  -> StoryCommandResult
+  -> InspectionResult / SceneCompletionResult / SceneTransitionResult / SaveResult
+  -> command journal + route journal
+  -> save adapter
+  -> UI projection
+  -> GameHost diagnostics
+  -> DOM-free fixture replay
+```
+
 ## Current domains
 
 ```txt
@@ -101,9 +136,17 @@ scene descriptor source
 story state save/load
 story clue ledger
 hotspot inspection
+inspection command authority
+inspection result authority
 scene completion
 interlude transition
+route state
+save state
+reset state
 notebook/debug projection
+runtime diagnostics
+fixture replay
+stage descriptor validation
 fixed-camera stage renderer
 Three.js render host
 stage layer descriptors
@@ -120,6 +163,8 @@ central status-summary publish-game rollup membership
 ```
 
 ## Current service inventory
+
+Implemented services:
 
 ```txt
 createInitialState
@@ -148,6 +193,30 @@ StageKit animate
 static Pages deploy
 ```
 
+Needed services for the next implementation slice:
+
+```txt
+createStorySourceSnapshot
+createStoryStateSnapshot
+createStageSceneSnapshot
+createStoryCommandEnvelope
+validateStoryCommand
+applyStoryCommand
+applyInspectionCommand
+applyContinueSceneCommand
+applyResetSaveCommand
+applyLoadSaveCommand
+createInspectionResult
+createSceneCompletionResult
+createSceneTransitionResult
+createSaveResult
+appendRouteJournalEntry
+appendCommandJournalEntry
+projectGameHostDiagnostics
+runStoryFixtureSequence
+validateSceneDescriptor
+```
+
 ## Current kit inventory
 
 Implemented or implied kits:
@@ -157,6 +226,7 @@ unmapped-house-static-shell-kit
 unmapped-house-story-runtime-kit
 unmapped-house-story-data-kit
 unmapped-house-story-state-save-kit
+unmapped-house-localstorage-save-kit
 unmapped-house-clue-ledger-kit
 unmapped-house-scene-completion-kit
 unmapped-house-interlude-overlay-kit
@@ -171,6 +241,7 @@ unmapped-house-hover-label-kit
 unmapped-house-anime-material-shader-kit
 unmapped-house-stage-postprocess-kit
 unmapped-house-static-pages-deploy-kit
+unmapped-house-static-validation-kit
 unmapped-house-agent-state-kit
 unmapped-house-central-ledger-readback-kit
 unmapped-house-status-summary-rollup-membership-kit
@@ -180,11 +251,15 @@ Needed next-cut kits:
 
 ```txt
 unmapped-house-story-source-snapshot-kit
+unmapped-house-story-state-snapshot-kit
 unmapped-house-stage-scene-snapshot-kit
 unmapped-house-story-command-envelope-kit
 unmapped-house-command-validation-kit
+unmapped-house-story-command-result-kit
+unmapped-house-story-command-reason-kit
 unmapped-house-inspection-action-kit
 unmapped-house-inspection-result-contract-kit
+unmapped-house-clue-ledger-reducer-kit
 unmapped-house-scene-completion-result-kit
 unmapped-house-scene-transition-result-kit
 unmapped-house-save-result-kit
@@ -220,18 +295,31 @@ DOM event
   -> UI projection
 ```
 
+## Source-backed blockers
+
+```txt
+src/game.js keeps story state as a module-level mutable object.
+src/game.js repeat hotspot inspection returns by mutating text/log/UI/save instead of returning a typed repeated-inspection result.
+src/game.js grants clues directly by mutating state.clues.
+src/game.js completion is checked inline through sceneComplete(currentScene).
+src/game.js interlude transition is scheduled through setTimeout and DOM class mutation.
+src/game.js nextScene mutates currentScene, state.sceneId, state.route, interlude DOM, StageKit, UI, and save state in one handler.
+src/stage-kit.js owns pointer click dispatch and renderer state together, so story authority must be extracted without destabilizing picking.
+src/story-data.js has required clue lists, but no descriptor validation proves every required clue is grantable or every hotspot id is unique.
+```
+
 ## Documentation diagnosis
 
 The repo-local `.agent/` folder exists and includes required audit files, tracker entries, and turn ledger entries.
 
-The central ledger has a `repo-ledger/LuminaryLabs-Publish/TheUnmappedHouse.md` file and internal change-log entries for the root-agent-state and central-readback passes.
+The central ledger has a `repo-ledger/LuminaryLabs-Publish/TheUnmappedHouse.md` file and internal change-log entries for the root-agent-state, central-readback, and rollup-closure passes.
 
-The central status-summary rollup gap is closed in `repo-checks/reports/status-summary.json` schema `1.18.0`; it includes `TheUnmappedHouse` in the publish-game map from direct ledgers. The direct repo ledger and repo-local docs are being refreshed by this pass so future selector logic does not keep returning to this repo only because old docs describe a lagging rollup.
+This pass adds the missing implementation-facing command/result acceptance ledger so future work can move directly into source changes without re-discovering the same authority seam.
 
 ## Recommended next implementation objective
 
 ```txt
-TheUnmappedHouse Story Command Authority + Fixture Replay Gate
+TheUnmappedHouse Story Command Result Acceptance Ledger
 ```
 
-Do this before expanding the story or renderer.
+Do this before expanding the story, replacing the renderer, adding audio, adding inventory, or broadening the StageKit object vocabulary.
