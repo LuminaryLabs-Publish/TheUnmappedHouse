@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-08T05:28:26-04:00`
+**Updated:** `2026-07-08T08:21:49-04:00`
 
 ## Current validation status
 
@@ -15,16 +15,24 @@ Browser smoke run: no, connector-only documentation/audit pass
 GitHub Pages workflow inspected in prior pass: yes
 Full LuminaryLabs-Publish repo list compared to central ledger state: yes
 Chosen repo root .agent exists before this pass: yes
-Central status-summary rollup inclusion: yes, observed in status-summary.json schema 1.18.0
+Central status-summary rollup inclusion: yes, observed in prior status-summary.json schema 1.18.0 readback
 ```
 
-## Source checks performed
+## Source checks performed this pass
 
-- [x] Confirmed root `.agent/START_HERE.md` exists and points to current audit/tracker material.
-- [x] Confirmed central `repo-ledger/LuminaryLabs-Publish/TheUnmappedHouse.md` exists.
-- [x] Confirmed central `repo-checks/reports/status-summary.json` includes `TheUnmappedHouse` in the machine-readable publish-game rollup.
-- [x] Confirmed prior source audit still identifies the fixed-camera story loop, StageKit render host, localStorage save path, and story command authority gap.
-- [x] Confirmed this pass only updates documentation and ledger state, not runtime behavior.
+- [x] Listed accessible `LuminaryLabs-Publish` repositories by GitHub installation.
+- [x] Excluded `LuminaryLabs-Publish/TheCavalryOfRome`.
+- [x] Confirmed checked non-Cavalry repos already have root `.agent/START_HERE.md` state.
+- [x] Confirmed `TheUnmappedHouse` root `.agent/START_HERE.md` exists.
+- [x] Read `README.md`.
+- [x] Read `package.json`.
+- [x] Read `src/game.js`.
+- [x] Read `src/stage-kit.js`.
+- [x] Read `src/story-data.js`.
+- [x] Read current repo-local `.agent` state.
+- [x] Updated repo-local `.agent` docs only.
+- [x] Updated central `repo-ledger/LuminaryLabs-Publish/TheUnmappedHouse.md`.
+- [x] Added central internal change-log entry.
 
 ## Validation not performed
 
@@ -42,18 +50,18 @@ These should be implemented before story expansion.
 ```txt
 01_initial_state_has_first_scene
 02_known_hotspot_grants_expected_clue
-03_duplicate_hotspot_is_stable_and_does_not_duplicate_clue
-04_unknown_hotspot_rejected_with_reason
-05_incomplete_scene_cannot_continue
-06_complete_first_scene_emits_completion_result
+03_duplicate_hotspot_is_accepted_repeat_and_does_not_duplicate_clue
+04_unknown_hotspot_rejected_with_UNKNOWN_HOTSPOT
+05_incomplete_scene_cannot_continue_with_SCENE_INCOMPLETE
+06_complete_first_scene_emits_SCENE_COMPLETED
 07_continue_after_completion_moves_to_next_scene
-08_full_three_scene_route_reaches_prototype_complete
+08_continue_at_final_scene_emits_PROTOTYPE_COMPLETE
 09_save_load_roundtrip_preserves_scene_clues_route_and_inspection
 10_reset_clears_save_and_restores_initial_state
 11_scene_descriptor_rejects_duplicate_hotspot_ids
 12_scene_descriptor_rejects_ungrantable_required_clues
-13_central_publish_repo_list_includes_the_unmapped_house
-14_central_status_rollup_includes_the_unmapped_house_in_publish_game_map
+13_story_source_snapshot_lists_three_scenes
+14_stage_scene_snapshot_lists_camera_layers_props_hotspots_post
 ```
 
 ## Acceptance gate for next implementation
@@ -61,8 +69,15 @@ These should be implemented before story expansion.
 A future implementation pass should not be considered complete until it can report:
 
 ```txt
+npm run check
 node scripts/validate-story-fixtures.mjs
 # expected: all story command fixture cases pass
 ```
 
 If the repo remains browser-only, add a DOM-free module first and then write the fixture script around that module.
+
+## Current safe claim
+
+This pass only updated documentation and central ledger records.
+
+No runtime success is claimed.
