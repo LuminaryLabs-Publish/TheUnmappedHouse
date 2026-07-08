@@ -2,15 +2,15 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Audit timestamp:** `2026-07-08T01:50:19-04:00`
+**Audit timestamp:** `2026-07-08T02:40:00-04:00`
 
 ## Summary
 
-`TheUnmappedHouse` is a compact fixed-camera anime horror prototype with a strong initial loop and a reusable-looking StageKit.
+`TheUnmappedHouse` is a compact fixed-camera anime horror prototype with a strong initial point-and-click loop and a reusable-looking Three.js StageKit.
 
-The current implementation is still host-centric: UI handlers directly mutate story state, persistence, scene progression, and debug projection.
+The root `.agent/` state now exists. This pass is a follow-up readback pass: it compares the full `LuminaryLabs-Publish` repo list against the central `LuminaryLabs-Dev/LuminaryLabs` ledger, confirms `TheUnmappedHouse` is no longer missing repo-local `.agent` state, and records that it is still only partially promoted in central summary rollups.
 
-The next architecture move should preserve the visible route while extracting story command authority, result contracts, fixtures, and descriptor validation.
+The next architecture move should still preserve the visible route while extracting story command authority, result contracts, fixtures, and descriptor validation.
 
 ## Full repo-list comparison result
 
@@ -25,14 +25,16 @@ PhantomCommand
 PrehistoricRush
 TheCavalryOfRome   excluded by standing rule
 TheOpenAbove
-TheUnmappedHouse   selected
+TheUnmappedHouse   selected for follow-up central-ledger readback
 ZombieOrchard
 ```
 
 Selection reason:
 
 ```txt
-TheUnmappedHouse was selected because the central ledger already knew about it, but the repo itself was missing a root .agent/START_HERE.md and current audit state. This made it a higher priority than another ordinary oldest-ledger pass.
+TheUnmappedHouse was selected because all non-excluded Publish repos observed in the current list have at least some central readback, but TheUnmappedHouse remains a partial central-rollup case: the central latest summary records it as observed in direct ledger readback but not yet part of the status-summary 1.17 publish-game rollup.
+
+This is no longer a root-agent-missing pass. It is a follow-up documentation integrity pass to keep repo-local .agent state, central repo-ledger state, and internal change-log state aligned.
 ```
 
 ## Product surface
@@ -110,6 +112,8 @@ hover label projection
 anime shader material
 WebGL post-processing
 responsive story panel styling
+central ledger readback
+repo-local .agent operating state
 ```
 
 ## Current service inventory
@@ -164,6 +168,8 @@ unmapped-house-hover-label-kit
 unmapped-house-anime-material-shader-kit
 unmapped-house-stage-postprocess-kit
 unmapped-house-static-pages-deploy-kit
+unmapped-house-agent-state-kit
+unmapped-house-central-ledger-readback-kit
 ```
 
 Needed next-cut kits:
@@ -209,6 +215,14 @@ DOM event
   -> save adapter
   -> UI projection
 ```
+
+## Documentation diagnosis
+
+The repo-local `.agent/` folder exists and includes required audit files, tracker entries, and turn ledger entries.
+
+The central ledger has a `repo-ledger/LuminaryLabs-Publish/TheUnmappedHouse.md` file and an internal change-log entry for the first root-agent-state pass.
+
+The central latest summary still marks `TheUnmappedHouse` as direct readback context rather than part of the `status-summary.json` publish-game rollup. That is the next central-ledger cleanup item, not a product-code blocker.
 
 ## Recommended next implementation objective
 
