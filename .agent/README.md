@@ -5,7 +5,7 @@ This folder stores repo-local agent findings for `LuminaryLabs-Publish/TheUnmapp
 ## Latest tracker
 
 ```txt
-.agent/trackers/2026-07-08T00-08-03-04-00/project-breakdown.md
+.agent/trackers/2026-07-08T01-38-23-04-00/project-breakdown.md
 ```
 
 ## Latest kit registry
@@ -18,13 +18,14 @@ This folder stores repo-local agent findings for `LuminaryLabs-Publish/TheUnmapp
 
 ```txt
 .agent/trackers/2026-07-08T00-08-03-04-00/project-breakdown.md
+.agent/trackers/2026-07-08T01-38-23-04-00/project-breakdown.md
 ```
 
 ## Current repo read
 
-`TheUnmappedHouse` is a fixed-camera anime point-and-click horror prototype. Its current product shape is a text-first inspection game wrapped around a reusable Stage Kit: Three.js locked-camera diorama scenes, procedural stage props, invisible hotspot volumes, clue-gated scene completion, interlude transitions, localStorage state, anime shader materials, and WebGL post-processing.
+`TheUnmappedHouse` is a fixed-camera anime point-and-click horror prototype. Its product surface is a text-first inspection game wrapped around a reusable Stage Kit: Three.js locked-camera diorama scenes, procedural stage props, invisible hotspot volumes, clue-gated scene completion, interlude transitions, localStorage state, anime shader materials, and WebGL post-processing.
 
-The live route is:
+The live route remains:
 
 ```txt
 index.html
@@ -33,7 +34,24 @@ index.html
   -> src/story-data.js
 ```
 
-The main blocker is not visual rendering. The main blocker is authority shape: inspection, clue grants, completion, transitions, route updates, and save writes currently mutate state directly without typed result records, stable rejection reasons, a command journal, a `window.GameHost` diagnostics surface, or DOM-free fixture replay.
+The strongest reusable system is still `StageKit`. It owns renderer setup, locked camera composition, pointer parallax, shader material creation, post-process rendering, scene descriptor loading, layer/prop/hotspot creation, hover labels, raycast picking, resizing, and animation.
+
+The main blocker is story authority shape. `src/game.js` mutates state directly from UI handlers. Inspection, clue grants, repeat inspection, room completion, interlude display, next-scene routing, save writes, reset, and debug projection do not yet produce typed result envelopes, stable reason codes, command journals, or DOM-free fixture replay.
+
+## Interaction loop
+
+```txt
+open index.html
+  -> read current room text
+  -> hover stage hotspots or use side-panel buttons
+  -> inspect hotspots
+  -> collect clue grants
+  -> complete the room when required clues are found
+  -> read interlude / map update
+  -> continue to the next scene
+  -> persist route and clues with localStorage
+  -> reset local save with R when needed
+```
 
 ## Current explicit kit inventory
 
@@ -54,7 +72,7 @@ unmapped-house-notebook-debug-kit
 unmapped-house-static-pages-deploy-kit
 ```
 
-## Current candidate kit inventory
+## Runtime-implied kit inventory
 
 ```txt
 unmapped-house-app-runtime-kit
@@ -73,8 +91,8 @@ unmapped-house-static-validation-kit
 ## Next cutover kit inventory
 
 ```txt
+unmapped-house-story-command-envelope-kit
 unmapped-house-inspection-action-kit
-unmapped-house-inspection-command-envelope-kit
 unmapped-house-inspection-result-contract-kit
 unmapped-house-inspection-rejection-reason-kit
 unmapped-house-clue-ledger-reducer-kit
@@ -94,34 +112,36 @@ unmapped-house-stage-descriptor-validation-kit
 
 ## Immediate next product direction
 
-Commit to `TheUnmappedHouse Inspection Result Contract + Scene Transition Fixture Gate`:
+Commit to `TheUnmappedHouse Story Command Authority + Fixture Replay Gate`:
 
 ```txt
-preserve current static route, visuals, story text, StageKit behavior, localStorage key, and Pages workflow
-  -> add StoryStateSnapshot and StageSceneSnapshot helpers
-  -> add InspectionCommandEnvelope and InspectionResult contracts
-  -> add stable InspectionReason values
-  -> move mutation out of inspectHotspot into a pure inspection reducer
-  -> preserve UI behavior by consuming result records
-  -> add SceneCompletionResult and SceneTransitionResult
-  -> add RouteJournal entries for inspections and transitions
-  -> add SaveResult around localStorage persistence
-  -> expose window.GameHost.getState() diagnostics
-  -> add DOM-free fixture coverage for first-room completion, repeat inspection, unknown hotspot, transition, full route, save/load, and reset
-  -> defer StageKit renderer extraction until story authority fixtures are stable
+preserve current static route, visuals, story copy, StageKit behavior, localStorage key, and Pages workflow
+  -> add StorySourceSnapshot and StageSceneSnapshot helpers
+  -> add StoryCommandEnvelope for inspect_hotspot, continue_scene, reset_save, and load_save
+  -> add StoryCommandResult with accepted/rejected status and stable reason
+  -> move inspectHotspot mutation into pure applyInspectionCommand
+  -> move nextScene mutation into pure applyContinueSceneCommand
+  -> emit InspectionResult, SceneCompletionResult, SceneTransitionResult, SaveResult, and RouteJournal entries
+  -> keep existing UI as a consumer of result records
+  -> expose additive window.GameHost.getState diagnostics
+  -> add DOM-free fixture harness for first-room completion, repeat inspection, unknown hotspot, transition, full route, save/load, and reset
+  -> defer deeper StageKit renderer extraction until story authority fixtures are stable
 ```
 
 ## Next acceptance target
 
 ```txt
 The browser prototype still loads from index.html.
-Hotspot buttons and raycast clicks both produce typed InspectionResult records.
-First-time inspection grants clues once.
-Repeat inspection is classified as repeat_inspection and does not duplicate clues.
-Unknown hotspot is rejected with unknown_hotspot.
-Room completion emits SceneCompletionResult.
-Continue emits SceneTransitionResult.
+All existing authored scenes, visuals, hotspot buttons, hover labels, and raycast clicks still work.
+Hotspot buttons and raycast clicks both produce StoryCommandResult records.
+First-time inspection grants each clue exactly once.
+Repeat inspection returns reason=repeat_inspection and does not duplicate clues.
+Unknown hotspot returns accepted=false with reason=unknown_hotspot.
+Continue before completion returns accepted=false with reason=scene_incomplete.
+Room completion produces SceneCompletionResult.
+Continue after completion produces SceneTransitionResult.
 RouteJournal captures accepted inspection and transition events.
-window.GameHost.getState() exposes story, stage, save, journal, latestResult, and fixture diagnostics.
-DOM-free smoke proves core story progression without rendering.
+SaveResult wraps load/save/reset paths.
+window.GameHost.getState exposes story, stage, save, journal, latestResult, and fixture diagnostics.
+DOM-free fixtures prove core story progression without WebGL or localStorage.
 ```
