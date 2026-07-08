@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Last aligned:** `2026-07-08T12-59-11-04-00`
+**Last aligned:** `2026-07-08T14-31-06-04-00`
 
 ## Purpose
 
@@ -16,23 +16,23 @@ The full accessible `LuminaryLabs-Publish` repository list was compared against 
 
 No checked non-Cavalry repo was fully new, absent from the central ledger, missing root `.agent/START_HERE.md`, or recently added but undocumented.
 
-`TheUnmappedHouse` was selected as the oldest observed eligible fallback follow-up with an actionable source-backed blocker: the story fixture replay contract now needs a concrete reducer module map, result row schema, projection map, and fixture matrix.
+`TheUnmappedHouse` was selected as the oldest observed eligible fallback follow-up after newer central readbacks were observed for the other sampled repos. The active blocker is still story command authority, but this pass narrows the next source work from a broad reducer idea into a host-integration wire map.
 
 `LuminaryLabs-Publish/TheCavalryOfRome` remains excluded by standing rule.
 
 ## Publish repos checked
 
 ```txt
-LuminaryLabs-Publish/HorrorCorridor      tracked / root .agent present / latest central review 2026-07-08T12:29:17-04:00
-LuminaryLabs-Publish/AetherVale          tracked / root .agent present / latest central update 2026-07-08T12:01:23-04:00
-LuminaryLabs-Publish/TheOpenAbove        tracked / root .agent present / latest central update 2026-07-08T11:49:04-04:00
+LuminaryLabs-Publish/HorrorCorridor      tracked / root .agent present / latest central review 2026-07-08T13:59:50-04:00
+LuminaryLabs-Publish/AetherVale          tracked / root .agent present / latest central update 2026-07-08T13:39:15-04:00
+LuminaryLabs-Publish/TheOpenAbove        tracked / root .agent present / latest central update 2026-07-08T13:31:29-04:00
 LuminaryLabs-Publish/TheCavalryOfRome    excluded by rule
-LuminaryLabs-Publish/PhantomCommand      tracked / root .agent present / latest central update 2026-07-08T12:41:31-04:00
-LuminaryLabs-Publish/PrehistoricRush     tracked / root .agent present / latest central update 2026-07-08T12:09:27-04:00
-LuminaryLabs-Publish/ZombieOrchard       tracked / root .agent present / latest central update 2026-07-08T12:51:50-04:00
-LuminaryLabs-Publish/IntoTheMeadow       tracked / root .agent present / latest central update 2026-07-08T12:21:20-04:00
-LuminaryLabs-Publish/MyCozyIsland        tracked / root .agent present / latest central update 2026-07-08T11:40:00-04:00
-LuminaryLabs-Publish/TheUnmappedHouse    selected fallback / latest central update 2026-07-08T11:28:38-04:00
+LuminaryLabs-Publish/PhantomCommand      tracked / root .agent present / latest central update 2026-07-08T14:08:24-04:00
+LuminaryLabs-Publish/PrehistoricRush     tracked / root .agent present / latest central update 2026-07-08T13:18:13-04:00
+LuminaryLabs-Publish/ZombieOrchard       tracked / root .agent present / latest central update 2026-07-08T14:18:45-04:00
+LuminaryLabs-Publish/IntoTheMeadow       tracked / root .agent present / latest central update 2026-07-08T13:50:37-04:00
+LuminaryLabs-Publish/MyCozyIsland        tracked / root .agent present / latest central update 2026-07-08T13:11:07-04:00
+LuminaryLabs-Publish/TheUnmappedHouse    selected fallback / previous central review 2026-07-08T12:59:11-04:00
 ```
 
 ## Current product read
@@ -64,20 +64,20 @@ DOM button or StageKit hotspot click
   -> saveState()
 ```
 
-## Target reducer loop
+## Target host-integration loop
 
 ```txt
-StoryCommandEnvelope
+UI event or StageKit callback
+  -> StoryCommandEnvelope
   -> StorySourceSnapshot
   -> StoryStateSnapshot
   -> StageSceneSnapshot
-  -> validateStoryCommand
-  -> applyStoryCommand
   -> StoryCommandResult
   -> StoryEventRecord[]
   -> StoryProjection
   -> SaveProjection
-  -> GameHost diagnostics
+  -> InterludeProjection
+  -> GameHostStoryDiagnostics
   -> DOM-free fixture rows
 ```
 
@@ -88,11 +88,12 @@ StoryCommandEnvelope
 .agent/known-gaps.md
 .agent/next-steps.md
 .agent/validation.md
-.agent/architecture-audit/2026-07-08T12-59-11-04-00-story-result-reducer-map.md
-.agent/render-audit/2026-07-08T12-59-11-04-00-stage-projection-readback.md
-.agent/interaction-audit/2026-07-08T12-59-11-04-00-story-result-fixture-rows.md
-.agent/trackers/2026-07-08T12-59-11-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-08T12-59-11-04-00.md
+.agent/architecture-audit/2026-07-08T14-31-06-04-00-story-host-integration-dsk-map.md
+.agent/render-audit/2026-07-08T14-31-06-04-00-stage-gamehost-projection-readback.md
+.agent/interaction-audit/2026-07-08T14-31-06-04-00-story-command-host-wire-map.md
+.agent/gameplay-audit/2026-07-08T14-31-06-04-00-room-progress-result-loop.md
+.agent/trackers/2026-07-08T14-31-06-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-08T14-31-06-04-00.md
 .agent/kit-registry.json
 ```
 
@@ -107,6 +108,7 @@ Earlier breakdown entries remain useful context:
 .agent/trackers/2026-07-08T08-21-49-04-00/project-breakdown.md
 .agent/trackers/2026-07-08T10-01-57-04-00/project-breakdown.md
 .agent/trackers/2026-07-08T11-28-38-04-00/project-breakdown.md
+.agent/trackers/2026-07-08T12-59-11-04-00/project-breakdown.md
 ```
 
 ## Source files to inspect next
@@ -132,7 +134,7 @@ The next implementation should preserve `index.html -> src/game.js`, current sto
 ## Current next safe ledge
 
 ```txt
-TheUnmappedHouse Story Result Reducer Implementation Map + Fixture Rows
+TheUnmappedHouse Story Reducer Host Integration Wire Map + Fixture Gate
 ```
 
-Stop that ledge when fixture rows can prove initial state, first hotspot inspection, repeated inspection, unknown hotspot rejection, incomplete continue rejection, room completion, scene transition, prototype completion, save/load, reset, duplicate descriptor rejection, ungrantable clue rejection, stage snapshot readback, story projection, and GameHost projection without using DOM, Three.js, browser input, localStorage, `setTimeout`, or StageKit raycasting.
+Stop that ledge when `src/game.js` consumes reducer results through an adapter, UI projection is result-driven, localStorage writes consume save intents, interlude timing is represented as a projection instead of implicit control flow, and a DOM-free fixture proves inspect/repeat/reject/complete/continue/prototype/save/load/reset/GameHost rows without Three.js, browser input, localStorage, `setTimeout`, or StageKit raycasting.
