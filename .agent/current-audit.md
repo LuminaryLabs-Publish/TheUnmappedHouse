@@ -2,13 +2,13 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Audit timestamp:** `2026-07-08T02:40:00-04:00`
+**Audit timestamp:** `2026-07-08T03:42:00-04:00`
 
 ## Summary
 
-`TheUnmappedHouse` is a compact fixed-camera anime horror prototype with a strong initial point-and-click loop and a reusable-looking Three.js StageKit.
+`TheUnmappedHouse` is a compact fixed-camera anime horror prototype with a clear point-and-click inspection loop and a reusable-looking Three.js `StageKit`.
 
-The root `.agent/` state now exists. This pass is a follow-up readback pass: it compares the full `LuminaryLabs-Publish` repo list against the central `LuminaryLabs-Dev/LuminaryLabs` ledger, confirms `TheUnmappedHouse` is no longer missing repo-local `.agent` state, and records that it is still only partially promoted in central summary rollups.
+The root `.agent/` state exists. This pass is a documentation integrity follow-up: it re-compares the full accessible `LuminaryLabs-Publish` repo list against central tracking, confirms no currently observed non-excluded Publish repo is fully new or missing root `.agent/START_HERE.md` state, and keeps `TheUnmappedHouse` marked as the remaining central status-summary rollup gap.
 
 The next architecture move should still preserve the visible route while extracting story command authority, result contracts, fixtures, and descriptor validation.
 
@@ -17,31 +17,31 @@ The next architecture move should still preserve the visible route while extract
 Current `LuminaryLabs-Publish` repos observed:
 
 ```txt
-AetherVale
-HorrorCorridor
-IntoTheMeadow
-MyCozyIsland
-PhantomCommand
-PrehistoricRush
-TheCavalryOfRome   excluded by standing rule
-TheOpenAbove
-TheUnmappedHouse   selected for follow-up central-ledger readback
-ZombieOrchard
+AetherVale            tracked; root .agent state observed
+HorrorCorridor        tracked; root .agent state observed
+IntoTheMeadow         tracked; root .agent state observed
+MyCozyIsland          tracked; root .agent state observed
+PhantomCommand        tracked; root .agent state observed
+PrehistoricRush       tracked; root .agent state observed
+TheCavalryOfRome      excluded by standing rule
+TheOpenAbove          tracked; root .agent state observed
+TheUnmappedHouse      selected for central status-summary rollup gap follow-up
+ZombieOrchard         tracked; root .agent state observed
 ```
 
 Selection reason:
 
 ```txt
-TheUnmappedHouse was selected because all non-excluded Publish repos observed in the current list have at least some central readback, but TheUnmappedHouse remains a partial central-rollup case: the central latest summary records it as observed in direct ledger readback but not yet part of the status-summary 1.17 publish-game rollup.
+TheUnmappedHouse was selected because all checked non-excluded Publish repos have at least root .agent state, but TheUnmappedHouse remains a central-rollup edge case: central latest-summary/status reporting has treated it as direct readback context rather than normal status-summary publish-game rollup membership.
 
-This is no longer a root-agent-missing pass. It is a follow-up documentation integrity pass to keep repo-local .agent state, central repo-ledger state, and internal change-log state aligned.
+This is not a root-agent-missing pass and not a product-code pass. It is a follow-up documentation integrity pass to keep repo-local .agent state and central ledger state aligned.
 ```
 
 ## Product surface
 
 ```txt
 README.md
-  -> identifies the project as a fixed-camera anime point-and-click horror prototype
+  -> fixed-camera anime point-and-click horror prototype
 
 index.html
   -> loads ./src/game.js
@@ -113,6 +113,7 @@ anime shader material
 WebGL post-processing
 responsive story panel styling
 central ledger readback
+status-summary rollup gap
 repo-local .agent operating state
 ```
 
@@ -170,6 +171,7 @@ unmapped-house-stage-postprocess-kit
 unmapped-house-static-pages-deploy-kit
 unmapped-house-agent-state-kit
 unmapped-house-central-ledger-readback-kit
+unmapped-house-status-summary-rollup-gap-kit
 ```
 
 Needed next-cut kits:
@@ -220,9 +222,9 @@ DOM event
 
 The repo-local `.agent/` folder exists and includes required audit files, tracker entries, and turn ledger entries.
 
-The central ledger has a `repo-ledger/LuminaryLabs-Publish/TheUnmappedHouse.md` file and an internal change-log entry for the first root-agent-state pass.
+The central ledger has a `repo-ledger/LuminaryLabs-Publish/TheUnmappedHouse.md` file and internal change-log entries for the root-agent-state and central-readback passes.
 
-The central latest summary still marks `TheUnmappedHouse` as direct readback context rather than part of the `status-summary.json` publish-game rollup. That is the next central-ledger cleanup item, not a product-code blocker.
+The central status-summary rollup still needs to include `TheUnmappedHouse` with the other non-excluded Publish game repos when that schema/report is next refreshed. That is a central-ledger cleanup item, not a product-code blocker.
 
 ## Recommended next implementation objective
 
