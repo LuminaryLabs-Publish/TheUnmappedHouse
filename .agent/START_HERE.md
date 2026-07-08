@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Last aligned:** `2026-07-08T03:42:00-04:00`
+**Last aligned:** `2026-07-08T04-00-00-04-00`
 
 ## Purpose
 
@@ -16,11 +16,19 @@ Use it before touching implementation code.
 
 The player inspects hotspots in locked-camera diorama scenes, collects clue state, completes each room when required clues are found, and moves through interludes as the house becomes mapped.
 
+The current public route is still:
+
+```txt
+index.html -> src/game.js -> src/stage-kit.js + src/story-data.js
+```
+
 ## Current documentation state
 
 The root `.agent/` folder exists and has the required audit surfaces.
 
-The latest follow-up pass confirms that all checked non-excluded `LuminaryLabs-Publish` repos now have root `.agent/START_HERE.md` state. `TheUnmappedHouse` was selected again only because it remains the central status-summary rollup normalization gap: it has repo-local `.agent` state and central repo-ledger state, but central reports still treat it as direct readback context rather than normal `status-summary.json` publish-game rollup membership.
+The current repo-selection pass found no checked non-excluded `LuminaryLabs-Publish` repo that was completely missing central tracking or root `.agent/START_HERE.md` state.
+
+`TheUnmappedHouse` remains the least-normalized central tracking case because repo-local `.agent` state exists and the central repo-ledger file exists, but central machine-readable status rollup still omits it from the normal publish-game map.
 
 ## First files to read
 
@@ -33,8 +41,8 @@ The latest follow-up pass confirms that all checked non-excluded `LuminaryLabs-P
 .agent/render-audit/stage-render-audit.md
 .agent/interaction-audit/hotspot-loop-audit.md
 .agent/central-ledger-audit/publish-ledger-comparison.md
-.agent/trackers/2026-07-08T03-42-00-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-08T03-42-00-04-00.md
+.agent/trackers/2026-07-08T04-00-00-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-08T04-00-00-04-00.md
 ```
 
 Earlier breakdown passes:
@@ -44,6 +52,8 @@ Earlier breakdown passes:
 .agent/turn-ledger/2026-07-08T01-50-19-04-00.md
 .agent/trackers/2026-07-08T02-40-00-04-00/project-breakdown.md
 .agent/turn-ledger/2026-07-08T02-40-00-04-00.md
+.agent/trackers/2026-07-08T03-42-00-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-08T03-42-00-04-00.md
 ```
 
 ## Source files to inspect next
@@ -66,9 +76,13 @@ Move story progression into pure command/result kits, then let the UI consume th
 
 ## Current next safe ledge
 
-Build a story command authority and fixture replay gate without changing the visual route.
+```txt
+TheUnmappedHouse Story Command Authority + Fixture Replay Gate
+```
 
-Keep the existing `index.html -> src/game.js -> src/stage-kit.js -> src/story-data.js` path working while extracting pure story logic.
+Keep the existing route working while extracting pure story logic.
+
+Build command envelopes, result records, rejection reasons, route journals, GameHost diagnostics, and DOM-free fixture replay before changing visible story or renderer behavior.
 
 ## Central cleanup note
 
