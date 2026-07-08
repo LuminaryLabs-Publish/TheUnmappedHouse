@@ -2,13 +2,23 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Last aligned:** `2026-07-08T05:28:26-04:00`
+**Last aligned:** `2026-07-08T08:21:49-04:00`
 
 ## Purpose
 
 This `.agent/` folder is the repo-local operating memory for scheduled and manual breakdown work on `TheUnmappedHouse`.
 
-Use it before touching implementation code.
+Read this folder before changing implementation code.
+
+## Current selection result
+
+The full accessible `LuminaryLabs-Publish` repo list was compared against `LuminaryLabs-Dev/LuminaryLabs` central ledger state.
+
+No checked non-Cavalry Publish repo was found that was fully new, absent from the central ledger, missing root `.agent/START_HERE.md`, or recently added but undocumented.
+
+`TheUnmappedHouse` was selected as the oldest eligible fallback follow-up with an unresolved source-backed story authority seam. The old central rollup gap is closed and must not be used as the reason for selection anymore. This pass instead narrows the next implementation into a concrete story command/result acceptance ledger.
+
+`LuminaryLabs-Publish/TheCavalryOfRome` remains excluded by standing rule.
 
 ## Current product read
 
@@ -16,7 +26,7 @@ Use it before touching implementation code.
 
 The player inspects hotspots in locked-camera diorama scenes, collects clue state, completes each room when required clues are found, and moves through interludes as the house becomes mapped.
 
-The current public route is still:
+The current public route remains:
 
 ```txt
 index.html -> src/game.js -> src/stage-kit.js + src/story-data.js
@@ -26,9 +36,22 @@ index.html -> src/game.js -> src/stage-kit.js + src/story-data.js
 
 The root `.agent/` folder exists and has the required audit surfaces.
 
-The current repo-selection pass found no checked non-excluded `LuminaryLabs-Publish` repo that was completely missing central tracking or root `.agent/START_HERE.md` state.
+This pass refreshed the repo-local operating docs and added a timestamped story command/result acceptance ledger so the next implementation pass has exact command names, reason codes, result records, fixture cases, and file boundaries.
 
-`TheUnmappedHouse` was selected for this follow-up because prior local docs still described an open central status-summary rollup gap. That gap is now closed in `LuminaryLabs-Dev/LuminaryLabs:repo-checks/reports/status-summary.json` schema `1.18.0`, which includes `TheUnmappedHouse` in `known_repos`, `active_products`, and `publish_game_map_from_direct_ledgers`.
+## Publish repos checked
+
+```txt
+LuminaryLabs-Publish/AetherVale          ledgered with root .agent
+LuminaryLabs-Publish/HorrorCorridor      ledgered with root .agent
+LuminaryLabs-Publish/IntoTheMeadow       ledgered with root .agent
+LuminaryLabs-Publish/MyCozyIsland        ledgered with root .agent
+LuminaryLabs-Publish/PhantomCommand      ledgered with root .agent
+LuminaryLabs-Publish/PrehistoricRush     ledgered with root .agent
+LuminaryLabs-Publish/TheCavalryOfRome    excluded by rule
+LuminaryLabs-Publish/TheOpenAbove        ledgered with root .agent
+LuminaryLabs-Publish/TheUnmappedHouse    selected fallback: story command/result acceptance ledger
+LuminaryLabs-Publish/ZombieOrchard       ledgered with root .agent
+```
 
 ## First files to read
 
@@ -37,16 +60,15 @@ The current repo-selection pass found no checked non-excluded `LuminaryLabs-Publ
 .agent/known-gaps.md
 .agent/next-steps.md
 .agent/validation.md
-.agent/architecture-audit/domain-service-breakdown.md
-.agent/render-audit/stage-render-audit.md
-.agent/interaction-audit/hotspot-loop-audit.md
-.agent/central-ledger-audit/publish-ledger-comparison.md
-.agent/trackers/2026-07-08T05-28-26-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-08T05-28-26-04-00.md
+.agent/architecture-audit/2026-07-08T08-21-49-04-00-dsk-domain-breakdown.md
+.agent/render-audit/2026-07-08T08-21-49-04-00-stage-render-readback.md
+.agent/interaction-audit/2026-07-08T08-21-49-04-00-story-command-result-acceptance-ledger.md
+.agent/trackers/2026-07-08T08-21-49-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-08T08-21-49-04-00.md
 .agent/kit-registry.json
 ```
 
-Earlier breakdown passes:
+Earlier breakdown entries:
 
 ```txt
 .agent/trackers/2026-07-08T01-50-19-04-00/project-breakdown.md
@@ -57,12 +79,15 @@ Earlier breakdown passes:
 .agent/turn-ledger/2026-07-08T03-42-00-04-00.md
 .agent/trackers/2026-07-08T04-00-00-04-00/project-breakdown.md
 .agent/turn-ledger/2026-07-08T04-00-00-04-00.md
+.agent/trackers/2026-07-08T05-28-26-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-08T05-28-26-04-00.md
 ```
 
 ## Source files to inspect next
 
 ```txt
 README.md
+package.json
 index.html
 src/game.js
 src/stage-kit.js
@@ -75,18 +100,12 @@ src/styles.css
 
 Do not let UI handlers, DOM code, browser state, renderer code, or localStorage own story authority long term.
 
-Move story progression into pure command/result kits, then let the UI consume those results.
+Move story progression into pure command/result kits, then let the UI, save adapter, debug projection, renderer, and future `GameHost` diagnostics consume those result records.
 
 ## Current next safe ledge
 
 ```txt
-TheUnmappedHouse Story Command Authority + Fixture Replay Gate
+TheUnmappedHouse Story Command Result Acceptance Ledger
 ```
 
-Keep the existing route working while extracting pure story logic.
-
-Build command envelopes, result records, rejection reasons, route journals, GameHost diagnostics, and DOM-free fixture replay before changing visible story or renderer behavior.
-
-## Central cleanup note
-
-The central rollup gap should no longer be used as a reason to repeatedly select this repo. Future selection should return to new/untracked/missing-`.agent` repos first, then the oldest eligible documented repo by current ledger state.
+Keep `index.html -> src/game.js`, the current story copy, the current `SAVE_KEY`, and StageKit visuals stable while adding source-owned command envelopes, accepted/rejected result records, stable reason codes, route/command journals, save result records, descriptor validation, `GameHost` diagnostics, and DOM-free fixture replay.
