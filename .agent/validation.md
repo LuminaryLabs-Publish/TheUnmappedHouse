@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-08T14-31-06-04-00`
+**Updated:** `2026-07-08T16-19-57-04-00`
 
 ## Current validation status
 
@@ -15,7 +15,7 @@ Browser smoke run: no, connector-only documentation/audit pass
 Fixture script created: no
 Fixture script run: no
 GitHub Pages live route checked: no
-Full LuminaryLabs-Publish repo list compared to central ledger state: yes
+Full LuminaryLabs-Publish repo list compared to central ledger/root agent state: yes
 Chosen repo root .agent exists before this pass: yes
 Central ledger updated: yes
 Branch created: no
@@ -29,10 +29,12 @@ Pushed to main: yes
 src/game.js read
 src/stage-kit.js read
 src/story-data.js read
+package.json read
 central repo ledger read
 repo-local .agent root docs read
 repo-local kit registry read
 accessible LuminaryLabs-Publish repo list read
+sampled root .agent state for current repo candidates read
 ```
 
 ## Required next validation
