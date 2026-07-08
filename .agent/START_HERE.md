@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Last aligned:** `2026-07-08T08:21:49-04:00`
+**Last aligned:** `2026-07-08T10-01-57-04-00`
 
 ## Purpose
 
@@ -16,7 +16,7 @@ The full accessible `LuminaryLabs-Publish` repo list was compared against `Lumin
 
 No checked non-Cavalry Publish repo was found that was fully new, absent from the central ledger, missing root `.agent/START_HERE.md`, or recently added but undocumented.
 
-`TheUnmappedHouse` was selected as the oldest eligible fallback follow-up with an unresolved source-backed story authority seam. The old central rollup gap is closed and must not be used as the reason for selection anymore. This pass instead narrows the next implementation into a concrete story command/result acceptance ledger.
+`TheUnmappedHouse` was selected as the oldest observed eligible fallback follow-up with an unresolved source-backed story authority seam. The old central rollup gap is closed and must not be reused as a selection reason. This pass narrows the next implementation from a command/result acceptance ledger into an exact source wire map and fixture replay contract.
 
 `LuminaryLabs-Publish/TheCavalryOfRome` remains excluded by standing rule.
 
@@ -36,7 +36,7 @@ index.html -> src/game.js -> src/stage-kit.js + src/story-data.js
 
 The root `.agent/` folder exists and has the required audit surfaces.
 
-This pass refreshed the repo-local operating docs and added a timestamped story command/result acceptance ledger so the next implementation pass has exact command names, reason codes, result records, fixture cases, and file boundaries.
+This pass refreshed the repo-local operating docs and added a timestamped story authority source wire map so the next implementation pass has exact helper files, command names, reason codes, result records, fixture cases, and integration boundaries.
 
 ## Publish repos checked
 
@@ -49,7 +49,7 @@ LuminaryLabs-Publish/PhantomCommand      ledgered with root .agent
 LuminaryLabs-Publish/PrehistoricRush     ledgered with root .agent
 LuminaryLabs-Publish/TheCavalryOfRome    excluded by rule
 LuminaryLabs-Publish/TheOpenAbove        ledgered with root .agent
-LuminaryLabs-Publish/TheUnmappedHouse    selected fallback: story command/result acceptance ledger
+LuminaryLabs-Publish/TheUnmappedHouse    selected fallback: story authority source wire map
 LuminaryLabs-Publish/ZombieOrchard       ledgered with root .agent
 ```
 
@@ -60,11 +60,12 @@ LuminaryLabs-Publish/ZombieOrchard       ledgered with root .agent
 .agent/known-gaps.md
 .agent/next-steps.md
 .agent/validation.md
-.agent/architecture-audit/2026-07-08T08-21-49-04-00-dsk-domain-breakdown.md
-.agent/render-audit/2026-07-08T08-21-49-04-00-stage-render-readback.md
+.agent/architecture-audit/2026-07-08T10-01-57-04-00-story-authority-dsk-breakdown.md
+.agent/render-audit/2026-07-08T10-01-57-04-00-stage-result-readback.md
+.agent/interaction-audit/2026-07-08T10-01-57-04-00-story-authority-source-wire-map.md
 .agent/interaction-audit/2026-07-08T08-21-49-04-00-story-command-result-acceptance-ledger.md
-.agent/trackers/2026-07-08T08-21-49-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-08T08-21-49-04-00.md
+.agent/trackers/2026-07-08T10-01-57-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-08T10-01-57-04-00.md
 .agent/kit-registry.json
 ```
 
@@ -81,6 +82,8 @@ Earlier breakdown entries:
 .agent/turn-ledger/2026-07-08T04-00-00-04-00.md
 .agent/trackers/2026-07-08T05-28-26-04-00/project-breakdown.md
 .agent/turn-ledger/2026-07-08T05-28-26-04-00.md
+.agent/trackers/2026-07-08T08-21-49-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-08T08-21-49-04-00.md
 ```
 
 ## Source files to inspect next
@@ -89,6 +92,7 @@ Earlier breakdown entries:
 README.md
 package.json
 index.html
+src/aspect-frame.js
 src/game.js
 src/stage-kit.js
 src/story-data.js
@@ -105,7 +109,7 @@ Move story progression into pure command/result kits, then let the UI, save adap
 ## Current next safe ledge
 
 ```txt
-TheUnmappedHouse Story Command Result Acceptance Ledger
+TheUnmappedHouse Story Authority Source Wire Map
 ```
 
-Keep `index.html -> src/game.js`, the current story copy, the current `SAVE_KEY`, and StageKit visuals stable while adding source-owned command envelopes, accepted/rejected result records, stable reason codes, route/command journals, save result records, descriptor validation, `GameHost` diagnostics, and DOM-free fixture replay.
+Keep `index.html -> src/game.js`, the current story copy, the current `SAVE_KEY`, and StageKit visuals stable while adding source snapshots, command envelopes, result records, stable reason codes, reducer helpers, projection helpers, additive `GameHost` diagnostics, and DOM-free fixture replay.
