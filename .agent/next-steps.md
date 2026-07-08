@@ -2,11 +2,11 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-08T12-59-11-04-00`
+**Updated:** `2026-07-08T14-31-06-04-00`
 
 ## Next safe ledge
 
-Build the story result reducer implementation map and fixture rows into source.
+Build the story reducer host-integration wire map into source.
 
 Do not expand story content first.
 
@@ -17,7 +17,7 @@ Do not change the route, localStorage key, scene copy, StageKit picking behavior
 ## Current ledge name
 
 ```txt
-TheUnmappedHouse Story Result Reducer Implementation Map + Fixture Rows
+TheUnmappedHouse Story Reducer Host Integration Wire Map + Fixture Gate
 ```
 
 ## Build order
@@ -33,17 +33,66 @@ TheUnmappedHouse Story Result Reducer Implementation Map + Fixture Rows
 8. Add src/story-authority/story-event-record.js.
 9. Add src/story-authority/story-reducer.js.
 10. Add src/story-authority/story-projection.js.
-11. Add src/story-authority/story-fixture-cases.js.
-12. Add scripts/validate-story-authority.mjs.
-13. Add npm script for the fixture and include it in npm run check or a dedicated smoke command.
-14. Adapt src/game.js to consume StoryCommandResult without changing visible behavior.
-15. Add additive window.GameHost.getState() diagnostics.
+11. Add src/story-authority/save-projection.js.
+12. Add src/story-authority/interlude-projection.js.
+13. Add src/story-authority/gamehost-story-diagnostics.js.
+14. Add src/story-authority/story-fixture-cases.js.
+15. Add scripts/validate-story-authority.mjs.
+16. Add npm script for the fixture and include it in npm run check or a dedicated smoke command.
+17. Adapt src/game.js so DOM buttons and StageKit callbacks dispatch StoryCommandEnvelope objects.
+18. Adapt src/game.js so text, hotspot buttons, notebook, interlude, localStorage, and debug output consume projections instead of owning story rules.
+19. Add additive window.GameHost.getState() diagnostics without removing the visible debug panel.
+```
+
+## Command types
+
+```txt
+story.inspect_hotspot
+story.continue_scene
+story.load_state
+story.save_state
+story.reset_save
+story.project
+```
+
+## Required result statuses
+
+```txt
+accepted
+rejected
+no_mutation
+terminal
+```
+
+## Required reason families
+
+```txt
+initial_state_created
+loaded_state_normalized
+loaded_state_rejected
+hotspot_inspected
+hotspot_repeated
+hotspot_unknown
+scene_incomplete
+scene_completed
+scene_transitioned
+prototype_complete
+invalid_command
+invalid_scene_id
+duplicate_scene_id
+duplicate_hotspot_id
+ungrantable_required_clue
+save_requested
+reset_requested
+projection_updated
 ```
 
 ## Fixture rows required
 
 ```txt
 initial_state
+load_empty_state
+load_malformed_state
 inspect_first_hotspot
 repeat_hotspot
 unknown_hotspot
@@ -60,6 +109,8 @@ duplicate_hotspot_descriptor_rejected
 ungrantable_required_clue_rejected
 stage_scene_snapshot
 story_projection
+save_projection
+interlude_projection
 GameHost_projection
 ```
 
@@ -73,11 +124,13 @@ current scenes and copy remain unchanged
 current SAVE_KEY remains unchanged
 StageKit behavior remains visible-equivalent
 UI consumes result/projection records instead of owning story authority
+localStorage writes consume SaveProjection objects
+interlude opening consumes InterludeProjection instead of implicit setTimeout-only control flow
 window.GameHost.getState is additive and read-only
 ```
 
 ## Stop condition
 
-Stop after the story reducer and fixture proof are stable.
+Stop after the story reducer, host adapter, and fixture proof are stable.
 
-Defer deeper StageKit extraction, new rooms, new art, and browser automation until the reducer fixtures explain every accepted, rejected, no-mutation, transition, save, reset, projection, and prototype-complete path.
+Defer deeper StageKit extraction, new rooms, new art, audio, inventory, and browser automation until the reducer fixtures explain every accepted, rejected, no-mutation, transition, save, reset, projection, interlude, and prototype-complete path.
