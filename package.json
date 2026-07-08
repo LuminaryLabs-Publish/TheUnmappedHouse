@@ -6,7 +6,7 @@
   "description": "A fixed-camera anime point-and-click horror story prototype.",
   "scripts": {
     "serve": "python3 -m http.server 8080",
-    "check": "node --check src/game.js && node --check src/stage-kit.js && node --check src/story-data.js"
+    "check": "node --check src/aspect-frame.js && node --check src/game.js && node --check src/stage-kit.js && node --check src/story-data.js"
   },
   "license": "UNLICENSED"
 }
