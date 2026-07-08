@@ -2,11 +2,11 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-08T14-31-06-04-00`
+**Updated:** `2026-07-08T16-19-57-04-00`
 
 ## Next safe ledge
 
-Build the story reducer host-integration wire map into source.
+Build the story authority source-file cutover and host projection fixture gate.
 
 Do not expand story content first.
 
@@ -17,7 +17,7 @@ Do not change the route, localStorage key, scene copy, StageKit picking behavior
 ## Current ledge name
 
 ```txt
-TheUnmappedHouse Story Reducer Host Integration Wire Map + Fixture Gate
+TheUnmappedHouse Story Authority Source File Cutover + Host Projection Fixture Gate
 ```
 
 ## Build order
@@ -53,6 +53,8 @@ story.load_state
 story.save_state
 story.reset_save
 story.project
+story.validate_source
+story.snapshot_stage
 ```
 
 ## Required result statuses
@@ -85,6 +87,7 @@ ungrantable_required_clue
 save_requested
 reset_requested
 projection_updated
+stage_snapshot_created
 ```
 
 ## Fixture rows required
@@ -133,4 +136,4 @@ window.GameHost.getState is additive and read-only
 
 Stop after the story reducer, host adapter, and fixture proof are stable.
 
-Defer deeper StageKit extraction, new rooms, new art, audio, inventory, and browser automation until the reducer fixtures explain every accepted, rejected, no-mutation, transition, save, reset, projection, interlude, and prototype-complete path.
+Defer deeper StageKit extraction, new rooms, new art, audio, inventory, and browser automation until the reducer fixtures explain every accepted, rejected, no-mutation, transition, save, reset, projection, interlude, prototype-complete, and GameHost path.
