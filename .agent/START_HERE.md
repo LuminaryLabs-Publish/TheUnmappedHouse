@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Last aligned:** `2026-07-08T14-31-06-04-00`
+**Last aligned:** `2026-07-08T16-19-57-04-00`
 
 ## Purpose
 
@@ -12,34 +12,34 @@ Read this folder before changing implementation code.
 
 ## Current selection result
 
-The full accessible `LuminaryLabs-Publish` repository list was compared against `LuminaryLabs-Dev/LuminaryLabs` central ledger state.
+The full accessible `LuminaryLabs-Publish` repository list was compared against tracked repo-ledger state in `LuminaryLabs-Dev/LuminaryLabs` and sampled root `.agent/START_HERE.md` state.
 
-No checked non-Cavalry repo was fully new, absent from the central ledger, missing root `.agent/START_HERE.md`, or recently added but undocumented.
-
-`TheUnmappedHouse` was selected as the oldest observed eligible fallback follow-up after newer central readbacks were observed for the other sampled repos. The active blocker is still story command authority, but this pass narrows the next source work from a broad reducer idea into a host-integration wire map.
+No checked non-Cavalry Publish repo was fully new, absent from the central ledger, undocumented, recently added but undocumented, or missing sampled root `.agent/START_HERE.md` state.
 
 `LuminaryLabs-Publish/TheCavalryOfRome` remains excluded by standing rule.
+
+`TheUnmappedHouse` was selected as the oldest sampled root-agent fallback because its last root alignment was `2026-07-08T14-31-06-04-00`, older than the other sampled non-excluded repos. The current high-value seam is still story authority, but this pass narrows it from a broad host-integration map into an exact source-file cutover contract.
 
 ## Publish repos checked
 
 ```txt
-LuminaryLabs-Publish/HorrorCorridor      tracked / root .agent present / latest central review 2026-07-08T13:59:50-04:00
-LuminaryLabs-Publish/AetherVale          tracked / root .agent present / latest central update 2026-07-08T13:39:15-04:00
-LuminaryLabs-Publish/TheOpenAbove        tracked / root .agent present / latest central update 2026-07-08T13:31:29-04:00
+LuminaryLabs-Publish/HorrorCorridor      tracked / root .agent present / latest sampled alignment 2026-07-08T15:49:18-04:00
+LuminaryLabs-Publish/AetherVale          tracked / root .agent present / latest sampled alignment 2026-07-08T15-20-41-04-00
+LuminaryLabs-Publish/TheOpenAbove        tracked / root .agent present / latest sampled alignment 2026-07-08T15-11-18-04-00
 LuminaryLabs-Publish/TheCavalryOfRome    excluded by rule
-LuminaryLabs-Publish/PhantomCommand      tracked / root .agent present / latest central update 2026-07-08T14:08:24-04:00
-LuminaryLabs-Publish/PrehistoricRush     tracked / root .agent present / latest central update 2026-07-08T13:18:13-04:00
-LuminaryLabs-Publish/ZombieOrchard       tracked / root .agent present / latest central update 2026-07-08T14:18:45-04:00
-LuminaryLabs-Publish/IntoTheMeadow       tracked / root .agent present / latest central update 2026-07-08T13:50:37-04:00
-LuminaryLabs-Publish/MyCozyIsland        tracked / root .agent present / latest central update 2026-07-08T13:11:07-04:00
-LuminaryLabs-Publish/TheUnmappedHouse    selected fallback / previous central review 2026-07-08T12:59:11-04:00
+LuminaryLabs-Publish/PhantomCommand      tracked / root .agent present / latest sampled alignment 2026-07-08T15-58-59-04-00
+LuminaryLabs-Publish/PrehistoricRush     tracked / root .agent present / latest sampled alignment 2026-07-08T14:51:11-04:00
+LuminaryLabs-Publish/ZombieOrchard       tracked / root .agent present / repo-local alignment 2026-07-08T16-10-36-04-00; central ledger still older at sampled readback
+LuminaryLabs-Publish/IntoTheMeadow       tracked / root .agent present / latest sampled alignment 2026-07-08T15-28-13-04-00
+LuminaryLabs-Publish/MyCozyIsland        tracked / root .agent present / latest sampled alignment 2026-07-08T14-58-49-04-00
+LuminaryLabs-Publish/TheUnmappedHouse    selected fallback / oldest sampled root alignment 2026-07-08T14-31-06-04-00
 ```
 
 ## Current product read
 
 `TheUnmappedHouse` is a fixed-camera anime point-and-click horror prototype.
 
-The current public route remains:
+The current route remains:
 
 ```txt
 index.html
@@ -53,18 +53,18 @@ The player inspects hotspot volumes in locked-camera diorama scenes, collects cl
 ## Current source loop
 
 ```txt
-DOM button or StageKit hotspot click
-  -> inspectHotspot(hotspot)
-  -> mutate inspected map
-  -> grant clue strings directly
-  -> update text and notebook log
-  -> sceneComplete(currentScene)
-  -> maybe setTimeout(showInterlude, 450)
-  -> renderUi()
-  -> saveState()
+open index.html
+  -> src/game.js loads story source and saved state
+  -> StageKit loads the current fixed-camera scene
+  -> hotspot side-panel button or StageKit raycast click calls inspectHotspot(hotspot)
+  -> inspectHotspot mutates inspected state, grants clues, writes text/log, checks scene completion, schedules interlude, renders UI, and saves
+  -> continue button calls nextScene()
+  -> nextScene mutates scene id, route, interlude DOM, StageKit scene, UI, and save state
+  -> KeyR clears localStorage and reloads
+  -> debug panel emits an ad hoc JSON projection
 ```
 
-## Target host-integration loop
+## Target authority loop
 
 ```txt
 UI event or StageKit callback
@@ -72,6 +72,7 @@ UI event or StageKit callback
   -> StorySourceSnapshot
   -> StoryStateSnapshot
   -> StageSceneSnapshot
+  -> applyStoryCommand()
   -> StoryCommandResult
   -> StoryEventRecord[]
   -> StoryProjection
@@ -79,6 +80,7 @@ UI event or StageKit callback
   -> InterludeProjection
   -> GameHostStoryDiagnostics
   -> DOM-free fixture rows
+  -> browser host consumes projections without owning rules
 ```
 
 ## First files to read
@@ -88,53 +90,58 @@ UI event or StageKit callback
 .agent/known-gaps.md
 .agent/next-steps.md
 .agent/validation.md
-.agent/architecture-audit/2026-07-08T14-31-06-04-00-story-host-integration-dsk-map.md
-.agent/render-audit/2026-07-08T14-31-06-04-00-stage-gamehost-projection-readback.md
-.agent/interaction-audit/2026-07-08T14-31-06-04-00-story-command-host-wire-map.md
-.agent/gameplay-audit/2026-07-08T14-31-06-04-00-room-progress-result-loop.md
-.agent/trackers/2026-07-08T14-31-06-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-08T14-31-06-04-00.md
+.agent/architecture-audit/2026-07-08T16-19-57-04-00-story-authority-source-file-map.md
+.agent/render-audit/2026-07-08T16-19-57-04-00-stage-snapshot-projection-boundary.md
+.agent/interaction-audit/2026-07-08T16-19-57-04-00-story-result-host-adapter-contract.md
+.agent/gameplay-audit/2026-07-08T16-19-57-04-00-route-completion-result-loop.md
+.agent/story-authority-audit/2026-07-08T16-19-57-04-00-source-file-cutover-contract.md
+.agent/trackers/2026-07-08T16-19-57-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-08T16-19-57-04-00.md
 .agent/kit-registry.json
 ```
 
-Earlier breakdown entries remain useful context:
-
-```txt
-.agent/trackers/2026-07-08T01-50-19-04-00/project-breakdown.md
-.agent/trackers/2026-07-08T02-40-00-04-00/project-breakdown.md
-.agent/trackers/2026-07-08T03-42-00-04-00/project-breakdown.md
-.agent/trackers/2026-07-08T04-00-00-04-00/project-breakdown.md
-.agent/trackers/2026-07-08T05-28-26-04-00/project-breakdown.md
-.agent/trackers/2026-07-08T08-21-49-04-00/project-breakdown.md
-.agent/trackers/2026-07-08T10-01-57-04-00/project-breakdown.md
-.agent/trackers/2026-07-08T11-28-38-04-00/project-breakdown.md
-.agent/trackers/2026-07-08T12-59-11-04-00/project-breakdown.md
-```
-
-## Source files to inspect next
+## Source files to inspect before implementation
 
 ```txt
 README.md
 package.json
 index.html
-src/aspect-frame.js
 src/game.js
 src/stage-kit.js
 src/story-data.js
-src/styles.css
-.github/workflows/deploy.yml
+src/aspect-frame.js
+.github/workflows/deploy-pages.yml
+```
+
+## Source files to add next
+
+```txt
+src/story-authority/story-source-snapshot.js
+src/story-authority/story-state-snapshot.js
+src/story-authority/stage-scene-snapshot.js
+src/story-authority/story-command-envelope.js
+src/story-authority/story-command-reasons.js
+src/story-authority/story-command-result.js
+src/story-authority/story-event-record.js
+src/story-authority/story-reducer.js
+src/story-authority/story-projection.js
+src/story-authority/save-projection.js
+src/story-authority/interlude-projection.js
+src/story-authority/gamehost-story-diagnostics.js
+src/story-authority/story-fixture-cases.js
+scripts/validate-story-authority.mjs
 ```
 
 ## Main rule
 
-Do not make story authority depend on DOM state, WebGL state, localStorage, `setTimeout`, or StageKit picking internals.
+Keep `index.html -> src/game.js`, `SAVE_KEY`, story copy, StageKit visuals, fixed 16:9 frame behavior, and current Pages deployment stable.
 
-The next implementation should preserve `index.html -> src/game.js`, current story copy, current `SAVE_KEY`, current StageKit visuals, and current Pages workflow while adding pure story authority helpers, DOM-free fixture replay, and additive `window.GameHost.getState()` diagnostics.
+Do not expand story content, inventory, audio, new rooms, or renderer internals until story command/result authority is fixture-readable and the host consumes projections instead of owning rules.
 
 ## Current next safe ledge
 
 ```txt
-TheUnmappedHouse Story Reducer Host Integration Wire Map + Fixture Gate
+TheUnmappedHouse Story Authority Source File Cutover + Host Projection Fixture Gate
 ```
 
-Stop that ledge when `src/game.js` consumes reducer results through an adapter, UI projection is result-driven, localStorage writes consume save intents, interlude timing is represented as a projection instead of implicit control flow, and a DOM-free fixture proves inspect/repeat/reject/complete/continue/prototype/save/load/reset/GameHost rows without Three.js, browser input, localStorage, `setTimeout`, or StageKit raycasting.
+Stop that ledge when fixture rows prove first inspect, repeat inspect, unknown hotspot, incomplete continue, completed room, scene transition, prototype complete, save/load, reset, descriptor validation, stage snapshot, story projection, save projection, interlude projection, and additive GameHost diagnostics without DOM, WebGL, localStorage, setTimeout, or StageKit raycasting.
