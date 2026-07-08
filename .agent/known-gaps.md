@@ -2,17 +2,19 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-08T05:28:26-04:00`
+**Updated:** `2026-07-08T08:21:49-04:00`
 
 ## Architecture gaps
 
 - Story authority is embedded in `src/game.js` UI handlers.
+- Module-level `state` and `currentScene` are mutated directly.
 - There is no command envelope for inspection, continuation, load, save, or reset.
 - There are no stable accepted/rejected result records.
-- There are no stable reason codes for invalid commands.
+- There are no stable reason codes for invalid or duplicate commands.
+- Repeat hotspot inspection is a direct UI branch, not a typed repeated-inspection result.
 - The clue ledger mutates directly through `grantClues`.
 - Scene completion is calculated directly in the host runtime without a result contract.
-- Interlude progression mutates route state directly.
+- Interlude progression mutates route state directly through `nextScene`.
 - Save writes happen directly from the same code path as UI projection.
 - The debug notebook is a live projection, not a stable diagnostics API.
 
@@ -21,11 +23,15 @@
 - No DOM-free story fixture replay exists.
 - No fixture matrix exists for hotspot inspection.
 - No fixture matrix exists for scene completion and transition.
+- No fixture matrix exists for repeat inspection.
+- No fixture matrix exists for unknown hotspot rejection.
+- No fixture matrix exists for continue-before-complete rejection.
+- No fixture matrix exists for save/load/reset parity.
 - No validation exists for malformed or missing scene descriptors.
 - No validation exists for duplicate hotspot ids.
 - No validation exists for `requiresToComplete` values that are never granted.
 - No validation exists for unavailable next scenes.
-- No static smoke script is present.
+- No static smoke script is present beyond `npm run check` syntax validation.
 - No Pages deploy proof has been recorded in `.agent/` yet.
 
 ## Renderer and stage gaps
@@ -48,9 +54,8 @@
 ## Central tracking gaps
 
 - `TheUnmappedHouse` has repo-local `.agent` state and central `repo-ledger` state.
-- The previous central status-summary rollup gap is now closed by `LuminaryLabs-Dev/LuminaryLabs:repo-checks/reports/status-summary.json` schema `1.18.0`.
-- The central direct repo ledger and this repo-local `.agent` state were stale because they still described the rollup gap as open.
-- Future repo-breakdown selection should not repeatedly select this repo solely because of the old status-summary rollup language.
+- The previous central status-summary rollup gap is closed by `LuminaryLabs-Dev/LuminaryLabs:repo-checks/reports/status-summary.json` schema `1.18.0`.
+- Future repo-breakdown selection should not repeatedly select this repo solely because of old status-summary rollup language.
 
 ## Documentation gaps fixed by prior passes
 
@@ -71,11 +76,21 @@
 
 - Refreshed `.agent/START_HERE.md`.
 - Refreshed `.agent/current-audit.md`.
-- Refreshed `.agent/central-ledger-audit/publish-ledger-comparison.md`.
 - Refreshed `.agent/known-gaps.md`.
 - Refreshed `.agent/next-steps.md`.
 - Refreshed `.agent/validation.md`.
 - Refreshed `.agent/kit-registry.json`.
-- Added `.agent/trackers/2026-07-08T05-28-26-04-00/project-breakdown.md`.
-- Added `.agent/turn-ledger/2026-07-08T05-28-26-04-00.md`.
+- Added `.agent/architecture-audit/2026-07-08T08-21-49-04-00-dsk-domain-breakdown.md`.
+- Added `.agent/render-audit/2026-07-08T08-21-49-04-00-stage-render-readback.md`.
+- Added `.agent/interaction-audit/2026-07-08T08-21-49-04-00-story-command-result-acceptance-ledger.md`.
+- Added `.agent/trackers/2026-07-08T08-21-49-04-00/project-breakdown.md`.
+- Added `.agent/turn-ledger/2026-07-08T08-21-49-04-00.md`.
 - Updated central ledger/change-log state for this follow-up.
+
+## Primary unresolved ledge
+
+```txt
+TheUnmappedHouse Story Command Result Acceptance Ledger
+```
+
+The next source change should add command/result authority and DOM-free replay without changing story copy, route shape, StageKit visuals, localStorage key, or Pages workflow.
