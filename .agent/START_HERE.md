@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Last aligned:** `2026-07-08T04-00-00-04-00`
+**Last aligned:** `2026-07-08T05:28:26-04:00`
 
 ## Purpose
 
@@ -28,7 +28,7 @@ The root `.agent/` folder exists and has the required audit surfaces.
 
 The current repo-selection pass found no checked non-excluded `LuminaryLabs-Publish` repo that was completely missing central tracking or root `.agent/START_HERE.md` state.
 
-`TheUnmappedHouse` remains the least-normalized central tracking case because repo-local `.agent` state exists and the central repo-ledger file exists, but central machine-readable status rollup still omits it from the normal publish-game map.
+`TheUnmappedHouse` was selected for this follow-up because prior local docs still described an open central status-summary rollup gap. That gap is now closed in `LuminaryLabs-Dev/LuminaryLabs:repo-checks/reports/status-summary.json` schema `1.18.0`, which includes `TheUnmappedHouse` in `known_repos`, `active_products`, and `publish_game_map_from_direct_ledgers`.
 
 ## First files to read
 
@@ -41,8 +41,9 @@ The current repo-selection pass found no checked non-excluded `LuminaryLabs-Publ
 .agent/render-audit/stage-render-audit.md
 .agent/interaction-audit/hotspot-loop-audit.md
 .agent/central-ledger-audit/publish-ledger-comparison.md
-.agent/trackers/2026-07-08T04-00-00-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-08T04-00-00-04-00.md
+.agent/trackers/2026-07-08T05-28-26-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-08T05-28-26-04-00.md
+.agent/kit-registry.json
 ```
 
 Earlier breakdown passes:
@@ -54,6 +55,8 @@ Earlier breakdown passes:
 .agent/turn-ledger/2026-07-08T02-40-00-04-00.md
 .agent/trackers/2026-07-08T03-42-00-04-00/project-breakdown.md
 .agent/turn-ledger/2026-07-08T03-42-00-04-00.md
+.agent/trackers/2026-07-08T04-00-00-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-08T04-00-00-04-00.md
 ```
 
 ## Source files to inspect next
@@ -86,4 +89,4 @@ Build command envelopes, result records, rejection reasons, route journals, Game
 
 ## Central cleanup note
 
-The central `LuminaryLabs-Dev/LuminaryLabs` status-summary rollup should eventually include `TheUnmappedHouse` with the other non-excluded Publish game repos so future scheduled repo selection does not keep returning here only because summary rollup state lags direct ledger state.
+The central rollup gap should no longer be used as a reason to repeatedly select this repo. Future selection should return to new/untracked/missing-`.agent` repos first, then the oldest eligible documented repo by current ledger state.
