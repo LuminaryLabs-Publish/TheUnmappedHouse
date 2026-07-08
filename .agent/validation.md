@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-08T10-01-57-04-00`
+**Updated:** `2026-07-08T11-28-38-04-00`
 
 ## Current validation status
 
@@ -22,11 +22,8 @@ Central status-summary rollup inclusion: yes, observed in prior status-summary.j
 
 - [x] Listed accessible `LuminaryLabs-Publish` repositories by GitHub installation.
 - [x] Excluded `LuminaryLabs-Publish/TheCavalryOfRome`.
-- [x] Confirmed checked non-Cavalry repos already have root `.agent/START_HERE.md` state.
-- [x] Confirmed `TheUnmappedHouse` root `.agent/START_HERE.md` exists.
-- [x] Read `README.md`.
-- [x] Read `package.json`.
-- [x] Read `src/aspect-frame.js`.
+- [x] Confirmed checked non-Cavalry repos already have sampled root `.agent/START_HERE.md` state.
+- [x] Confirmed `TheUnmappedHouse` root `.agent/START_HERE.md` exists before this pass.
 - [x] Read `src/game.js`.
 - [x] Read `src/stage-kit.js`.
 - [x] Read `src/story-data.js`.
@@ -34,6 +31,24 @@ Central status-summary rollup inclusion: yes, observed in prior status-summary.j
 - [x] Updated repo-local `.agent` docs only.
 - [x] Updated central `repo-ledger/LuminaryLabs-Publish/TheUnmappedHouse.md`.
 - [x] Added central internal change-log entry.
+
+## Source facts verified
+
+```txt
+src/game.js
+  -> SAVE_KEY remains the-unmapped-house.stage-prototype.v1
+  -> state and currentScene are mutable module-level values
+  -> inspectHotspot mutates inspected state, grants clues, logs text, checks completion, renders UI, and saves
+  -> nextScene mutates scene id, route, interlude DOM, StageKit scene, UI, and save state
+  -> KeyR deletes localStorage and reloads
+
+src/stage-kit.js
+  -> imports Three.js from CDN
+  -> owns renderer, camera, raycaster, render target, post pass, hotspot creation, pointer picking, hover label, click dispatch, resize, and animate loop
+
+src/story-data.js
+  -> exports three scenes with stage descriptors, hotspot descriptors, clue grants, completion requirements, and interlude text
+```
 
 ## Validation not performed
 
@@ -51,20 +66,21 @@ These should be implemented before story expansion.
 
 ```txt
 01_initial_state_has_first_scene
-02_known_hotspot_grants_expected_clue
-03_duplicate_hotspot_is_accepted_repeat_and_does_not_duplicate_clue
-04_unknown_hotspot_rejected_with_UNKNOWN_HOTSPOT
-05_incomplete_scene_cannot_continue_with_SCENE_INCOMPLETE
-06_complete_first_scene_emits_SCENE_COMPLETED
-07_continue_after_completion_moves_to_next_scene
-08_continue_at_final_scene_emits_PROTOTYPE_COMPLETE
-09_save_load_roundtrip_preserves_scene_clues_route_and_inspection
-10_reset_clears_save_and_restores_initial_state
-11_scene_descriptor_rejects_duplicate_hotspot_ids
-12_scene_descriptor_rejects_ungrantable_required_clues
-13_story_source_snapshot_lists_three_scenes
-14_stage_scene_snapshot_lists_camera_layers_props_hotspots_post
-15_gamehost_projection_contains_latest_result_and_stage_summary
+02_story_source_snapshot_lists_three_scenes
+03_stage_scene_snapshot_lists_camera_layers_props_hotspots_post
+04_known_hotspot_grants_expected_clue
+05_repeat_hotspot_accepts_with_HOTSPOT_ALREADY_INSPECTED_and_no_duplicate_clue
+06_unknown_hotspot_rejects_with_UNKNOWN_HOTSPOT
+07_incomplete_scene_cannot_continue_with_SCENE_INCOMPLETE
+08_complete_first_scene_emits_SCENE_COMPLETED_event
+09_continue_after_completion_moves_to_repeating_hallway
+10_complete_all_three_scenes_reaches_prototype_complete
+11_save_load_roundtrip_preserves_scene_clues_route_and_inspection
+12_reset_returns_initial_state_and_reset_save_result
+13_duplicate_scene_ids_rejected
+14_duplicate_hotspot_ids_rejected
+15_ungrantable_required_clues_rejected
+16_gamehost_projection_contains_latest_result_stage_summary_and_fixture_summary
 ```
 
 ## Acceptance gate for next implementation
@@ -77,7 +93,7 @@ node scripts/validate-story-fixtures.mjs
 # expected: all story command fixture cases pass
 ```
 
-If the repo remains browser-only, add a DOM-free module first and then write the fixture script around that module.
+If the repo remains browser-only, add DOM-free story-authority modules first and then write the fixture script around those modules.
 
 ## Current safe claim
 
