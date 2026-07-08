@@ -2,15 +2,15 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-08T14-31-06-04-00`
+**Updated:** `2026-07-08T16-19-57-04-00`
 
 ## Architecture gaps
 
 - Story authority is embedded in `src/game.js` UI handlers.
 - Module-level `state` and `currentScene` are mutated directly.
-- There is no command envelope for inspection, continuation, load, save, projection, or reset.
-- There are no stable accepted/rejected/no-mutation/result records.
-- There are no stable reason codes for repeated hotspot, unknown hotspot, incomplete continue, prototype complete, invalid command, duplicate descriptor, or ungrantable required clue.
+- There is no source-owned story command envelope for inspection, continuation, load, save, projection, or reset.
+- There are no stable accepted/rejected/no-mutation/terminal result records.
+- There are no stable reason codes for repeated hotspot, unknown hotspot, incomplete continue, prototype complete, invalid command, malformed save, duplicate descriptor, or ungrantable required clue.
 - Repeat hotspot inspection is a direct UI branch, not a typed repeated-inspection result.
 - The clue ledger mutates directly through `grantClues`.
 - Scene completion is calculated directly in the host runtime without a `SceneCompletionResult`.
@@ -18,23 +18,24 @@
 - Save writes happen directly from the same code path as UI projection.
 - Reset deletes localStorage and reloads instead of returning a reset result and clear-save intent.
 - The debug notebook is a live DOM projection, not a stable diagnostics API.
-- There is no command journal or route journal row shape.
+- There is no command journal, route journal, save journal, or fixture summary row shape.
 - There is no DOM-free story replay fixture.
 
 ## Host-integration gaps
 
-- `inspectHotspot(hotspot)` is both command dispatcher, reducer, text projector, log writer, completion detector, interlude scheduler, UI renderer, and save trigger.
+- `inspectHotspot(hotspot)` is command dispatcher, reducer, text projector, log writer, completion detector, interlude scheduler, UI renderer, and save trigger in one function.
 - `nextScene()` directly mutates `currentScene`, `state.sceneId`, `state.route`, interlude DOM state, StageKit scene state, UI, and save state.
-- `loadState()` shallow-merges localStorage into initial state without producing normalization facts, fallback reasons, or rejected-save metadata.
+- `loadState()` shallow-merges localStorage into initial state without normalization facts, fallback reasons, rejected-save metadata, or source version.
 - `saveState()` has no `SaveProjection`, save reason, save version, clear-save intent, or save parity fixture.
 - `setTimeout(showInterlude, 450)` hides completion timing from reducer fixtures.
-- There is no adapter boundary where the DOM host consumes `StoryProjection` and `InterludeProjection` without owning story rules.
+- There is no host adapter boundary where the DOM host consumes `StoryProjection`, `SaveProjection`, and `InterludeProjection` without owning story rules.
+- There is no additive `window.GameHost.getState()` story diagnostics surface.
 
 ## Render and projection gaps
 
 - `StageKit` can load visual descriptors, but no pure `StageSceneSnapshot` reports camera, layer, prop, hotspot, post-process, and validation facts without Three.js.
-- `window.GameHost` is not yet implemented as an additive diagnostics surface for story results.
-- Current `debug` JSON is useful but does not include latest command result, result reason, event records, fixture status, save projection, interlude projection, or stage snapshot.
+- Current `debug` JSON does not include latest command result, result reason, event records, fixture status, save projection, interlude projection, stage snapshot, or source validation status.
+- There is no stage descriptor readback fixture that proves every scene has camera, post settings, visible layers/props, and clickable hotspots.
 
 ## Source validation gaps
 
