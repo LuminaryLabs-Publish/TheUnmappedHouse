@@ -49,10 +49,26 @@ Use:
 - invisible hotspot boxes for point-click interaction
 - shader time uniforms for atmospheric motion
 
+## 16:9 aspect frame
+
+The Stage Kit uses `src/aspect-frame.js` as the layout contract.
+
+Scenes are always authored against a canonical `1920 x 1080` frame and `DESIGN_ASPECT = 16 / 9`.
+
+The browser may be wide or tall, but the game frame is centered with letterbox or pillarbox margins.
+
+The renderer, render target, camera aspect, hover labels, and pointer raycast coordinates are all resolved against the visible 16:9 frame.
+
+This prevents composition drift and keeps invisible hotspot meshes aligned with the fixed-camera stage.
+
 ## Implemented feature checklist
 
 - [x] Fixed perspective stage scenes
 - [x] Locked camera
+- [x] Fixed 16:9 aspect frame
+- [x] Letterbox / pillarbox browser fitting
+- [x] Pointer remapping through the canvas rect
+- [x] UI constrained inside the cinematic frame
 - [x] Mouse parallax
 - [x] Procedural stage building from data
 - [x] Clickable hotspots
