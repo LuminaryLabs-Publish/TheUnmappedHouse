@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-08T16-19-57-04-00`
+**Updated:** `2026-07-08T18-51-55-04-00`
 
 ## Current validation status
 
@@ -29,6 +29,7 @@ Pushed to main: yes
 src/game.js read
 src/stage-kit.js read
 src/story-data.js read
+src/aspect-frame.js read
 package.json read
 central repo ledger read
 repo-local .agent root docs read
@@ -58,7 +59,7 @@ repeat hotspot does not duplicate clue
 room completion opens interlude
 continue advances scene
 KeyR reset preserves expected behavior
-window.GameHost.getState returns additive story/stage/latestCommand/save/interlude/fixture diagnostics
+window.GameHost.getState returns additive story/stage/latestCommand/preflight/save/interlude/fixture diagnostics
 ```
 
 ## Fixture proof expected next
@@ -67,6 +68,10 @@ window.GameHost.getState returns additive story/stage/latestCommand/save/interlu
 initial_state accepted
 load_empty_state accepted
 load_malformed_state rejected or normalized with reason
+source_preflight_passes accepted
+duplicate_scene_descriptor_rejected rejected
+duplicate_hotspot_descriptor_rejected rejected
+ungrantable_required_clue_rejected rejected
 inspect_first_hotspot accepted
 repeat_hotspot no_mutation
 unknown_hotspot rejected
@@ -78,13 +83,11 @@ prototype_complete_continue terminal
 save_state accepted + SaveProjection
 load_state accepted + normalized snapshot
 reset_save accepted + clear-save intent
-duplicate_scene_descriptor_rejected rejected
-duplicate_hotspot_descriptor_rejected rejected
-ungrantable_required_clue_rejected rejected
 stage_scene_snapshot accepted
 story_projection accepted
 save_projection accepted
 interlude_projection accepted
+stage_projection accepted
 GameHost_projection accepted
 ```
 
