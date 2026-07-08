@@ -2,11 +2,11 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Timestamp:** `2026-07-08T02:40:00-04:00`
+**Timestamp:** `2026-07-08T04-00-00-04-00`
 
 ## Goal
 
-Compare the full current `LuminaryLabs-Publish` repo list against central tracked/documented state in `LuminaryLabs-Dev/LuminaryLabs` and document why this repo was selected for the current breakdown pass.
+Compare the full accessible `LuminaryLabs-Publish` repo list against central tracked/documented state in `LuminaryLabs-Dev/LuminaryLabs` and document why this repo was selected for the current breakdown pass.
 
 ## Full Publish repo list observed
 
@@ -19,7 +19,7 @@ PhantomCommand
 PrehistoricRush
 TheCavalryOfRome   excluded by standing rule
 TheOpenAbove
-TheUnmappedHouse   selected for follow-up central-ledger readback
+TheUnmappedHouse   selected for central status rollup normalization follow-up
 ZombieOrchard
 ```
 
@@ -28,23 +28,25 @@ ZombieOrchard
 Observed central state:
 
 ```txt
-AetherVale        tracked in central latest summary / direct ledger readback
-HorrorCorridor    tracked in central latest summary / direct ledger readback
-IntoTheMeadow     tracked in central latest summary / direct ledger readback
-MyCozyIsland      tracked in central latest summary / direct ledger readback
-PhantomCommand    tracked in central latest summary / direct ledger readback
-PrehistoricRush   tracked in central latest summary / direct ledger readback
+AetherVale        tracked; root .agent state observed
+HorrorCorridor    tracked; root .agent state observed
+IntoTheMeadow     tracked; root .agent state observed
+MyCozyIsland      tracked; root .agent state observed
+PhantomCommand    tracked; root .agent state observed
+PrehistoricRush   tracked; root .agent state observed
 TheCavalryOfRome  excluded by standing rule
-TheOpenAbove      tracked in central latest summary / direct ledger readback
-TheUnmappedHouse  central repo-ledger exists; latest summary records it only as additional observed direct readback context
-ZombieOrchard     tracked in central latest summary / direct ledger readback
+TheOpenAbove      tracked; root .agent state observed
+TheUnmappedHouse  central repo-ledger exists; status-summary publish-game rollup still omits it
+ZombieOrchard     tracked; root .agent state observed
 ```
 
 ## Selection result
 
 No currently observed non-excluded Publish repo appears entirely absent from central tracking.
 
-`TheUnmappedHouse` was selected because it is still the least-normalized central tracking case: it has root `.agent` state and a central repo-ledger file, but central latest summary explicitly keeps it outside the status-summary `1.17.0` publish-game rollup.
+No currently checked non-excluded Publish repo appears to be missing root `.agent/START_HERE.md` state.
+
+`TheUnmappedHouse` was selected because it is still the least-normalized central tracking case: it has root `.agent` state and a central repo-ledger file, but central status reporting has not yet promoted it into the normal machine-readable publish-game rollup.
 
 ## Current repo-local state
 
@@ -57,6 +59,7 @@ No currently observed non-excluded Publish repo appears entirely absent from cen
 .agent/architecture-audit/domain-service-breakdown.md exists
 .agent/render-audit/stage-render-audit.md exists
 .agent/interaction-audit/hotspot-loop-audit.md exists
+.agent/central-ledger-audit/publish-ledger-comparison.md exists
 .agent/turn-ledger/ exists
 .agent/trackers/ exists
 ```
@@ -66,13 +69,15 @@ No currently observed non-excluded Publish repo appears entirely absent from cen
 ```txt
 central repo-ledger: present
 central internal change-log: present
-central latest summary direct readback: present
-central status-summary publish-game rollup: pending
+central direct readback: present
+central status-summary known_repos: pending
+central status-summary active_products: pending
+central status-summary publish_game_map_from_direct_ledgers: pending
 ```
 
 ## Next central cleanup
 
-Update the central status summary / publish-game rollup so `TheUnmappedHouse` is not only represented as an additional direct-readback note.
+Update the central status summary / publish-game rollup so `TheUnmappedHouse` is not only represented through direct readback and repo-ledger state.
 
 That work belongs in `LuminaryLabs-Dev/LuminaryLabs`, not in product runtime code.
 
