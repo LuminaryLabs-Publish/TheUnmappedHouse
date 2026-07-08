@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Last aligned:** `2026-07-08T10-01-57-04-00`
+**Last aligned:** `2026-07-08T11-28-38-04-00`
 
 ## Purpose
 
@@ -12,45 +12,73 @@ Read this folder before changing implementation code.
 
 ## Current selection result
 
-The full accessible `LuminaryLabs-Publish` repo list was compared against `LuminaryLabs-Dev/LuminaryLabs` central ledger state.
+The full accessible `LuminaryLabs-Publish` repository list was compared against `LuminaryLabs-Dev/LuminaryLabs` central ledger state.
 
-No checked non-Cavalry Publish repo was found that was fully new, absent from the central ledger, missing root `.agent/START_HERE.md`, or recently added but undocumented.
+No checked non-Cavalry repo was fully new, absent from the central ledger, missing root `.agent/START_HERE.md`, or recently added but undocumented.
 
-`TheUnmappedHouse` was selected as the oldest observed eligible fallback follow-up with an unresolved source-backed story authority seam. The old central rollup gap is closed and must not be reused as a selection reason. This pass narrows the next implementation from a command/result acceptance ledger into an exact source wire map and fixture replay contract.
+`TheUnmappedHouse` was selected as the oldest observed eligible fallback follow-up with a source-backed blocker that is still actionable: the prior source wire map now needs a fixture replay contract and GameHost projection gate.
 
 `LuminaryLabs-Publish/TheCavalryOfRome` remains excluded by standing rule.
+
+## Publish repos checked
+
+```txt
+LuminaryLabs-Publish/AetherVale          tracked; root .agent observed
+LuminaryLabs-Publish/HorrorCorridor      tracked; root .agent observed
+LuminaryLabs-Publish/IntoTheMeadow       tracked; root .agent observed
+LuminaryLabs-Publish/MyCozyIsland        tracked; root .agent observed
+LuminaryLabs-Publish/PhantomCommand      tracked; root .agent observed
+LuminaryLabs-Publish/PrehistoricRush     tracked; root .agent observed
+LuminaryLabs-Publish/TheCavalryOfRome    excluded by rule
+LuminaryLabs-Publish/TheOpenAbove        tracked; root .agent observed
+LuminaryLabs-Publish/TheUnmappedHouse    selected fallback: story fixture replay contract
+LuminaryLabs-Publish/ZombieOrchard       tracked; root .agent observed
+```
 
 ## Current product read
 
 `TheUnmappedHouse` is a fixed-camera anime point-and-click horror prototype.
 
-The player inspects hotspots in locked-camera diorama scenes, collects clue state, completes each room when required clues are found, and moves through interludes as the house becomes mapped.
-
 The current public route remains:
 
 ```txt
-index.html -> src/game.js -> src/stage-kit.js + src/story-data.js
+index.html
+  -> src/game.js
+  -> src/stage-kit.js
+  -> src/story-data.js
 ```
 
-## Current documentation state
+The player inspects hotspot volumes in locked-camera diorama scenes, collects clue state, completes a room when all required clues are found, reads an interlude, and continues to the next scene.
 
-The root `.agent/` folder exists and has the required audit surfaces.
-
-This pass refreshed the repo-local operating docs and added a timestamped story authority source wire map so the next implementation pass has exact helper files, command names, reason codes, result records, fixture cases, and integration boundaries.
-
-## Publish repos checked
+## Current source loop
 
 ```txt
-LuminaryLabs-Publish/AetherVale          ledgered with root .agent
-LuminaryLabs-Publish/HorrorCorridor      ledgered with root .agent
-LuminaryLabs-Publish/IntoTheMeadow       ledgered with root .agent
-LuminaryLabs-Publish/MyCozyIsland        ledgered with root .agent
-LuminaryLabs-Publish/PhantomCommand      ledgered with root .agent
-LuminaryLabs-Publish/PrehistoricRush     ledgered with root .agent
-LuminaryLabs-Publish/TheCavalryOfRome    excluded by rule
-LuminaryLabs-Publish/TheOpenAbove        ledgered with root .agent
-LuminaryLabs-Publish/TheUnmappedHouse    selected fallback: story authority source wire map
-LuminaryLabs-Publish/ZombieOrchard       ledgered with root .agent
+DOM button or StageKit hotspot click
+  -> inspectHotspot(hotspot)
+  -> mutate inspected map
+  -> grant clue strings directly
+  -> update text and notebook log
+  -> sceneComplete(currentScene)
+  -> maybe setTimeout(showInterlude, 450)
+  -> renderUi()
+  -> saveState()
+```
+
+## Target fixture loop
+
+```txt
+StoryCommandEnvelope
+  -> StorySourceSnapshot
+  -> StoryStateSnapshot
+  -> StageSceneSnapshot
+  -> applyStoryCommand
+  -> StoryCommandResult
+  -> StoryEventRecord[]
+  -> StoryCommandJournal
+  -> StoryProjection
+  -> SaveProjection
+  -> GameHost diagnostics
+  -> DOM-free fixture replay rows
 ```
 
 ## First files to read
@@ -60,30 +88,24 @@ LuminaryLabs-Publish/ZombieOrchard       ledgered with root .agent
 .agent/known-gaps.md
 .agent/next-steps.md
 .agent/validation.md
-.agent/architecture-audit/2026-07-08T10-01-57-04-00-story-authority-dsk-breakdown.md
-.agent/render-audit/2026-07-08T10-01-57-04-00-stage-result-readback.md
-.agent/interaction-audit/2026-07-08T10-01-57-04-00-story-authority-source-wire-map.md
-.agent/interaction-audit/2026-07-08T08-21-49-04-00-story-command-result-acceptance-ledger.md
-.agent/trackers/2026-07-08T10-01-57-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-08T10-01-57-04-00.md
+.agent/architecture-audit/2026-07-08T11-28-38-04-00-story-fixture-replay-dsk-breakdown.md
+.agent/render-audit/2026-07-08T11-28-38-04-00-stage-gamehost-readback.md
+.agent/interaction-audit/2026-07-08T11-28-38-04-00-story-fixture-replay-contract.md
+.agent/trackers/2026-07-08T11-28-38-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-08T11-28-38-04-00.md
 .agent/kit-registry.json
 ```
 
-Earlier breakdown entries:
+Earlier breakdown entries remain useful context:
 
 ```txt
 .agent/trackers/2026-07-08T01-50-19-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-08T01-50-19-04-00.md
 .agent/trackers/2026-07-08T02-40-00-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-08T02-40-00-04-00.md
 .agent/trackers/2026-07-08T03-42-00-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-08T03-42-00-04-00.md
 .agent/trackers/2026-07-08T04-00-00-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-08T04-00-00-04-00.md
 .agent/trackers/2026-07-08T05-28-26-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-08T05-28-26-04-00.md
 .agent/trackers/2026-07-08T08-21-49-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-08T08-21-49-04-00.md
+.agent/trackers/2026-07-08T10-01-57-04-00/project-breakdown.md
 ```
 
 ## Source files to inspect next
@@ -102,14 +124,14 @@ src/styles.css
 
 ## Main rule
 
-Do not let UI handlers, DOM code, browser state, renderer code, or localStorage own story authority long term.
+Do not make story authority depend on DOM state, WebGL state, localStorage, `setTimeout`, or StageKit picking internals.
 
-Move story progression into pure command/result kits, then let the UI, save adapter, debug projection, renderer, and future `GameHost` diagnostics consume those result records.
+The next implementation should preserve `index.html -> src/game.js`, current story copy, current `SAVE_KEY`, current StageKit visuals, and current Pages workflow while adding pure story authority helpers, DOM-free fixture replay, and additive `window.GameHost.getState()` diagnostics.
 
 ## Current next safe ledge
 
 ```txt
-TheUnmappedHouse Story Authority Source Wire Map
+TheUnmappedHouse Story Fixture Replay Contract + GameHost Projection Gate
 ```
 
-Keep `index.html -> src/game.js`, the current story copy, the current `SAVE_KEY`, and StageKit visuals stable while adding source snapshots, command envelopes, result records, stable reason codes, reducer helpers, projection helpers, additive `GameHost` diagnostics, and DOM-free fixture replay.
+Stop that ledge when fixture rows can prove initial state, hotspot inspection, repeated inspection, unknown hotspot rejection, incomplete continue rejection, room completion, scene transition, prototype completion, save/load, reset, duplicate descriptor rejection, ungrantable clue rejection, stage snapshot readback, and GameHost projection without using DOM, Three.js, browser input, or localStorage.
