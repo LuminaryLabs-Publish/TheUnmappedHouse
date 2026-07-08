@@ -2,11 +2,11 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-08T05:28:26-04:00`
+**Updated:** `2026-07-08T08:21:49-04:00`
 
 ## Next safe ledge
 
-Build the story command authority and fixture replay gate.
+Build the story command/result acceptance ledger into source.
 
 Do not expand story content first.
 
@@ -14,41 +14,44 @@ Do not rewrite the renderer first.
 
 Do not change the route, localStorage key, scene copy, or Pages workflow unless required by validation.
 
-## Central documentation cleanup
-
-The prior central status-summary rollup gap is closed.
+## Current ledge name
 
 ```txt
-central ledger file exists: yes
-repo-local .agent exists: yes
-central internal change log exists: yes
-status-summary publish-game rollup inclusion: yes, schema 1.18.0
+TheUnmappedHouse Story Command Result Acceptance Ledger
 ```
-
-Future repo-breakdown passes should not keep selecting `TheUnmappedHouse` solely because older `.agent` or central ledger text described the rollup as pending.
 
 ## Build checklist
 
-- [ ] Add a pure story snapshot helper for scene/source data.
-- [ ] Add a pure state snapshot helper for current runtime state.
-- [ ] Add command envelopes for `inspect_hotspot`, `continue_scene`, `load_save`, and `reset_save`.
-- [ ] Add stable command rejection reasons.
-- [ ] Move hotspot inspection mutation into a pure `applyInspectionCommand` service.
-- [ ] Move scene continuation mutation into a pure `applyContinueSceneCommand` service.
-- [ ] Emit result records for inspection, scene completion, scene transition, save, and reset.
-- [ ] Add route journal and command journal records.
-- [ ] Keep the current UI as a consumer of result records.
-- [ ] Add `window.GameHost.getState()` diagnostics only after pure state projection exists.
-- [ ] Add DOM-free fixture cases for first-room completion.
-- [ ] Add DOM-free fixture cases for duplicate inspection.
-- [ ] Add DOM-free fixture cases for unknown hotspot rejection.
-- [ ] Add DOM-free fixture cases for continue-before-complete rejection.
-- [ ] Add DOM-free fixture cases for transition to the next scene.
-- [ ] Add DOM-free fixture cases for full route completion.
-- [ ] Add DOM-free fixture cases for save/load parity.
-- [ ] Add DOM-free fixture cases for reset behavior.
-- [ ] Add stage descriptor validation for camera, layers, props, hotspots, post settings, and completion requirements.
-- [ ] Record fixture commands and expected result signatures in `.agent/validation.md`.
+- [ ] Add `src/story-authority/story-snapshot.js`.
+- [ ] Export `createStorySourceSnapshot(scenes)`.
+- [ ] Export `createStoryStateSnapshot(state, currentSceneId)`.
+- [ ] Export `createStageSceneSnapshot(scene)`.
+- [ ] Add `src/story-authority/story-commands.js`.
+- [ ] Define `StoryCommandEnvelope` shapes for `inspect_hotspot`, `continue_scene`, `load_save`, and `reset_save`.
+- [ ] Define `StoryCommandResult` with `accepted`, `kind`, `reason`, `state`, `events`, `journalEntry`, and `projection` fields.
+- [ ] Add stable `StoryCommandReason` values.
+- [ ] Add `UNKNOWN_SCENE` rejection.
+- [ ] Add `UNKNOWN_HOTSPOT` rejection.
+- [ ] Add `HOTSPOT_ALREADY_INSPECTED` accepted-repeat result.
+- [ ] Add `SCENE_INCOMPLETE` rejection for premature continue.
+- [ ] Add `NO_NEXT_SCENE` accepted prototype-complete result.
+- [ ] Add `MALFORMED_SAVE` fallback/load result.
+- [ ] Move hotspot inspection mutation into pure `applyInspectionCommand`.
+- [ ] Move scene continuation mutation into pure `applyContinueSceneCommand`.
+- [ ] Move reset/load logic into result-returning save helpers.
+- [ ] Emit `InspectionResult` for first and repeat inspection.
+- [ ] Emit `SceneCompletionResult` when all required clues are present.
+- [ ] Emit `SceneTransitionResult` when continuing after completion.
+- [ ] Emit `SaveResult` for load, save, and reset.
+- [ ] Emit `RouteJournalEntry` and `CommandJournalEntry` records.
+- [ ] Keep `src/game.js` as the UI consumer of results.
+- [ ] Preserve `SAVE_KEY = "the-unmapped-house.stage-prototype.v1"`.
+- [ ] Preserve current story text and stage descriptors.
+- [ ] Add additive `window.GameHost.getState()` diagnostics after pure projections exist.
+- [ ] Add `scripts/validate-story-fixtures.mjs`.
+- [ ] Add fixture cases for initial state, first-room completion, duplicate inspection, unknown hotspot, premature continue, transition, full route, save/load, reset, duplicate hotspot ids, and ungrantable required clues.
+- [ ] Add `npm run validate:story` or extend `npm run check` to include the fixture script.
+- [ ] Record validation output in `.agent/validation.md`.
 
 ## Domain split target
 
@@ -58,10 +61,11 @@ unmapped-house
 │  ├─ story-source-snapshot-kit
 │  ├─ story-state-snapshot-kit
 │  ├─ story-command-envelope-kit
+│  ├─ story-command-result-kit
+│  ├─ story-command-reason-kit
 │  ├─ command-validation-kit
 │  ├─ inspection-action-kit
 │  ├─ inspection-result-contract-kit
-│  ├─ inspection-rejection-reason-kit
 │  ├─ scene-completion-result-kit
 │  └─ scene-transition-result-kit
 ├─ state-and-save
@@ -81,14 +85,15 @@ unmapped-house
 │  ├─ stage-postprocess-kit
 │  ├─ hotspot-raycast-kit
 │  └─ hover-label-kit
-├─ ledger-readback
-│  ├─ repo-local-agent-state-kit
-│  ├─ central-repo-ledger-readback-kit
-│  └─ central-status-summary-rollup-membership-kit
+├─ diagnostics
+│  ├─ gamehost-diagnostics-kit
+│  ├─ notebook-debug-projection-kit
+│  └─ fixture-summary-projection-kit
 └─ fixtures
    ├─ dom-free-fixture-kit
    ├─ hotspot-fixture-matrix-kit
-   └─ scene-completion-fixture-kit
+   ├─ scene-completion-fixture-kit
+   └─ save-load-fixture-kit
 ```
 
 ## What to avoid
@@ -100,9 +105,10 @@ unmapped-house
 - [ ] Do not make StageKit depend on story-specific clue names.
 - [ ] Do not hide failed commands by silently no-oping.
 - [ ] Do not let stale central summary language cause duplicate repo breakdown selection forever.
+- [ ] Do not change the visual art pass before source-level story authority has fixtures.
 
 ## Success condition
 
-A fixture script can replay story commands without DOM, Three.js, browser input, or localStorage and produce the same scene/clue/route result that the live UI expects.
+A fixture script can replay story commands without DOM, Three.js, browser input, or localStorage and produce the same scene, clue, route, inspection, completion, and prototype-complete results that the live UI expects.
 
-The central ledger state no longer claims `TheUnmappedHouse` is missing from the normal publish-game rollup.
+The central ledger state no longer claims `TheUnmappedHouse` is missing from the normal publish-game rollup, and the next work item is no longer discovery. It is implementation.
