@@ -1,18 +1,19 @@
 {
-  "schemaVersion": "1.6.0",
+  "schemaVersion": "1.7.0",
   "repo": "LuminaryLabs-Publish/TheUnmappedHouse",
-  "generatedAt": "2026-07-08T14-31-06-04-00",
+  "generatedAt": "2026-07-08T16-19-57-04-00",
   "branchTarget": "main",
-  "status": "story-reducer-host-integration-wire-map-fixture-gate-planned",
-  "latestTracker": ".agent/trackers/2026-07-08T14-31-06-04-00/project-breakdown.md",
-  "latestTurnLedger": ".agent/turn-ledger/2026-07-08T14-31-06-04-00.md",
-  "latestArchitectureAudit": ".agent/architecture-audit/2026-07-08T14-31-06-04-00-story-host-integration-dsk-map.md",
-  "latestRenderAudit": ".agent/render-audit/2026-07-08T14-31-06-04-00-stage-gamehost-projection-readback.md",
-  "latestInteractionAudit": ".agent/interaction-audit/2026-07-08T14-31-06-04-00-story-command-host-wire-map.md",
-  "latestGameplayAudit": ".agent/gameplay-audit/2026-07-08T14-31-06-04-00-room-progress-result-loop.md",
+  "status": "story-authority-source-file-cutover-host-projection-fixture-gate-planned",
+  "latestTracker": ".agent/trackers/2026-07-08T16-19-57-04-00/project-breakdown.md",
+  "latestTurnLedger": ".agent/turn-ledger/2026-07-08T16-19-57-04-00.md",
+  "latestArchitectureAudit": ".agent/architecture-audit/2026-07-08T16-19-57-04-00-story-authority-source-file-map.md",
+  "latestRenderAudit": ".agent/render-audit/2026-07-08T16-19-57-04-00-stage-snapshot-projection-boundary.md",
+  "latestInteractionAudit": ".agent/interaction-audit/2026-07-08T16-19-57-04-00-story-result-host-adapter-contract.md",
+  "latestGameplayAudit": ".agent/gameplay-audit/2026-07-08T16-19-57-04-00-route-completion-result-loop.md",
+  "latestStoryAuthorityAudit": ".agent/story-authority-audit/2026-07-08T16-19-57-04-00-source-file-cutover-contract.md",
   "selection": {
     "selectedRepo": "LuminaryLabs-Publish/TheUnmappedHouse",
-    "reason": "No checked non-Cavalry LuminaryLabs-Publish repo was new, central-ledger absent, missing root .agent state, or recently added but undocumented. TheUnmappedHouse was selected as the oldest observed eligible fallback after central readbacks showed newer updates for the other sampled non-excluded repos.",
+    "reason": "No checked non-Cavalry LuminaryLabs-Publish repo was new, central-ledger absent, missing sampled root .agent state, or recently added but undocumented. TheUnmappedHouse was selected as the oldest sampled root-agent fallback because its last root alignment was 2026-07-08T14-31-06-04-00.",
     "excludedRepos": [
       {
         "repo": "LuminaryLabs-Publish/TheCavalryOfRome",
@@ -34,54 +35,40 @@
   },
   "productDirection": {
     "currentRuntime": "fixed-camera anime point-and-click horror stage prototype",
-    "currentGap": "Story progression still mutates directly from UI handlers. Inspection, clue grants, repeat inspection, room completion, interlude routing, save writes, reset, and debug projection lack typed result records, stable reasons, command journals, GameHost diagnostics, and DOM-free replay fixtures.",
-    "recommendedDecision": "Keep StageKit visuals stable and wire source-owned story command results into the host before extracting renderer, material, camera, audio, inventory, or prop-generation services.",
-    "recommendedVerticalSlice": "TheUnmappedHouse Story Reducer Host Integration Wire Map + Fixture Gate"
+    "currentGap": "Story progression, save intent, interlude intent, reset, debug output, and completion logic still live in src/game.js DOM handlers instead of source-owned command/result/projection modules.",
+    "recommendedDecision": "Keep StageKit visuals stable and cut story authority into pure files before renderer extraction, new rooms, audio, inventory, or browser automation.",
+    "recommendedVerticalSlice": "TheUnmappedHouse Story Authority Source File Cutover + Host Projection Fixture Gate"
   },
   "interactionLoop": {
-    "currentPlayerFacing": [
-      "open index.html",
-      "read the current room text",
-      "hover over invisible hotspot volumes",
-      "read hover labels",
-      "click hotspots or matching side-panel buttons",
-      "read text-first inspection results",
-      "collect clues into notebook state",
-      "complete the room when all required clues are found",
-      "read interlude or map update",
-      "continue to the next room",
-      "reset local save with R if needed"
-    ],
     "currentSource": [
-      "StageKit click or side-panel button",
-      "inspectHotspot(hotspot)",
-      "direct inspected-state mutation",
-      "direct clue mutation through grantClues",
-      "direct text/log mutation",
-      "direct sceneComplete check",
-      "setTimeout(showInterlude, 450) when complete",
-      "renderUi()",
-      "saveState()"
+      "src/game.js loads story source and saved state",
+      "StageKit loads the current fixed-camera scene",
+      "hotspot side-panel button or StageKit raycast click calls inspectHotspot(hotspot)",
+      "inspectHotspot mutates inspected state, grants clues, writes text/log, checks scene completion, schedules interlude, renders UI, and saves",
+      "continue button calls nextScene()",
+      "nextScene mutates scene id, route, interlude DOM, StageKit scene, UI, and save state",
+      "KeyR clears localStorage and reloads",
+      "debug panel emits ad hoc JSON"
     ],
     "targetAuthority": [
-      "create StoryCommandEnvelope",
-      "validate scene, route, hotspot, save, and descriptor shape",
-      "produce StoryCommandResult with accepted/rejected/no_mutation/terminal status",
-      "reduce clue ledger, inspected state, route, log, completion, and terminal state",
-      "produce StoryEventRecord rows",
-      "produce StoryProjection, SaveProjection, and InterludeProjection",
-      "consume projections from src/game.js without moving rules back into DOM handlers",
-      "project additive GameHost diagnostics",
-      "replay command sequences without DOM or WebGL"
+      "StoryCommandEnvelope",
+      "StorySourceSnapshot",
+      "StoryStateSnapshot",
+      "StageSceneSnapshot",
+      "StoryCommandResult",
+      "StoryEventRecord[]",
+      "StoryProjection",
+      "SaveProjection",
+      "InterludeProjection",
+      "GameHostStoryDiagnostics",
+      "DOM-free fixture rows"
     ]
   },
   "domains": [
     { "id": "static-page-shell", "status": "implemented", "services": ["stage mount", "story panel", "hotspot list", "notebook pane", "hover label", "interlude shell", "module script route"] },
-    { "id": "static-pages-deploy", "status": "implemented", "services": ["main push trigger", "workflow dispatch", "Pages configuration", "root artifact upload", "Pages deploy"] },
     { "id": "browser-app-runtime", "status": "implemented-monolith", "services": ["DOM lookup", "boot order", "state load", "scene binding", "UI projection", "KeyR reset"] },
     { "id": "story-source", "status": "implemented", "services": ["game title", "scene descriptors", "opening text", "interlude text", "completion requirements", "ordered route"] },
     { "id": "story-state", "status": "implemented-inline", "services": ["scene id", "clues", "flags", "inspected map", "route", "log"] },
-    { "id": "scene-descriptor", "status": "implemented", "services": ["background", "fog", "camera", "layers", "props", "hotspots", "post settings"] },
     { "id": "stage-render-host", "status": "implemented", "services": ["renderer", "scene", "camera", "lights", "render target", "resize", "animation loop"] },
     { "id": "fixed-aspect-frame", "status": "implemented", "services": ["1920x1080 design frame", "16:9 aspect", "letterbox/pillarbox frame application"] },
     { "id": "hotspot-picking", "status": "implemented", "services": ["invisible hotspot mesh", "pointer normalization", "raycast", "hover label", "click dispatch"] },
@@ -165,7 +152,7 @@
     "scripts/validate-story-authority.mjs"
   ],
   "nextSlice": {
-    "name": "TheUnmappedHouse Story Reducer Host Integration Wire Map + Fixture Gate",
+    "name": "TheUnmappedHouse Story Authority Source File Cutover + Host Projection Fixture Gate",
     "preserve": ["static route", "current visuals", "story copy", "StageKit behavior", "localStorage key", "Pages workflow"],
     "fixtureRows": [
       "initial_state",
