@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-08T08:21:49-04:00`
+**Updated:** `2026-07-08T10-01-57-04-00`
 
 ## Current validation status
 
@@ -26,6 +26,7 @@ Central status-summary rollup inclusion: yes, observed in prior status-summary.j
 - [x] Confirmed `TheUnmappedHouse` root `.agent/START_HERE.md` exists.
 - [x] Read `README.md`.
 - [x] Read `package.json`.
+- [x] Read `src/aspect-frame.js`.
 - [x] Read `src/game.js`.
 - [x] Read `src/stage-kit.js`.
 - [x] Read `src/story-data.js`.
@@ -36,6 +37,7 @@ Central status-summary rollup inclusion: yes, observed in prior status-summary.j
 
 ## Validation not performed
 
+- [ ] No local checkout was made.
 - [ ] No local static server was started.
 - [ ] No browser or Playwright smoke test was run.
 - [ ] No GitHub Actions run result was inspected after the new docs commits.
@@ -62,6 +64,7 @@ These should be implemented before story expansion.
 12_scene_descriptor_rejects_ungrantable_required_clues
 13_story_source_snapshot_lists_three_scenes
 14_stage_scene_snapshot_lists_camera_layers_props_hotspots_post
+15_gamehost_projection_contains_latest_result_and_stage_summary
 ```
 
 ## Acceptance gate for next implementation
