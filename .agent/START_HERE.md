@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Last aligned:** `2026-07-08T11-28-38-04-00`
+**Last aligned:** `2026-07-08T12-59-11-04-00`
 
 ## Purpose
 
@@ -16,23 +16,23 @@ The full accessible `LuminaryLabs-Publish` repository list was compared against 
 
 No checked non-Cavalry repo was fully new, absent from the central ledger, missing root `.agent/START_HERE.md`, or recently added but undocumented.
 
-`TheUnmappedHouse` was selected as the oldest observed eligible fallback follow-up with a source-backed blocker that is still actionable: the prior source wire map now needs a fixture replay contract and GameHost projection gate.
+`TheUnmappedHouse` was selected as the oldest observed eligible fallback follow-up with an actionable source-backed blocker: the story fixture replay contract now needs a concrete reducer module map, result row schema, projection map, and fixture matrix.
 
 `LuminaryLabs-Publish/TheCavalryOfRome` remains excluded by standing rule.
 
 ## Publish repos checked
 
 ```txt
-LuminaryLabs-Publish/AetherVale          tracked; root .agent observed
-LuminaryLabs-Publish/HorrorCorridor      tracked; root .agent observed
-LuminaryLabs-Publish/IntoTheMeadow       tracked; root .agent observed
-LuminaryLabs-Publish/MyCozyIsland        tracked; root .agent observed
-LuminaryLabs-Publish/PhantomCommand      tracked; root .agent observed
-LuminaryLabs-Publish/PrehistoricRush     tracked; root .agent observed
+LuminaryLabs-Publish/HorrorCorridor      tracked / root .agent present / latest central review 2026-07-08T12:29:17-04:00
+LuminaryLabs-Publish/AetherVale          tracked / root .agent present / latest central update 2026-07-08T12:01:23-04:00
+LuminaryLabs-Publish/TheOpenAbove        tracked / root .agent present / latest central update 2026-07-08T11:49:04-04:00
 LuminaryLabs-Publish/TheCavalryOfRome    excluded by rule
-LuminaryLabs-Publish/TheOpenAbove        tracked; root .agent observed
-LuminaryLabs-Publish/TheUnmappedHouse    selected fallback: story fixture replay contract
-LuminaryLabs-Publish/ZombieOrchard       tracked; root .agent observed
+LuminaryLabs-Publish/PhantomCommand      tracked / root .agent present / latest central update 2026-07-08T12:41:31-04:00
+LuminaryLabs-Publish/PrehistoricRush     tracked / root .agent present / latest central update 2026-07-08T12:09:27-04:00
+LuminaryLabs-Publish/ZombieOrchard       tracked / root .agent present / latest central update 2026-07-08T12:51:50-04:00
+LuminaryLabs-Publish/IntoTheMeadow       tracked / root .agent present / latest central update 2026-07-08T12:21:20-04:00
+LuminaryLabs-Publish/MyCozyIsland        tracked / root .agent present / latest central update 2026-07-08T11:40:00-04:00
+LuminaryLabs-Publish/TheUnmappedHouse    selected fallback / latest central update 2026-07-08T11:28:38-04:00
 ```
 
 ## Current product read
@@ -64,21 +64,21 @@ DOM button or StageKit hotspot click
   -> saveState()
 ```
 
-## Target fixture loop
+## Target reducer loop
 
 ```txt
 StoryCommandEnvelope
   -> StorySourceSnapshot
   -> StoryStateSnapshot
   -> StageSceneSnapshot
+  -> validateStoryCommand
   -> applyStoryCommand
   -> StoryCommandResult
   -> StoryEventRecord[]
-  -> StoryCommandJournal
   -> StoryProjection
   -> SaveProjection
   -> GameHost diagnostics
-  -> DOM-free fixture replay rows
+  -> DOM-free fixture rows
 ```
 
 ## First files to read
@@ -88,11 +88,11 @@ StoryCommandEnvelope
 .agent/known-gaps.md
 .agent/next-steps.md
 .agent/validation.md
-.agent/architecture-audit/2026-07-08T11-28-38-04-00-story-fixture-replay-dsk-breakdown.md
-.agent/render-audit/2026-07-08T11-28-38-04-00-stage-gamehost-readback.md
-.agent/interaction-audit/2026-07-08T11-28-38-04-00-story-fixture-replay-contract.md
-.agent/trackers/2026-07-08T11-28-38-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-08T11-28-38-04-00.md
+.agent/architecture-audit/2026-07-08T12-59-11-04-00-story-result-reducer-map.md
+.agent/render-audit/2026-07-08T12-59-11-04-00-stage-projection-readback.md
+.agent/interaction-audit/2026-07-08T12-59-11-04-00-story-result-fixture-rows.md
+.agent/trackers/2026-07-08T12-59-11-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-08T12-59-11-04-00.md
 .agent/kit-registry.json
 ```
 
@@ -106,6 +106,7 @@ Earlier breakdown entries remain useful context:
 .agent/trackers/2026-07-08T05-28-26-04-00/project-breakdown.md
 .agent/trackers/2026-07-08T08-21-49-04-00/project-breakdown.md
 .agent/trackers/2026-07-08T10-01-57-04-00/project-breakdown.md
+.agent/trackers/2026-07-08T11-28-38-04-00/project-breakdown.md
 ```
 
 ## Source files to inspect next
@@ -131,7 +132,7 @@ The next implementation should preserve `index.html -> src/game.js`, current sto
 ## Current next safe ledge
 
 ```txt
-TheUnmappedHouse Story Fixture Replay Contract + GameHost Projection Gate
+TheUnmappedHouse Story Result Reducer Implementation Map + Fixture Rows
 ```
 
-Stop that ledge when fixture rows can prove initial state, hotspot inspection, repeated inspection, unknown hotspot rejection, incomplete continue rejection, room completion, scene transition, prototype completion, save/load, reset, duplicate descriptor rejection, ungrantable clue rejection, stage snapshot readback, and GameHost projection without using DOM, Three.js, browser input, or localStorage.
+Stop that ledge when fixture rows can prove initial state, first hotspot inspection, repeated inspection, unknown hotspot rejection, incomplete continue rejection, room completion, scene transition, prototype completion, save/load, reset, duplicate descriptor rejection, ungrantable clue rejection, stage snapshot readback, story projection, and GameHost projection without using DOM, Three.js, browser input, localStorage, `setTimeout`, or StageKit raycasting.
