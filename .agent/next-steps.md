@@ -2,11 +2,11 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-08T08:21:49-04:00`
+**Updated:** `2026-07-08T10-01-57-04-00`
 
 ## Next safe ledge
 
-Build the story command/result acceptance ledger into source.
+Build the story authority source wire map into source.
 
 Do not expand story content first.
 
@@ -17,79 +17,83 @@ Do not change the route, localStorage key, scene copy, or Pages workflow unless 
 ## Current ledge name
 
 ```txt
-TheUnmappedHouse Story Command Result Acceptance Ledger
+TheUnmappedHouse Story Authority Source Wire Map
 ```
 
 ## Build checklist
 
-- [ ] Add `src/story-authority/story-snapshot.js`.
+- [ ] Add `src/story-authority/story-source-snapshot.js`.
 - [ ] Export `createStorySourceSnapshot(scenes)`.
-- [ ] Export `createStoryStateSnapshot(state, currentSceneId)`.
-- [ ] Export `createStageSceneSnapshot(scene)`.
-- [ ] Add `src/story-authority/story-commands.js`.
-- [ ] Define `StoryCommandEnvelope` shapes for `inspect_hotspot`, `continue_scene`, `load_save`, and `reset_save`.
-- [ ] Define `StoryCommandResult` with `accepted`, `kind`, `reason`, `state`, `events`, `journalEntry`, and `projection` fields.
-- [ ] Add stable `StoryCommandReason` values.
-- [ ] Add `UNKNOWN_SCENE` rejection.
-- [ ] Add `UNKNOWN_HOTSPOT` rejection.
-- [ ] Add `HOTSPOT_ALREADY_INSPECTED` accepted-repeat result.
-- [ ] Add `SCENE_INCOMPLETE` rejection for premature continue.
-- [ ] Add `NO_NEXT_SCENE` accepted prototype-complete result.
-- [ ] Add `MALFORMED_SAVE` fallback/load result.
-- [ ] Move hotspot inspection mutation into pure `applyInspectionCommand`.
-- [ ] Move scene continuation mutation into pure `applyContinueSceneCommand`.
-- [ ] Move reset/load logic into result-returning save helpers.
-- [ ] Emit `InspectionResult` for first and repeat inspection.
-- [ ] Emit `SceneCompletionResult` when all required clues are present.
-- [ ] Emit `SceneTransitionResult` when continuing after completion.
-- [ ] Emit `SaveResult` for load, save, and reset.
-- [ ] Emit `RouteJournalEntry` and `CommandJournalEntry` records.
-- [ ] Keep `src/game.js` as the UI consumer of results.
-- [ ] Preserve `SAVE_KEY = "the-unmapped-house.stage-prototype.v1"`.
-- [ ] Preserve current story text and stage descriptors.
+- [ ] Export `createSceneGrantIndex(scenes)`.
+- [ ] Export `createSceneCompletionIndex(scenes)`.
+- [ ] Export `validateStorySourceSnapshot(snapshot)`.
+- [ ] Add `src/story-authority/story-state-snapshot.js`.
+- [ ] Export `createInitialStoryState(sourceSnapshot)`.
+- [ ] Export `normalizeLoadedStoryState(raw, sourceSnapshot)`.
+- [ ] Export `createStoryStateSnapshot(state)`.
+- [ ] Preserve compatibility with old persisted fields: `sceneId`, `clues`, `flags`, `inspected`, `route`, and `log`.
+- [ ] Add `src/story-authority/stage-scene-snapshot.js`.
+- [ ] Export `createStageSceneSnapshot(scene)` without importing Three.js.
+- [ ] Add `src/story-authority/story-command-envelope.js`.
+- [ ] Define `INSPECT_HOTSPOT`, `CONTINUE_SCENE`, `LOAD_SAVE`, `SAVE_STATE`, and `RESET_SAVE` command envelopes.
+- [ ] Add `src/story-authority/story-command-reasons.js`.
+- [ ] Define stable reason codes: `OK`, `HOTSPOT_ALREADY_INSPECTED`, `UNKNOWN_SCENE`, `UNKNOWN_HOTSPOT`, `SCENE_INCOMPLETE`, `NO_NEXT_SCENE`, `MALFORMED_SAVE`, `DUPLICATE_SCENE_ID`, `DUPLICATE_HOTSPOT_ID`, and `UNGRANTABLE_REQUIRED_CLUE`.
+- [ ] Add `src/story-authority/story-command-result.js`.
+- [ ] Define `StoryCommandResult` with `id`, `commandId`, `type`, `accepted`, `reason`, `state`, `events`, `projection`, and `journalEntry` fields.
+- [ ] Add `src/story-authority/story-reducer.js`.
+- [ ] Export `applyStoryCommand(envelope, context)`.
+- [ ] Export `applyInspectionCommand(envelope, context)`.
+- [ ] Export `applyContinueSceneCommand(envelope, context)`.
+- [ ] Export `applyLoadSaveCommand(envelope, context)`.
+- [ ] Export `applySaveStateCommand(envelope, context)`.
+- [ ] Export `applyResetSaveCommand(envelope, context)`.
+- [ ] Add `src/story-authority/story-projection.js`.
+- [ ] Export `projectUiState(result, sourceSnapshot)`.
+- [ ] Export `projectNotebookDebug(stateSnapshot, sourceSnapshot, latestResult)`.
+- [ ] Export `projectGameHostDiagnostics(sourceSnapshot, stateSnapshot, latestResult, stageSnapshot)`.
+- [ ] Edit `src/game.js` so DOM handlers create envelopes and consume results.
+- [ ] Keep `SAVE_KEY = "the-unmapped-house.stage-prototype.v1"`.
+- [ ] Keep StageKit `onHotspot` callback shape stable.
+- [ ] Keep story text and stage descriptors stable.
 - [ ] Add additive `window.GameHost.getState()` diagnostics after pure projections exist.
 - [ ] Add `scripts/validate-story-fixtures.mjs`.
-- [ ] Add fixture cases for initial state, first-room completion, duplicate inspection, unknown hotspot, premature continue, transition, full route, save/load, reset, duplicate hotspot ids, and ungrantable required clues.
-- [ ] Add `npm run validate:story` or extend `npm run check` to include the fixture script.
+- [ ] Add fixture cases for initial state, known hotspot, repeat inspection, unknown hotspot, premature continue, scene completion, transition, prototype complete, save/load, reset, duplicate hotspot ids, ungrantable required clues, stage snapshot, and GameHost projection.
+- [ ] Add `npm run validate:story` or extend `npm run check` after the fixture script exists.
 - [ ] Record validation output in `.agent/validation.md`.
 
 ## Domain split target
 
 ```txt
-unmapped-house
-├─ story-authority
+unmapped-house-domain
+├─ story-source-domain
 │  ├─ story-source-snapshot-kit
+│  ├─ scene-descriptor-validation-kit
+│  └─ stage-scene-snapshot-kit
+├─ story-state-domain
 │  ├─ story-state-snapshot-kit
-│  ├─ story-command-envelope-kit
-│  ├─ story-command-result-kit
-│  ├─ story-command-reason-kit
-│  ├─ command-validation-kit
-│  ├─ inspection-action-kit
-│  ├─ inspection-result-contract-kit
-│  ├─ scene-completion-result-kit
-│  └─ scene-transition-result-kit
-├─ state-and-save
+│  ├─ clue-ledger-reducer-kit
 │  ├─ route-journal-kit
-│  ├─ command-journal-kit
-│  ├─ save-result-kit
-│  └─ localstorage-save-adapter-kit
-├─ stage-descriptor
-│  ├─ stage-scene-snapshot-kit
-│  ├─ stage-layer-descriptor-kit
-│  ├─ stage-prop-descriptor-kit
-│  ├─ stage-hotspot-volume-kit
-│  └─ stage-descriptor-validation-kit
-├─ renderer-host
+│  └─ command-journal-kit
+├─ story-command-domain
+│  ├─ story-command-envelope-kit
+│  ├─ command-validation-kit
+│  ├─ story-command-reason-kit
+│  ├─ story-command-result-kit
+│  ├─ inspection-action-kit
+│  ├─ scene-completion-result-kit
+│  ├─ scene-transition-result-kit
+│  └─ save-result-kit
+├─ renderer-consumer-domain
 │  ├─ fixed-camera-diorama-kit
-│  ├─ anime-material-shader-kit
-│  ├─ stage-postprocess-kit
 │  ├─ hotspot-raycast-kit
-│  └─ hover-label-kit
-├─ diagnostics
-│  ├─ gamehost-diagnostics-kit
+│  ├─ hover-label-kit
 │  ├─ notebook-debug-projection-kit
+│  └─ interlude-overlay-consumer-kit
+├─ diagnostics-domain
+│  ├─ gamehost-diagnostics-kit
+│  ├─ story-result-projection-kit
 │  └─ fixture-summary-projection-kit
-└─ fixtures
+└─ fixture-domain
    ├─ dom-free-fixture-kit
    ├─ hotspot-fixture-matrix-kit
    ├─ scene-completion-fixture-kit
@@ -109,6 +113,6 @@ unmapped-house
 
 ## Success condition
 
-A fixture script can replay story commands without DOM, Three.js, browser input, or localStorage and produce the same scene, clue, route, inspection, completion, and prototype-complete results that the live UI expects.
+A fixture script can replay story commands without DOM, Three.js, browser input, or localStorage and produce the same scene, clue, route, inspection, completion, transition, save, reset, and prototype-complete results that the live UI expects.
 
 The central ledger state no longer claims `TheUnmappedHouse` is missing from the normal publish-game rollup, and the next work item is no longer discovery. It is implementation.
