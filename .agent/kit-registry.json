@@ -1,0 +1,188 @@
+{
+  "schemaVersion": "1.0.0",
+  "repo": "LuminaryLabs-Publish/TheUnmappedHouse",
+  "generatedAt": "2026-07-08T00:08:03-04:00",
+  "branchTarget": "main",
+  "status": "agent-side-kit-registry-created-inspection-result-scene-transition-fixture-gate-planned",
+  "latestTracker": ".agent/trackers/2026-07-08T00-08-03-04-00/project-breakdown.md",
+  "selection": {
+    "selectedRepo": "LuminaryLabs-Publish/TheUnmappedHouse",
+    "reason": "Repository exists in LuminaryLabs-Publish and had no central repo-ledger entry, so it was selected before continuing the already documented rotation.",
+    "excludedRepos": [
+      {
+        "repo": "LuminaryLabs-Publish/TheCavalryOfRome",
+        "reason": "Standing rule: do not work on Cavalry of Rome."
+      }
+    ],
+    "publishReposObserved": [
+      "AetherVale",
+      "HorrorCorridor",
+      "IntoTheMeadow",
+      "MyCozyIsland",
+      "PhantomCommand",
+      "PrehistoricRush",
+      "TheCavalryOfRome",
+      "TheOpenAbove",
+      "TheUnmappedHouse",
+      "ZombieOrchard"
+    ]
+  },
+  "productDirection": {
+    "currentRuntime": "fixed-camera anime point-and-click horror stage prototype",
+    "currentGap": "Inspection, clue grants, scene completion, transitions, route updates, and save writes mutate state directly without typed result records, stable rejection reasons, command journal, GameHost diagnostics, or DOM-free fixture replay.",
+    "recommendedDecision": "Keep StageKit visuals stable and formalize the story authority layer first, before extracting renderer, material, camera, or prop generation services.",
+    "recommendedVerticalSlice": "TheUnmappedHouse Inspection Result Contract + Scene Transition Fixture Gate"
+  },
+  "runtimeEvidence": {
+    "readme": "README.md describes a fixed-camera anime point-and-click horror prototype using a reusable Stage Kit for locked-camera Three.js diorama scenes, hotspot inspection, story state, procedural stage props, anime shader materials, and WebGL post-processing.",
+    "index": "index.html mounts #stage, #story-panel, #hotspot-list, #state-debug, #hover-label, #interlude, and loads ./src/game.js as the only module route.",
+    "game": "src/game.js owns localStorage state, StageKit construction, inspectHotspot, clue grants, log, scene completion, interlude, nextScene, renderUi, and KeyR reset.",
+    "stageKit": "src/stage-kit.js owns Three.js renderer, scene, camera, raycaster, animated anime materials, post-process shader, hotspot meshes, pointer hover, click picking, resize, and animation.",
+    "storyData": "src/story-data.js exports three scene descriptors with camera, stage, prop, post, hotspot, clue, completion, and interlude data.",
+    "workflow": ".github/workflows/deploy.yml deploys the static repository root to GitHub Pages on main pushes."
+  },
+  "interactionLoop": {
+    "currentPlayerFacing": [
+      "open index.html",
+      "see a fixed-camera room diorama",
+      "hover over invisible hotspot volumes",
+      "read hover labels",
+      "click hotspots or matching side-panel buttons",
+      "read text-first inspection results",
+      "collect clues into notebook state",
+      "complete the room when all required clues are found",
+      "read interlude / map update",
+      "continue to the next room",
+      "reset local save with R if needed"
+    ],
+    "currentRuntime": [
+      "index.html loads src/game.js",
+      "game.js queries DOM nodes",
+      "loadState reads localStorage or creates initial state",
+      "current scene is selected from story-data",
+      "StageKit creates renderer, scene, camera, raycaster, lights, render target, and post pass",
+      "stage.loadScene builds layers, props, hotspots, shader materials, and post settings",
+      "renderUi projects story text, hotspot buttons, and debug JSON",
+      "StageKit animation loop renders scene through post-process",
+      "pointer hover and click raycast against hotspot meshes",
+      "inspectHotspot mutates inspected/clues/log and may open interlude",
+      "saveState persists state"
+    ],
+    "targetAuthority": [
+      "create InspectionCommandEnvelope",
+      "validate scene and hotspot ids",
+      "produce InspectionResult with accepted/rejected status and stable reason",
+      "reduce clue ledger and inspected state",
+      "produce SceneCompletionResult when room requirements are met",
+      "produce SceneTransitionResult for Continue",
+      "journal accepted/rejected commands",
+      "project StorySnapshot, StageSnapshot, SaveSnapshot, and diagnostics",
+      "replay command sequences without DOM or WebGL"
+    ]
+  },
+  "domains": [
+    { "id": "static-page-shell", "status": "implemented", "services": ["stage mount", "story panel", "hotspot list", "notebook pane", "hover label", "interlude shell", "module script route"] },
+    { "id": "static-pages-deploy", "status": "implemented", "services": ["main push trigger", "workflow dispatch", "Pages configuration", "root artifact upload", "Pages deploy"] },
+    { "id": "app-runtime", "status": "implemented-monolith", "services": ["DOM lookup", "boot order", "state load", "scene binding", "UI projection", "KeyR reset"] },
+    { "id": "story-source", "status": "implemented", "services": ["game title", "scene descriptors", "opening text", "interlude text", "completion requirements", "ordered route"] },
+    { "id": "scene-descriptor", "status": "implemented", "services": ["background", "fog", "camera", "layers", "props", "hotspots", "post settings"] },
+    { "id": "stage-render-host", "status": "implemented", "services": ["renderer", "scene", "camera", "lights", "render target", "resize", "animation loop"] },
+    { "id": "fixed-camera-composition", "status": "implemented", "services": ["base camera position", "lookAt", "fov", "pointer parallax"] },
+    { "id": "anime-material-shader", "status": "implemented", "services": ["shader material", "noise blend", "toon steps", "rim contribution", "time uniform"] },
+    { "id": "webgl-post-process", "status": "implemented", "services": ["grain", "vignette", "chromatic aberration", "distortion", "memory scanline", "post render pass"] },
+    { "id": "hotspot-picking", "status": "implemented", "services": ["invisible hotspot mesh", "pointer normalization", "raycast", "hover label", "click dispatch"] },
+    { "id": "inspection-action", "status": "implicit-inline", "services": ["inspect hotspot", "repeat branch", "text result", "clue grant", "log write"] },
+    { "id": "clue-ledger", "status": "implemented-inline", "services": ["hasClue", "grantClues", "deduplicate clues", "completion inputs"] },
+    { "id": "scene-completion", "status": "implemented-inline", "services": ["requiresToComplete check", "completion log", "interlude trigger"] },
+    { "id": "interlude-transition", "status": "implemented-inline", "services": ["show interlude", "continue action", "next scene selection", "route push"] },
+    { "id": "save-state", "status": "implemented-inline", "services": ["localStorage key", "load", "save", "reset"] },
+    { "id": "notebook-debug", "status": "implemented-inline", "services": ["scene id", "clues", "route", "inspected", "complete", "latest log"] },
+    { "id": "runtime-diagnostics", "status": "missing", "services": ["GameHost projection", "latest result", "journal counters", "stage summary", "fixture status"] },
+    { "id": "fixture-replay", "status": "missing", "services": ["DOM-free reducer execution", "inspection fixtures", "transition fixtures", "save/load fixtures", "reset fixtures"] }
+  ],
+  "implementedKits": [
+    "unmapped-house-static-shell-kit",
+    "unmapped-house-stage-kit",
+    "unmapped-house-fixed-camera-diorama-kit",
+    "unmapped-house-anime-material-shader-kit",
+    "unmapped-house-stage-postprocess-kit",
+    "unmapped-house-hotspot-raycast-kit",
+    "unmapped-house-hover-label-kit",
+    "unmapped-house-story-data-kit",
+    "unmapped-house-story-state-save-kit",
+    "unmapped-house-clue-ledger-kit",
+    "unmapped-house-scene-completion-kit",
+    "unmapped-house-interlude-overlay-kit",
+    "unmapped-house-notebook-debug-kit",
+    "unmapped-house-static-pages-deploy-kit"
+  ],
+  "candidateKits": [
+    "unmapped-house-app-runtime-kit",
+    "unmapped-house-story-ui-projection-kit",
+    "unmapped-house-localstorage-save-kit",
+    "unmapped-house-route-state-kit",
+    "unmapped-house-stage-descriptor-kit",
+    "unmapped-house-stage-layer-kit",
+    "unmapped-house-stage-prop-kit",
+    "unmapped-house-stage-hotspot-volume-kit",
+    "unmapped-house-fixed-camera-parallax-kit",
+    "unmapped-house-postprocess-memory-kit",
+    "unmapped-house-static-validation-kit"
+  ],
+  "nextCutKits": [
+    "unmapped-house-inspection-action-kit",
+    "unmapped-house-inspection-command-envelope-kit",
+    "unmapped-house-inspection-result-contract-kit",
+    "unmapped-house-inspection-rejection-reason-kit",
+    "unmapped-house-clue-ledger-reducer-kit",
+    "unmapped-house-scene-completion-result-kit",
+    "unmapped-house-scene-transition-result-kit",
+    "unmapped-house-route-state-journal-kit",
+    "unmapped-house-save-result-kit",
+    "unmapped-house-story-snapshot-projector-kit",
+    "unmapped-house-stage-snapshot-projector-kit",
+    "unmapped-house-gamehost-diagnostics-kit",
+    "unmapped-house-command-journal-kit",
+    "unmapped-house-dom-free-fixture-kit",
+    "unmapped-house-hotspot-fixture-matrix-kit",
+    "unmapped-house-scene-completion-fixture-kit",
+    "unmapped-house-stage-descriptor-validation-kit"
+  ],
+  "nextSlice": {
+    "name": "TheUnmappedHouse Inspection Result Contract + Scene Transition Fixture Gate",
+    "preserve": ["static route", "current visuals", "story copy", "StageKit behavior", "localStorage key", "Pages workflow"],
+    "buildOrder": [
+      "add StoryStateSnapshot helper",
+      "add StageSceneSnapshot helper",
+      "add InspectionCommandEnvelope contract",
+      "add InspectionResult contract",
+      "add stable InspectionReason values",
+      "move mutation out of inspectHotspot into pure applyInspectionCommand",
+      "consume result records in existing UI",
+      "add SceneCompletionResult",
+      "add SceneTransitionResult",
+      "add RouteJournal entries",
+      "add SaveResult records",
+      "expose window.GameHost.getState diagnostics",
+      "add DOM-free story reducer fixture harness"
+    ]
+  },
+  "acceptanceTargets": [
+    "existing browser prototype still loads from index.html",
+    "hotspot buttons and raycast clicks both produce InspectionResult records",
+    "first-time inspection grants each clue exactly once",
+    "repeat inspection returns reason=repeat_inspection and does not duplicate clues",
+    "unknown hotspot returns accepted=false with reason=unknown_hotspot",
+    "room completion produces SceneCompletionResult",
+    "continue action produces SceneTransitionResult",
+    "RouteJournal captures inspection and transition events",
+    "window.GameHost.getState exposes story, stage, save, journal, latestResult, and fixture diagnostics",
+    "DOM-free fixtures cover first-room completion, repeat inspection, unknown hotspot, transition, full route, save/load, and reset"
+  ],
+  "validation": {
+    "runtimeSourceChanged": false,
+    "agentDocsChanged": true,
+    "localBuildRun": false,
+    "reason": "Connector-only documentation pass. No runtime source files were modified."
+  }
+}
