@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-08T03:42:00-04:00`
+**Updated:** `2026-07-08T05:28:26-04:00`
 
 ## Current validation status
 
@@ -12,22 +12,19 @@ Agent docs changed in this pass: yes
 Central ledger changed in this pass: yes
 Local build run: no, connector-only documentation/audit pass
 Browser smoke run: no, connector-only documentation/audit pass
-GitHub Pages workflow inspected: yes
+GitHub Pages workflow inspected in prior pass: yes
 Full LuminaryLabs-Publish repo list compared to central ledger state: yes
 Chosen repo root .agent exists before this pass: yes
+Central status-summary rollup inclusion: yes, observed in status-summary.json schema 1.18.0
 ```
 
 ## Source checks performed
 
-- [x] Confirmed `README.md` describes a fixed-camera anime point-and-click horror prototype.
-- [x] Confirmed `index.html` loads `./src/game.js` and declares the stage, story panel, hotspot list, notebook debug panel, hover label, and interlude overlay.
-- [x] Confirmed `src/game.js` owns state, localStorage, hotspot inspection, clue grants, scene completion, interlude progression, UI projection, and reset.
-- [x] Confirmed `src/stage-kit.js` owns Three.js renderer setup, camera, raycaster, lights, render target, post-processing, scene loading, pointer picking, resize, and animation.
-- [x] Confirmed `src/story-data.js` contains three scene descriptors with camera, stage, props, hotspots, clue grants, completion requirements, and interludes.
-- [x] Confirmed `.github/workflows/deploy.yml` deploys the static site from `main` to GitHub Pages and supports manual dispatch.
 - [x] Confirmed root `.agent/START_HERE.md` exists and points to current audit/tracker material.
 - [x] Confirmed central `repo-ledger/LuminaryLabs-Publish/TheUnmappedHouse.md` exists.
-- [x] Confirmed central status reporting still needs to promote `TheUnmappedHouse` from direct readback context into the normal publish-game rollup.
+- [x] Confirmed central `repo-checks/reports/status-summary.json` includes `TheUnmappedHouse` in the machine-readable publish-game rollup.
+- [x] Confirmed prior source audit still identifies the fixed-camera story loop, StageKit render host, localStorage save path, and story command authority gap.
+- [x] Confirmed this pass only updates documentation and ledger state, not runtime behavior.
 
 ## Validation not performed
 
@@ -36,7 +33,7 @@ Chosen repo root .agent exists before this pass: yes
 - [ ] No GitHub Actions run result was inspected after the new docs commits.
 - [ ] No JavaScript syntax check was run.
 - [ ] No runtime behavior was changed.
-- [ ] No status-summary schema update was performed from this repo-local pass.
+- [ ] No status-summary schema update was performed in this pass because the central status-summary already records rollup inclusion.
 
 ## Fixture cases required next
 
@@ -56,7 +53,7 @@ These should be implemented before story expansion.
 11_scene_descriptor_rejects_duplicate_hotspot_ids
 12_scene_descriptor_rejects_ungrantable_required_clues
 13_central_publish_repo_list_includes_the_unmapped_house
-14_central_status_rollup_promotes_the_unmapped_house_from_direct_readback_note
+14_central_status_rollup_includes_the_unmapped_house_in_publish_game_map
 ```
 
 ## Acceptance gate for next implementation
