@@ -1,13 +1,13 @@
 {
   "schemaVersion": "1.2.0",
   "repo": "LuminaryLabs-Publish/TheUnmappedHouse",
-  "generatedAt": "2026-07-08T05:28:26-04:00",
+  "generatedAt": "2026-07-08T08:21:49-04:00",
   "branchTarget": "main",
-  "status": "central-rollup-gap-closed-story-command-authority-fixture-replay-gate-planned",
-  "latestTracker": ".agent/trackers/2026-07-08T05-28-26-04-00/project-breakdown.md",
+  "status": "story-command-result-acceptance-ledger-ready-for-implementation",
+  "latestTracker": ".agent/trackers/2026-07-08T08-21-49-04-00/project-breakdown.md",
   "selection": {
     "selectedRepo": "LuminaryLabs-Publish/TheUnmappedHouse",
-    "reason": "No checked non-Cavalry LuminaryLabs-Publish repo was new, central-ledger absent, or missing root .agent state. TheUnmappedHouse was selected because stale local and central docs still described an open central status-summary rollup gap that is now closed in LuminaryLabs-Dev/LuminaryLabs status-summary.json schema 1.18.0.",
+    "reason": "No checked non-Cavalry LuminaryLabs-Publish repo was new, central-ledger absent, missing root .agent state, or recently added but undocumented. TheUnmappedHouse was selected as the oldest eligible fallback with an unresolved source-backed story command authority seam. The old central rollup gap is closed and was not used as the current selection reason.",
     "excludedRepos": [
       {
         "repo": "LuminaryLabs-Publish/TheCavalryOfRome",
@@ -25,19 +25,13 @@
       "TheOpenAbove",
       "TheUnmappedHouse",
       "ZombieOrchard"
-    ],
-    "centralRollupState": {
-      "knownReposIncludesTheUnmappedHouse": true,
-      "activeProductsIncludesTheUnmappedHouse": true,
-      "publishGameMapIncludesTheUnmappedHouse": true,
-      "statusSummarySchema": "1.18.0"
-    }
+    ]
   },
   "productDirection": {
     "currentRuntime": "fixed-camera anime point-and-click horror stage prototype",
     "currentGap": "Story progression mutates directly from UI handlers. Inspection, clue grants, repeat inspection, room completion, interlude routing, save writes, reset, and debug projection lack typed result records, stable reasons, command journals, GameHost diagnostics, and DOM-free replay fixtures.",
-    "recommendedDecision": "Keep StageKit visuals stable and formalize story command authority before extracting renderer, material, camera, or prop generation services.",
-    "recommendedVerticalSlice": "TheUnmappedHouse Story Command Authority + Fixture Replay Gate"
+    "recommendedDecision": "Keep StageKit visuals stable and formalize story command authority before extracting renderer, material, camera, audio, inventory, or prop generation services.",
+    "recommendedVerticalSlice": "TheUnmappedHouse Story Command Result Acceptance Ledger"
   },
   "interactionLoop": {
     "currentPlayerFacing": [
@@ -49,13 +43,24 @@
       "read text-first inspection results",
       "collect clues into notebook state",
       "complete the room when all required clues are found",
-      "read interlude / map update",
+      "read interlude or map update",
       "continue to the next room",
       "reset local save with R if needed"
     ],
+    "currentSource": [
+      "StageKit click or side-panel button",
+      "inspectHotspot(hotspot)",
+      "direct inspected-state mutation",
+      "direct clue mutation through grantClues",
+      "direct text/log mutation",
+      "direct sceneComplete check",
+      "setTimeout(showInterlude, 450) when complete",
+      "renderUi()",
+      "saveState()"
+    ],
     "targetAuthority": [
       "create StoryCommandEnvelope",
-      "validate scene, route, and hotspot ids",
+      "validate scene, route, hotspot, and save shape",
       "produce StoryCommandResult with accepted/rejected status and stable reason",
       "reduce clue ledger, inspected state, route, and log deltas",
       "produce SceneCompletionResult when room requirements are met",
@@ -78,7 +83,7 @@
     { "id": "webgl-post-process", "status": "implemented", "services": ["grain", "vignette", "chromatic aberration", "distortion", "memory scanline", "post render pass"] },
     { "id": "hotspot-picking", "status": "implemented", "services": ["invisible hotspot mesh", "pointer normalization", "raycast", "hover label", "click dispatch"] },
     { "id": "inspection-action", "status": "implicit-inline", "services": ["inspect hotspot", "repeat branch", "text result", "clue grant", "log write"] },
-    { "id": "inspection-result-authority", "status": "missing", "services": ["command envelope", "validation", "accepted result", "rejected result", "stable reason", "clue delta", "text/log delta"] },
+    { "id": "story-command-authority", "status": "missing", "services": ["command envelope", "validation", "accepted result", "rejected result", "stable reason", "clue delta", "text/log delta"] },
     { "id": "clue-ledger", "status": "implemented-inline", "services": ["hasClue", "grantClues", "deduplicate clues", "completion inputs"] },
     { "id": "scene-completion", "status": "implemented-inline", "services": ["requiresToComplete check", "completion log", "interlude trigger"] },
     { "id": "interlude-transition", "status": "implemented-inline", "services": ["show interlude", "continue action", "next scene selection", "route push"] },
@@ -97,40 +102,48 @@
     "unmapped-house-hotspot-raycast-kit",
     "unmapped-house-hover-label-kit",
     "unmapped-house-story-data-kit",
+    "unmapped-house-story-runtime-kit",
     "unmapped-house-story-state-save-kit",
+    "unmapped-house-localstorage-save-kit",
     "unmapped-house-clue-ledger-kit",
     "unmapped-house-scene-completion-kit",
     "unmapped-house-interlude-overlay-kit",
     "unmapped-house-notebook-debug-kit",
     "unmapped-house-static-pages-deploy-kit",
+    "unmapped-house-static-validation-kit",
     "unmapped-house-agent-state-kit",
     "unmapped-house-central-ledger-readback-kit",
     "unmapped-house-central-status-summary-rollup-membership-kit"
   ],
   "nextCutKits": [
+    "unmapped-house-story-source-snapshot-kit",
+    "unmapped-house-story-state-snapshot-kit",
+    "unmapped-house-stage-scene-snapshot-kit",
     "unmapped-house-story-command-envelope-kit",
+    "unmapped-house-command-validation-kit",
+    "unmapped-house-story-command-result-kit",
+    "unmapped-house-story-command-reason-kit",
     "unmapped-house-inspection-action-kit",
     "unmapped-house-inspection-result-contract-kit",
-    "unmapped-house-inspection-rejection-reason-kit",
     "unmapped-house-clue-ledger-reducer-kit",
     "unmapped-house-scene-completion-result-kit",
     "unmapped-house-scene-transition-result-kit",
-    "unmapped-house-route-state-journal-kit",
     "unmapped-house-save-result-kit",
-    "unmapped-house-story-snapshot-projector-kit",
-    "unmapped-house-stage-snapshot-projector-kit",
-    "unmapped-house-gamehost-diagnostics-kit",
+    "unmapped-house-route-journal-kit",
     "unmapped-house-command-journal-kit",
+    "unmapped-house-gamehost-diagnostics-kit",
     "unmapped-house-dom-free-fixture-kit",
     "unmapped-house-hotspot-fixture-matrix-kit",
     "unmapped-house-scene-completion-fixture-kit",
+    "unmapped-house-save-load-fixture-kit",
     "unmapped-house-stage-descriptor-validation-kit"
   ],
   "nextSlice": {
-    "name": "TheUnmappedHouse Story Command Authority + Fixture Replay Gate",
+    "name": "TheUnmappedHouse Story Command Result Acceptance Ledger",
     "preserve": ["static route", "current visuals", "story copy", "StageKit behavior", "localStorage key", "Pages workflow"],
     "buildOrder": [
       "add StorySourceSnapshot helper",
+      "add StoryStateSnapshot helper",
       "add StageSceneSnapshot helper",
       "add StoryCommandEnvelope contract",
       "add StoryCommandResult contract",
