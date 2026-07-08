@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-08T02:40:00-04:00`
+**Updated:** `2026-07-08T03:42:00-04:00`
 
 ## Architecture gaps
 
@@ -48,11 +48,11 @@
 ## Central tracking gaps
 
 - `TheUnmappedHouse` has repo-local `.agent` state and central `repo-ledger` state.
-- The central latest summary still describes it as direct readback context rather than status-summary rollup inclusion.
-- The next central status-summary refresh should include `TheUnmappedHouse` in the normal publish-game rollup if the central schema is meant to track all non-excluded `LuminaryLabs-Publish` repos.
+- Central status reporting still needs to include it in the normal publish-game rollup if the central schema is meant to track every non-excluded `LuminaryLabs-Publish` game repo.
+- The next central status-summary refresh should remove the direct-readback-only treatment and add `TheUnmappedHouse` beside the other non-excluded Publish repos.
 - The breakdown selector should avoid repeatedly selecting this repo only because central summary rollup state lags repo-ledger state.
 
-## Documentation gaps fixed by prior pass
+## Documentation gaps fixed by prior passes
 
 - Root `.agent/START_HERE.md` was missing.
 - Root `.agent/current-audit.md` was missing.
@@ -64,10 +64,14 @@
 - Root `.agent/render-audit/` did not have a StageKit render audit.
 - Root `.agent/interaction-audit/` did not have a hotspot loop audit.
 - Root `.agent/trackers/` did not have a scheduled breakdown entry.
+- A central-ledger readback pass added `.agent/central-ledger-audit/publish-ledger-comparison.md`.
 
 ## Documentation gaps fixed by this pass
 
-- Added a follow-up timestamped turn ledger entry for central-ledger readback.
-- Added a follow-up tracker entry for the repo-list versus central-ledger comparison.
-- Added `.agent/central-ledger-audit/publish-ledger-comparison.md`.
-- Refreshed `START_HERE.md`, `current-audit.md`, `next-steps.md`, `known-gaps.md`, and `validation.md` around the central rollup gap.
+- Added `.agent/trackers/2026-07-08T03-42-00-04-00/project-breakdown.md`.
+- Added `.agent/turn-ledger/2026-07-08T03-42-00-04-00.md`.
+- Refreshed `.agent/START_HERE.md`.
+- Refreshed `.agent/current-audit.md`.
+- Refreshed `.agent/known-gaps.md`.
+- Refreshed `.agent/validation.md`.
+- Updated central ledger/change-log state for this follow-up.
