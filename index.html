@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="The Unmapped House: a fixed-camera anime point-and-click horror story." />
+  <title>The Unmapped House</title>
+  <link rel="stylesheet" href="./src/styles.css" />
+</head>
+<body>
+  <main id="app">
+    <section id="stage" aria-label="The Unmapped House stage renderer"></section>
+
+    <aside id="story-panel" aria-live="polite">
+      <p class="eyebrow">The Unmapped House</p>
+      <h1 id="scene-title">Loading</h1>
+      <p id="scene-text"></p>
+
+      <div id="hotspot-list" aria-label="Available inspections"></div>
+
+      <section class="notes">
+        <h2>Notebook</h2>
+        <pre id="state-debug"></pre>
+      </section>
+    </aside>
+
+    <div id="hover-label" hidden></div>
+
+    <sction id="interlude" class="interlude" aria-hidden="true">
+      <article>
+        <p class="eyebrow">Map update</p>
+        <h2 id="interlude-title"></h2>
+        <p id="interlude-text"></p>
+        <button id="continue-button" type="button">Continue</button>
+      </article>
+    </section>
+  </main>
+
+  <script type="module" src="./src/game.js"></script>
+</body>
+</html>
