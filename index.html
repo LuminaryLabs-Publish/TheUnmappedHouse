@@ -9,31 +9,33 @@
 </head>
 <body>
   <main id="app">
-    <section id="stage" aria-label="The Unmapped House stage renderer"></section>
+    <div id="aspect-frame" aria-label="16:9 game frame">
+      <section id="stage" aria-label="The Unmapped House stage renderer"></section>
 
-    <aside id="story-panel" aria-live="polite">
-      <p class="eyebrow">The Unmapped House</p>
-      <h1 id="scene-title">Loading</h1>
-      <p id="scene-text"></p>
+      <aside id="story-panel" aria-live="polite">
+        <p class="eyebrow">The Unmapped House</p>
+        <h1 id="scene-title">Loading</h1>
+        <p id="scene-text"></p>
 
-      <div id="hotspot-list" aria-label="Available inspections"></div>
+        <div id="hotspot-list" aria-label="Available inspections"></div>
 
-      <section class="notes">
-        <h2>Notebook</h2>
-        <pre id="state-debug"></pre>
+        <section class="notes">
+          <h2>Notebook</h2>
+          <pre id="state-debug"></pre>
+        </section>
+      </aside>
+
+      <div id="hover-label" hidden></div>
+
+      <section id="interlude" class="interlude" aria-hidden="true">
+        <article>
+          <p class="eyebrow">Map update</p>
+          <h2 id="interlude-title"></h2>
+          <p id="interlude-text"></p>
+          <button id="continue-button" type="button">Continue</button>
+        </article>
       </section>
-    </aside>
-
-    <div id="hover-label" hidden></div>
-
-    <section id="interlude" class="interlude" aria-hidden="true">
-      <article>
-        <p class="eyebrow">Map update</p>
-        <h2 id="interlude-title"></h2>
-        <p id="interlude-text"></p>
-        <button id="continue-button" type="button">Continue</button>
-      </article>
-    </section>
+    </div>
   </main>
 
   <script type="module" src="./src/game.js"></script>
