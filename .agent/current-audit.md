@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Audit timestamp:** `2026-07-08T08:21:49-04:00`
+**Audit timestamp:** `2026-07-08T10-01-57-04-00`
 
 ## Summary
 
@@ -10,7 +10,9 @@
 
 This pass re-compared the accessible `LuminaryLabs-Publish` organization list against central `LuminaryLabs-Dev/LuminaryLabs` ledger state. No checked non-Cavalry repo was fully new, absent from the central ledger, missing root `.agent/START_HERE.md`, or recently added but undocumented.
 
-`TheUnmappedHouse` was selected as an oldest eligible fallback follow-up because its remaining source-backed blocker is still story command authority. The stale central status-summary rollup gap is already closed and is not used as the current selection reason.
+`TheUnmappedHouse` was selected as an oldest observed eligible fallback follow-up because its remaining source-backed blocker is still story command authority. The stale central status-summary rollup gap is already closed and is not used as the current selection reason.
+
+This pass adds a source wire map that names exact additive files and fixture rows for the next implementation.
 
 ## Full repo-list comparison result
 
@@ -25,7 +27,7 @@ PhantomCommand        tracked; root .agent state observed
 PrehistoricRush       tracked; root .agent state observed
 TheCavalryOfRome      excluded by standing rule
 TheOpenAbove          tracked; root .agent state observed
-TheUnmappedHouse      selected fallback: story command/result acceptance ledger
+TheUnmappedHouse      selected fallback: story authority source wire map
 ZombieOrchard         tracked; root .agent state observed
 ```
 
@@ -34,7 +36,7 @@ Selection reason:
 ```txt
 No checked non-Cavalry Publish repo was new, central-ledger absent, missing root .agent state, or recently added but undocumented.
 
-TheUnmappedHouse remains an eligible documented repo with the oldest unresolved story-authority implementation ledge visible in this pass. It was selected to add a concrete command/result acceptance ledger rather than to revisit the closed central rollup gap.
+TheUnmappedHouse remains an eligible documented repo with the oldest observed unresolved story-authority implementation ledge in this pass. It was selected to convert the prior acceptance ledger into a file-level source wire map and fixture replay contract.
 ```
 
 ## Source-backed product surface
@@ -46,12 +48,16 @@ README.md
 
 package.json
   -> browser-only static module project
-  -> npm run check validates src/game.js, src/stage-kit.js, and src/story-data.js with node --check
+  -> npm run check validates src/aspect-frame.js, src/game.js, src/stage-kit.js, and src/story-data.js with node --check
 
 index.html
   -> static page shell
   -> loads ./src/game.js
   -> declares stage root, story panel, hotspot list, notebook debug panel, hover label, and interlude overlay
+
+src/aspect-frame.js
+  -> owns fixed 1920 x 1080 / 16:9 frame math
+  -> applies letterbox/pillarbox dimensions to the aspect frame element
 
 src/game.js
   -> owns state load/save
@@ -114,7 +120,7 @@ Target authority loop:
 ```txt
 UI event
   -> StoryCommandEnvelope
-  -> StorySourceSnapshot + StoryStateSnapshot
+  -> StorySourceSnapshot + StoryStateSnapshot + StageSceneSnapshot
   -> validateStoryCommand
   -> applyStoryCommand
   -> StoryCommandResult
@@ -131,6 +137,7 @@ UI event
 ```txt
 static page shell
 static Pages deploy
+browser app runtime
 fixed-camera story runtime
 scene descriptor source
 story state save/load
@@ -147,6 +154,8 @@ notebook/debug projection
 runtime diagnostics
 fixture replay
 stage descriptor validation
+stage scene snapshot
+fixed aspect frame
 fixed-camera stage renderer
 Three.js render host
 stage layer descriptors
@@ -159,7 +168,6 @@ WebGL post-processing
 responsive story panel styling
 repo-local .agent operating state
 central repo-ledger readback
-central status-summary publish-game rollup membership
 ```
 
 ## Current service inventory
@@ -179,6 +187,8 @@ showInterlude
 nextScene
 renderUi
 KeyR reset
+computeAspectFrame
+applyAspectFrame
 StageKit constructor
 StageKit animeMaterial
 StageKit loadScene
@@ -197,7 +207,12 @@ Needed services for the next implementation slice:
 
 ```txt
 createStorySourceSnapshot
+createSceneGrantIndex
+createSceneCompletionIndex
+validateStorySourceSnapshot
 createStoryStateSnapshot
+createInitialStoryState
+normalizeLoadedStoryState
 createStageSceneSnapshot
 createStoryCommandEnvelope
 validateStoryCommand
@@ -206,15 +221,17 @@ applyInspectionCommand
 applyContinueSceneCommand
 applyResetSaveCommand
 applyLoadSaveCommand
+createStoryCommandResult
 createInspectionResult
 createSceneCompletionResult
 createSceneTransitionResult
 createSaveResult
 appendRouteJournalEntry
 appendCommandJournalEntry
+projectUiState
+projectNotebookDebug
 projectGameHostDiagnostics
 runStoryFixtureSequence
-validateSceneDescriptor
 ```
 
 ## Current kit inventory
@@ -231,6 +248,7 @@ unmapped-house-clue-ledger-kit
 unmapped-house-scene-completion-kit
 unmapped-house-interlude-overlay-kit
 unmapped-house-notebook-debug-kit
+unmapped-house-aspect-frame-kit
 unmapped-house-stage-kit
 unmapped-house-fixed-camera-diorama-kit
 unmapped-house-stage-layer-kit
@@ -244,7 +262,6 @@ unmapped-house-static-pages-deploy-kit
 unmapped-house-static-validation-kit
 unmapped-house-agent-state-kit
 unmapped-house-central-ledger-readback-kit
-unmapped-house-status-summary-rollup-membership-kit
 ```
 
 Needed next-cut kits:
@@ -308,18 +325,10 @@ src/stage-kit.js owns pointer click dispatch and renderer state together, so sto
 src/story-data.js has required clue lists, but no descriptor validation proves every required clue is grantable or every hotspot id is unique.
 ```
 
-## Documentation diagnosis
-
-The repo-local `.agent/` folder exists and includes required audit files, tracker entries, and turn ledger entries.
-
-The central ledger has a `repo-ledger/LuminaryLabs-Publish/TheUnmappedHouse.md` file and internal change-log entries for the root-agent-state, central-readback, and rollup-closure passes.
-
-This pass adds the missing implementation-facing command/result acceptance ledger so future work can move directly into source changes without re-discovering the same authority seam.
-
 ## Recommended next implementation objective
 
 ```txt
-TheUnmappedHouse Story Command Result Acceptance Ledger
+TheUnmappedHouse Story Authority Source Wire Map
 ```
 
 Do this before expanding the story, replacing the renderer, adding audio, adding inventory, or broadening the StageKit object vocabulary.
