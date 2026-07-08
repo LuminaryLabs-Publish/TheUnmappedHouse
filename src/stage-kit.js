@@ -1,4 +1,5 @@
 import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
+import { DESIGN_ASPECT, DESIGN_HEIGHT, DESIGN_WIDTH, applyAspectFrame, computeAspectFrame } from "./aspect-frame.js";
 
 const STAGE_VERTEX = `
 varying vec3 vWorld;
@@ -131,10 +132,13 @@ export class StageKit {
     this.hotspots = [];
     this.materials = [];
     this.parallax = { x: 0, y: 0 };
+    this.frameElement = root.closest("#aspect-frame") ?? root;
+    this.viewport = { x: 0, y: 0, width: DESIGN_WIDTH, height: DESIGN_HEIGHT, scale: 1, aspect: DESIGN_ASPECT };
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
-    this.renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
-    this.renderer.setSize(innerWidth, innerHeight);
+    this.pixelRatio = Math.min(devicePixelRatio || 1, 2);
+    this.renderer.setPixelRatio(this.pixelRatio);
+    this.renderer.setSize(DESIGN_WIDTH, DESIGN_HEIGHT, false);
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     root.append(this.renderer.domElement);
@@ -143,7 +147,7 @@ export class StageKit {
     this.stageGroup = new THREE.Group();
     this.scene.add(this.stageGroup);
 
-    this.camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.1, 250);
+    this.camera = new THREE.PerspectiveCamera(42, DESIGN_ASPECT, 0.1, 250);
     this.raycaster = new THREE.Raycaster();
 
     this.light = new THREE.DirectionalLight(0xffdfb0, 3.0);
@@ -151,7 +155,7 @@ export class StageKit {
     this.light.castShadow = true;
     this.scene.add(this.light, new THREE.HemisphereLight(0xf6e6d0, 0x1c2230, 1.1));
 
-    this.target = new THREE.WebGLRenderTarget(innerWidth, innerHeight, { samples: 2 });
+    this.target = new THREE.WebGLRenderTarget(DESIGN_WIDTH * this.pixelRatio, DESIGN_HEIGHT * this.pixelRatio, { samples: 2 });
     this.postScene = new THREE.Scene();
     this.postCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     this.postMaterial = new THREE.ShaderMaterial({
@@ -169,6 +173,7 @@ export class StageKit {
     });
     this.postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), this.postMaterial));
 
+    this.resize();
     addEventListener("resize", () => this.resize());
     this.renderer.domElement.addEventListener("mousemove", (event) => this.handlePointer(event));
     this.renderer.domElement.addEventListener("click", () => this.clickHotspot());
@@ -215,6 +220,7 @@ export class StageKit {
       fov: cam.fov ?? 40
     };
     this.camera.fov = this.baseCamera.fov;
+    this.camera.aspect = DESIGN_ASPECT;
     this.camera.updateProjectionMatrix();
 
     for (const layer of sceneData.stage.layers ?? []) this.createLayer(layer);
@@ -269,8 +275,8 @@ export class StageKit {
     const rect = this.renderer.domElement.getBoundingClientRect();
     this.pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
     this.pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-    this.mouse.x = (event.clientX / innerWidth - 0.5) * 2;
-    this.mouse.y = (event.clientY / innerHeight - 0.5) * 2;
+    this.mouse.x = Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width - 0.5) * 2));
+    this.mouse.y = Math.max(-1, Math.min(1, ((event.clientY - rect.top) / rect.height - 0.5) * 2));
 
     const hit = this.pick();
     this.hovered = hit?.object?.userData?.hotspot ?? null;
@@ -278,8 +284,9 @@ export class StageKit {
       this.hoverLabel.hidden = !this.hovered;
       if (this.hovered) {
         this.hoverLabel.textContent = this.hovered.label;
-        this.hoverLabel.style.left = `${event.clientX + 14}px`;
-        this.hoverLabel.style.top = `${event.clientY + 14}px`;
+        const frameRect = this.frameElement.getBoundingClientRect();
+        this.hoverLabel.style.left = `${event.clientX - frameRect.left + 14}px`;
+        this.hoverLabel.style.top = `${event.clientY - frameRect.top + 14}px`;
       }
     }
   }
@@ -296,10 +303,23 @@ export class StageKit {
   }
 
   resize() {
-    this.camera.aspect = innerWidth / innerHeight;
+    this.pixelRatio = Math.min(devicePixelRatio || 1, 2);
+    this.renderer.setPixelRatio(this.pixelRatio);
+    this.viewport = applyAspectFrame(this.frameElement, computeAspectFrame(innerWidth, innerHeight));
+
+    this.camera.aspect = DESIGN_ASPECT;
     this.camera.updateProjectionMatrix();
-    this.renderer.setSize(innerWidth, innerHeight);
-    this.target.setSize(innerWidth, innerHeight);
+
+    this.renderer.setSize(this.viewport.width, this.viewport.height, false);
+    this.renderer.domElement.style.position = "absolute";
+    this.renderer.domElement.style.inset = "0";
+    this.renderer.domElement.style.width = "100%";
+    this.renderer.domElement.style.height = "100%";
+
+    this.target.setSize(
+      Math.max(1, Math.floor(this.viewport.width * this.pixelRatio)),
+      Math.max(1, Math.floor(this.viewport.height * this.pixelRatio))
+    );
   }
 
   animate() {
