@@ -1,13 +1,17 @@
 {
-  "schemaVersion": "1.2.0",
+  "schemaVersion": "1.3.0",
   "repo": "LuminaryLabs-Publish/TheUnmappedHouse",
-  "generatedAt": "2026-07-08T08:21:49-04:00",
+  "generatedAt": "2026-07-08T10-01-57-04-00",
   "branchTarget": "main",
-  "status": "story-command-result-acceptance-ledger-ready-for-implementation",
-  "latestTracker": ".agent/trackers/2026-07-08T08-21-49-04-00/project-breakdown.md",
+  "status": "story-authority-source-wire-map-ready-for-implementation",
+  "latestTracker": ".agent/trackers/2026-07-08T10-01-57-04-00/project-breakdown.md",
+  "latestTurnLedger": ".agent/turn-ledger/2026-07-08T10-01-57-04-00.md",
+  "latestArchitectureAudit": ".agent/architecture-audit/2026-07-08T10-01-57-04-00-story-authority-dsk-breakdown.md",
+  "latestRenderAudit": ".agent/render-audit/2026-07-08T10-01-57-04-00-stage-result-readback.md",
+  "latestInteractionAudit": ".agent/interaction-audit/2026-07-08T10-01-57-04-00-story-authority-source-wire-map.md",
   "selection": {
     "selectedRepo": "LuminaryLabs-Publish/TheUnmappedHouse",
-    "reason": "No checked non-Cavalry LuminaryLabs-Publish repo was new, central-ledger absent, missing root .agent state, or recently added but undocumented. TheUnmappedHouse was selected as the oldest eligible fallback with an unresolved source-backed story command authority seam. The old central rollup gap is closed and was not used as the current selection reason.",
+    "reason": "No checked non-Cavalry LuminaryLabs-Publish repo was new, central-ledger absent, missing root .agent state, or recently added but undocumented. TheUnmappedHouse was selected as the oldest observed eligible fallback with an unresolved source-backed story authority seam. The old central rollup gap is closed and was not used as the current selection reason.",
     "excludedRepos": [
       {
         "repo": "LuminaryLabs-Publish/TheCavalryOfRome",
@@ -31,7 +35,7 @@
     "currentRuntime": "fixed-camera anime point-and-click horror stage prototype",
     "currentGap": "Story progression mutates directly from UI handlers. Inspection, clue grants, repeat inspection, room completion, interlude routing, save writes, reset, and debug projection lack typed result records, stable reasons, command journals, GameHost diagnostics, and DOM-free replay fixtures.",
     "recommendedDecision": "Keep StageKit visuals stable and formalize story command authority before extracting renderer, material, camera, audio, inventory, or prop generation services.",
-    "recommendedVerticalSlice": "TheUnmappedHouse Story Command Result Acceptance Ledger"
+    "recommendedVerticalSlice": "TheUnmappedHouse Story Authority Source Wire Map"
   },
   "interactionLoop": {
     "currentPlayerFacing": [
@@ -74,33 +78,21 @@
   "domains": [
     { "id": "static-page-shell", "status": "implemented", "services": ["stage mount", "story panel", "hotspot list", "notebook pane", "hover label", "interlude shell", "module script route"] },
     { "id": "static-pages-deploy", "status": "implemented", "services": ["main push trigger", "workflow dispatch", "Pages configuration", "root artifact upload", "Pages deploy"] },
-    { "id": "app-runtime", "status": "implemented-monolith", "services": ["DOM lookup", "boot order", "state load", "scene binding", "UI projection", "KeyR reset"] },
+    { "id": "browser-app-runtime", "status": "implemented-monolith", "services": ["DOM lookup", "boot order", "state load", "scene binding", "UI projection", "KeyR reset"] },
     { "id": "story-source", "status": "implemented", "services": ["game title", "scene descriptors", "opening text", "interlude text", "completion requirements", "ordered route"] },
+    { "id": "story-state", "status": "implemented-inline", "services": ["scene id", "clues", "flags", "inspected map", "route", "log"] },
     { "id": "scene-descriptor", "status": "implemented", "services": ["background", "fog", "camera", "layers", "props", "hotspots", "post settings"] },
     { "id": "stage-render-host", "status": "implemented", "services": ["renderer", "scene", "camera", "lights", "render target", "resize", "animation loop"] },
-    { "id": "fixed-camera-composition", "status": "implemented", "services": ["base camera position", "lookAt", "fov", "pointer parallax"] },
-    { "id": "anime-material-shader", "status": "implemented", "services": ["shader material", "noise blend", "toon steps", "rim contribution", "time uniform"] },
-    { "id": "webgl-post-process", "status": "implemented", "services": ["grain", "vignette", "chromatic aberration", "distortion", "memory scanline", "post render pass"] },
+    { "id": "fixed-aspect-frame", "status": "implemented", "services": ["1920x1080 design frame", "16:9 aspect", "letterbox/pillarbox frame application"] },
     { "id": "hotspot-picking", "status": "implemented", "services": ["invisible hotspot mesh", "pointer normalization", "raycast", "hover label", "click dispatch"] },
-    { "id": "inspection-action", "status": "implicit-inline", "services": ["inspect hotspot", "repeat branch", "text result", "clue grant", "log write"] },
-    { "id": "story-command-authority", "status": "missing", "services": ["command envelope", "validation", "accepted result", "rejected result", "stable reason", "clue delta", "text/log delta"] },
-    { "id": "clue-ledger", "status": "implemented-inline", "services": ["hasClue", "grantClues", "deduplicate clues", "completion inputs"] },
-    { "id": "scene-completion", "status": "implemented-inline", "services": ["requiresToComplete check", "completion log", "interlude trigger"] },
-    { "id": "interlude-transition", "status": "implemented-inline", "services": ["show interlude", "continue action", "next scene selection", "route push"] },
-    { "id": "save-state", "status": "implemented-inline", "services": ["localStorage key", "load", "save", "reset"] },
-    { "id": "notebook-debug", "status": "implemented-inline", "services": ["scene id", "clues", "route", "inspected", "complete", "latest log"] },
-    { "id": "runtime-diagnostics", "status": "missing", "services": ["GameHost projection", "latest result", "journal counters", "stage summary", "fixture status"] },
-    { "id": "fixture-replay", "status": "missing", "services": ["DOM-free reducer execution", "inspection fixtures", "transition fixtures", "save/load fixtures", "reset fixtures"] },
-    { "id": "central-status-summary-rollup-membership", "status": "documented", "services": ["known_repos inclusion", "active_products inclusion", "publish_game_map_from_direct_ledgers inclusion"] }
+    { "id": "story-command-authority", "status": "missing-next", "services": ["command envelope", "validation", "accepted result", "rejected result", "stable reason", "clue delta", "text/log delta"] },
+    { "id": "runtime-diagnostics", "status": "missing-next", "services": ["GameHost projection", "latest result", "journal counters", "stage summary", "fixture status"] },
+    { "id": "fixture-replay", "status": "missing-next", "services": ["DOM-free reducer execution", "inspection fixtures", "transition fixtures", "save/load fixtures", "reset fixtures"] }
   ],
   "implementedKits": [
     "unmapped-house-static-shell-kit",
-    "unmapped-house-stage-kit",
-    "unmapped-house-fixed-camera-diorama-kit",
-    "unmapped-house-anime-material-shader-kit",
-    "unmapped-house-stage-postprocess-kit",
-    "unmapped-house-hotspot-raycast-kit",
-    "unmapped-house-hover-label-kit",
+    "unmapped-house-static-pages-deploy-kit",
+    "unmapped-house-browser-runtime-kit",
     "unmapped-house-story-data-kit",
     "unmapped-house-story-runtime-kit",
     "unmapped-house-story-state-save-kit",
@@ -108,12 +100,21 @@
     "unmapped-house-clue-ledger-kit",
     "unmapped-house-scene-completion-kit",
     "unmapped-house-interlude-overlay-kit",
+    "unmapped-house-route-state-kit",
     "unmapped-house-notebook-debug-kit",
-    "unmapped-house-static-pages-deploy-kit",
+    "unmapped-house-aspect-frame-kit",
+    "unmapped-house-stage-kit",
+    "unmapped-house-fixed-camera-diorama-kit",
+    "unmapped-house-stage-layer-kit",
+    "unmapped-house-stage-prop-kit",
+    "unmapped-house-stage-hotspot-volume-kit",
+    "unmapped-house-hotspot-raycast-kit",
+    "unmapped-house-hover-label-kit",
+    "unmapped-house-anime-material-shader-kit",
+    "unmapped-house-stage-postprocess-kit",
     "unmapped-house-static-validation-kit",
     "unmapped-house-agent-state-kit",
-    "unmapped-house-central-ledger-readback-kit",
-    "unmapped-house-central-status-summary-rollup-membership-kit"
+    "unmapped-house-central-ledger-readback-kit"
   ],
   "nextCutKits": [
     "unmapped-house-story-source-snapshot-kit",
@@ -134,29 +135,37 @@
     "unmapped-house-gamehost-diagnostics-kit",
     "unmapped-house-dom-free-fixture-kit",
     "unmapped-house-hotspot-fixture-matrix-kit",
-    "unmapped-house-scene-completion-fixture-kit",
-    "unmapped-house-save-load-fixture-kit",
-    "unmapped-house-stage-descriptor-validation-kit"
+    "unmapped-house-scene-descriptor-validation-kit"
+  ],
+  "recommendedSourceFiles": [
+    "src/story-authority/story-source-snapshot.js",
+    "src/story-authority/story-state-snapshot.js",
+    "src/story-authority/stage-scene-snapshot.js",
+    "src/story-authority/story-command-envelope.js",
+    "src/story-authority/story-command-reasons.js",
+    "src/story-authority/story-command-result.js",
+    "src/story-authority/story-reducer.js",
+    "src/story-authority/story-projection.js",
+    "scripts/validate-story-fixtures.mjs"
   ],
   "nextSlice": {
-    "name": "TheUnmappedHouse Story Command Result Acceptance Ledger",
+    "name": "TheUnmappedHouse Story Authority Source Wire Map",
     "preserve": ["static route", "current visuals", "story copy", "StageKit behavior", "localStorage key", "Pages workflow"],
-    "buildOrder": [
-      "add StorySourceSnapshot helper",
-      "add StoryStateSnapshot helper",
-      "add StageSceneSnapshot helper",
-      "add StoryCommandEnvelope contract",
-      "add StoryCommandResult contract",
-      "add stable StoryCommandReason values",
-      "move inspectHotspot mutation into pure applyInspectionCommand",
-      "move nextScene mutation into pure applyContinueSceneCommand",
-      "consume result records in existing UI",
-      "add SceneCompletionResult",
-      "add SceneTransitionResult",
-      "add RouteJournal entries",
-      "add SaveResult records",
-      "expose window.GameHost.getState diagnostics",
-      "add DOM-free story reducer fixture harness"
+    "fixtureRows": [
+      "initial state has first scene",
+      "known hotspot grants expected clue",
+      "repeat hotspot accepted without duplicate clue",
+      "unknown hotspot rejected",
+      "premature continue rejected",
+      "scene completion emits result",
+      "continue after completion moves to next scene",
+      "final continue emits prototype complete",
+      "save/load roundtrip preserves state",
+      "reset restores initial state",
+      "duplicate hotspot ids rejected",
+      "ungrantable required clues rejected",
+      "stage scene snapshot lists render-facing facts",
+      "GameHost projection contains latest result and stage summary"
     ]
   },
   "validation": {
