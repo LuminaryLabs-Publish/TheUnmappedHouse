@@ -2,28 +2,31 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-08T01:50:19-04:00`
+**Updated:** `2026-07-08T02:40:00-04:00`
 
 ## Current validation status
 
 ```txt
 Runtime files changed in this pass: no
 Agent docs changed in this pass: yes
-Central ledger changed in this pass: pending until internal changelog and ledger update are written
+Central ledger changed in this pass: yes
 Local build run: no, connector-only documentation/audit pass
 Browser smoke run: no, connector-only documentation/audit pass
 GitHub Pages workflow inspected: yes
+Full LuminaryLabs-Publish repo list compared to central ledger state: yes
+Chosen repo root .agent exists after prior pass: yes
 ```
 
 ## Source checks performed
 
 - [x] Confirmed `README.md` describes a fixed-camera anime point-and-click horror prototype.
-- [x] Confirmed `index.html` loads `./src/game.js` and exposes the stage, story panel, hotspot list, notebook debug, hover label, and interlude elements.
 - [x] Confirmed `src/game.js` owns state, localStorage, hotspot inspection, clue grants, scene completion, interlude progression, UI projection, and reset.
 - [x] Confirmed `src/stage-kit.js` owns Three.js renderer setup, camera, raycaster, lights, render target, post-processing, scene loading, pointer picking, resize, and animation.
 - [x] Confirmed `src/story-data.js` contains three scene descriptors with camera, stage, props, hotspots, clue grants, completion requirements, and interludes.
 - [x] Confirmed `.github/workflows/deploy.yml` deploys the static site from `main` to GitHub Pages.
-- [x] Confirmed the root `.agent/START_HERE.md` was missing before this pass.
+- [x] Confirmed root `.agent/START_HERE.md` now exists and points to current audit/tracker material.
+- [x] Confirmed central `repo-ledger/LuminaryLabs-Publish/TheUnmappedHouse.md` exists.
+- [x] Confirmed central latest summary currently records `TheUnmappedHouse` as direct readback context but not yet as status-summary publish-game rollup inclusion.
 
 ## Validation not performed
 
@@ -32,6 +35,7 @@ GitHub Pages workflow inspected: yes
 - [ ] No GitHub Actions run result was inspected after the new docs commits.
 - [ ] No JavaScript syntax check was run.
 - [ ] No runtime behavior was changed.
+- [ ] No status-summary schema update was performed from this repo-local pass.
 
 ## Fixture cases required next
 
@@ -50,6 +54,8 @@ These should be implemented before story expansion.
 10_reset_clears_save_and_restores_initial_state
 11_scene_descriptor_rejects_duplicate_hotspot_ids
 12_scene_descriptor_rejects_ungrantable_required_clues
+13_central_publish_repo_list_includes_the_unmapped_house
+14_central_status_rollup_promotes_the_unmapped_house_from_direct_readback_note
 ```
 
 ## Acceptance gate for next implementation
