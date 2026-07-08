@@ -1,17 +1,17 @@
 {
-  "schemaVersion": "1.4.0",
+  "schemaVersion": "1.5.0",
   "repo": "LuminaryLabs-Publish/TheUnmappedHouse",
-  "generatedAt": "2026-07-08T11-28-38-04-00",
+  "generatedAt": "2026-07-08T12-59-11-04-00",
   "branchTarget": "main",
-  "status": "story-fixture-replay-contract-ready-for-implementation",
-  "latestTracker": ".agent/trackers/2026-07-08T11-28-38-04-00/project-breakdown.md",
-  "latestTurnLedger": ".agent/turn-ledger/2026-07-08T11-28-38-04-00.md",
-  "latestArchitectureAudit": ".agent/architecture-audit/2026-07-08T11-28-38-04-00-story-fixture-replay-dsk-breakdown.md",
-  "latestRenderAudit": ".agent/render-audit/2026-07-08T11-28-38-04-00-stage-gamehost-readback.md",
-  "latestInteractionAudit": ".agent/interaction-audit/2026-07-08T11-28-38-04-00-story-fixture-replay-contract.md",
+  "status": "story-result-reducer-implementation-map-ready",
+  "latestTracker": ".agent/trackers/2026-07-08T12-59-11-04-00/project-breakdown.md",
+  "latestTurnLedger": ".agent/turn-ledger/2026-07-08T12-59-11-04-00.md",
+  "latestArchitectureAudit": ".agent/architecture-audit/2026-07-08T12-59-11-04-00-story-result-reducer-map.md",
+  "latestRenderAudit": ".agent/render-audit/2026-07-08T12-59-11-04-00-stage-projection-readback.md",
+  "latestInteractionAudit": ".agent/interaction-audit/2026-07-08T12-59-11-04-00-story-result-fixture-rows.md",
   "selection": {
     "selectedRepo": "LuminaryLabs-Publish/TheUnmappedHouse",
-    "reason": "No checked non-Cavalry LuminaryLabs-Publish repo was new, central-ledger absent, missing root .agent state, or recently added but undocumented. TheUnmappedHouse was selected as an oldest observed eligible fallback with an unresolved story-authority implementation ledge. This pass narrows the prior source wire map into a fixture replay contract and GameHost projection gate.",
+    "reason": "No checked non-Cavalry LuminaryLabs-Publish repo was new, central-ledger absent, missing root .agent state, or recently added but undocumented. TheUnmappedHouse was selected as the oldest observed eligible fallback with an unresolved story-authority implementation ledge. This pass narrows the prior story fixture replay contract into a story result reducer implementation map and fixture row matrix.",
     "excludedRepos": [
       {
         "repo": "LuminaryLabs-Publish/TheCavalryOfRome",
@@ -19,23 +19,23 @@
       }
     ],
     "publishReposObserved": [
-      "AetherVale",
       "HorrorCorridor",
-      "IntoTheMeadow",
-      "MyCozyIsland",
+      "AetherVale",
+      "TheOpenAbove",
+      "TheCavalryOfRome",
       "PhantomCommand",
       "PrehistoricRush",
-      "TheCavalryOfRome",
-      "TheOpenAbove",
-      "TheUnmappedHouse",
-      "ZombieOrchard"
+      "ZombieOrchard",
+      "IntoTheMeadow",
+      "MyCozyIsland",
+      "TheUnmappedHouse"
     ]
   },
   "productDirection": {
     "currentRuntime": "fixed-camera anime point-and-click horror stage prototype",
     "currentGap": "Story progression still mutates directly from UI handlers. Inspection, clue grants, repeat inspection, room completion, interlude routing, save writes, reset, and debug projection lack typed result records, stable reasons, command journals, GameHost diagnostics, and DOM-free replay fixtures.",
     "recommendedDecision": "Keep StageKit visuals stable and formalize story command authority before extracting renderer, material, camera, audio, inventory, or prop generation services.",
-    "recommendedVerticalSlice": "TheUnmappedHouse Story Fixture Replay Contract + GameHost Projection Gate"
+    "recommendedVerticalSlice": "TheUnmappedHouse Story Result Reducer Implementation Map + Fixture Rows"
   },
   "interactionLoop": {
     "currentPlayerFacing": [
@@ -86,7 +86,8 @@
     { "id": "stage-render-host", "status": "implemented", "services": ["renderer", "scene", "camera", "lights", "render target", "resize", "animation loop"] },
     { "id": "fixed-aspect-frame", "status": "implemented", "services": ["1920x1080 design frame", "16:9 aspect", "letterbox/pillarbox frame application"] },
     { "id": "hotspot-picking", "status": "implemented", "services": ["invisible hotspot mesh", "pointer normalization", "raycast", "hover label", "click dispatch"] },
-    { "id": "story-command-authority", "status": "missing-next", "services": ["command envelope", "validation", "accepted result", "rejected result", "stable reason", "clue delta", "text/log delta"] },
+    { "id": "story-command-authority", "status": "missing-next", "services": ["command envelope", "validation", "accepted result", "rejected result", "no-mutation result", "stable reason", "clue delta", "text/log delta"] },
+    { "id": "story-result-reducer", "status": "missing-next", "services": ["apply inspection", "apply continue", "apply save", "apply load", "apply reset", "project state"] },
     { "id": "runtime-diagnostics", "status": "missing-next", "services": ["GameHost projection", "latest result", "journal counters", "stage summary", "fixture status"] },
     { "id": "fixture-replay", "status": "missing-next", "services": ["DOM-free reducer execution", "inspection fixtures", "transition fixtures", "save/load fixtures", "reset fixtures", "descriptor rejection fixtures"] }
   ],
@@ -125,6 +126,7 @@
     "unmapped-house-command-validation-kit",
     "unmapped-house-story-command-result-kit",
     "unmapped-house-story-command-reason-kit",
+    "unmapped-house-story-reducer-kit",
     "unmapped-house-story-event-record-kit",
     "unmapped-house-inspection-action-kit",
     "unmapped-house-inspection-result-contract-kit",
@@ -135,6 +137,7 @@
     "unmapped-house-save-result-kit",
     "unmapped-house-route-state-journal-kit",
     "unmapped-house-command-journal-kit",
+    "unmapped-house-story-ui-projection-kit",
     "unmapped-house-gamehost-diagnostics-kit",
     "unmapped-house-dom-free-fixture-kit",
     "unmapped-house-hotspot-fixture-matrix-kit",
@@ -150,30 +153,34 @@
     "src/story-authority/story-command-envelope.js",
     "src/story-authority/story-command-reasons.js",
     "src/story-authority/story-command-result.js",
+    "src/story-authority/story-event-record.js",
     "src/story-authority/story-reducer.js",
     "src/story-authority/story-projection.js",
-    "scripts/validate-story-fixtures.mjs"
+    "src/story-authority/story-fixture-cases.js",
+    "scripts/validate-story-authority.mjs"
   ],
   "nextSlice": {
-    "name": "TheUnmappedHouse Story Fixture Replay Contract + GameHost Projection Gate",
+    "name": "TheUnmappedHouse Story Result Reducer Implementation Map + Fixture Rows",
     "preserve": ["static route", "current visuals", "story copy", "StageKit behavior", "localStorage key", "Pages workflow"],
     "fixtureRows": [
-      "initial state has first scene",
-      "story source snapshot lists three scenes",
-      "stage scene snapshot lists camera/layers/props/hotspots/post",
-      "known hotspot grants expected clue",
-      "repeat hotspot accepted without duplicate clue",
-      "unknown hotspot rejected",
-      "premature continue rejected",
-      "scene completion emits result",
-      "continue after completion moves to next scene",
-      "final continue emits prototype complete",
-      "save/load roundtrip preserves state",
-      "reset restores initial state",
-      "duplicate scene ids rejected",
-      "duplicate hotspot ids rejected",
-      "ungrantable required clues rejected",
-      "GameHost projection contains latest result, stage summary, and fixture summary"
+      "initial_state",
+      "inspect_first_hotspot",
+      "repeat_hotspot",
+      "unknown_hotspot",
+      "scene_incomplete_continue",
+      "complete_library_scene",
+      "continue_to_hallway",
+      "complete_full_route",
+      "prototype_complete_continue",
+      "save_state",
+      "load_state",
+      "reset_save",
+      "duplicate_scene_descriptor_rejected",
+      "duplicate_hotspot_descriptor_rejected",
+      "ungrantable_required_clue_rejected",
+      "stage_scene_snapshot",
+      "story_projection",
+      "GameHost_projection"
     ]
   },
   "validation": {
