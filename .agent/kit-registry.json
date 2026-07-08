@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "1.1.0",
   "repo": "LuminaryLabs-Publish/TheUnmappedHouse",
-  "generatedAt": "2026-07-08T00:08:03-04:00",
+  "generatedAt": "2026-07-08T01:38:23-04:00",
   "branchTarget": "main",
-  "status": "agent-side-kit-registry-created-inspection-result-scene-transition-fixture-gate-planned",
-  "latestTracker": ".agent/trackers/2026-07-08T00-08-03-04-00/project-breakdown.md",
+  "status": "story-command-authority-fixture-replay-gate-planned",
+  "latestTracker": ".agent/trackers/2026-07-08T01-38-23-04-00/project-breakdown.md",
   "selection": {
     "selectedRepo": "LuminaryLabs-Publish/TheUnmappedHouse",
-    "reason": "Repository exists in LuminaryLabs-Publish and had no central repo-ledger entry, so it was selected before continuing the already documented rotation.",
+    "reason": "Oldest eligible tracked non-Cavalry Publish repo by latest central repo-ledger timestamp after the latest HorrorCorridor pass.",
     "excludedRepos": [
       {
         "repo": "LuminaryLabs-Publish/TheCavalryOfRome",
@@ -25,26 +25,37 @@
       "TheOpenAbove",
       "TheUnmappedHouse",
       "ZombieOrchard"
+    ],
+    "eligibleLedgerOrdering": [
+      { "repo": "TheUnmappedHouse", "latestReviewed": "2026-07-08T00:08:03-04:00", "selected": true },
+      { "repo": "TheOpenAbove", "latestReviewed": "2026-07-08T00:21:15-04:00", "selected": false },
+      { "repo": "AetherVale", "latestReviewed": "2026-07-08T00:28:42-04:00", "selected": false },
+      { "repo": "PhantomCommand", "latestReviewed": "2026-07-08T00:41:39-04:00", "selected": false },
+      { "repo": "PrehistoricRush", "latestReviewed": "2026-07-08T00:49:44-04:00", "selected": false },
+      { "repo": "MyCozyIsland", "latestReviewed": "2026-07-08T01:00:43-04:00", "selected": false },
+      { "repo": "IntoTheMeadow", "latestReviewed": "2026-07-08T01:10:16-04:00", "selected": false },
+      { "repo": "ZombieOrchard", "latestReviewed": "2026-07-08T01:20:35-04:00", "selected": false },
+      { "repo": "HorrorCorridor", "latestReviewed": "2026-07-08T01:31:11-04:00", "selected": false }
     ]
   },
   "productDirection": {
     "currentRuntime": "fixed-camera anime point-and-click horror stage prototype",
-    "currentGap": "Inspection, clue grants, scene completion, transitions, route updates, and save writes mutate state directly without typed result records, stable rejection reasons, command journal, GameHost diagnostics, or DOM-free fixture replay.",
-    "recommendedDecision": "Keep StageKit visuals stable and formalize the story authority layer first, before extracting renderer, material, camera, or prop generation services.",
-    "recommendedVerticalSlice": "TheUnmappedHouse Inspection Result Contract + Scene Transition Fixture Gate"
+    "currentGap": "Story progression mutates directly from UI handlers. Inspection, clue grants, repeat inspection, room completion, interlude routing, save writes, reset, and debug projection lack typed result records, stable reasons, command journals, GameHost diagnostics, and DOM-free replay fixtures.",
+    "recommendedDecision": "Keep StageKit visuals stable and formalize story command authority before extracting renderer, material, camera, or prop generation services.",
+    "recommendedVerticalSlice": "TheUnmappedHouse Story Command Authority + Fixture Replay Gate"
   },
   "runtimeEvidence": {
     "readme": "README.md describes a fixed-camera anime point-and-click horror prototype using a reusable Stage Kit for locked-camera Three.js diorama scenes, hotspot inspection, story state, procedural stage props, anime shader materials, and WebGL post-processing.",
-    "index": "index.html mounts #stage, #story-panel, #hotspot-list, #state-debug, #hover-label, #interlude, and loads ./src/game.js as the only module route.",
-    "game": "src/game.js owns localStorage state, StageKit construction, inspectHotspot, clue grants, log, scene completion, interlude, nextScene, renderUi, and KeyR reset.",
-    "stageKit": "src/stage-kit.js owns Three.js renderer, scene, camera, raycaster, animated anime materials, post-process shader, hotspot meshes, pointer hover, click picking, resize, and animation.",
+    "index": "index.html mounts #stage, #story-panel, #hotspot-list, #state-debug, #hover-label, #interlude, and loads ./src/game.js as the module route.",
+    "game": "src/game.js owns localStorage state, StageKit construction, inspectHotspot, clue grants, log writes, scene completion, interlude, nextScene, renderUi, and KeyR reset.",
+    "stageKit": "src/stage-kit.js owns Three.js renderer, scene, camera, raycaster, lights, render target, post-process shader, hotspot meshes, pointer hover, click picking, resize, and animation.",
     "storyData": "src/story-data.js exports three scene descriptors with camera, stage, prop, post, hotspot, clue, completion, and interlude data.",
     "workflow": ".github/workflows/deploy.yml deploys the static repository root to GitHub Pages on main pushes."
   },
   "interactionLoop": {
     "currentPlayerFacing": [
       "open index.html",
-      "see a fixed-camera room diorama",
+      "read the current room text",
       "hover over invisible hotspot volumes",
       "read hover labels",
       "click hotspots or matching side-panel buttons",
@@ -66,15 +77,17 @@
       "StageKit animation loop renders scene through post-process",
       "pointer hover and click raycast against hotspot meshes",
       "inspectHotspot mutates inspected/clues/log and may open interlude",
+      "nextScene mutates sceneId/route and loads the next scene",
       "saveState persists state"
     ],
     "targetAuthority": [
-      "create InspectionCommandEnvelope",
-      "validate scene and hotspot ids",
-      "produce InspectionResult with accepted/rejected status and stable reason",
-      "reduce clue ledger and inspected state",
+      "create StoryCommandEnvelope",
+      "validate scene, route, and hotspot ids",
+      "produce StoryCommandResult with accepted/rejected status and stable reason",
+      "reduce clue ledger, inspected state, route, and log deltas",
       "produce SceneCompletionResult when room requirements are met",
       "produce SceneTransitionResult for Continue",
+      "produce SaveResult for load/save/reset",
       "journal accepted/rejected commands",
       "project StorySnapshot, StageSnapshot, SaveSnapshot, and diagnostics",
       "replay command sequences without DOM or WebGL"
@@ -92,6 +105,7 @@
     { "id": "webgl-post-process", "status": "implemented", "services": ["grain", "vignette", "chromatic aberration", "distortion", "memory scanline", "post render pass"] },
     { "id": "hotspot-picking", "status": "implemented", "services": ["invisible hotspot mesh", "pointer normalization", "raycast", "hover label", "click dispatch"] },
     { "id": "inspection-action", "status": "implicit-inline", "services": ["inspect hotspot", "repeat branch", "text result", "clue grant", "log write"] },
+    { "id": "inspection-result-authority", "status": "missing", "services": ["command envelope", "validation", "accepted result", "rejected result", "stable reason", "clue delta", "text/log delta"] },
     { "id": "clue-ledger", "status": "implemented-inline", "services": ["hasClue", "grantClues", "deduplicate clues", "completion inputs"] },
     { "id": "scene-completion", "status": "implemented-inline", "services": ["requiresToComplete check", "completion log", "interlude trigger"] },
     { "id": "interlude-transition", "status": "implemented-inline", "services": ["show interlude", "continue action", "next scene selection", "route push"] },
@@ -116,7 +130,7 @@
     "unmapped-house-notebook-debug-kit",
     "unmapped-house-static-pages-deploy-kit"
   ],
-  "candidateKits": [
+  "runtimeImpliedKits": [
     "unmapped-house-app-runtime-kit",
     "unmapped-house-story-ui-projection-kit",
     "unmapped-house-localstorage-save-kit",
@@ -130,8 +144,8 @@
     "unmapped-house-static-validation-kit"
   ],
   "nextCutKits": [
+    "unmapped-house-story-command-envelope-kit",
     "unmapped-house-inspection-action-kit",
-    "unmapped-house-inspection-command-envelope-kit",
     "unmapped-house-inspection-result-contract-kit",
     "unmapped-house-inspection-rejection-reason-kit",
     "unmapped-house-clue-ledger-reducer-kit",
@@ -148,16 +162,27 @@
     "unmapped-house-scene-completion-fixture-kit",
     "unmapped-house-stage-descriptor-validation-kit"
   ],
+  "deferredKits": [
+    "unmapped-house-inventory-memory-kit",
+    "unmapped-house-character-affinity-kit",
+    "unmapped-house-chapter-route-graph-kit",
+    "unmapped-house-audio-sting-kit",
+    "unmapped-house-controller-navigation-kit",
+    "unmapped-house-save-slot-kit",
+    "unmapped-house-storylet-authoring-kit",
+    "unmapped-house-cutscene-panel-kit"
+  ],
   "nextSlice": {
-    "name": "TheUnmappedHouse Inspection Result Contract + Scene Transition Fixture Gate",
+    "name": "TheUnmappedHouse Story Command Authority + Fixture Replay Gate",
     "preserve": ["static route", "current visuals", "story copy", "StageKit behavior", "localStorage key", "Pages workflow"],
     "buildOrder": [
-      "add StoryStateSnapshot helper",
+      "add StorySourceSnapshot helper",
       "add StageSceneSnapshot helper",
-      "add InspectionCommandEnvelope contract",
-      "add InspectionResult contract",
-      "add stable InspectionReason values",
-      "move mutation out of inspectHotspot into pure applyInspectionCommand",
+      "add StoryCommandEnvelope contract",
+      "add StoryCommandResult contract",
+      "add stable StoryCommandReason values",
+      "move inspectHotspot mutation into pure applyInspectionCommand",
+      "move nextScene mutation into pure applyContinueSceneCommand",
       "consume result records in existing UI",
       "add SceneCompletionResult",
       "add SceneTransitionResult",
@@ -169,13 +194,16 @@
   },
   "acceptanceTargets": [
     "existing browser prototype still loads from index.html",
-    "hotspot buttons and raycast clicks both produce InspectionResult records",
+    "existing authored scenes, visuals, hotspot buttons, hover labels, and raycast clicks still work",
+    "hotspot buttons and raycast clicks both produce StoryCommandResult records",
     "first-time inspection grants each clue exactly once",
     "repeat inspection returns reason=repeat_inspection and does not duplicate clues",
     "unknown hotspot returns accepted=false with reason=unknown_hotspot",
+    "continue before completion returns accepted=false with reason=scene_incomplete",
     "room completion produces SceneCompletionResult",
-    "continue action produces SceneTransitionResult",
+    "continue after completion produces SceneTransitionResult",
     "RouteJournal captures inspection and transition events",
+    "SaveResult wraps load/save/reset paths",
     "window.GameHost.getState exposes story, stage, save, journal, latestResult, and fixture diagnostics",
     "DOM-free fixtures cover first-room completion, repeat inspection, unknown hotspot, transition, full route, save/load, and reset"
   ],
