@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Last aligned:** `2026-07-08T01:50:19-04:00`
+**Last aligned:** `2026-07-08T02:40:00-04:00`
 
 ## Purpose
 
@@ -16,6 +16,12 @@ Use it before touching implementation code.
 
 The player inspects hotspots in locked-camera diorama scenes, collects clue state, completes each room when required clues are found, and moves through interludes as the house becomes mapped.
 
+## Current documentation state
+
+The root `.agent/` folder now exists and has the required audit surfaces.
+
+The latest follow-up pass confirms the repo is tracked in the central ledger, but it is still only partially represented in central summary rollups because `TheUnmappedHouse` is recorded as direct readback context rather than part of the status-summary publish-game rollup.
+
 ## First files to read
 
 ```txt
@@ -26,6 +32,14 @@ The player inspects hotspots in locked-camera diorama scenes, collects clue stat
 .agent/architecture-audit/domain-service-breakdown.md
 .agent/render-audit/stage-render-audit.md
 .agent/interaction-audit/hotspot-loop-audit.md
+.agent/central-ledger-audit/publish-ledger-comparison.md
+.agent/trackers/2026-07-08T02-40-00-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-08T02-40-00-04-00.md
+```
+
+Earlier root-agent materialization pass:
+
+```txt
 .agent/trackers/2026-07-08T01-50-19-04-00/project-breakdown.md
 .agent/turn-ledger/2026-07-08T01-50-19-04-00.md
 ```
