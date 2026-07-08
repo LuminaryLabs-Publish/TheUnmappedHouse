@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-08T02:40:00-04:00`
+**Updated:** `2026-07-08T03:42:00-04:00`
 
 ## Current validation status
 
@@ -14,19 +14,20 @@ Local build run: no, connector-only documentation/audit pass
 Browser smoke run: no, connector-only documentation/audit pass
 GitHub Pages workflow inspected: yes
 Full LuminaryLabs-Publish repo list compared to central ledger state: yes
-Chosen repo root .agent exists after prior pass: yes
+Chosen repo root .agent exists before this pass: yes
 ```
 
 ## Source checks performed
 
 - [x] Confirmed `README.md` describes a fixed-camera anime point-and-click horror prototype.
+- [x] Confirmed `index.html` loads `./src/game.js` and declares the stage, story panel, hotspot list, notebook debug panel, hover label, and interlude overlay.
 - [x] Confirmed `src/game.js` owns state, localStorage, hotspot inspection, clue grants, scene completion, interlude progression, UI projection, and reset.
 - [x] Confirmed `src/stage-kit.js` owns Three.js renderer setup, camera, raycaster, lights, render target, post-processing, scene loading, pointer picking, resize, and animation.
 - [x] Confirmed `src/story-data.js` contains three scene descriptors with camera, stage, props, hotspots, clue grants, completion requirements, and interludes.
-- [x] Confirmed `.github/workflows/deploy.yml` deploys the static site from `main` to GitHub Pages.
-- [x] Confirmed root `.agent/START_HERE.md` now exists and points to current audit/tracker material.
+- [x] Confirmed `.github/workflows/deploy.yml` deploys the static site from `main` to GitHub Pages and supports manual dispatch.
+- [x] Confirmed root `.agent/START_HERE.md` exists and points to current audit/tracker material.
 - [x] Confirmed central `repo-ledger/LuminaryLabs-Publish/TheUnmappedHouse.md` exists.
-- [x] Confirmed central latest summary currently records `TheUnmappedHouse` as direct readback context but not yet as status-summary publish-game rollup inclusion.
+- [x] Confirmed central status reporting still needs to promote `TheUnmappedHouse` from direct readback context into the normal publish-game rollup.
 
 ## Validation not performed
 
