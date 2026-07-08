@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-08T01:50:19-04:00`
+**Updated:** `2026-07-08T02:40:00-04:00`
 
 ## Next safe ledge
 
@@ -13,6 +13,19 @@ Do not expand story content first.
 Do not rewrite the renderer first.
 
 Do not change the route, localStorage key, scene copy, or Pages workflow unless required by validation.
+
+## Central documentation cleanup
+
+Before treating `TheUnmappedHouse` as fully covered by the Publish repo breakdown loop, update central summary/rollup state so the repo is no longer only an observed direct-readback note.
+
+```txt
+central ledger file exists: yes
+repo-local .agent exists: yes
+central internal change log exists: yes
+status-summary publish-game rollup inclusion: still pending
+```
+
+This central-rollup cleanup should not block story authority implementation, but it should be tracked so future selection passes do not repeatedly choose this repo only because central summary state lags direct ledger state.
 
 ## Build checklist
 
@@ -67,6 +80,10 @@ unmapped-house
 │  ├─ stage-postprocess-kit
 │  ├─ hotspot-raycast-kit
 │  └─ hover-label-kit
+├─ ledger-readback
+│  ├─ repo-local-agent-state-kit
+│  ├─ central-repo-ledger-readback-kit
+│  └─ status-summary-rollup-gap-kit
 └─ fixtures
    ├─ dom-free-fixture-kit
    ├─ hotspot-fixture-matrix-kit
@@ -81,7 +98,10 @@ unmapped-house
 - [ ] Do not add new rooms until fixture replay proves existing progression.
 - [ ] Do not make StageKit depend on story-specific clue names.
 - [ ] Do not hide failed commands by silently no-oping.
+- [ ] Do not let central summary lag cause duplicate repo breakdown selection forever.
 
 ## Success condition
 
 A fixture script can replay story commands without DOM, Three.js, browser input, or localStorage and produce the same scene/clue/route result that the live UI expects.
+
+A central ledger pass also promotes `TheUnmappedHouse` from direct readback note to the normal publish-game rollup when the central status schema is next refreshed.
