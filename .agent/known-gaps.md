@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T07-48-29-04-00`
+**Updated:** `2026-07-09T08-02-33-04-00`
 
 ## Architecture gaps
 
@@ -12,7 +12,7 @@
 - There is no source-owned story command envelope for inspection, continuation, load, save, projection, readback, ledger readback, or reset.
 - There is no explicit `StoryPreflight` that validates source descriptors, loaded state, command shape, current scene, target hotspot, completion requirement, and target scene before mutation.
 - Repeat hotspot inspection is a direct UI branch, not a typed repeated-inspection result.
-- Unknown hotspot, incomplete continue, malformed save, and terminal prototype states do not have stable reason codes.
+- Unknown hotspot, incomplete continue, malformed save, central-ledger mismatch, and terminal prototype states do not have stable reason codes.
 - The clue ledger mutates directly through `grantClues`.
 - Scene completion is calculated directly in the host runtime without a `SceneCompletionResult`.
 - Interlude progression mutates route state directly through `nextScene`.
@@ -53,6 +53,7 @@
 
 ## Central tracking gaps
 
+- Central tracking was stale relative to repo-local `.agent` state at selection time.
 - Central tracking has no source-owned `CentralLedgerReadback` fixture row.
 - The central ledger can be manually updated before repo-local fixtures prove that referenced `.agent` paths and source facts are current.
 - The next runtime pass should emit an explicit `central_ledger_snapshot_created` fixture row so the central ledger can be validated against repo-local source paths.
