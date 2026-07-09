@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T05-20-42-04-00`
+**Updated:** `2026-07-09T07-48-29-04-00`
 
 ## Current validation status
 
@@ -66,6 +66,7 @@ window.GameHost.getState().story returns additive sourceManifest/sourceSnapshot/
 ```txt
 source_manifest_created accepted
 source_snapshot_created accepted
+stage_snapshot_created accepted
 initial_state accepted
 load_empty_state accepted
 load_malformed_state rejected or normalized with reason
