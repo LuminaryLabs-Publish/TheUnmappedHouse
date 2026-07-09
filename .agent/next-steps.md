@@ -2,11 +2,11 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T16-50-00-04-00`
+**Updated:** `2026-07-09T16-58-52-04-00`
 
 ## Next safe ledge
 
-Build the story fixture readback ledger refresh and browser adapter gate.
+Build the story fixture readback central catch-up and browser adapter gate.
 
 Do not expand story content first.
 
@@ -17,15 +17,15 @@ Do not change the route, localStorage key, story copy, StageKit picking behavior
 ## Current ledge name
 
 ```txt
-TheUnmappedHouse Story Fixture Readback Ledger Refresh + Browser Adapter Gate
+TheUnmappedHouse Story Fixture Readback Central Catch-up + Browser Adapter Gate
 ```
 
 ## Implementation checklist
 
-- Add `src/story-source-manifest.js` with product id, route id, save key, story version, scene ids, hotspot ids, command ids, and expected public route.
-- Add `src/story-snapshots.js` with source, state, and stage-scene snapshot helpers.
+- Add `src/story-source-manifest.js` with product id, route id, save key, story version, scene ids, hotspot ids, command ids, expected public route, repo-local ledger pointers, and central ledger pointers.
+- Add `src/story-snapshots.js` with source, state, stage-scene, repo-local ledger, and central ledger snapshot helpers.
 - Add `src/story-commands.js` with command envelopes for load, inspect_hotspot, continue_scene, reset, save, project, readback, repo_ledger_readback, and central_ledger_readback.
-- Add `src/story-preflight.js` with descriptor, state, current scene, target hotspot, completion, continuation, and malformed-save checks.
+- Add `src/story-preflight.js` with descriptor, state, current scene, target hotspot, completion, continuation, malformed-save, repo-ledger, and central-ledger checks.
 - Add `src/story-results.js` with canonical status and reason codes.
 - Add `src/story-reducer.js` to return command results without touching DOM, StageKit, timers, or localStorage.
 - Add `src/story-projections.js` for story panel, hotspot buttons, debug JSON, save intent, interlude intent, and StageKit load intent.
