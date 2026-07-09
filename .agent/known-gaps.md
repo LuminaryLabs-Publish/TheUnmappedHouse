@@ -2,12 +2,13 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-08T21-00-12-04-00`
+**Updated:** `2026-07-08T23-08-29-04-00`
 
 ## Architecture gaps
 
 - Story authority is embedded in `src/game.js` UI handlers.
 - Module-level `state` and `currentScene` are mutated directly.
+- There is no `StorySourceManifest` that defines product id, route id, save key, scene ids, command ids, source version, and public entry route.
 - There is no source-owned story command envelope for inspection, continuation, load, save, projection, or reset.
 - There is no explicit `StoryPreflight` that validates source descriptors, loaded state, command shape, current scene, and target hotspot before mutation.
 - There are no stable accepted/rejected/no-mutation/terminal result records.
@@ -31,7 +32,7 @@
 - `setTimeout(showInterlude, 450)` hides completion timing from reducer fixtures.
 - There is no `StoryBrowserAdapterPlan` saying what the browser should update after each result.
 - There is no host adapter boundary where the DOM host consumes `StoryProjection`, `SaveProjection`, `InterludeProjection`, and `StageProjection` without owning story rules.
-- There is no additive `window.GameHost.getState()` story diagnostics surface.
+- There is no additive `window.GameHost.getState().story` diagnostics surface.
 
 ## Render and projection gaps
 
@@ -54,7 +55,7 @@
 
 - `npm run check` only runs syntax checks.
 - There is no `scripts/validate-story-authority.mjs` fixture.
-- There is no fixture row for first inspect, repeat inspect, unknown hotspot, incomplete continue, full route, save/load, reset, source validation, stage snapshot, story projection, interlude projection, save projection, stage projection, browser adapter plan, or GameHost projection.
+- There is no fixture row for source manifest, first inspect, repeat inspect, unknown hotspot, incomplete continue, full route, save/load, reset, source validation, stage snapshot, story projection, interlude projection, save projection, stage projection, browser adapter plan, or GameHost projection.
 
 ## Do not solve by
 
