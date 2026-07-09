@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T02-02-03-04-00`
+**Updated:** `2026-07-09T02-11-07-04-00`
 
 ## Current validation status
 
@@ -27,7 +27,6 @@ Pushed to main: yes
 
 ```txt
 package.json read
-index.html read
 src/game.js read
 src/stage-kit.js read
 src/story-data.js read
@@ -35,7 +34,7 @@ central repo ledger read
 repo-local .agent root docs read
 repo-local kit registry read
 accessible LuminaryLabs-Publish repo list read
-sampled root .agent state for current repo candidates read
+sampled root .agent state for selected repo read
 ```
 
 ## Required next validation
@@ -93,7 +92,7 @@ stage_projection accepted
 browser_adapter_plan accepted
 browser_adapter_readback accepted
 GameHost_projection accepted
-central_ledger_snapshot ledger_readback
+central_ledger_snapshot accepted
 ```
 
 ## Validation boundaries
