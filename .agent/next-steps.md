@@ -2,11 +2,11 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-08T18-51-55-04-00`
+**Updated:** `2026-07-08T21-00-12-04-00`
 
 ## Next safe ledge
 
-Build the story preflight result fixture contract and Stage projection readback gate.
+Build the story browser adapter projection map and fixture contract.
 
 Do not expand story content first.
 
@@ -17,7 +17,7 @@ Do not change the route, localStorage key, scene copy, StageKit picking behavior
 ## Current ledge name
 
 ```txt
-TheUnmappedHouse Story Preflight Result Fixture Contract + Stage Projection Readback Gate
+TheUnmappedHouse Story Browser Adapter Projection Map + Fixture Contract
 ```
 
 ## Build order
@@ -37,13 +37,14 @@ TheUnmappedHouse Story Preflight Result Fixture Contract + Stage Projection Read
 12. Add src/story-authority/save-projection.js.
 13. Add src/story-authority/interlude-projection.js.
 14. Add src/story-authority/stage-projection.js.
-15. Add src/story-authority/gamehost-story-diagnostics.js.
-16. Add src/story-authority/story-fixture-cases.js.
-17. Add scripts/validate-story-authority.mjs.
-18. Add npm script for the fixture and include it in npm run check or a dedicated smoke command.
-19. Adapt src/game.js so DOM buttons and StageKit callbacks dispatch StoryCommandEnvelope objects.
-20. Adapt src/game.js so text, hotspot buttons, notebook, interlude, StageKit load calls, localStorage, and debug output consume projections instead of owning story rules.
-21. Add additive window.GameHost.getState() diagnostics without removing the visible debug panel.
+15. Add src/story-authority/story-browser-adapter-plan.js.
+16. Add src/story-authority/gamehost-story-diagnostics.js.
+17. Add src/story-authority/story-fixture-cases.js.
+18. Add scripts/validate-story-authority.mjs.
+19. Add npm script for the fixture and include it in npm run check or a dedicated smoke command.
+20. Adapt src/game.js so DOM buttons and StageKit callbacks dispatch StoryCommandEnvelope objects.
+21. Adapt src/game.js so text, hotspot buttons, notebook, interlude, StageKit load calls, localStorage, and debug output consume projections instead of owning story rules.
+22. Add additive window.GameHost.getState() diagnostics without removing the visible debug panel.
 ```
 
 ## Command types
@@ -58,6 +59,7 @@ story.project
 story.validate_source
 story.snapshot_stage
 story.preflight
+story.browser_adapter_plan
 ```
 
 ## Required result statuses
@@ -94,6 +96,7 @@ reset_requested
 projection_updated
 stage_snapshot_created
 stage_projection_requested
+browser_adapter_plan_created
 ```
 
 ## Fixture rows required
@@ -122,6 +125,7 @@ story_projection
 save_projection
 interlude_projection
 stage_projection
+browser_adapter_plan
 GameHost_projection
 ```
 
@@ -138,11 +142,12 @@ UI consumes result/projection records instead of owning story authority
 localStorage writes consume SaveProjection objects
 interlude opening consumes InterludeProjection instead of implicit setTimeout-only control flow
 StageKit loadScene calls consume StageProjection objects instead of host-owned transition rules
+StoryBrowserAdapterPlan explains DOM text, hotspot list, debug panel, save, interlude, stage, and host updates
 window.GameHost.getState is additive and read-only
 ```
 
 ## Stop condition
 
-Stop after story source preflight, reducer, host adapter, stage projection, and fixture proof are stable.
+Stop after story source preflight, reducer, host adapter, stage projection, browser adapter plan, and fixture proof are stable.
 
-Defer deeper StageKit extraction, new rooms, new art, audio, inventory, and browser automation until the fixtures explain every accepted, rejected, no-mutation, transition, save, reset, projection, interlude, stage-projection, prototype-complete, and GameHost path.
+Defer deeper StageKit extraction, new rooms, new art, audio, inventory, and browser automation until the fixtures explain every accepted, rejected, no-mutation, transition, save, reset, projection, interlude, stage-projection, browser-adapter, prototype-complete, and GameHost path.
