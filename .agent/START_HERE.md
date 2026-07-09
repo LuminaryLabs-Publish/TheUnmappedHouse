@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Last aligned:** `2026-07-08T21-00-12-04-00`
+**Last aligned:** `2026-07-08T23-08-29-04-00`
 
 ## Purpose
 
@@ -18,23 +18,23 @@ No checked non-Cavalry Publish repo was fully new, absent from the central ledge
 
 `LuminaryLabs-Publish/TheCavalryOfRome` remains excluded by standing rule.
 
-`TheUnmappedHouse` was selected as the oldest eligible fallback by sampled root/central alignment. Its previous root alignment was `2026-07-08T18-51-55-04-00`, older than the other current sampled non-excluded repos after recent catch-up passes.
+`TheUnmappedHouse` was selected as the oldest eligible fallback by sampled root/central alignment. Its previous root alignment was `2026-07-08T21-00-12-04-00`, older than the other current sampled non-excluded repos.
 
-This pass keeps the story-authority direction and tightens the next implementation into a browser adapter projection map: `src/game.js` should become a consumer of story results and projections, not the owner of inspection, transition, save, reset, and debug rules.
+This pass keeps the story-authority direction and tightens the next implementation into a source manifest plus adapter consumer fixture gate: `src/game.js` should become a consumer of story results and projections, not the owner of source fallback, inspection, transition, save, reset, and debug rules.
 
 ## Publish repos checked
 
 ```txt
-LuminaryLabs-Publish/IntoTheMeadow       tracked / root .agent present / latest sampled alignment 2026-07-08T20-21-59-04-00
-LuminaryLabs-Publish/HorrorCorridor      tracked / root .agent present / latest sampled alignment 2026-07-08T20-38-28-04-00
-LuminaryLabs-Publish/AetherVale          tracked / root .agent present / latest sampled alignment 2026-07-08T18-58-10-04-00
-LuminaryLabs-Publish/ZombieOrchard       tracked / root .agent present / latest sampled alignment 2026-07-08T19-21-15-04-00
-LuminaryLabs-Publish/TheUnmappedHouse    selected / oldest sampled alignment 2026-07-08T18-51-55-04-00
-LuminaryLabs-Publish/MyCozyIsland        tracked / root .agent present / latest sampled alignment 2026-07-08T19-50-20-04-00
-LuminaryLabs-Publish/TheOpenAbove        tracked / root .agent present / latest sampled alignment 2026-07-08T20-01-23-04-00
-LuminaryLabs-Publish/PhantomCommand      tracked / root .agent present / latest sampled alignment 2026-07-08T20-52-00-04-00
+LuminaryLabs-Publish/IntoTheMeadow       tracked / root .agent present / latest sampled alignment 2026-07-08T22-38-17-04-00
+LuminaryLabs-Publish/HorrorCorridor      tracked / root .agent present / latest sampled alignment 2026-07-08T22-51-43-04-00
+LuminaryLabs-Publish/AetherVale          tracked / root .agent present / latest sampled alignment 2026-07-08T21-31-35-04-00
+LuminaryLabs-Publish/ZombieOrchard       tracked / root .agent present / latest sampled alignment 2026-07-08T21-18-39-04-00
+LuminaryLabs-Publish/TheUnmappedHouse    selected / oldest eligible sampled alignment 2026-07-08T21-00-12-04-00
+LuminaryLabs-Publish/MyCozyIsland        tracked / root .agent present / latest sampled alignment 2026-07-08T21-58-34-04-00
+LuminaryLabs-Publish/TheOpenAbove        tracked / root .agent present / latest sampled alignment 2026-07-08T22-19-38-04-00
+LuminaryLabs-Publish/PhantomCommand      tracked / root .agent present / latest sampled alignment 2026-07-08T22-58-02-04-00
 LuminaryLabs-Publish/TheCavalryOfRome    excluded by rule
-LuminaryLabs-Publish/PrehistoricRush     tracked / root .agent present / latest sampled alignment 2026-07-08T19-30-31-04-00
+LuminaryLabs-Publish/PrehistoricRush     tracked / root .agent present / latest sampled alignment 2026-07-08T21-40-45-04-00 / central readback previously recorded 2026-07-08T21-50-56-04-00
 ```
 
 ## Current product read
@@ -59,6 +59,7 @@ open index.html
   -> src/game.js imports StageKit plus story data
   -> DOM nodes are captured at module scope
   -> localStorage is shallow-merged into createInitialState()
+  -> currentScene is resolved from scenes or falls back to scenes[0]
   -> StageKit is constructed with inspectHotspot as onHotspot callback
   -> StageKit loads current scene descriptors
   -> hotspot side-panel button or raycast click calls inspectHotspot(hotspot)
@@ -73,6 +74,7 @@ open index.html
 
 ```txt
 UI event or StageKit callback
+  -> StorySourceManifest
   -> StoryCommandEnvelope
   -> StorySourceSnapshot
   -> StoryStateSnapshot
@@ -97,14 +99,14 @@ UI event or StageKit callback
 .agent/known-gaps.md
 .agent/next-steps.md
 .agent/validation.md
-.agent/architecture-audit/2026-07-08T21-00-12-04-00-story-adapter-projection-dsk-map.md
-.agent/render-audit/2026-07-08T21-00-12-04-00-stage-snapshot-adapter-readback.md
-.agent/interaction-audit/2026-07-08T21-00-12-04-00-hotspot-to-command-adapter-map.md
-.agent/gameplay-audit/2026-07-08T21-00-12-04-00-route-save-projection-loop.md
-.agent/story-authority-audit/2026-07-08T21-00-12-04-00-browser-adapter-fixture-contract.md
-.agent/deploy-audit/2026-07-08T21-00-12-04-00-syntax-fixture-validation-gate.md
-.agent/trackers/2026-07-08T21-00-12-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-08T21-00-12-04-00.md
+.agent/architecture-audit/2026-07-08T23-08-29-04-00-story-source-manifest-dsk-map.md
+.agent/render-audit/2026-07-08T23-08-29-04-00-stage-projection-readback-fixture-map.md
+.agent/interaction-audit/2026-07-08T23-08-29-04-00-hotspot-command-source-manifest.md
+.agent/gameplay-audit/2026-07-08T23-08-29-04-00-story-command-journal-loop.md
+.agent/story-authority-audit/2026-07-08T23-08-29-04-00-source-manifest-adapter-consumer-gate.md
+.agent/deploy-audit/2026-07-08T23-08-29-04-00-npm-check-fixture-wire-map.md
+.agent/trackers/2026-07-08T23-08-29-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-08T23-08-29-04-00.md
 .agent/kit-registry.json
 ```
 
@@ -124,6 +126,7 @@ src/aspect-frame.js
 ## Source files to add next
 
 ```txt
+src/story-authority/story-source-manifest.js
 src/story-authority/story-source-snapshot.js
 src/story-authority/story-state-snapshot.js
 src/story-authority/stage-scene-snapshot.js
@@ -147,12 +150,12 @@ scripts/validate-story-authority.mjs
 
 Keep `index.html -> src/game.js`, `SAVE_KEY`, story copy, StageKit visuals, fixed 16:9 frame behavior, and current Pages deployment stable.
 
-Do not expand story content, inventory, audio, new rooms, or renderer internals until story preflight, command/result authority, projections, browser adapter plan, host diagnostics, and fixture rows are stable.
+Do not expand story content, inventory, audio, new rooms, or renderer internals until story source manifest, preflight, command/result authority, projections, browser adapter plan, host diagnostics, and fixture rows are stable.
 
 ## Current next safe ledge
 
 ```txt
-TheUnmappedHouse Story Browser Adapter Projection Map + Fixture Contract
+TheUnmappedHouse Story Source Manifest + Adapter Consumer Fixture Gate
 ```
 
 Stop that ledge when fixture rows prove source validation, first inspect, repeat inspect, unknown hotspot, incomplete continue, completed room, scene transition, prototype complete, save/load, reset, stage snapshot, story projection, save projection, interlude projection, stage projection, browser adapter plan, and additive GameHost diagnostics without DOM, WebGL, localStorage, setTimeout, or StageKit raycasting.
