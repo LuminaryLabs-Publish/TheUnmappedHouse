@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Audit timestamp:** `2026-07-09T16-50-00-04-00`
+**Audit timestamp:** `2026-07-09T16-58-52-04-00`
 
 ## Summary
 
@@ -10,7 +10,7 @@
 
 This pass compared the accessible `LuminaryLabs-Publish` repo list against central `LuminaryLabs-Dev/LuminaryLabs` repo-ledger state. No non-Cavalry repo was fully new, ledger-absent, missing root `.agent`, recently added but undocumented, or otherwise undocumented.
 
-`TheUnmappedHouse` was selected as the oldest eligible documented-selection fallback because central tracking was still at `2026-07-09T13-38-15-04-00`.
+`TheUnmappedHouse` was selected as the oldest eligible documented-selection fallback because central tracking was still at `2026-07-09T13-38-15-04-00`, while repo-local `.agent` state had already advanced to `2026-07-09T16-50-00-04-00`.
 
 ## Full repo-list comparison result
 
@@ -24,7 +24,7 @@ LuminaryLabs-Publish/PrehistoricRush      tracked / root .agent present / centra
 LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T16-34-14-04-00
 LuminaryLabs-Publish/IntoTheMeadow        tracked / root .agent present / central latest 2026-07-09T15-39-08-04-00
 LuminaryLabs-Publish/MyCozyIsland         tracked / root .agent present / central latest 2026-07-09T14-39-07-04-00
-LuminaryLabs-Publish/TheUnmappedHouse     selected / oldest eligible fallback / central latest 2026-07-09T13-38-15-04-00
+LuminaryLabs-Publish/TheUnmappedHouse     selected / central latest 2026-07-09T13-38-15-04-00 / repo-local latest 2026-07-09T16-50-00-04-00
 ```
 
 ## Source read
@@ -177,5 +177,5 @@ planned/dom-free-story-fixture-kit
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Fixture Readback Ledger Refresh + Browser Adapter Gate
+TheUnmappedHouse Story Fixture Readback Central Catch-up + Browser Adapter Gate
 ```
