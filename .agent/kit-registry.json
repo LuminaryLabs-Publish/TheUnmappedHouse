@@ -1,21 +1,21 @@
 {
-  "schemaVersion": "1.16.5",
+  "schemaVersion": "1.16.6",
   "repo": "LuminaryLabs-Publish/TheUnmappedHouse",
-  "generatedAt": "2026-07-09T13-29-43-04-00",
+  "generatedAt": "2026-07-09T13-38-15-04-00",
   "branchTarget": "main",
-  "status": "story-authority-readback-central-ledger-fixture-gate-planned",
-  "latestTracker": ".agent/trackers/2026-07-09T13-29-43-04-00/project-breakdown.md",
-  "previousTracker": ".agent/trackers/2026-07-09T11-00-39-04-00/project-breakdown.md",
-  "latestTurnLedger": ".agent/turn-ledger/2026-07-09T13-29-43-04-00.md",
-  "latestArchitectureAudit": ".agent/architecture-audit/2026-07-09T13-29-43-04-00-story-authority-readback-dsk-map.md",
-  "latestRenderAudit": ".agent/render-audit/2026-07-09T13-29-43-04-00-stagekit-consumer-readback-contract.md",
-  "latestInteractionAudit": ".agent/interaction-audit/2026-07-09T13-29-43-04-00-hotspot-preflight-result-contract.md",
-  "latestGameplayAudit": ".agent/gameplay-audit/2026-07-09T13-29-43-04-00-story-route-save-adapter-loop.md",
-  "latestStoryAuthorityAudit": ".agent/story-authority-audit/2026-07-09T13-29-43-04-00-dom-free-story-fixture-contract.md",
-  "latestDeployAudit": ".agent/deploy-audit/2026-07-09T13-29-43-04-00-check-script-fixture-gate.md",
+  "status": "story-authority-central-sync-browser-adapter-fixture-gate-planned",
+  "latestTracker": ".agent/trackers/2026-07-09T13-38-15-04-00/project-breakdown.md",
+  "previousTracker": ".agent/trackers/2026-07-09T13-29-43-04-00/project-breakdown.md",
+  "latestTurnLedger": ".agent/turn-ledger/2026-07-09T13-38-15-04-00.md",
+  "latestArchitectureAudit": ".agent/architecture-audit/2026-07-09T13-38-15-04-00-story-authority-central-sync-dsk-map.md",
+  "latestRenderAudit": ".agent/render-audit/2026-07-09T13-38-15-04-00-stagekit-adapter-readback-map.md",
+  "latestInteractionAudit": ".agent/interaction-audit/2026-07-09T13-38-15-04-00-hotspot-command-result-adapter-contract.md",
+  "latestGameplayAudit": ".agent/gameplay-audit/2026-07-09T13-38-15-04-00-story-route-save-replay-loop.md",
+  "latestStoryAuthorityAudit": ".agent/story-authority-audit/2026-07-09T13-38-15-04-00-source-command-result-fixture-contract.md",
+  "latestDeployAudit": ".agent/deploy-audit/2026-07-09T13-38-15-04-00-check-script-fixture-map.md",
   "selection": {
     "selectedRepo": "LuminaryLabs-Publish/TheUnmappedHouse",
-    "reason": "No checked non-Cavalry LuminaryLabs-Publish repo was new, central-ledger absent, missing sampled root .agent state, recently added but undocumented, or otherwise undocumented. TheUnmappedHouse was selected as the oldest eligible central-ledger fallback after newer same-day ledger catch-ups elsewhere.",
+    "reason": "No checked non-Cavalry LuminaryLabs-Publish repo was new, central-ledger absent, missing sampled root .agent state, recently added but undocumented, or otherwise undocumented. TheUnmappedHouse was selected as the oldest eligible central-ledger fallback and central-sync repair target.",
     "excludedRepos": [
       {
         "repo": "LuminaryLabs-Publish/TheCavalryOfRome",
@@ -23,23 +23,23 @@
       }
     ],
     "publishReposObserved": [
+      "IntoTheMeadow",
       "HorrorCorridor",
       "AetherVale",
-      "TheOpenAbove",
-      "TheCavalryOfRome",
-      "PhantomCommand",
-      "PrehistoricRush",
       "ZombieOrchard",
-      "IntoTheMeadow",
+      "TheUnmappedHouse",
       "MyCozyIsland",
-      "TheUnmappedHouse"
+      "TheOpenAbove",
+      "PhantomCommand",
+      "TheCavalryOfRome",
+      "PrehistoricRush"
     ]
   },
   "productDirection": {
     "currentRuntime": "fixed-camera anime point-and-click horror prototype",
     "currentGap": "Story progression, source fallback, save intent, interlude intent, reset, debug output, completion logic, source validation, browser adapter decisions, adapter readback, repo-local ledger readback, and central ledger readback are not yet source-owned contracts.",
     "recommendedDecision": "Keep StageKit visuals stable and cut story source manifest plus preflight/command/result/projection/readback authority into pure files before renderer extraction, new rooms, audio, inventory, or browser-only automation.",
-    "recommendedVerticalSlice": "TheUnmappedHouse Story Authority Readback + Central Ledger Fixture Gate"
+    "recommendedVerticalSlice": "TheUnmappedHouse Story Authority Central Sync + Browser Adapter Fixture Gate"
   },
   "interactionLoop": {
     "currentSource": [
@@ -62,7 +62,7 @@
       "StageSceneSnapshot",
       "StoryPreflight",
       "StoryCommandResult",
-      "StoryEventRecord[]",
+      "StoryEventRecord",
       "StoryProjection",
       "SaveProjection",
       "InterludeProjection",
@@ -72,59 +72,35 @@
       "GameHostStoryDiagnostics",
       "RepoLocalLedgerReadback",
       "CentralLedgerReadback",
-      "DOM-free fixture rows"
+      "DomFreeStoryFixtureRows"
     ]
   },
   "domains": {
-    "implemented": [
+    "active": [
       "static-page-shell",
-      "static-pages-deploy",
+      "story-source-descriptors",
       "browser-app-runtime",
-      "story-source",
-      "story-scene-descriptor",
-      "story-hotspot-descriptor",
       "story-state",
-      "inspected-hotspot-state",
-      "localstorage-save",
+      "localstorage-save-state",
+      "scene-route-state",
+      "clue-ledger",
       "notebook-log",
-      "route-state",
+      "inspected-hotspot-state",
       "interlude-overlay",
-      "stage-render-host",
       "fixed-aspect-frame",
-      "fixed-camera-composition",
-      "scene-descriptor",
+      "fixed-camera-stage-render",
+      "scene-descriptor-rendering",
       "stage-layer-descriptor",
       "stage-prop-descriptor",
       "stage-hotspot-volume",
-      "hotspot-raycast-picking",
       "hover-label-projection",
+      "raycast-picking",
       "anime-material-shader",
-      "webgl-post-process",
-      "debug-json-projection"
-    ],
-    "missingNext": [
-      "story-source-manifest",
-      "story-source-snapshot",
-      "story-source-preflight",
-      "story-state-snapshot",
-      "stage-scene-snapshot",
-      "story-command-envelope",
-      "story-command-validation",
-      "story-command-reason-authority",
-      "story-command-result-authority",
-      "story-event-records",
-      "story-result-reducer",
-      "story-projection",
-      "save-projection",
-      "interlude-projection",
-      "stage-projection",
-      "story-browser-adapter-plan",
-      "browser-adapter-readback",
-      "story-host-adapter",
-      "GameHost-story-diagnostics",
-      "repo-local-ledger-readback",
-      "central-ledger-readback",
-      "fixture-replay"
+      "post-process-shader",
+      "browser-debug-projection",
+      "static-deploy-check-script",
+      "repo-local-agent-ledger",
+      "central-ledger-readback"
     ]
   },
   "kits": {
@@ -139,7 +115,8 @@
       "story-data-kit",
       "browser-story-runtime-kit",
       "localstorage-save-kit",
-      "debug-json-projection-kit"
+      "debug-json-projection-kit",
+      "repo-local-agent-ledger-kit"
     ],
     "nextCut": [
       "story-source-manifest-kit",
@@ -162,15 +139,6 @@
       "repo-local-ledger-readback-kit",
       "central-ledger-readback-kit",
       "dom-free-story-fixture-kit"
-    ]
-  },
-  "validation": {
-    "runtimeSourceChanged": false,
-    "localValidationRun": false,
-    "browserValidationRun": false,
-    "nextCommands": [
-      "npm run check",
-      "node scripts/validate-story-authority.mjs"
     ]
   }
 }
