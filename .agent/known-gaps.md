@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T05-20-42-04-00`
+**Updated:** `2026-07-09T07-48-29-04-00`
 
 ## Architecture gaps
 
@@ -12,6 +12,7 @@
 - There is no source-owned story command envelope for inspection, continuation, load, save, projection, readback, ledger readback, or reset.
 - There is no explicit `StoryPreflight` that validates source descriptors, loaded state, command shape, current scene, target hotspot, completion requirement, and target scene before mutation.
 - Repeat hotspot inspection is a direct UI branch, not a typed repeated-inspection result.
+- Unknown hotspot, incomplete continue, malformed save, and terminal prototype states do not have stable reason codes.
 - The clue ledger mutates directly through `grantClues`.
 - Scene completion is calculated directly in the host runtime without a `SceneCompletionResult`.
 - Interlude progression mutates route state directly through `nextScene`.
