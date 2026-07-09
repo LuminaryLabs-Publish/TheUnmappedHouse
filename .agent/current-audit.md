@@ -2,15 +2,15 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Audit timestamp:** `2026-07-09T13-29-43-04-00`
+**Audit timestamp:** `2026-07-09T13-38-15-04-00`
 
 ## Summary
 
 `TheUnmappedHouse` remains a compact fixed-camera anime point-and-click horror prototype with a stable visual route and a browser-bound story authority bottleneck.
 
-This pass compared the accessible `LuminaryLabs-Publish` repo list against central `LuminaryLabs-Dev/LuminaryLabs` repo-ledger state and sampled root `.agent` state. No non-Cavalry repo was fully new, ledger-absent, missing root `.agent`, recently added but undocumented, or otherwise undocumented.
+This pass compared the accessible `LuminaryLabs-Publish` repo list against central `LuminaryLabs-Dev/LuminaryLabs` repo-ledger state and sampled root `.agent/START_HERE.md` state. No non-Cavalry repo was fully new, ledger-absent, missing root `.agent`, recently added but undocumented, or otherwise undocumented.
 
-`TheUnmappedHouse` was selected because it had the oldest central-ledger timestamp among checked eligible repos after newer same-day catch-ups for ZombieOrchard, PhantomCommand, HorrorCorridor, IntoTheMeadow, and PrehistoricRush.
+`TheUnmappedHouse` was selected because it was the oldest eligible central-ledger fallback and because repo-local `.agent` state had advanced beyond central tracking.
 
 ## Full repo-list comparison result
 
@@ -19,7 +19,7 @@ LuminaryLabs-Publish/IntoTheMeadow        tracked / root .agent present / centra
 LuminaryLabs-Publish/HorrorCorridor       tracked / root .agent present / central latest 2026-07-09T12-30-09-04-00
 LuminaryLabs-Publish/AetherVale           tracked / root .agent present / central latest 2026-07-09T11-30-50-04-00
 LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T13-18-48-04-00
-LuminaryLabs-Publish/TheUnmappedHouse     selected / oldest central ledger fallback / central latest 2026-07-09T11-00-39-04-00
+LuminaryLabs-Publish/TheUnmappedHouse     selected / oldest eligible central-ledger fallback / repo-local state newer than central
 LuminaryLabs-Publish/MyCozyIsland         tracked / root .agent present / central latest 2026-07-09T11-39-50-04-00
 LuminaryLabs-Publish/TheOpenAbove         tracked / root .agent present / central latest 2026-07-09T11-50-08-04-00
 LuminaryLabs-Publish/PhantomCommand       tracked / root .agent present / central latest 2026-07-09T13-00-37-04-00
@@ -55,7 +55,7 @@ The render surface is not the immediate problem. `StageKit` already owns the fix
 
 The source-authority problem remains concentrated in `src/game.js`: it is simultaneously command dispatcher, reducer, browser adapter, localStorage adapter, route adapter, interlude scheduler, debug projector, StageKit consumer, and save writer.
 
-The next implementation should add source-owned story command/result/projection records and adapter readback before any route expansion.
+The next implementation should add source-owned story command/result/projection records and browser adapter readback before any route expansion.
 
 ## Current interaction loop
 
@@ -177,5 +177,5 @@ planned/dom-free-story-fixture-kit
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Authority Readback + Central Ledger Fixture Gate
+TheUnmappedHouse Story Authority Central Sync + Browser Adapter Fixture Gate
 ```
