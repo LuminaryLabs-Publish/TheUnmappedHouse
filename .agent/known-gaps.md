@@ -2,12 +2,13 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T16-50-00-04-00`
+**Updated:** `2026-07-09T16-58-52-04-00`
 
 ## Repo-local and central documentation gaps
 
 - There is no source-owned `RepoLocalLedgerReadback` fixture row proving root `.agent` pointers match actual timestamped files.
 - There is no source-owned `CentralLedgerReadback` fixture row proving central ledger pointers match repo-local state.
+- Central tracking had lagged repo-local `.agent` state, so ledger catch-up remains a recurring documentation risk until executable readback exists.
 - Ledger readback is still documentation-only instead of an executable fixture contract.
 
 ## Architecture gaps
@@ -42,7 +43,7 @@
 - Completion is only `requiresToComplete.every(hasClue)` and has no reason code matrix.
 - Scene routing assumes array order and has no source-owned route contract.
 - `localStorage` shallow merge can produce malformed loaded state without source validation.
-- Save intent is immediate side effect rather than a projection emitted by the reducer.
+- Save intent is an immediate side effect rather than a projection emitted by the reducer.
 - Interlude intent is delayed through `setTimeout()` rather than a deterministic projection.
 - Reset uses `KeyR` as direct browser behavior without a command/result contract.
 
