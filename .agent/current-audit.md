@@ -2,29 +2,29 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Audit timestamp:** `2026-07-09T02-11-07-04-00`
+**Audit timestamp:** `2026-07-09T05-20-42-04-00`
 
 ## Summary
 
-`TheUnmappedHouse` remains a compact fixed-camera anime point-and-click horror prototype.
+`TheUnmappedHouse` remains a compact fixed-camera anime point-and-click horror prototype with a stable visual route and a browser-bound story authority bottleneck.
 
-The accessible `LuminaryLabs-Publish` repo list was compared against central `LuminaryLabs-Dev/LuminaryLabs` tracking and sampled repo-local `.agent/START_HERE.md` state. No checked non-Cavalry repo was fully new, absent from tracking, recently added but undocumented, missing sampled root `.agent` state, or otherwise undocumented.
+The current pass compared the accessible `LuminaryLabs-Publish` repo list against central `LuminaryLabs-Dev/LuminaryLabs` repo-ledger state and sampled root `.agent` state. No non-Cavalry repo was fully new, ledger-absent, missing root `.agent`, recently added but undocumented, or otherwise undocumented.
 
-`TheUnmappedHouse` was selected because repo-local `.agent` state had advanced to `2026-07-09T02-02-03-04-00`, while the central ledger still showed `2026-07-09T01-50-17-04-00`. This pass preserves the story-authority direction and makes the consumer-freeze plus DOM-free fixture gate the explicit next proof target.
+`TheUnmappedHouse` was selected as the oldest eligible central-ledger fallback. The next implementation should preserve the visible route and cut the story command/result/browser-adapter proof boundary before adding content or visual systems.
 
 ## Full repo-list comparison result
 
 ```txt
-LuminaryLabs-Publish/HorrorCorridor      tracked / root .agent present / central latest 2026-07-09T01-09-24-04-00
-LuminaryLabs-Publish/AetherVale          tracked / root .agent present / central latest 2026-07-09T00-00-41-04-00
-LuminaryLabs-Publish/TheOpenAbove        tracked / root .agent present / central latest 2026-07-09T00-40-20-04-00
-LuminaryLabs-Publish/TheCavalryOfRome    excluded by rule
-LuminaryLabs-Publish/PhantomCommand      tracked / root .agent present / central latest 2026-07-09T01-28-10-04-00
-LuminaryLabs-Publish/PrehistoricRush     tracked / root .agent present / central latest 2026-07-09T00-09-22-04-00
-LuminaryLabs-Publish/ZombieOrchard       tracked / root .agent present / central latest 2026-07-08T23-40-55-04-00
-LuminaryLabs-Publish/IntoTheMeadow       tracked / root .agent present / central latest 2026-07-09T00-50-00-04-00
-LuminaryLabs-Publish/MyCozyIsland        tracked / root .agent present / central latest 2026-07-09T00-20-08-04-00
-LuminaryLabs-Publish/TheUnmappedHouse    selected / repo-local latest 2026-07-09T02-02-03-04-00 newer than central 2026-07-09T01-50-17-04-00
+LuminaryLabs-Publish/IntoTheMeadow        tracked / root .agent present / central latest 2026-07-09T03-50-12-04-00
+LuminaryLabs-Publish/HorrorCorridor       tracked / root .agent present / central latest 2026-07-09T04-30-54-04-00
+LuminaryLabs-Publish/AetherVale           tracked / root .agent present / central latest 2026-07-09T02-50-39-04-00
+LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T05-01-51-04-00
+LuminaryLabs-Publish/TheUnmappedHouse     selected / oldest eligible central latest 2026-07-09T02-11-07-04-00
+LuminaryLabs-Publish/MyCozyIsland         tracked / root .agent present / central latest 2026-07-09T02-31-41-04-00
+LuminaryLabs-Publish/TheOpenAbove         tracked / root .agent present / central latest 2026-07-09T03-29-29-04-00
+LuminaryLabs-Publish/PhantomCommand       tracked / root .agent present / central latest 2026-07-09T04-50-00-04-00
+LuminaryLabs-Publish/TheCavalryOfRome     excluded by rule
+LuminaryLabs-Publish/PrehistoricRush      tracked / root .agent present / central latest 2026-07-09T03-10-05-04-00
 ```
 
 ## Source read
@@ -34,22 +34,22 @@ package.json:
   exposes npm run serve and npm run check; check is syntax-only across src/aspect-frame.js, src/game.js, src/stage-kit.js, and src/story-data.js.
 
 src/game.js:
-  owns DOM bindings, SAVE_KEY, loadState, saveState, module-level state/currentScene, StageKit construction, inspection, clue grant, completion, interlude, next-scene routing, UI projection, debug JSON, reset, and save writes.
+  imports StageKit and story-data; captures DOM nodes at module scope; owns SAVE_KEY, load/save, state/currentScene, inspectHotspot, nextScene, renderUi, interlude, reset, and debug JSON.
 
 src/stage-kit.js:
-  owns Three.js import, renderer, fixed 16:9 frame integration, render target, post-process pass, anime material, scene loading, layers, props, hotspot volumes, pointer/raycast picking, hover label, resize, and animation.
+  imports Three.js from CDN; owns renderer, fixed 16:9 aspect frame integration, render target, post-process shader pass, anime material, scene loading, layer/prop/hotspot construction, raycast picking, hover label, resize, and animation.
 
 src/story-data.js:
-  owns gameTitle, three ordered scene descriptors, camera descriptors, stage layers, props, post settings, hotspot ids, hotspot grants, completion requirements, and interlude text.
+  owns gameTitle, three scene descriptors, camera descriptors, stage layers, props, post-process settings, hotspot IDs, hotspot grants, completion requirements, and interlude text.
 ```
 
 ## Main finding
 
-The render surface should remain stable. `StageKit` already owns the fixed 16:9 display, shader material, post-process, hotspot picking, and scene descriptor loading.
+The render surface is not the immediate problem. `StageKit` already owns the fixed design frame, camera descriptor consumption, shader material, post-process pass, hotspot volumes, hover label, and raycast picking.
 
-The source-authority issue is still in `src/game.js`: it is simultaneously command dispatcher, reducer, browser adapter, save adapter, route adapter, interlude scheduler, debug projector, and StageKit consumer.
+The source-authority problem is still concentrated in `src/game.js`: it is simultaneously command dispatcher, reducer, browser adapter, localStorage adapter, route adapter, interlude scheduler, debug projector, StageKit consumer, and save writer.
 
-The highest-value next pass is not a story expansion, visual rewrite, renderer extraction, inventory pass, or audio pass. It is a pure story-authority layer with `StorySourceManifest`, command/result records, projection objects, browser-adapter plans, browser-adapter readback, GameHost diagnostics, and central-ledger readback.
+The highest-value next pass is a source-owned story-adapter fixture layer with stable command envelopes, preflight, command results, projections, browser adapter plans, adapter readback, GameHost diagnostics, and central-ledger readback.
 
 ## Current interaction loop
 
@@ -62,71 +62,92 @@ open index.html
   -> continue button calls nextScene()
   -> nextScene mutates scene id, route, interlude DOM, StageKit scene, UI, and save state
   -> KeyR clears localStorage and reloads
-  -> debug panel emits an ad hoc JSON projection
+  -> debug panel emits ad hoc JSON
 ```
 
-## Target loop
+## Target authority loop
 
 ```txt
 UI event or StageKit callback
-  -> create StorySourceManifest
-  -> create StoryCommandEnvelope
-  -> create StorySourceSnapshot
-  -> create StoryStateSnapshot
-  -> create StageSceneSnapshot
-  -> run StoryPreflight
-  -> applyStoryCommand
-  -> return StoryCommandResult
-  -> emit StoryEventRecord[]
-  -> derive StoryProjection
-  -> derive SaveProjection
-  -> derive InterludeProjection
-  -> derive StageProjection
-  -> derive StoryBrowserAdapterPlan
-  -> derive BrowserAdapterReadback
-  -> project GameHostStoryDiagnostics
-  -> emit CentralLedgerReadback
-  -> verify DOM-free fixture rows
+  -> StorySourceManifest
+  -> StoryCommandEnvelope
+  -> StorySourceSnapshot
+  -> StoryStateSnapshot
+  -> StageSceneSnapshot
+  -> StoryPreflight
+  -> StoryCommandResult
+  -> StoryEventRecord[]
+  -> StoryProjection
+  -> SaveProjection
+  -> InterludeProjection
+  -> StageProjection
+  -> StoryBrowserAdapterPlan
+  -> BrowserAdapterReadback
+  -> GameHostStoryDiagnostics
+  -> CentralLedgerReadback
+  -> DOM-free fixture rows
 ```
 
 ## Domains in use
 
 ```txt
-implemented:
-  static-page-shell, static-pages-deploy, browser-app-runtime, story-source, story-state, localstorage-save, notebook-log, route-state, interlude-overlay, stage-render-host, fixed-aspect-frame, fixed-camera-composition, scene-descriptor, stage-layer-descriptor, stage-prop-descriptor, stage-hotspot-volume, hotspot-raycast-picking, hover-label-projection, anime-material-shader, webgl-post-process, debug-json-projection.
-
-missing-next:
-  story-source-manifest, story-source-snapshot, story-source-preflight, story-state-snapshot, stage-scene-snapshot, story-command-envelope, story-command-validation, story-command-reason-authority, story-command-result-authority, story-event-records, story-result-reducer, story-projection, save-projection, interlude-projection, stage-projection, story-browser-adapter-plan, browser-adapter-readback, story-host-adapter, GameHost-story-diagnostics, central-ledger-readback, fixture-replay, fixture-result-summary.
+static page shell
+story source descriptors
+browser app runtime
+story state
+localStorage save state
+scene route state
+clue ledger
+notebook log
+interlude overlay
+fixed aspect frame
+fixed camera stage render
+scene descriptor rendering
+stage layer descriptors
+stage prop descriptors
+hotspot volumes
+hover label projection
+raycast picking
+anime material shader
+post-process shader
+browser debug projection
+static deploy/check script
 ```
 
-## Services in use
+## Services the kits offer
 
 ```txt
-implemented:
-  createInitialState, loadState, saveState, hasClue, grantClues, writeLog, sceneComplete, inspectHotspot, showInterlude, nextScene, renderUi, KeyR reset, computeAspectFrame, applyAspectFrame, StageKit renderer/camera/raycaster/lights/render-target setup, StageKit animeMaterial, StageKit loadScene, StageKit createLayer, StageKit createProp, StageKit createHotspot, StageKit handlePointer, StageKit pick, StageKit clickHotspot, StageKit resize, StageKit animate, story scene descriptors, package syntax check.
-
-needed next:
-  createStorySourceManifest, createStorySourceSnapshot, validateStorySourceSnapshot, createGrantableClueIndex, createSceneCompletionIndex, createStoryPreflight, createInitialStoryState, normalizeLoadedStoryState, createStoryStateSnapshot, createStageSceneSnapshot, createStoryCommandEnvelope, validateStoryCommand, createStoryCommandReason, createStoryCommandResult, createStoryEventRecord, applyStoryCommand, applyInspectionCommand, applyContinueSceneCommand, applySaveCommand, applyLoadCommand, applyResetCommand, projectStoryUiState, projectSaveIntent, projectInterludeIntent, projectStageIntent, createStoryBrowserAdapterPlan, readBackBrowserAdapterPlan, projectGameHostStoryDiagnostics, createCentralLedgerReadback, runStoryFixtureSequence, summarizeStoryFixtureResults.
+StageKit: WebGL renderer, fixed 16:9 viewport, camera setup, shader materials, scene load, layer/prop/hotspot construction, pointer hover, click picking, and animation.
+AspectFrame: deterministic 16:9 frame calculation and DOM frame application.
+Story data: scene/hotspot/clue/interlude descriptor source.
+Game runtime: current browser-bound command handling, mutation, save, route, interlude, UI, debug, and reset service.
+Next story-authority kits: source manifest, source snapshots, preflight, command envelope, command result, projections, browser adapter plan, readback, diagnostics, and fixtures.
 ```
 
-## Kits
+## Kits identified
 
 ```txt
-implemented or implied:
-  unmapped-house-static-shell-kit, unmapped-house-static-pages-deploy-kit, unmapped-house-browser-runtime-kit, unmapped-house-story-data-kit, unmapped-house-story-runtime-kit, unmapped-house-story-state-save-kit, unmapped-house-localstorage-save-kit, unmapped-house-clue-ledger-kit, unmapped-house-scene-completion-kit, unmapped-house-interlude-overlay-kit, unmapped-house-route-state-kit, unmapped-house-notebook-debug-kit, unmapped-house-aspect-frame-kit, unmapped-house-stage-kit, unmapped-house-fixed-camera-diorama-kit, unmapped-house-stage-layer-kit, unmapped-house-stage-prop-kit, unmapped-house-stage-hotspot-volume-kit, unmapped-house-hotspot-raycast-kit, unmapped-house-hover-label-kit, unmapped-house-anime-material-shader-kit, unmapped-house-stage-postprocess-kit, unmapped-house-static-validation-kit, unmapped-house-agent-state-kit, unmapped-house-central-ledger-readback-kit.
-
-next-cut:
-  unmapped-house-story-source-manifest-kit, unmapped-house-story-source-snapshot-kit, unmapped-house-story-source-preflight-kit, unmapped-house-story-state-snapshot-kit, unmapped-house-stage-scene-snapshot-kit, unmapped-house-story-command-envelope-kit, unmapped-house-command-validation-kit, unmapped-house-story-command-result-kit, unmapped-house-story-command-reason-kit, unmapped-house-story-reducer-kit, unmapped-house-story-event-record-kit, unmapped-house-inspection-action-kit, unmapped-house-inspection-result-contract-kit, unmapped-house-clue-ledger-reducer-kit, unmapped-house-scene-completion-result-kit, unmapped-house-scene-transition-result-kit, unmapped-house-prototype-complete-result-kit, unmapped-house-save-result-kit, unmapped-house-save-projection-kit, unmapped-house-interlude-projection-kit, unmapped-house-stage-projection-kit, unmapped-house-browser-adapter-plan-kit, unmapped-house-browser-adapter-readback-kit, unmapped-house-route-state-journal-kit, unmapped-house-command-journal-kit, unmapped-house-story-ui-projection-kit, unmapped-house-gamehost-diagnostics-kit, unmapped-house-central-ledger-readback-row-kit, unmapped-house-dom-free-fixture-kit, unmapped-house-hotspot-fixture-matrix-kit, unmapped-house-scene-completion-fixture-kit, unmapped-house-save-load-fixture-kit, unmapped-house-stage-descriptor-validation-kit, unmapped-house-fixture-summary-projection-kit.
+implemented/static-page-shell-kit
+implemented/aspect-frame-kit
+implemented/stage-render-kit
+implemented/anime-material-kit
+implemented/post-process-kit
+implemented/hotspot-picking-kit
+implemented/story-data-kit
+implemented/browser-story-runtime-kit
+implemented/localstorage-save-kit
+implemented/debug-json-projection-kit
+planned/story-source-manifest-kit
+planned/story-command-envelope-kit
+planned/story-preflight-kit
+planned/story-command-result-kit
+planned/story-projection-kit
+planned/save-projection-kit
+planned/interlude-projection-kit
+planned/stage-projection-kit
+planned/browser-adapter-plan-kit
+planned/browser-adapter-readback-kit
+planned/gamehost-story-diagnostics-kit
+planned/central-ledger-readback-kit
+planned/dom-free-story-fixture-kit
 ```
-
-## Current next safe ledge
-
-```txt
-TheUnmappedHouse Story Authority Consumer Freeze + DOM-free Fixture Gate
-```
-
-## Validation note
-
-No runtime source files changed in this pass.
-
-No local `npm run check`, browser smoke, static server, fixture script, or GitHub Pages validation was run.
