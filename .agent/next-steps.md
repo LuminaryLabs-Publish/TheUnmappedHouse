@@ -2,11 +2,11 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T01-50-17-04-00`
+**Updated:** `2026-07-09T02-02-03-04-00`
 
 ## Next safe ledge
 
-Build the story adapter central readback and fixture freshness gate.
+Build the story authority central ledger splice plus browser adapter readback fixture gate.
 
 Do not expand story content first.
 
@@ -17,7 +17,7 @@ Do not change the route, localStorage key, scene copy, StageKit picking behavior
 ## Current ledge name
 
 ```txt
-TheUnmappedHouse Story Adapter Central Readback + Fixture Freshness Gate
+TheUnmappedHouse Story Authority Central Ledger Splice + Browser Adapter Readback Fixture Gate
 ```
 
 ## Build order
@@ -44,12 +44,13 @@ TheUnmappedHouse Story Adapter Central Readback + Fixture Freshness Gate
 19. Add src/story-authority/central-ledger-readback.js.
 20. Add src/story-authority/story-fixture-cases.js.
 21. Add scripts/validate-story-authority.mjs.
-22. Add npm script for the fixture and include it in npm run check or a dedicated smoke command after direct fixture execution is stable.
-23. Adapt src/game.js so DOM buttons and StageKit callbacks dispatch StoryCommandEnvelope objects.
-24. Adapt src/game.js so text, hotspot buttons, notebook, interlude, StageKit load calls, localStorage, and debug output consume StoryBrowserAdapterPlan records instead of owning story rules.
-25. Add additive window.GameHost.getState().story diagnostics without removing the visible debug panel.
-26. Emit central_ledger_snapshot / CentralLedgerReadback fixture rows.
-27. Update central ledger only after repo-local fixture/readback facts are current.
+22. Run the fixture directly before package script integration.
+23. Add npm script for the fixture and include it in npm run check only after direct fixture execution is stable.
+24. Adapt src/game.js so DOM buttons and StageKit callbacks dispatch StoryCommandEnvelope objects.
+25. Adapt src/game.js so text, hotspot buttons, notebook, interlude, StageKit load calls, localStorage, and debug output consume StoryBrowserAdapterPlan records instead of owning story rules.
+26. Add additive window.GameHost.getState().story diagnostics without removing the visible debug panel.
+27. Emit central_ledger_snapshot / CentralLedgerReadback fixture rows.
+28. Update central ledger only after repo-local fixture/readback facts are current.
 ```
 
 ## Command types
@@ -167,6 +168,7 @@ StoryBrowserAdapterPlan explains DOM text, hotspot list, debug panel, save, inte
 BrowserAdapterReadback reports what the host consumed and what it intentionally left unchanged
 window.GameHost.getState is additive and read-only
 central LuminaryLabs ledger points to the latest repo-local tracker, audits, and turn-ledger paths
+central_ledger_snapshot fixture row matches repo-local and central paths
 ```
 
 ## Stop condition
