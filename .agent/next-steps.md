@@ -2,11 +2,11 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T02-02-03-04-00`
+**Updated:** `2026-07-09T02-11-07-04-00`
 
 ## Next safe ledge
 
-Build the story authority central ledger splice plus browser adapter readback fixture gate.
+Build the story authority consumer freeze and DOM-free fixture gate.
 
 Do not expand story content first.
 
@@ -17,7 +17,7 @@ Do not change the route, localStorage key, scene copy, StageKit picking behavior
 ## Current ledge name
 
 ```txt
-TheUnmappedHouse Story Authority Central Ledger Splice + Browser Adapter Readback Fixture Gate
+TheUnmappedHouse Story Authority Consumer Freeze + DOM-free Fixture Gate
 ```
 
 ## Build order
@@ -44,8 +44,8 @@ TheUnmappedHouse Story Authority Central Ledger Splice + Browser Adapter Readbac
 19. Add src/story-authority/central-ledger-readback.js.
 20. Add src/story-authority/story-fixture-cases.js.
 21. Add scripts/validate-story-authority.mjs.
-22. Run the fixture directly before package script integration.
-23. Add npm script for the fixture and include it in npm run check only after direct fixture execution is stable.
+22. Run the fixture directly.
+23. Add the fixture to package validation after it is stable.
 24. Adapt src/game.js so DOM buttons and StageKit callbacks dispatch StoryCommandEnvelope objects.
 25. Adapt src/game.js so text, hotspot buttons, notebook, interlude, StageKit load calls, localStorage, and debug output consume StoryBrowserAdapterPlan records instead of owning story rules.
 26. Add additive window.GameHost.getState().story diagnostics without removing the visible debug panel.
