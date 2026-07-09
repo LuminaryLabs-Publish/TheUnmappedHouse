@@ -2,11 +2,11 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-08T23-08-29-04-00`
+**Updated:** `2026-07-08T23-19-33-04-00`
 
 ## Next safe ledge
 
-Build the story source manifest and adapter consumer fixture gate.
+Build the story browser adapter readback and central-ledger catch-up fixture gate.
 
 Do not expand story content first.
 
@@ -17,7 +17,7 @@ Do not change the route, localStorage key, scene copy, StageKit picking behavior
 ## Current ledge name
 
 ```txt
-TheUnmappedHouse Story Source Manifest + Adapter Consumer Fixture Gate
+TheUnmappedHouse Story Browser Adapter Readback + Central Ledger Catch-up Fixture Gate
 ```
 
 ## Build order
@@ -39,13 +39,15 @@ TheUnmappedHouse Story Source Manifest + Adapter Consumer Fixture Gate
 14. Add src/story-authority/interlude-projection.js.
 15. Add src/story-authority/stage-projection.js.
 16. Add src/story-authority/story-browser-adapter-plan.js.
-17. Add src/story-authority/gamehost-story-diagnostics.js.
-18. Add src/story-authority/story-fixture-cases.js.
-19. Add scripts/validate-story-authority.mjs.
-20. Add npm script for the fixture and include it in npm run check or a dedicated smoke command after direct fixture execution is stable.
-21. Adapt src/game.js so DOM buttons and StageKit callbacks dispatch StoryCommandEnvelope objects.
-22. Adapt src/game.js so text, hotspot buttons, notebook, interlude, StageKit load calls, localStorage, and debug output consume StoryBrowserAdapterPlan records instead of owning story rules.
-23. Add additive window.GameHost.getState().story diagnostics without removing the visible debug panel.
+17. Add src/story-authority/browser-adapter-readback.js.
+18. Add src/story-authority/gamehost-story-diagnostics.js.
+19. Add src/story-authority/story-fixture-cases.js.
+20. Add scripts/validate-story-authority.mjs.
+21. Add npm script for the fixture and include it in npm run check or a dedicated smoke command after direct fixture execution is stable.
+22. Adapt src/game.js so DOM buttons and StageKit callbacks dispatch StoryCommandEnvelope objects.
+23. Adapt src/game.js so text, hotspot buttons, notebook, interlude, StageKit load calls, localStorage, and debug output consume StoryBrowserAdapterPlan records instead of owning story rules.
+24. Add additive window.GameHost.getState().story diagnostics without removing the visible debug panel.
+25. Update central ledger only after repo-local fixture/readback facts are current.
 ```
 
 ## Command types
@@ -61,6 +63,8 @@ story.validate_source
 story.snapshot_stage
 story.preflight
 story.browser_adapter_plan
+story.browser_adapter_readback
+story.gamehost_projection
 ```
 
 ## Required result statuses
@@ -70,6 +74,8 @@ accepted
 rejected
 no_mutation
 terminal
+projected
+readback
 ```
 
 ## Required reason families
@@ -100,6 +106,9 @@ projection_updated
 stage_snapshot_created
 stage_projection_requested
 browser_adapter_plan_created
+browser_adapter_readback_created
+gamehost_projection_created
+central_ledger_caught_up
 ```
 
 ## Fixture rows required
@@ -131,7 +140,9 @@ save_projection
 interlude_projection
 stage_projection
 browser_adapter_plan
+browser_adapter_readback
 GameHost_projection
+central_ledger_snapshot
 ```
 
 ## Acceptance criteria
@@ -143,16 +154,18 @@ current public route still boots through index.html -> src/game.js
 current scenes and copy remain unchanged
 current SAVE_KEY remains unchanged
 StageKit behavior remains visible-equivalent
-UI consumes result/projection records instead of owning story authority
+UI consumes result/projection/readback records instead of owning story authority
 localStorage writes consume SaveProjection objects
 interlude opening consumes InterludeProjection instead of implicit setTimeout-only control flow
 StageKit loadScene calls consume StageProjection objects instead of host-owned transition rules
 StoryBrowserAdapterPlan explains DOM text, hotspot list, debug panel, save, interlude, stage, and host updates
+BrowserAdapterReadback reports what the host consumed and what it intentionally left unchanged
 window.GameHost.getState is additive and read-only
+central LuminaryLabs ledger points to the latest repo-local tracker, audits, and turn-ledger paths
 ```
 
 ## Stop condition
 
-Stop after story source manifest, source preflight, reducer, host adapter, stage projection, browser adapter plan, and fixture proof are stable.
+Stop after story source manifest, source preflight, reducer, host adapter, stage projection, browser adapter plan, browser adapter readback, and fixture proof are stable.
 
-Defer deeper StageKit extraction, new rooms, new art, audio, inventory, and browser automation until the fixtures explain every accepted, rejected, no-mutation, transition, save, reset, projection, interlude, stage-projection, browser-adapter, prototype-complete, and GameHost path.
+Defer deeper StageKit extraction, new rooms, new art, audio, inventory, and browser automation until the fixtures explain every accepted, rejected, no-mutation, transition, save, reset, projection, interlude, stage-projection, browser-adapter, adapter-readback, prototype-complete, and GameHost path.
