@@ -2,11 +2,11 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T10-50-00-04-00`
+**Updated:** `2026-07-09T10-54-04-04-00`
 
 ## Next safe ledge
 
-Build the story command result ledger and adapter readback fixture gate.
+Build the repo-local ledger repair and story authority fixture gate.
 
 Do not expand story content first.
 
@@ -17,7 +17,7 @@ Do not change the route, localStorage key, story copy, StageKit picking behavior
 ## Current ledge name
 
 ```txt
-TheUnmappedHouse Story Command Result Ledger + Adapter Readback Fixture Gate
+TheUnmappedHouse Repo-Local Ledger Repair + Story Authority Fixture Gate
 ```
 
 ## Build order
@@ -33,15 +33,15 @@ TheUnmappedHouse Story Command Result Ledger + Adapter Readback Fixture Gate
 8. Add src/story-authority/story-preflight.js.
 9. Add src/story-authority/story-command-result.js.
 10. Add src/story-authority/story-event-record.js.
-11. Add src/story-authority/story-command-ledger.js.
-12. Add src/story-authority/story-reducer.js.
-13. Add src/story-authority/story-projection.js.
-14. Add src/story-authority/save-projection.js.
-15. Add src/story-authority/interlude-projection.js.
-16. Add src/story-authority/stage-projection.js.
-17. Add src/story-authority/story-browser-adapter-plan.js.
-18. Add src/story-authority/browser-adapter-readback.js.
-19. Add src/story-authority/gamehost-story-diagnostics.js.
+11. Add src/story-authority/story-reducer.js.
+12. Add src/story-authority/story-projection.js.
+13. Add src/story-authority/save-projection.js.
+14. Add src/story-authority/interlude-projection.js.
+15. Add src/story-authority/stage-projection.js.
+16. Add src/story-authority/story-browser-adapter-plan.js.
+17. Add src/story-authority/browser-adapter-readback.js.
+18. Add src/story-authority/gamehost-story-diagnostics.js.
+19. Add src/story-authority/repo-local-ledger-readback.js.
 20. Add src/story-authority/central-ledger-readback.js.
 21. Add src/story-authority/story-fixture-cases.js.
 22. Add scripts/validate-story-authority.mjs.
@@ -50,7 +50,7 @@ TheUnmappedHouse Story Command Result Ledger + Adapter Readback Fixture Gate
 25. Adapt src/game.js so DOM buttons and StageKit callbacks dispatch StoryCommandEnvelope objects.
 26. Adapt src/game.js so text, hotspot buttons, notebook, interlude, StageKit load calls, localStorage, and debug output consume StoryBrowserAdapterPlan records.
 27. Add additive window.GameHost.getState().story diagnostics without removing the visible debug panel.
-28. Emit BrowserAdapterReadback and CentralLedgerReadback fixture rows.
+28. Emit BrowserAdapterReadback, RepoLocalLedgerReadback, and CentralLedgerReadback fixture rows.
 29. Update central ledger only after repo-local fixture/readback facts are current.
 ```
 
@@ -58,7 +58,6 @@ TheUnmappedHouse Story Command Result Ledger + Adapter Readback Fixture Gate
 
 ```txt
 story.inspect_hotspot
-story.repeat_hotspot
 story.continue_scene
 story.load_state
 story.save_state
@@ -70,6 +69,7 @@ story.preflight
 story.browser_adapter_plan
 story.browser_adapter_readback
 story.gamehost_projection
+story.repo_local_ledger_readback
 story.central_ledger_readback
 ```
 
@@ -82,6 +82,7 @@ no_mutation
 terminal
 readback
 normalized
+repo_local_sync
 central_sync
 ```
 
@@ -112,11 +113,10 @@ stage_projection_created
 browser_adapter_plan_created
 browser_adapter_readback_created
 gamehost_story_projection_created
+repo_local_ledger_snapshot_created
 central_ledger_snapshot_created
 ```
 
 ## Acceptance rule
 
 The next implementation is complete only when a DOM-free script can prove the same story command/result/projection rows that the browser adapter consumes.
-
-Browser work should become an adapter of source-owned records, not the place where story rules live.
