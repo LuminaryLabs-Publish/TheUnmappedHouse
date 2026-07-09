@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Last aligned:** `2026-07-09T01-50-17-04-00`
+**Last aligned:** `2026-07-09T02-02-03-04-00`
 
 ## Purpose
 
@@ -18,7 +18,7 @@ No checked non-Cavalry Publish repo was fully new, absent from the central ledge
 
 `LuminaryLabs-Publish/TheCavalryOfRome` remains excluded by standing rule.
 
-`TheUnmappedHouse` was selected because its repo-local `.agent` state had advanced to `2026-07-09T01-40-49-04-00` while the central `LuminaryLabs-Dev/LuminaryLabs` ledger still pointed at `2026-07-08T23-19-33-04-00`.
+`TheUnmappedHouse` was selected because repo-local `.agent` state had already advanced to `2026-07-09T01-50-17-04-00` while the central `LuminaryLabs-Dev/LuminaryLabs` ledger still pointed at `2026-07-08T23-19-33-04-00` before this run.
 
 This pass refreshes the repo-local breakdown and central ledger around the same implementation ledge: story authority must move behind command/result/projection/readback contracts before new content or renderer work.
 
@@ -29,7 +29,7 @@ LuminaryLabs-Publish/IntoTheMeadow       tracked / root .agent present / central
 LuminaryLabs-Publish/HorrorCorridor      tracked / root .agent present / central latest 2026-07-09T01-09-24-04-00
 LuminaryLabs-Publish/AetherVale          tracked / root .agent present / central latest 2026-07-09T00-00-41-04-00
 LuminaryLabs-Publish/ZombieOrchard       tracked / root .agent present / central latest 2026-07-08T23-40-55-04-00
-LuminaryLabs-Publish/TheUnmappedHouse    selected / repo-local latest 2026-07-09T01-40-49-04-00 newer than central 2026-07-08T23-19-33-04-00
+LuminaryLabs-Publish/TheUnmappedHouse    selected / repo-local latest 2026-07-09T01-50-17-04-00 newer than central 2026-07-08T23-19-33-04-00
 LuminaryLabs-Publish/MyCozyIsland        tracked / root .agent present / central latest 2026-07-09T00-20-08-04-00
 LuminaryLabs-Publish/TheOpenAbove        tracked / root .agent present / central latest 2026-07-09T00-40-20-04-00
 LuminaryLabs-Publish/PhantomCommand      tracked / root .agent present / central latest 2026-07-09T01-28-10-04-00
@@ -100,14 +100,14 @@ UI event or StageKit callback
 .agent/known-gaps.md
 .agent/next-steps.md
 .agent/validation.md
-.agent/architecture-audit/2026-07-09T01-50-17-04-00-story-adapter-central-readback-dsk-map.md
-.agent/render-audit/2026-07-09T01-50-17-04-00-stage-projection-readback-freeze.md
-.agent/interaction-audit/2026-07-09T01-50-17-04-00-hotspot-command-adapter-boundary.md
-.agent/gameplay-audit/2026-07-09T01-50-17-04-00-story-result-route-loop.md
-.agent/story-authority-audit/2026-07-09T01-50-17-04-00-source-preflight-adapter-readback-contract.md
-.agent/deploy-audit/2026-07-09T01-50-17-04-00-npm-check-fixture-wire-map.md
-.agent/trackers/2026-07-09T01-50-17-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-09T01-50-17-04-00.md
+.agent/architecture-audit/2026-07-09T02-02-03-04-00-story-authority-central-ledger-splice-dsk-breakdown.md
+.agent/render-audit/2026-07-09T02-02-03-04-00-stage-gamehost-readback-consumer-freeze.md
+.agent/interaction-audit/2026-07-09T02-02-03-04-00-inspection-command-result-plan.md
+.agent/gameplay-audit/2026-07-09T02-02-03-04-00-route-save-fixture-loop.md
+.agent/story-authority-audit/2026-07-09T02-02-03-04-00-central-ledger-splice-readback-contract.md
+.agent/deploy-audit/2026-07-09T02-02-03-04-00-npm-check-story-fixture-gate.md
+.agent/trackers/2026-07-09T02-02-03-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-09T02-02-03-04-00.md
 .agent/kit-registry.json
 ```
 
@@ -121,42 +121,10 @@ src/game.js
 src/stage-kit.js
 src/story-data.js
 src/aspect-frame.js
-.github/workflows/deploy-pages.yml
 ```
-
-## Source files to add next
-
-```txt
-src/story-authority/story-source-manifest.js
-src/story-authority/story-source-snapshot.js
-src/story-authority/story-state-snapshot.js
-src/story-authority/stage-scene-snapshot.js
-src/story-authority/story-command-envelope.js
-src/story-authority/story-command-reasons.js
-src/story-authority/story-command-result.js
-src/story-authority/story-event-record.js
-src/story-authority/story-preflight.js
-src/story-authority/story-reducer.js
-src/story-authority/story-projection.js
-src/story-authority/save-projection.js
-src/story-authority/interlude-projection.js
-src/story-authority/stage-projection.js
-src/story-authority/story-browser-adapter-plan.js
-src/story-authority/browser-adapter-readback.js
-src/story-authority/gamehost-story-diagnostics.js
-src/story-authority/central-ledger-readback.js
-src/story-authority/story-fixture-cases.js
-scripts/validate-story-authority.mjs
-```
-
-## Main rule
-
-Keep `index.html -> src/game.js`, `SAVE_KEY`, story copy, StageKit visuals, fixed 16:9 frame behavior, and current Pages deployment stable.
-
-Do not expand story content, inventory, audio, new rooms, or renderer internals until story source manifest, preflight, command/result authority, projections, browser adapter plan, adapter readback, host diagnostics, central-readback row, and fixture rows are stable.
 
 ## Current next safe ledge
 
 ```txt
-TheUnmappedHouse Story Adapter Central Readback + Fixture Freshness Gate
+TheUnmappedHouse Story Authority Central Ledger Splice + Browser Adapter Readback Fixture Gate
 ```
