@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Last aligned:** `2026-07-09T16-50-00-04-00`
+**Last aligned:** `2026-07-09T16-58-52-04-00`
 
 ## Purpose
 
@@ -18,7 +18,7 @@ No checked non-Cavalry repo was new, absent from central tracking, missing sampl
 
 `LuminaryLabs-Publish/TheCavalryOfRome` remains excluded.
 
-`TheUnmappedHouse` was selected as the oldest eligible documented-selection fallback. Central tracking still pointed at `2026-07-09T13-38-15-04-00`, making this the next correct ledger/readback refresh target.
+`TheUnmappedHouse` was selected as the oldest eligible documented-selection fallback and central readback catch-up target. Central tracking still pointed at `2026-07-09T13-38-15-04-00` while repo-local `.agent` state had already advanced to `2026-07-09T16-50-00-04-00`.
 
 ## Publish repos checked
 
@@ -32,7 +32,7 @@ LuminaryLabs-Publish/PrehistoricRush      tracked / root .agent present / centra
 LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T16-34-14-04-00
 LuminaryLabs-Publish/IntoTheMeadow        tracked / root .agent present / central latest 2026-07-09T15-39-08-04-00
 LuminaryLabs-Publish/MyCozyIsland         tracked / root .agent present / central latest 2026-07-09T14-39-07-04-00
-LuminaryLabs-Publish/TheUnmappedHouse     selected / oldest eligible fallback / central latest 2026-07-09T13-38-15-04-00
+LuminaryLabs-Publish/TheUnmappedHouse     selected / oldest eligible fallback / central latest 2026-07-09T13-38-15-04-00 / repo-local latest 2026-07-09T16-50-00-04-00
 ```
 
 ## Current product read
@@ -48,7 +48,7 @@ index.html
   -> src/story-data.js
 ```
 
-`index.html` mounts a 16:9 frame, the WebGL stage, story panel, hotspot list, debug notebook, hover label, interlude overlay, and the `src/game.js` module entry.
+`index.html` mounts a 16:9 frame, WebGL stage, story panel, hotspot list, debug notebook, hover label, interlude overlay, and `src/game.js` module entry.
 
 `src/game.js` owns browser command dispatch, story mutation, save IO, interlude timing, StageKit scene loading, DOM projection, reset, and debug JSON.
 
@@ -79,7 +79,7 @@ open index.html
 ## Current next safe ledge
 
 ```txt
-TheUnmappedHouse Story Fixture Readback Ledger Refresh + Browser Adapter Gate
+TheUnmappedHouse Story Fixture Readback Central Catch-up + Browser Adapter Gate
 ```
 
 ## First files to read next
@@ -90,14 +90,14 @@ TheUnmappedHouse Story Fixture Readback Ledger Refresh + Browser Adapter Gate
 .agent/next-steps.md
 .agent/validation.md
 .agent/kit-registry.json
-.agent/architecture-audit/2026-07-09T16-50-00-04-00-story-fixture-readback-ledger-dsk-map.md
-.agent/render-audit/2026-07-09T16-50-00-04-00-stagekit-readback-contract-map.md
-.agent/interaction-audit/2026-07-09T16-50-00-04-00-hotspot-command-repeat-result-map.md
-.agent/gameplay-audit/2026-07-09T16-50-00-04-00-story-route-fixture-loop.md
-.agent/story-authority-audit/2026-07-09T16-50-00-04-00-command-result-projection-readback-contract.md
-.agent/deploy-audit/2026-07-09T16-50-00-04-00-story-fixture-check-wire-map.md
-.agent/trackers/2026-07-09T16-50-00-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-09T16-50-00-04-00.md
+.agent/architecture-audit/2026-07-09T16-58-52-04-00-story-fixture-readback-central-catchup-dsk-map.md
+.agent/render-audit/2026-07-09T16-58-52-04-00-stagekit-projection-readback-contract.md
+.agent/interaction-audit/2026-07-09T16-58-52-04-00-hotspot-command-noop-result-map.md
+.agent/gameplay-audit/2026-07-09T16-58-52-04-00-story-route-save-fixture-loop.md
+.agent/story-authority-audit/2026-07-09T16-58-52-04-00-command-result-adapter-ledger-contract.md
+.agent/deploy-audit/2026-07-09T16-58-52-04-00-story-fixture-check-central-gate.md
+.agent/trackers/2026-07-09T16-58-52-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-09T16-58-52-04-00.md
 ```
 
 ## Main rule
