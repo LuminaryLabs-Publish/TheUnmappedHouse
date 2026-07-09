@@ -2,13 +2,12 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T10-54-04-04-00`
+**Updated:** `2026-07-09T11-00-39-04-00`
 
 ## Repo-local documentation gaps
 
-- `.agent/START_HERE.md` previously advanced to `2026-07-09T10-50-00-04-00` while the referenced tracker and audit files were not present.
-- `.agent/kit-registry.json` still pointed at `2026-07-09T08-02-33-04-00` before this pass.
-- The central repo ledger still pointed at `2026-07-09T08-02-33-04-00` before this pass.
+- Central tracking still pointed at `2026-07-09T08-02-33-04-00` before this pass.
+- Repo-local docs had mixed recent pointer state across `2026-07-09T10-50-00-04-00` and `2026-07-09T10-54-04-04-00` before this pass.
 - There is no source-owned `RepoLocalLedgerReadback` fixture row proving root `.agent` pointers match actual timestamped files.
 - There is no source-owned `CentralLedgerReadback` fixture row proving central ledger pointers match repo-local state.
 
