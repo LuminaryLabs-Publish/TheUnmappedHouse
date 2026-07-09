@@ -1,21 +1,21 @@
 {
-  "schemaVersion": "1.16.6",
+  "schemaVersion": "1.16.16",
   "repo": "LuminaryLabs-Publish/TheUnmappedHouse",
-  "generatedAt": "2026-07-09T13-38-15-04-00",
+  "generatedAt": "2026-07-09T16-50-00-04-00",
   "branchTarget": "main",
-  "status": "story-authority-central-sync-browser-adapter-fixture-gate-planned",
-  "latestTracker": ".agent/trackers/2026-07-09T13-38-15-04-00/project-breakdown.md",
-  "previousTracker": ".agent/trackers/2026-07-09T13-29-43-04-00/project-breakdown.md",
-  "latestTurnLedger": ".agent/turn-ledger/2026-07-09T13-38-15-04-00.md",
-  "latestArchitectureAudit": ".agent/architecture-audit/2026-07-09T13-38-15-04-00-story-authority-central-sync-dsk-map.md",
-  "latestRenderAudit": ".agent/render-audit/2026-07-09T13-38-15-04-00-stagekit-adapter-readback-map.md",
-  "latestInteractionAudit": ".agent/interaction-audit/2026-07-09T13-38-15-04-00-hotspot-command-result-adapter-contract.md",
-  "latestGameplayAudit": ".agent/gameplay-audit/2026-07-09T13-38-15-04-00-story-route-save-replay-loop.md",
-  "latestStoryAuthorityAudit": ".agent/story-authority-audit/2026-07-09T13-38-15-04-00-source-command-result-fixture-contract.md",
-  "latestDeployAudit": ".agent/deploy-audit/2026-07-09T13-38-15-04-00-check-script-fixture-map.md",
+  "status": "story-fixture-readback-ledger-refresh-browser-adapter-gate-planned",
+  "latestTracker": ".agent/trackers/2026-07-09T16-50-00-04-00/project-breakdown.md",
+  "previousTracker": ".agent/trackers/2026-07-09T13-38-15-04-00/project-breakdown.md",
+  "latestTurnLedger": ".agent/turn-ledger/2026-07-09T16-50-00-04-00.md",
+  "latestArchitectureAudit": ".agent/architecture-audit/2026-07-09T16-50-00-04-00-story-fixture-readback-ledger-dsk-map.md",
+  "latestRenderAudit": ".agent/render-audit/2026-07-09T16-50-00-04-00-stagekit-readback-contract-map.md",
+  "latestInteractionAudit": ".agent/interaction-audit/2026-07-09T16-50-00-04-00-hotspot-command-repeat-result-map.md",
+  "latestGameplayAudit": ".agent/gameplay-audit/2026-07-09T16-50-00-04-00-story-route-fixture-loop.md",
+  "latestStoryAuthorityAudit": ".agent/story-authority-audit/2026-07-09T16-50-00-04-00-command-result-projection-readback-contract.md",
+  "latestDeployAudit": ".agent/deploy-audit/2026-07-09T16-50-00-04-00-story-fixture-check-wire-map.md",
   "selection": {
     "selectedRepo": "LuminaryLabs-Publish/TheUnmappedHouse",
-    "reason": "No checked non-Cavalry LuminaryLabs-Publish repo was new, central-ledger absent, missing sampled root .agent state, recently added but undocumented, or otherwise undocumented. TheUnmappedHouse was selected as the oldest eligible central-ledger fallback and central-sync repair target.",
+    "reason": "No checked non-Cavalry LuminaryLabs-Publish repo was new, central-ledger absent, missing sampled root .agent state, recently added but undocumented, or otherwise undocumented. TheUnmappedHouse was selected as the oldest eligible documented-selection fallback because central tracking was still at 2026-07-09T13-38-15-04-00.",
     "excludedRepos": [
       {
         "repo": "LuminaryLabs-Publish/TheCavalryOfRome",
@@ -23,23 +23,23 @@
       }
     ],
     "publishReposObserved": [
-      "IntoTheMeadow",
       "HorrorCorridor",
       "AetherVale",
-      "ZombieOrchard",
-      "TheUnmappedHouse",
-      "MyCozyIsland",
       "TheOpenAbove",
-      "PhantomCommand",
       "TheCavalryOfRome",
-      "PrehistoricRush"
+      "PhantomCommand",
+      "PrehistoricRush",
+      "ZombieOrchard",
+      "IntoTheMeadow",
+      "MyCozyIsland",
+      "TheUnmappedHouse"
     ]
   },
   "productDirection": {
     "currentRuntime": "fixed-camera anime point-and-click horror prototype",
-    "currentGap": "Story progression, source fallback, save intent, interlude intent, reset, debug output, completion logic, source validation, browser adapter decisions, adapter readback, repo-local ledger readback, and central ledger readback are not yet source-owned contracts.",
+    "currentGap": "Story command handling, repeat no-op handling, terminal route handling, source validation, save intent, interlude intent, browser adapter decisions, adapter readback, repo-local ledger readback, and central ledger readback are not yet source-owned fixture contracts.",
     "recommendedDecision": "Keep StageKit visuals stable and cut story source manifest plus preflight/command/result/projection/readback authority into pure files before renderer extraction, new rooms, audio, inventory, or browser-only automation.",
-    "recommendedVerticalSlice": "TheUnmappedHouse Story Authority Central Sync + Browser Adapter Fixture Gate"
+    "recommendedVerticalSlice": "TheUnmappedHouse Story Fixture Readback Ledger Refresh + Browser Adapter Gate"
   },
   "interactionLoop": {
     "currentSource": [
@@ -103,6 +103,17 @@
       "central-ledger-readback"
     ]
   },
+  "services": [
+    "deterministic 16:9 frame calculation and DOM frame application",
+    "WebGL renderer and fixed-camera scene projection",
+    "shader material and post-process rendering",
+    "descriptor-driven stage layer, prop, and hotspot construction",
+    "pointer hover and raycast hotspot picking",
+    "story scene, clue, completion, and interlude descriptor source",
+    "browser-bound command handling, mutation, save, route, interlude, UI, debug, and reset",
+    "repo-local audit state and central ledger handoff",
+    "planned DOM-free story command fixtures"
+  ],
   "kits": {
     "implemented": [
       "static-page-shell-kit",
