@@ -2,11 +2,11 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T05-20-42-04-00`
+**Updated:** `2026-07-09T07-48-29-04-00`
 
 ## Next safe ledge
 
-Build the story adapter fixture readback and source authority consumer freeze.
+Build the story adapter readback ledger refresh and source fixture gate.
 
 Do not expand story content first.
 
@@ -17,7 +17,7 @@ Do not change the route, localStorage key, story copy, StageKit picking behavior
 ## Current ledge name
 
 ```txt
-TheUnmappedHouse Story Adapter Fixture Readback + Source Authority Consumer Freeze
+TheUnmappedHouse Story Adapter Readback Ledger Refresh + Source Fixture Gate
 ```
 
 ## Build order
@@ -49,7 +49,7 @@ TheUnmappedHouse Story Adapter Fixture Readback + Source Authority Consumer Free
 24. Adapt src/game.js so DOM buttons and StageKit callbacks dispatch StoryCommandEnvelope objects.
 25. Adapt src/game.js so text, hotspot buttons, notebook, interlude, StageKit load calls, localStorage, and debug output consume StoryBrowserAdapterPlan records.
 26. Add additive window.GameHost.getState().story diagnostics without removing the visible debug panel.
-27. Emit central_ledger_snapshot / CentralLedgerReadback fixture rows.
+27. Emit BrowserAdapterReadback and CentralLedgerReadback fixture rows.
 28. Update central ledger only after repo-local fixture/readback facts are current.
 ```
 
@@ -87,6 +87,7 @@ normalized
 ```txt
 source_manifest_created
 source_snapshot_created
+stage_snapshot_created
 initial_state_created
 load_empty_state
 load_malformed_state
