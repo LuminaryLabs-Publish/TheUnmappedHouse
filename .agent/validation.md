@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T13-29-43-04-00`
+**Updated:** `2026-07-09T13-38-15-04-00`
 
 ## Current validation status
 
@@ -28,71 +28,33 @@ Pushed to main: yes
 ```txt
 package.json read
 index.html read
+src/aspect-frame.js read
 src/game.js read
 src/stage-kit.js read
 src/story-data.js read
-central repo ledger read
 repo-local .agent root docs read
-repo-local kit registry read
-accessible LuminaryLabs-Publish repo list read
-sampled root .agent state for selected repo read
+central repo ledger read
+Publish repo list read
+sampled root .agent/START_HERE.md for checked non-Cavalry repos
 ```
 
-## Required next validation
+## Current available checks
 
-After the next runtime source pass, run:
-
-```bash
+```txt
 npm run check
-node scripts/validate-story-authority.mjs
-python3 -m http.server 8080
+npm run serve
 ```
 
-Then browser-check:
+`npm run check` currently performs syntax checks for `src/aspect-frame.js`, `src/game.js`, `src/stage-kit.js`, and `src/story-data.js`.
+
+## Missing validation before implementation
 
 ```txt
-index.html boots
-first scene loads
-hotspot hover works
-hotspot click grants clue
-repeat hotspot does not duplicate clue
-room completion opens interlude
-continue advances scene
-KeyR reset preserves expected behavior
-window.GameHost.getState().story returns additive sourceManifest/sourceSnapshot/latestCommand/preflight/save/interlude/stageProjection/browserAdapter/browserAdapterReadback/repoLocalLedger/centralLedger/fixture diagnostics
+scripts/story-authority-fixture.mjs
+DOM-free story command rows
+StageKit descriptor/readback rows
+Browser adapter plan/readback rows
+GameHost diagnostics rows
+repo-local ledger readback row
+central ledger readback row
 ```
-
-## Fixture proof expected next
-
-```txt
-source_manifest_created accepted
-source_snapshot_created accepted
-stage_snapshot_created accepted
-initial_state accepted
-load_empty_state accepted
-load_malformed_state rejected or normalized with reason
-source_preflight_passes accepted
-duplicate_scene_descriptor_rejected rejected
-duplicate_hotspot_descriptor_rejected rejected
-ungrantable_required_clue_rejected rejected
-inspect_first_hotspot accepted
-repeat_hotspot no_mutation
-unknown_hotspot rejected
-scene_incomplete_continue rejected
-complete_library_scene accepted + scene_completed event
-continue_to_repeating_hallway accepted + stage_projection
-complete_all_scenes accepted
-prototype_terminal_result terminal
-save_projection_created readback
-interlude_projection_created readback
-stage_projection_created readback
-browser_adapter_plan_created readback
-browser_adapter_readback_created readback
-gamehost_story_projection_created readback
-repo_local_ledger_snapshot_created readback
-central_ledger_snapshot_created readback
-```
-
-## Validation note
-
-This pass intentionally did not claim runtime success. It updated audit state only, refreshed repo-local documentation pointers, synced central tracking, and preserved the next source validation target.
