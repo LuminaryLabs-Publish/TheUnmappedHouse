@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T08-02-33-04-00`
+**Updated:** `2026-07-09T10-50-00-04-00`
 
 ## Current validation status
 
@@ -26,15 +26,12 @@ Pushed to main: yes
 ## Source readback performed
 
 ```txt
-package.json read
-src/game.js read
-src/stage-kit.js read
-src/story-data.js read
-central repo ledger read
+LuminaryLabs-Publish repository search read
+central repo ledger read for checked Publish repos
 repo-local .agent root docs read
 repo-local kit registry read
-accessible LuminaryLabs-Publish repo list read
-sampled root .agent state for selected repo read
+src/game.js read
+src/stage-kit.js read
 ```
 
 ## Required next validation
