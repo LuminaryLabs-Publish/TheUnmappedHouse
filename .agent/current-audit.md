@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Audit timestamp:** `2026-07-09T05-20-42-04-00`
+**Audit timestamp:** `2026-07-09T07-48-29-04-00`
 
 ## Summary
 
@@ -10,21 +10,21 @@
 
 The current pass compared the accessible `LuminaryLabs-Publish` repo list against central `LuminaryLabs-Dev/LuminaryLabs` repo-ledger state and sampled root `.agent` state. No non-Cavalry repo was fully new, ledger-absent, missing root `.agent`, recently added but undocumented, or otherwise undocumented.
 
-`TheUnmappedHouse` was selected as the oldest eligible central-ledger fallback. The next implementation should preserve the visible route and cut the story command/result/browser-adapter proof boundary before adding content or visual systems.
+`TheUnmappedHouse` was selected as the oldest eligible documented fallback. The next implementation should preserve the visible route and cut the story command/result/browser-adapter proof boundary before adding content or visual systems.
 
 ## Full repo-list comparison result
 
 ```txt
-LuminaryLabs-Publish/IntoTheMeadow        tracked / root .agent present / central latest 2026-07-09T03-50-12-04-00
-LuminaryLabs-Publish/HorrorCorridor       tracked / root .agent present / central latest 2026-07-09T04-30-54-04-00
-LuminaryLabs-Publish/AetherVale           tracked / root .agent present / central latest 2026-07-09T02-50-39-04-00
-LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T05-01-51-04-00
-LuminaryLabs-Publish/TheUnmappedHouse     selected / oldest eligible central latest 2026-07-09T02-11-07-04-00
-LuminaryLabs-Publish/MyCozyIsland         tracked / root .agent present / central latest 2026-07-09T02-31-41-04-00
-LuminaryLabs-Publish/TheOpenAbove         tracked / root .agent present / central latest 2026-07-09T03-29-29-04-00
-LuminaryLabs-Publish/PhantomCommand       tracked / root .agent present / central latest 2026-07-09T04-50-00-04-00
+LuminaryLabs-Publish/HorrorCorridor       tracked / root .agent present / central latest 2026-07-09T07-05-52-04-00
+LuminaryLabs-Publish/AetherVale           tracked / root .agent present / central latest 2026-07-09T06-01-30-04-00
+LuminaryLabs-Publish/TheOpenAbove         tracked / root .agent present / central latest 2026-07-09T06-20-00-04-00
 LuminaryLabs-Publish/TheCavalryOfRome     excluded by rule
-LuminaryLabs-Publish/PrehistoricRush      tracked / root .agent present / central latest 2026-07-09T03-10-05-04-00
+LuminaryLabs-Publish/PhantomCommand       tracked / root .agent present / central latest 2026-07-09T07-19-41-04-00
+LuminaryLabs-Publish/PrehistoricRush      tracked / root .agent present / central latest 2026-07-09T06-10-35-04-00
+LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T07-30-48-04-00
+LuminaryLabs-Publish/IntoTheMeadow        tracked / root .agent present / central latest 2026-07-09T06-28-53-04-00
+LuminaryLabs-Publish/MyCozyIsland         tracked / root .agent present / central latest 2026-07-09T05-38-20-04-00
+LuminaryLabs-Publish/TheUnmappedHouse     selected / oldest eligible central latest 2026-07-09T05-20-42-04-00
 ```
 
 ## Source read
@@ -59,8 +59,10 @@ open index.html
   -> StageKit loads the current fixed-camera scene
   -> hotspot side-panel button or StageKit raycast click calls inspectHotspot(hotspot)
   -> inspectHotspot mutates inspected state, grants clues, writes text/log, checks scene completion, schedules interlude, renders UI, and saves
+  -> repeat hotspot branch writes text/log/UI/save without a typed no_mutation result
   -> continue button calls nextScene()
   -> nextScene mutates scene id, route, interlude DOM, StageKit scene, UI, and save state
+  -> terminal route writes prototype-complete text directly into DOM state
   -> KeyR clears localStorage and reloads
   -> debug panel emits ad hoc JSON
 ```
@@ -99,13 +101,14 @@ localStorage save state
 scene route state
 clue ledger
 notebook log
+inspected hotspot state
 interlude overlay
 fixed aspect frame
 fixed camera stage render
 scene descriptor rendering
 stage layer descriptors
 stage prop descriptors
-hotspot volumes
+stage hotspot volumes
 hover label projection
 raycast picking
 anime material shader
@@ -121,7 +124,7 @@ StageKit: WebGL renderer, fixed 16:9 viewport, camera setup, shader materials, s
 AspectFrame: deterministic 16:9 frame calculation and DOM frame application.
 Story data: scene/hotspot/clue/interlude descriptor source.
 Game runtime: current browser-bound command handling, mutation, save, route, interlude, UI, debug, and reset service.
-Next story-authority kits: source manifest, source snapshots, preflight, command envelope, command result, projections, browser adapter plan, readback, diagnostics, and fixtures.
+Next story-authority kits: source manifest, source snapshots, preflight, command envelope, command result, projections, browser adapter plan, readback, diagnostics, central ledger readback, and fixtures.
 ```
 
 ## Kits identified
@@ -150,4 +153,10 @@ planned/browser-adapter-readback-kit
 planned/gamehost-story-diagnostics-kit
 planned/central-ledger-readback-kit
 planned/dom-free-story-fixture-kit
+```
+
+## Next safe ledge
+
+```txt
+TheUnmappedHouse Story Adapter Readback Ledger Refresh + Source Fixture Gate
 ```
