@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Audit timestamp:** `2026-07-09T08-02-33-04-00`
+**Audit timestamp:** `2026-07-09T10-50-00-04-00`
 
 ## Summary
 
@@ -10,29 +10,26 @@
 
 This pass compared the accessible `LuminaryLabs-Publish` repo list against central `LuminaryLabs-Dev/LuminaryLabs` repo-ledger state and sampled root `.agent` state. No non-Cavalry repo was fully new, ledger-absent, missing root `.agent`, recently added but undocumented, or otherwise undocumented.
 
-`TheUnmappedHouse` was selected as a central-ledger catch-up target because central tracking was still stale relative to repo-local `.agent` state. The next implementation should preserve the visible route and cut the story command/result/browser-adapter proof boundary before adding content or visual systems.
+`TheUnmappedHouse` was selected as the oldest eligible documented-selection fallback at this run window. The next implementation should preserve the visible route and cut the story command/result/browser-adapter proof boundary before adding content or visual systems.
 
 ## Full repo-list comparison result
 
 ```txt
-LuminaryLabs-Publish/HorrorCorridor       tracked / root .agent present / central latest 2026-07-09T07-05-52-04-00
-LuminaryLabs-Publish/AetherVale           tracked / root .agent present / central latest 2026-07-09T06-01-30-04-00
-LuminaryLabs-Publish/TheOpenAbove         tracked / root .agent present / central latest 2026-07-09T06-20-00-04-00
+LuminaryLabs-Publish/IntoTheMeadow        tracked / root .agent present / central latest 2026-07-09T09-50-00-04-00
+LuminaryLabs-Publish/HorrorCorridor       tracked / root .agent present / central latest 2026-07-09T10-10-32-04-00
+LuminaryLabs-Publish/AetherVale           tracked / root .agent present / central latest 2026-07-09T08-50-00-04-00
+LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T10-40-00-04-00
+LuminaryLabs-Publish/TheUnmappedHouse     selected / oldest eligible central-ledger timestamp observed at 2026-07-09T08-02-33-04-00
+LuminaryLabs-Publish/MyCozyIsland         tracked / root .agent present / central latest 2026-07-09T08-29-38-04-00
+LuminaryLabs-Publish/TheOpenAbove         tracked / root .agent present / central latest 2026-07-09T09-36-24-04-00
+LuminaryLabs-Publish/PhantomCommand       tracked / root .agent present / central latest 2026-07-09T10-20-44-04-00
 LuminaryLabs-Publish/TheCavalryOfRome     excluded by rule
-LuminaryLabs-Publish/PhantomCommand       tracked / root .agent present / central latest 2026-07-09T07-19-41-04-00
-LuminaryLabs-Publish/PrehistoricRush      tracked / root .agent present / central latest 2026-07-09T06-10-35-04-00
-LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T07-41-29-04-00
-LuminaryLabs-Publish/IntoTheMeadow        tracked / root .agent present / central latest 2026-07-09T06-28-53-04-00
-LuminaryLabs-Publish/MyCozyIsland         tracked / root .agent present / central latest 2026-07-09T05-38-20-04-00
-LuminaryLabs-Publish/TheUnmappedHouse     selected / central stale at 2026-07-09T05-20-42-04-00; repo-local latest 2026-07-09T07-48-29-04-00
+LuminaryLabs-Publish/PrehistoricRush      tracked / root .agent present / central latest 2026-07-09T09-10-50-04-00
 ```
 
 ## Source read
 
 ```txt
-package.json:
-  exposes npm run serve and npm run check; check is syntax-only across src/aspect-frame.js, src/game.js, src/stage-kit.js, and src/story-data.js.
-
 src/game.js:
   imports StageKit and story-data; captures DOM nodes at module scope; owns SAVE_KEY, load/save, state/currentScene, inspectHotspot, nextScene, renderUi, interlude, reset, and debug JSON.
 
@@ -40,16 +37,16 @@ src/stage-kit.js:
   imports Three.js from CDN; owns renderer, fixed 16:9 aspect frame integration, render target, post-process shader pass, anime material, scene loading, layer/prop/hotspot construction, raycast picking, hover label, resize, and animation.
 
 src/story-data.js:
-  owns gameTitle, three scene descriptors, camera descriptors, stage layers, props, post-process settings, hotspot IDs, hotspot grants, completion requirements, and interlude text.
+  owns gameTitle, scene descriptors, camera descriptors, stage layers, props, post-process settings, hotspot IDs, hotspot grants, completion requirements, and interlude text.
 ```
 
 ## Main finding
 
-The render surface is not the immediate problem. `StageKit` already owns the fixed design frame, camera descriptor consumption, shader material, post-process pass, hotspot volumes, hover label, and raycast picking.
+The render surface is not the immediate problem. `StageKit` already owns the fixed design frame, camera descriptor consumption, shader material, post-process pass, hotspot volumes, hover label, raycast picking, and render-target post pass.
 
 The source-authority problem is still concentrated in `src/game.js`: it is simultaneously command dispatcher, reducer, browser adapter, localStorage adapter, route adapter, interlude scheduler, debug projector, StageKit consumer, and save writer.
 
-The highest-value next pass is a source-owned story-adapter fixture layer with stable command envelopes, preflight, command results, projections, browser adapter plans, adapter readback, GameHost diagnostics, and central-ledger readback.
+The highest-value next pass is a source-owned story command/result ledger with stable command envelopes, preflight, command results, event records, projections, browser adapter plans, adapter readback, GameHost diagnostics, central-ledger readback, and DOM-free fixtures.
 
 ## Current interaction loop
 
@@ -58,7 +55,7 @@ open index.html
   -> src/game.js loads story source and saved state
   -> StageKit loads the current fixed-camera scene
   -> hotspot side-panel button or StageKit raycast click calls inspectHotspot(hotspot)
-  -> inspectHotspot mutates inspected state, grants clues, writes text/log, checks scene completion, schedules interlude, renders UI, and saves
+  -> inspectHotspot mutates inspected state, grants clues, writes text/log, checks completion, schedules interlude, renders UI, and saves
   -> repeat hotspot branch writes text/log/UI/save without a typed no_mutation result
   -> continue button calls nextScene()
   -> nextScene mutates scene id, route, interlude DOM, StageKit scene, UI, and save state
@@ -125,7 +122,7 @@ StageKit: WebGL renderer, fixed 16:9 viewport, camera setup, shader materials, s
 AspectFrame: deterministic 16:9 frame calculation and DOM frame application.
 Story data: scene/hotspot/clue/interlude descriptor source.
 Game runtime: current browser-bound command handling, mutation, save, route, interlude, UI, debug, and reset service.
-Next story-authority kits: source manifest, source snapshots, preflight, command envelope, command result, projections, browser adapter plan, readback, diagnostics, central ledger readback, and fixtures.
+Next story-authority kits: source manifest, source snapshots, preflight, command envelope, command result, event records, projections, browser adapter plan, readback, diagnostics, central ledger readback, and fixtures.
 ```
 
 ## Kits identified
@@ -145,6 +142,7 @@ planned/story-source-manifest-kit
 planned/story-command-envelope-kit
 planned/story-preflight-kit
 planned/story-command-result-kit
+planned/story-event-record-kit
 planned/story-projection-kit
 planned/save-projection-kit
 planned/interlude-projection-kit
@@ -159,5 +157,5 @@ planned/dom-free-story-fixture-kit
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Central Ledger Catch-up + Story Adapter Source Fixture Gate
+TheUnmappedHouse Story Command Result Ledger + Adapter Readback Fixture Gate
 ```
