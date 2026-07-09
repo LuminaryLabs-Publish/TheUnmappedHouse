@@ -2,11 +2,11 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T01-40-49-04-00`
+**Updated:** `2026-07-09T01-50-17-04-00`
 
 ## Next safe ledge
 
-Build the story adapter readback fixture plus central-ledger freshness gate.
+Build the story adapter central readback and fixture freshness gate.
 
 Do not expand story content first.
 
@@ -17,7 +17,7 @@ Do not change the route, localStorage key, scene copy, StageKit picking behavior
 ## Current ledge name
 
 ```txt
-TheUnmappedHouse Story Adapter Readback Fixture + Central Ledger Freshness Gate
+TheUnmappedHouse Story Adapter Central Readback + Fixture Freshness Gate
 ```
 
 ## Build order
@@ -48,7 +48,8 @@ TheUnmappedHouse Story Adapter Readback Fixture + Central Ledger Freshness Gate
 23. Adapt src/game.js so DOM buttons and StageKit callbacks dispatch StoryCommandEnvelope objects.
 24. Adapt src/game.js so text, hotspot buttons, notebook, interlude, StageKit load calls, localStorage, and debug output consume StoryBrowserAdapterPlan records instead of owning story rules.
 25. Add additive window.GameHost.getState().story diagnostics without removing the visible debug panel.
-26. Add central-ledger readback row so repo-local and central docs can prove freshness after each pass.
+26. Emit central_ledger_snapshot / CentralLedgerReadback fixture rows.
+27. Update central ledger only after repo-local fixture/readback facts are current.
 ```
 
 ## Command types
@@ -78,6 +79,7 @@ no_mutation
 terminal
 projected
 readback
+ledger_readback
 ```
 
 ## Required reason families
@@ -111,6 +113,7 @@ browser_adapter_plan_created
 browser_adapter_readback_created
 gamehost_projection_created
 central_ledger_readback_created
+central_ledger_caught_up
 ```
 
 ## Fixture rows required
@@ -144,7 +147,7 @@ stage_projection
 browser_adapter_plan
 browser_adapter_readback
 GameHost_projection
-central_ledger_readback
+central_ledger_snapshot
 ```
 
 ## Acceptance criteria
@@ -164,11 +167,10 @@ StoryBrowserAdapterPlan explains DOM text, hotspot list, debug panel, save, inte
 BrowserAdapterReadback reports what the host consumed and what it intentionally left unchanged
 window.GameHost.getState is additive and read-only
 central LuminaryLabs ledger points to the latest repo-local tracker, audits, and turn-ledger paths
-central-ledger readback row proves central freshness from repo-local state
 ```
 
 ## Stop condition
 
-Stop after story source manifest, source preflight, reducer, host adapter, stage projection, browser adapter plan, browser adapter readback, central-ledger readback, and fixture proof are stable.
+Stop after story source manifest, source preflight, reducer, host adapter, stage projection, browser adapter plan, browser adapter readback, central ledger readback, and fixture proof are stable.
 
-Defer deeper StageKit extraction, new rooms, new art, audio, inventory, and browser automation until the fixtures explain every accepted, rejected, no-mutation, transition, save, reset, projection, interlude, stage-projection, browser-adapter, adapter-readback, central-readback, prototype-complete, and GameHost path.
+Defer deeper StageKit extraction, new rooms, new art, audio, inventory, and browser automation until the fixtures explain every accepted, rejected, no-mutation, transition, save, reset, projection, interlude, stage-projection, browser-adapter, adapter-readback, prototype-complete, GameHost, and central-ledger path.
