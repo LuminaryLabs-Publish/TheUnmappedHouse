@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T02-11-07-04-00`
+**Updated:** `2026-07-09T05-20-42-04-00`
 
 ## Current validation status
 
@@ -78,25 +78,18 @@ repeat_hotspot no_mutation
 unknown_hotspot rejected
 scene_incomplete_continue rejected
 complete_library_scene accepted + scene_completed event
-continue_to_hallway accepted + scene_transitioned event
-complete_full_route accepted
-prototype_complete_continue terminal
-save_state accepted + SaveProjection
-load_state accepted + normalized snapshot
-reset_save accepted + clear-save intent
-stage_scene_snapshot accepted
-story_projection accepted
-save_projection accepted
-interlude_projection accepted
-stage_projection accepted
-browser_adapter_plan accepted
-browser_adapter_readback accepted
-GameHost_projection accepted
-central_ledger_snapshot accepted
+continue_to_repeating_hallway accepted + stage_projection
+complete_all_scenes accepted
+prototype_terminal_result terminal
+save_projection_created readback
+interlude_projection_created readback
+stage_projection_created readback
+browser_adapter_plan_created readback
+browser_adapter_readback_created readback
+gamehost_story_projection_created readback
+central_ledger_snapshot_created readback
 ```
 
-## Validation boundaries
+## Validation note
 
-This pass only updated `.agent` documentation and central tracking.
-
-No implementation source, package script, fixture script, browser behavior, deployment workflow, or runtime route was changed.
+This pass intentionally did not claim runtime success. It updated audit state only, and it preserved the next source validation target.
