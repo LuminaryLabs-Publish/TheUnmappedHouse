@@ -2,15 +2,15 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Audit timestamp:** `2026-07-09T07-48-29-04-00`
+**Audit timestamp:** `2026-07-09T08-02-33-04-00`
 
 ## Summary
 
 `TheUnmappedHouse` remains a compact fixed-camera anime point-and-click horror prototype with a stable visual route and a browser-bound story authority bottleneck.
 
-The current pass compared the accessible `LuminaryLabs-Publish` repo list against central `LuminaryLabs-Dev/LuminaryLabs` repo-ledger state and sampled root `.agent` state. No non-Cavalry repo was fully new, ledger-absent, missing root `.agent`, recently added but undocumented, or otherwise undocumented.
+This pass compared the accessible `LuminaryLabs-Publish` repo list against central `LuminaryLabs-Dev/LuminaryLabs` repo-ledger state and sampled root `.agent` state. No non-Cavalry repo was fully new, ledger-absent, missing root `.agent`, recently added but undocumented, or otherwise undocumented.
 
-`TheUnmappedHouse` was selected as the oldest eligible documented fallback. The next implementation should preserve the visible route and cut the story command/result/browser-adapter proof boundary before adding content or visual systems.
+`TheUnmappedHouse` was selected as a central-ledger catch-up target because central tracking was still stale relative to repo-local `.agent` state. The next implementation should preserve the visible route and cut the story command/result/browser-adapter proof boundary before adding content or visual systems.
 
 ## Full repo-list comparison result
 
@@ -21,10 +21,10 @@ LuminaryLabs-Publish/TheOpenAbove         tracked / root .agent present / centra
 LuminaryLabs-Publish/TheCavalryOfRome     excluded by rule
 LuminaryLabs-Publish/PhantomCommand       tracked / root .agent present / central latest 2026-07-09T07-19-41-04-00
 LuminaryLabs-Publish/PrehistoricRush      tracked / root .agent present / central latest 2026-07-09T06-10-35-04-00
-LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T07-30-48-04-00
+LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T07-41-29-04-00
 LuminaryLabs-Publish/IntoTheMeadow        tracked / root .agent present / central latest 2026-07-09T06-28-53-04-00
 LuminaryLabs-Publish/MyCozyIsland         tracked / root .agent present / central latest 2026-07-09T05-38-20-04-00
-LuminaryLabs-Publish/TheUnmappedHouse     selected / oldest eligible central latest 2026-07-09T05-20-42-04-00
+LuminaryLabs-Publish/TheUnmappedHouse     selected / central stale at 2026-07-09T05-20-42-04-00; repo-local latest 2026-07-09T07-48-29-04-00
 ```
 
 ## Source read
@@ -115,6 +115,7 @@ anime material shader
 post-process shader
 browser debug projection
 static deploy/check script
+central ledger readback
 ```
 
 ## Services the kits offer
@@ -158,5 +159,5 @@ planned/dom-free-story-fixture-kit
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Adapter Readback Ledger Refresh + Source Fixture Gate
+TheUnmappedHouse Central Ledger Catch-up + Story Adapter Source Fixture Gate
 ```
