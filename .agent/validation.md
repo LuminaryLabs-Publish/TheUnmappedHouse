@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T01-50-17-04-00`
+**Updated:** `2026-07-09T02-02-03-04-00`
 
 ## Current validation status
 
@@ -93,7 +93,7 @@ stage_projection accepted
 browser_adapter_plan accepted
 browser_adapter_readback accepted
 GameHost_projection accepted
-central_ledger_snapshot accepted
+central_ledger_snapshot ledger_readback
 ```
 
 ## Validation boundaries
