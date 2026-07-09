@@ -2,17 +2,16 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T01-40-49-04-00`
+**Updated:** `2026-07-09T01-50-17-04-00`
 
 ## Architecture gaps
 
 - Story authority is embedded in `src/game.js` UI handlers.
 - Module-level `state` and `currentScene` are mutated directly.
 - There is no `StorySourceManifest` that defines product id, route id, save key, scene ids, command ids, source version, and public entry route.
-- There is no source-owned story command envelope for inspection, continuation, load, save, projection, reset, or central-readback rows.
+- There is no source-owned story command envelope for inspection, continuation, load, save, projection, or reset.
 - There is no explicit `StoryPreflight` that validates source descriptors, loaded state, command shape, current scene, and target hotspot before mutation.
 - There are no stable accepted/rejected/no-mutation/terminal/readback result records.
-- There are no stable reason codes for repeated hotspot, unknown hotspot, incomplete continue, prototype complete, invalid command, malformed save, duplicate descriptor, ungrantable required clue, browser-adapter readback, or central-ledger readback.
 - Repeat hotspot inspection is a direct UI branch, not a typed repeated-inspection result.
 - The clue ledger mutates directly through `grantClues`.
 - Scene completion is calculated directly in the host runtime without a `SceneCompletionResult`.
@@ -20,7 +19,7 @@
 - Save writes happen directly from the same code path as UI projection.
 - Reset deletes localStorage and reloads instead of returning a reset result and clear-save intent.
 - The debug notebook is a live DOM projection, not a stable diagnostics API.
-- There is no command journal, route journal, save journal, preflight journal, adapter journal, readback journal, central-readback journal, or fixture summary row shape.
+- There is no command journal, route journal, save journal, preflight journal, adapter journal, readback journal, central-ledger readback row, or fixture summary row shape.
 - There is no DOM-free story replay fixture.
 
 ## Browser adapter gaps
@@ -39,7 +38,7 @@
 
 - `StageKit` can load visual descriptors, but no pure `StageSceneSnapshot` reports camera, layer, prop, hotspot, post-process, and validation facts without Three.js.
 - There is no `StageProjection` readback contract for the host to say what scene should be loaded and why.
-- Current `debug` JSON does not include latest command result, preflight status, result reason, event records, fixture status, save projection, interlude projection, stage projection, stage snapshot, adapter plan, adapter readback, central-readback status, or source validation status.
+- Current `debug` JSON does not include latest command result, preflight status, result reason, event records, fixture status, save projection, interlude projection, stage projection, stage snapshot, adapter plan, adapter readback, central-ledger readback, or source validation status.
 - There is no stage descriptor readback fixture that proves every scene has camera, post settings, visible layers/props, and clickable hotspots.
 
 ## Source validation gaps
@@ -54,15 +53,15 @@
 
 ## Central tracking gaps
 
-- The central `LuminaryLabs-Dev/LuminaryLabs` repo ledger must stay aligned to the newest repo-local tracker after each pass.
-- The story authority fixture should include a central-ledger readback row so future runs can prove whether the repo-local and central pointers are fresh.
-- The repo needs a stable `central_ledger_readback_created` reason and row shape.
+- Before this pass, the central `LuminaryLabs-Dev/LuminaryLabs` repo ledger still pointed to `2026-07-08T23-19-33-04-00` while repo-local `.agent/START_HERE.md` readback had advanced to `2026-07-09T01-40-49-04-00`.
+- The central ledger must stay aligned to latest tracker, turn-ledger, architecture, render, interaction, gameplay, story-authority, deploy, and kit-registry paths after every repo-local documentation pass.
+- The next runtime pass should emit an explicit `CentralLedgerReadback` / `central_ledger_snapshot` fixture row so the central ledger can be validated against repo-local source paths instead of updated from memory.
 
 ## Testing gaps
 
 - `npm run check` only runs syntax checks.
 - There is no `scripts/validate-story-authority.mjs` fixture.
-- There is no fixture row for source manifest, first inspect, repeat inspect, unknown hotspot, incomplete continue, full route, save/load, reset, source validation, stage snapshot, story projection, interlude projection, save projection, stage projection, browser adapter plan, browser adapter readback, GameHost projection, or central ledger readback.
+- There is no fixture row for source manifest, first inspect, repeat inspect, unknown hotspot, incomplete continue, full route, save/load, reset, source validation, stage snapshot, story projection, interlude projection, save projection, stage projection, browser adapter plan, browser adapter readback, GameHost projection, or central ledger snapshot.
 
 ## Do not solve by
 
