@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Last aligned:** `2026-07-09T13-38-15-04-00`
+**Last aligned:** `2026-07-09T16-50-00-04-00`
 
 ## Purpose
 
@@ -18,21 +18,21 @@ No checked non-Cavalry repo was new, absent from central tracking, missing sampl
 
 `LuminaryLabs-Publish/TheCavalryOfRome` remains excluded.
 
-`TheUnmappedHouse` was selected as the oldest eligible central-ledger fallback and central-sync repair target. The repo-local `.agent` state had already advanced beyond central tracking, so this pass realigns repo-local docs and the central ledger around the story authority/browser adapter fixture gate.
+`TheUnmappedHouse` was selected as the oldest eligible documented-selection fallback. Central tracking still pointed at `2026-07-09T13-38-15-04-00`, making this the next correct ledger/readback refresh target.
 
 ## Publish repos checked
 
 ```txt
-LuminaryLabs-Publish/IntoTheMeadow        tracked / root .agent present / central latest 2026-07-09T12-08-46-04-00
-LuminaryLabs-Publish/HorrorCorridor       tracked / root .agent present / central latest 2026-07-09T12-30-09-04-00
-LuminaryLabs-Publish/AetherVale           tracked / root .agent present / central latest 2026-07-09T11-30-50-04-00
-LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T13-18-48-04-00
-LuminaryLabs-Publish/TheUnmappedHouse     selected / oldest eligible central-ledger fallback and central-sync repair
-LuminaryLabs-Publish/MyCozyIsland         tracked / root .agent present / central latest 2026-07-09T11-39-50-04-00
-LuminaryLabs-Publish/TheOpenAbove         tracked / root .agent present / central latest 2026-07-09T11-50-08-04-00
-LuminaryLabs-Publish/PhantomCommand       tracked / root .agent present / central latest 2026-07-09T13-00-37-04-00
+LuminaryLabs-Publish/HorrorCorridor       tracked / root .agent present / central latest 2026-07-09T16-00-13-04-00
+LuminaryLabs-Publish/AetherVale           tracked / root .agent present / central latest 2026-07-09T14-16-00-04-00
+LuminaryLabs-Publish/TheOpenAbove         tracked / root .agent present / central latest 2026-07-09T15-09-09-04-00
 LuminaryLabs-Publish/TheCavalryOfRome     excluded by rule
-LuminaryLabs-Publish/PrehistoricRush      tracked / root .agent present / central latest 2026-07-09T12-00-36-04-00
+LuminaryLabs-Publish/PhantomCommand       tracked / root .agent present / central latest 2026-07-09T16-29-23-04-00
+LuminaryLabs-Publish/PrehistoricRush      tracked / root .agent present / central latest 2026-07-09T15-31-40-04-00
+LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T16-34-14-04-00
+LuminaryLabs-Publish/IntoTheMeadow        tracked / root .agent present / central latest 2026-07-09T15-39-08-04-00
+LuminaryLabs-Publish/MyCozyIsland         tracked / root .agent present / central latest 2026-07-09T14-39-07-04-00
+LuminaryLabs-Publish/TheUnmappedHouse     selected / oldest eligible fallback / central latest 2026-07-09T13-38-15-04-00
 ```
 
 ## Current product read
@@ -79,7 +79,7 @@ open index.html
 ## Current next safe ledge
 
 ```txt
-TheUnmappedHouse Story Authority Central Sync + Browser Adapter Fixture Gate
+TheUnmappedHouse Story Fixture Readback Ledger Refresh + Browser Adapter Gate
 ```
 
 ## First files to read next
@@ -90,18 +90,18 @@ TheUnmappedHouse Story Authority Central Sync + Browser Adapter Fixture Gate
 .agent/next-steps.md
 .agent/validation.md
 .agent/kit-registry.json
-.agent/architecture-audit/2026-07-09T13-38-15-04-00-story-authority-central-sync-dsk-map.md
-.agent/render-audit/2026-07-09T13-38-15-04-00-stagekit-adapter-readback-map.md
-.agent/interaction-audit/2026-07-09T13-38-15-04-00-hotspot-command-result-adapter-contract.md
-.agent/gameplay-audit/2026-07-09T13-38-15-04-00-story-route-save-replay-loop.md
-.agent/story-authority-audit/2026-07-09T13-38-15-04-00-source-command-result-fixture-contract.md
-.agent/deploy-audit/2026-07-09T13-38-15-04-00-check-script-fixture-map.md
-.agent/trackers/2026-07-09T13-38-15-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-09T13-38-15-04-00.md
+.agent/architecture-audit/2026-07-09T16-50-00-04-00-story-fixture-readback-ledger-dsk-map.md
+.agent/render-audit/2026-07-09T16-50-00-04-00-stagekit-readback-contract-map.md
+.agent/interaction-audit/2026-07-09T16-50-00-04-00-hotspot-command-repeat-result-map.md
+.agent/gameplay-audit/2026-07-09T16-50-00-04-00-story-route-fixture-loop.md
+.agent/story-authority-audit/2026-07-09T16-50-00-04-00-command-result-projection-readback-contract.md
+.agent/deploy-audit/2026-07-09T16-50-00-04-00-story-fixture-check-wire-map.md
+.agent/trackers/2026-07-09T16-50-00-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-09T16-50-00-04-00.md
 ```
 
 ## Main rule
 
 Keep the current route, `SAVE_KEY`, story copy, fixed 16:9 StageKit surface, hotspot picking, interlude behavior, reset key, and existing debug panel stable.
 
-Do not add rooms, audio, inventory, renderer extraction, or browser-only smoke gates before source-owned story command/result fixtures prove reducer output, browser adapter plans, adapter readback, stage projection, save/interlude intent, GameHost diagnostics, repo-local ledger consistency, and central ledger readback.
+Do not add rooms, audio, inventory, renderer extraction, or browser-only smoke gates before source-owned story command/result fixtures prove reducer output, repeat/no-op results, terminal-route results, browser adapter plans, adapter readback, stage projection, save/interlude intent, GameHost diagnostics, repo-local ledger consistency, and central ledger readback.
