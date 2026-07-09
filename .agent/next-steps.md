@@ -2,11 +2,11 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T13-29-43-04-00`
+**Updated:** `2026-07-09T13-38-15-04-00`
 
 ## Next safe ledge
 
-Build the story authority readback and central ledger fixture gate.
+Build the story authority central sync and browser adapter fixture gate.
 
 Do not expand story content first.
 
@@ -17,106 +17,45 @@ Do not change the route, localStorage key, story copy, StageKit picking behavior
 ## Current ledge name
 
 ```txt
-TheUnmappedHouse Story Authority Readback + Central Ledger Fixture Gate
+TheUnmappedHouse Story Authority Central Sync + Browser Adapter Fixture Gate
 ```
 
-## Build order
+## Implementation order
+
+1. Add pure story authority modules under `src/story-authority/`.
+2. Add `StorySourceManifest` with product id, route id, save key, scene ids, command ids, source version, and fixture expectations.
+3. Add source and state snapshot builders.
+4. Add command envelope and reason catalog.
+5. Add preflight for inspect, continue, reset intent, save/load, projection, and ledger readback.
+6. Add command result records for accepted, rejected, no-mutation, complete-scene, terminal-complete, corrupted-save-fallback, and reset-intent.
+7. Add projection records for story text, notebook log, save intent, interlude intent, StageKit intent, and debug diagnostics.
+8. Add browser adapter plan and adapter readback contracts.
+9. Add DOM-free fixture rows before wiring browser behavior.
+10. Add compatibility-safe `globalThis.UnmappedHouseHost.getState()` diagnostics.
+11. Wire `src/game.js` to consume the pure records while preserving visible behavior.
+12. Add fixture script to `npm run check`.
+
+## Validation target
 
 ```txt
-1. Preserve index.html, src/game.js route entry, SAVE_KEY, story copy, StageKit visuals, and static deploy workflow.
-2. Add src/story-authority/story-source-manifest.js.
-3. Add src/story-authority/story-source-snapshot.js.
-4. Add src/story-authority/story-state-snapshot.js.
-5. Add src/story-authority/stage-scene-snapshot.js.
-6. Add src/story-authority/story-command-envelope.js.
-7. Add src/story-authority/story-command-reasons.js.
-8. Add src/story-authority/story-preflight.js.
-9. Add src/story-authority/story-command-result.js.
-10. Add src/story-authority/story-event-record.js.
-11. Add src/story-authority/story-reducer.js.
-12. Add src/story-authority/story-projection.js.
-13. Add src/story-authority/save-projection.js.
-14. Add src/story-authority/interlude-projection.js.
-15. Add src/story-authority/stage-projection.js.
-16. Add src/story-authority/story-browser-adapter-plan.js.
-17. Add src/story-authority/browser-adapter-readback.js.
-18. Add src/story-authority/gamehost-story-diagnostics.js.
-19. Add src/story-authority/repo-local-ledger-readback.js.
-20. Add src/story-authority/central-ledger-readback.js.
-21. Add src/story-authority/story-fixture-cases.js.
-22. Add scripts/validate-story-authority.mjs.
-23. Run the DOM-free fixture directly.
-24. Add fixture invocation to package validation after the direct fixture is stable.
-25. Adapt src/game.js so DOM buttons and StageKit callbacks dispatch StoryCommandEnvelope objects.
-26. Adapt src/game.js so text, hotspot buttons, notebook, interlude, StageKit load calls, localStorage, and debug output consume StoryBrowserAdapterPlan records.
-27. Add additive window.GameHost.getState().story diagnostics without removing the visible debug panel.
-28. Emit BrowserAdapterReadback, RepoLocalLedgerReadback, and CentralLedgerReadback fixture rows.
-29. Update central ledger only after repo-local fixture/readback facts are current.
+npm run check
+node scripts/story-authority-fixture.mjs
+manual browser route smoke after fixture rows pass
 ```
 
-## Command types
+## Stop condition for the next implementation
+
+Stop when fixture rows prove:
 
 ```txt
-story.inspect_hotspot
-story.continue_scene
-story.load_state
-story.save_state
-story.reset_save
-story.project
-story.validate_source
-story.snapshot_stage
-story.preflight
-story.browser_adapter_plan
-story.browser_adapter_readback
-story.gamehost_projection
-story.repo_local_ledger_readback
-story.central_ledger_readback
+first inspect accepted + clue grant + save intent
+repeat inspect no_mutation + log/text compatibility
+scene completion + interlude intent
+continue accepted + stage projection
+terminal continue terminal_complete + no scene mutation
+corrupted save fallback
+reset intent without hard browser dependency
+repo-local ledger readback
+central ledger readback
+browser adapter readback skeleton
 ```
-
-## Required result statuses
-
-```txt
-accepted
-rejected
-no_mutation
-terminal
-readback
-normalized
-repo_local_sync
-central_sync
-```
-
-## Required fixture rows
-
-```txt
-source_manifest_created
-source_snapshot_created
-stage_snapshot_created
-initial_state_created
-load_empty_state
-load_malformed_state
-source_preflight_passes
-duplicate_scene_descriptor_rejected
-duplicate_hotspot_descriptor_rejected
-ungrantable_required_clue_rejected
-inspect_first_hotspot
-repeat_hotspot_no_mutation
-unknown_hotspot_rejected
-scene_incomplete_continue_rejected
-complete_library_scene
-continue_to_repeating_hallway
-complete_all_scenes
-prototype_terminal_result
-save_projection_created
-interlude_projection_created
-stage_projection_created
-browser_adapter_plan_created
-browser_adapter_readback_created
-gamehost_story_projection_created
-repo_local_ledger_snapshot_created
-central_ledger_snapshot_created
-```
-
-## Acceptance rule
-
-The next implementation is complete only when a DOM-free script can prove the same story command/result/projection rows that the browser adapter consumes.
