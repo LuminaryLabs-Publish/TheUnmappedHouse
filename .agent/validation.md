@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T13-38-15-04-00`
+**Updated:** `2026-07-09T16-50-00-04-00`
 
 ## Current validation status
 
@@ -20,41 +20,62 @@ Chosen repo root .agent exists before this pass: yes
 Central ledger updated: yes
 Branch created: no
 Pull request created: no
-Pushed to main: yes
+Pushed only to main: yes
 ```
 
-## Source readback performed
+## Evidence read this pass
 
 ```txt
-package.json read
-index.html read
-src/aspect-frame.js read
-src/game.js read
-src/stage-kit.js read
-src/story-data.js read
-repo-local .agent root docs read
-central repo ledger read
-Publish repo list read
-sampled root .agent/START_HERE.md for checked non-Cavalry repos
+LuminaryLabs-Publish full accessible repository list from installation 142700432
+LuminaryLabs-Dev/LuminaryLabs repo-ledger entries for non-Cavalry Publish repos
+LuminaryLabs-Publish/TheUnmappedHouse:.agent/START_HERE.md
+LuminaryLabs-Publish/TheUnmappedHouse:src/game.js
+LuminaryLabs-Publish/TheUnmappedHouse:src/stage-kit.js
+LuminaryLabs-Publish/TheUnmappedHouse:src/story-data.js
+LuminaryLabs-Publish/TheUnmappedHouse:package.json
 ```
 
-## Current available checks
+## Validation interpretation
+
+This is a documentation-only breakdown pass.
+
+The repo-local `.agent` state and central ledger were updated to point to the latest story fixture/readback ledge.
+
+No runtime correctness claim is made for story command fixtures because those fixtures do not exist yet.
+
+## Next validation gate
+
+The next implementation must run:
 
 ```txt
 npm run check
-npm run serve
 ```
 
-`npm run check` currently performs syntax checks for `src/aspect-frame.js`, `src/game.js`, `src/stage-kit.js`, and `src/story-data.js`.
-
-## Missing validation before implementation
+After the fixture runner is added, `npm run check` should include:
 
 ```txt
-scripts/story-authority-fixture.mjs
-DOM-free story command rows
-StageKit descriptor/readback rows
-Browser adapter plan/readback rows
-GameHost diagnostics rows
-repo-local ledger readback row
-central ledger readback row
+node --check src/aspect-frame.js
+node --check src/game.js
+node --check src/stage-kit.js
+node --check src/story-data.js
+node --check src/story-source-manifest.js
+node --check src/story-commands.js
+node --check src/story-preflight.js
+node --check src/story-results.js
+node --check src/story-reducer.js
+node --check src/story-projections.js
+node tests/fixtures/story-command-results.mjs
+```
+
+## Manual browser smoke still required after implementation
+
+```txt
+open index.html
+inspect all three library hotspots
+confirm interlude opens
+continue to repeating hallway
+repeat inspect an already-seen hotspot
+complete all rooms
+press R and confirm save reset
+verify debug JSON matches host readback projection
 ```
