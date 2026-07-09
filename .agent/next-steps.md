@@ -2,11 +2,11 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T10-54-04-04-00`
+**Updated:** `2026-07-09T11-00-39-04-00`
 
 ## Next safe ledge
 
-Build the repo-local ledger repair and story authority fixture gate.
+Build the central-ledger sync and story adapter fixture gate.
 
 Do not expand story content first.
 
@@ -17,7 +17,7 @@ Do not change the route, localStorage key, story copy, StageKit picking behavior
 ## Current ledge name
 
 ```txt
-TheUnmappedHouse Repo-Local Ledger Repair + Story Authority Fixture Gate
+TheUnmappedHouse Central Ledger Sync + Story Adapter Fixture Gate
 ```
 
 ## Build order
