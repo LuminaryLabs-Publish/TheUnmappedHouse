@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Last aligned:** `2026-07-09T07-48-29-04-00`
+**Last aligned:** `2026-07-09T08-02-33-04-00`
 
 ## Purpose
 
@@ -18,7 +18,7 @@ No checked non-Cavalry Publish repo was new, absent from the central ledger, mis
 
 `LuminaryLabs-Publish/TheCavalryOfRome` remains excluded by standing rule.
 
-`TheUnmappedHouse` was selected as the oldest eligible documented fallback. Its central ledger latest timestamp was `2026-07-09T05-20-42-04-00`, older than the next checked eligible repos.
+`TheUnmappedHouse` was selected as the oldest eligible central-ledger catch-up target. Central tracking still pointed to `2026-07-09T05-20-42-04-00` while repo-local `.agent` state had already advanced to `2026-07-09T07-48-29-04-00`.
 
 ## Publish repos checked
 
@@ -29,10 +29,10 @@ LuminaryLabs-Publish/TheOpenAbove         tracked / root .agent present / centra
 LuminaryLabs-Publish/TheCavalryOfRome     excluded by rule
 LuminaryLabs-Publish/PhantomCommand       tracked / root .agent present / central latest 2026-07-09T07-19-41-04-00
 LuminaryLabs-Publish/PrehistoricRush      tracked / root .agent present / central latest 2026-07-09T06-10-35-04-00
-LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T07-30-48-04-00
+LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T07-41-29-04-00
 LuminaryLabs-Publish/IntoTheMeadow        tracked / root .agent present / central latest 2026-07-09T06-28-53-04-00
 LuminaryLabs-Publish/MyCozyIsland         tracked / root .agent present / central latest 2026-07-09T05-38-20-04-00
-LuminaryLabs-Publish/TheUnmappedHouse     selected / oldest eligible central latest 2026-07-09T05-20-42-04-00
+LuminaryLabs-Publish/TheUnmappedHouse     selected / central stale at 2026-07-09T05-20-42-04-00; repo-local latest 2026-07-09T07-48-29-04-00
 ```
 
 ## Current product read
@@ -73,7 +73,7 @@ open index.html
 ## Current next safe ledge
 
 ```txt
-TheUnmappedHouse Story Adapter Readback Ledger Refresh + Source Fixture Gate
+TheUnmappedHouse Central Ledger Catch-up + Story Adapter Source Fixture Gate
 ```
 
 ## First files to read next
@@ -84,14 +84,14 @@ TheUnmappedHouse Story Adapter Readback Ledger Refresh + Source Fixture Gate
 .agent/next-steps.md
 .agent/validation.md
 .agent/kit-registry.json
-.agent/architecture-audit/2026-07-09T07-48-29-04-00-story-adapter-readback-ledger-dsk-map.md
-.agent/render-audit/2026-07-09T07-48-29-04-00-stage-projection-consumer-readback.md
-.agent/interaction-audit/2026-07-09T07-48-29-04-00-hotspot-command-readback-freeze.md
-.agent/gameplay-audit/2026-07-09T07-48-29-04-00-story-route-command-result-loop.md
-.agent/story-authority-audit/2026-07-09T07-48-29-04-00-source-fixture-ledger-readback-contract.md
-.agent/deploy-audit/2026-07-09T07-48-29-04-00-story-fixture-validation-wire-map.md
-.agent/trackers/2026-07-09T07-48-29-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-09T07-48-29-04-00.md
+.agent/architecture-audit/2026-07-09T08-02-33-04-00-central-ledger-story-fixture-dsk-map.md
+.agent/render-audit/2026-07-09T08-02-33-04-00-stage-adapter-readback-map.md
+.agent/interaction-audit/2026-07-09T08-02-33-04-00-hotspot-command-reason-freeze.md
+.agent/gameplay-audit/2026-07-09T08-02-33-04-00-story-route-save-ledger-loop.md
+.agent/story-authority-audit/2026-07-09T08-02-33-04-00-central-sync-fixture-contract.md
+.agent/deploy-audit/2026-07-09T08-02-33-04-00-story-fixture-check-validation-gate.md
+.agent/trackers/2026-07-09T08-02-33-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-09T08-02-33-04-00.md
 ```
 
 ## Main rule
