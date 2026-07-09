@@ -2,11 +2,11 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T08-02-33-04-00`
+**Updated:** `2026-07-09T10-50-00-04-00`
 
 ## Next safe ledge
 
-Build the central ledger catch-up and story adapter source fixture gate.
+Build the story command result ledger and adapter readback fixture gate.
 
 Do not expand story content first.
 
@@ -17,7 +17,7 @@ Do not change the route, localStorage key, story copy, StageKit picking behavior
 ## Current ledge name
 
 ```txt
-TheUnmappedHouse Central Ledger Catch-up + Story Adapter Source Fixture Gate
+TheUnmappedHouse Story Command Result Ledger + Adapter Readback Fixture Gate
 ```
 
 ## Build order
@@ -33,30 +33,32 @@ TheUnmappedHouse Central Ledger Catch-up + Story Adapter Source Fixture Gate
 8. Add src/story-authority/story-preflight.js.
 9. Add src/story-authority/story-command-result.js.
 10. Add src/story-authority/story-event-record.js.
-11. Add src/story-authority/story-reducer.js.
-12. Add src/story-authority/story-projection.js.
-13. Add src/story-authority/save-projection.js.
-14. Add src/story-authority/interlude-projection.js.
-15. Add src/story-authority/stage-projection.js.
-16. Add src/story-authority/story-browser-adapter-plan.js.
-17. Add src/story-authority/browser-adapter-readback.js.
-18. Add src/story-authority/gamehost-story-diagnostics.js.
-19. Add src/story-authority/central-ledger-readback.js.
-20. Add src/story-authority/story-fixture-cases.js.
-21. Add scripts/validate-story-authority.mjs.
-22. Run the DOM-free fixture directly.
-23. Add fixture invocation to package validation after the direct fixture is stable.
-24. Adapt src/game.js so DOM buttons and StageKit callbacks dispatch StoryCommandEnvelope objects.
-25. Adapt src/game.js so text, hotspot buttons, notebook, interlude, StageKit load calls, localStorage, and debug output consume StoryBrowserAdapterPlan records.
-26. Add additive window.GameHost.getState().story diagnostics without removing the visible debug panel.
-27. Emit BrowserAdapterReadback and CentralLedgerReadback fixture rows.
-28. Update central ledger only after repo-local fixture/readback facts are current.
+11. Add src/story-authority/story-command-ledger.js.
+12. Add src/story-authority/story-reducer.js.
+13. Add src/story-authority/story-projection.js.
+14. Add src/story-authority/save-projection.js.
+15. Add src/story-authority/interlude-projection.js.
+16. Add src/story-authority/stage-projection.js.
+17. Add src/story-authority/story-browser-adapter-plan.js.
+18. Add src/story-authority/browser-adapter-readback.js.
+19. Add src/story-authority/gamehost-story-diagnostics.js.
+20. Add src/story-authority/central-ledger-readback.js.
+21. Add src/story-authority/story-fixture-cases.js.
+22. Add scripts/validate-story-authority.mjs.
+23. Run the DOM-free fixture directly.
+24. Add fixture invocation to package validation after the direct fixture is stable.
+25. Adapt src/game.js so DOM buttons and StageKit callbacks dispatch StoryCommandEnvelope objects.
+26. Adapt src/game.js so text, hotspot buttons, notebook, interlude, StageKit load calls, localStorage, and debug output consume StoryBrowserAdapterPlan records.
+27. Add additive window.GameHost.getState().story diagnostics without removing the visible debug panel.
+28. Emit BrowserAdapterReadback and CentralLedgerReadback fixture rows.
+29. Update central ledger only after repo-local fixture/readback facts are current.
 ```
 
 ## Command types
 
 ```txt
 story.inspect_hotspot
+story.repeat_hotspot
 story.continue_scene
 story.load_state
 story.save_state
