@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T10-54-04-04-00`
+**Updated:** `2026-07-09T11-00-39-04-00`
 
 ## Current validation status
 
@@ -17,8 +17,8 @@ Fixture script run: no
 GitHub Pages live route checked: no
 Full LuminaryLabs-Publish repo list compared to central ledger/root agent state: yes
 Chosen repo root .agent exists before this pass: yes
-Repo-local .agent pointer inconsistency found: yes
-Repo-local .agent pointer inconsistency repaired: yes
+Repo-local mixed pointer state found: yes
+Repo-local mixed pointer state normalized: yes
 Central ledger updated: yes
 Branch created: no
 Pull request created: no
@@ -98,4 +98,4 @@ central_ledger_snapshot_created readback
 
 ## Validation note
 
-This pass intentionally did not claim runtime success. It updated audit state only, repaired repo-local documentation pointers, synced central tracking, and preserved the next source validation target.
+This pass intentionally did not claim runtime success. It updated audit state only, normalized repo-local documentation pointers, synced central tracking, and preserved the next source validation target.
