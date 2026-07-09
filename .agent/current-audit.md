@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Audit timestamp:** `2026-07-09T11-00-39-04-00`
+**Audit timestamp:** `2026-07-09T13-29-43-04-00`
 
 ## Summary
 
@@ -10,21 +10,21 @@
 
 This pass compared the accessible `LuminaryLabs-Publish` repo list against central `LuminaryLabs-Dev/LuminaryLabs` repo-ledger state and sampled root `.agent` state. No non-Cavalry repo was fully new, ledger-absent, missing root `.agent`, recently added but undocumented, or otherwise undocumented.
 
-`TheUnmappedHouse` was selected because it had the oldest central-ledger timestamp among checked eligible repos. This pass also normalizes repo-local pointer drift from partial `2026-07-09T10-50-00-04-00` and `2026-07-09T10-54-04-04-00` handoffs into one complete `2026-07-09T11-00-39-04-00` audit set.
+`TheUnmappedHouse` was selected because it had the oldest central-ledger timestamp among checked eligible repos after newer same-day catch-ups for ZombieOrchard, PhantomCommand, HorrorCorridor, IntoTheMeadow, and PrehistoricRush.
 
 ## Full repo-list comparison result
 
 ```txt
-LuminaryLabs-Publish/IntoTheMeadow        tracked / root .agent present / central latest 2026-07-09T09-50-00-04-00
-LuminaryLabs-Publish/HorrorCorridor       tracked / root .agent present / central latest 2026-07-09T10-10-32-04-00
-LuminaryLabs-Publish/AetherVale           tracked / root .agent present / central latest 2026-07-09T08-50-00-04-00
-LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T10-40-00-04-00
-LuminaryLabs-Publish/TheUnmappedHouse     selected / oldest central ledger fallback and mixed pointer repair target
-LuminaryLabs-Publish/MyCozyIsland         tracked / root .agent present / central latest 2026-07-09T08-29-38-04-00
-LuminaryLabs-Publish/TheOpenAbove         tracked / root .agent present / central latest 2026-07-09T09-36-24-04-00
-LuminaryLabs-Publish/PhantomCommand       tracked / root .agent present / central latest 2026-07-09T10-29-02-04-00
+LuminaryLabs-Publish/IntoTheMeadow        tracked / root .agent present / central latest 2026-07-09T12-08-46-04-00
+LuminaryLabs-Publish/HorrorCorridor       tracked / root .agent present / central latest 2026-07-09T12-30-09-04-00
+LuminaryLabs-Publish/AetherVale           tracked / root .agent present / central latest 2026-07-09T11-30-50-04-00
+LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T13-18-48-04-00
+LuminaryLabs-Publish/TheUnmappedHouse     selected / oldest central ledger fallback / central latest 2026-07-09T11-00-39-04-00
+LuminaryLabs-Publish/MyCozyIsland         tracked / root .agent present / central latest 2026-07-09T11-39-50-04-00
+LuminaryLabs-Publish/TheOpenAbove         tracked / root .agent present / central latest 2026-07-09T11-50-08-04-00
+LuminaryLabs-Publish/PhantomCommand       tracked / root .agent present / central latest 2026-07-09T13-00-37-04-00
 LuminaryLabs-Publish/TheCavalryOfRome     excluded by rule
-LuminaryLabs-Publish/PrehistoricRush      tracked / root .agent present / central latest 2026-07-09T09-10-50-04-00
+LuminaryLabs-Publish/PrehistoricRush      tracked / root .agent present / central latest 2026-07-09T12-00-36-04-00
 ```
 
 ## Source read
@@ -55,7 +55,7 @@ The render surface is not the immediate problem. `StageKit` already owns the fix
 
 The source-authority problem remains concentrated in `src/game.js`: it is simultaneously command dispatcher, reducer, browser adapter, localStorage adapter, route adapter, interlude scheduler, debug projector, StageKit consumer, and save writer.
 
-The documentation-state problem was also real: central tracking still pointed at `2026-07-09T08-02-33-04-00`, while repo-local files had later mixed timestamps. This pass creates a complete `2026-07-09T11-00-39-04-00` artifact set and syncs the central ledger.
+The next implementation should add source-owned story command/result/projection records and adapter readback before any route expansion.
 
 ## Current interaction loop
 
@@ -177,5 +177,5 @@ planned/dom-free-story-fixture-kit
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Central Ledger Sync + Story Adapter Fixture Gate
+TheUnmappedHouse Story Authority Readback + Central Ledger Fixture Gate
 ```
