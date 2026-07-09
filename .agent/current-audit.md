@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Audit timestamp:** `2026-07-09T02-02-03-04-00`
+**Audit timestamp:** `2026-07-09T02-11-07-04-00`
 
 ## Summary
 
@@ -10,21 +10,21 @@
 
 The accessible `LuminaryLabs-Publish` repo list was compared against central `LuminaryLabs-Dev/LuminaryLabs` tracking and sampled repo-local `.agent/START_HERE.md` state. No checked non-Cavalry repo was fully new, absent from tracking, recently added but undocumented, missing sampled root `.agent` state, or otherwise undocumented.
 
-`TheUnmappedHouse` was selected because repo-local `.agent` state had advanced to `2026-07-09T01-50-17-04-00`, while the central ledger still showed `2026-07-08T23-19-33-04-00`. This pass preserves the story-adapter direction and makes the central-ledger splice/readback row the explicit next proof target.
+`TheUnmappedHouse` was selected because repo-local `.agent` state had advanced to `2026-07-09T02-02-03-04-00`, while the central ledger still showed `2026-07-09T01-50-17-04-00`. This pass preserves the story-authority direction and makes the consumer-freeze plus DOM-free fixture gate the explicit next proof target.
 
 ## Full repo-list comparison result
 
 ```txt
-LuminaryLabs-Publish/IntoTheMeadow       tracked / root .agent present / central latest 2026-07-09T00-50-00-04-00
 LuminaryLabs-Publish/HorrorCorridor      tracked / root .agent present / central latest 2026-07-09T01-09-24-04-00
 LuminaryLabs-Publish/AetherVale          tracked / root .agent present / central latest 2026-07-09T00-00-41-04-00
-LuminaryLabs-Publish/ZombieOrchard       tracked / root .agent present / central latest 2026-07-08T23-40-55-04-00
-LuminaryLabs-Publish/TheUnmappedHouse    selected / repo-local latest 2026-07-09T01-50-17-04-00 newer than central 2026-07-08T23-19-33-04-00
-LuminaryLabs-Publish/MyCozyIsland        tracked / root .agent present / central latest 2026-07-09T00-20-08-04-00
 LuminaryLabs-Publish/TheOpenAbove        tracked / root .agent present / central latest 2026-07-09T00-40-20-04-00
-LuminaryLabs-Publish/PhantomCommand      tracked / root .agent present / central latest 2026-07-09T01-28-10-04-00
 LuminaryLabs-Publish/TheCavalryOfRome    excluded by rule
+LuminaryLabs-Publish/PhantomCommand      tracked / root .agent present / central latest 2026-07-09T01-28-10-04-00
 LuminaryLabs-Publish/PrehistoricRush     tracked / root .agent present / central latest 2026-07-09T00-09-22-04-00
+LuminaryLabs-Publish/ZombieOrchard       tracked / root .agent present / central latest 2026-07-08T23-40-55-04-00
+LuminaryLabs-Publish/IntoTheMeadow       tracked / root .agent present / central latest 2026-07-09T00-50-00-04-00
+LuminaryLabs-Publish/MyCozyIsland        tracked / root .agent present / central latest 2026-07-09T00-20-08-04-00
+LuminaryLabs-Publish/TheUnmappedHouse    selected / repo-local latest 2026-07-09T02-02-03-04-00 newer than central 2026-07-09T01-50-17-04-00
 ```
 
 ## Source read
@@ -32,9 +32,6 @@ LuminaryLabs-Publish/PrehistoricRush     tracked / root .agent present / central
 ```txt
 package.json:
   exposes npm run serve and npm run check; check is syntax-only across src/aspect-frame.js, src/game.js, src/stage-kit.js, and src/story-data.js.
-
-index.html:
-  mounts #stage, #story-panel, #hotspot-list, #state-debug, #hover-label, #interlude, and imports ./src/game.js.
 
 src/game.js:
   owns DOM bindings, SAVE_KEY, loadState, saveState, module-level state/currentScene, StageKit construction, inspection, clue grant, completion, interlude, next-scene routing, UI projection, debug JSON, reset, and save writes.
@@ -125,7 +122,7 @@ next-cut:
 ## Current next safe ledge
 
 ```txt
-TheUnmappedHouse Story Authority Central Ledger Splice + Browser Adapter Readback Fixture Gate
+TheUnmappedHouse Story Authority Consumer Freeze + DOM-free Fixture Gate
 ```
 
 ## Validation note
