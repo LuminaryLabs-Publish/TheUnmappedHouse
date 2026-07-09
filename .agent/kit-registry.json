@@ -1,21 +1,21 @@
 {
-  "schemaVersion": "1.16.2",
+  "schemaVersion": "1.16.3",
   "repo": "LuminaryLabs-Publish/TheUnmappedHouse",
-  "generatedAt": "2026-07-09T08-02-33-04-00",
+  "generatedAt": "2026-07-09T10-50-00-04-00",
   "branchTarget": "main",
-  "status": "central-ledger-catchup-story-adapter-source-fixture-gate-planned",
-  "latestTracker": ".agent/trackers/2026-07-09T08-02-33-04-00/project-breakdown.md",
-  "previousTracker": ".agent/trackers/2026-07-09T07-48-29-04-00/project-breakdown.md",
-  "latestTurnLedger": ".agent/turn-ledger/2026-07-09T08-02-33-04-00.md",
-  "latestArchitectureAudit": ".agent/architecture-audit/2026-07-09T08-02-33-04-00-central-ledger-story-fixture-dsk-map.md",
-  "latestRenderAudit": ".agent/render-audit/2026-07-09T08-02-33-04-00-stage-adapter-readback-map.md",
-  "latestInteractionAudit": ".agent/interaction-audit/2026-07-09T08-02-33-04-00-hotspot-command-reason-freeze.md",
-  "latestGameplayAudit": ".agent/gameplay-audit/2026-07-09T08-02-33-04-00-story-route-save-ledger-loop.md",
-  "latestStoryAuthorityAudit": ".agent/story-authority-audit/2026-07-09T08-02-33-04-00-central-sync-fixture-contract.md",
-  "latestDeployAudit": ".agent/deploy-audit/2026-07-09T08-02-33-04-00-story-fixture-check-validation-gate.md",
+  "status": "story-command-result-ledger-adapter-readback-fixture-gate-planned",
+  "latestTracker": ".agent/trackers/2026-07-09T10-50-00-04-00/project-breakdown.md",
+  "previousTracker": ".agent/trackers/2026-07-09T08-02-33-04-00/project-breakdown.md",
+  "latestTurnLedger": ".agent/turn-ledger/2026-07-09T10-50-00-04-00.md",
+  "latestArchitectureAudit": ".agent/architecture-audit/2026-07-09T10-50-00-04-00-story-command-result-ledger-dsk-map.md",
+  "latestRenderAudit": ".agent/render-audit/2026-07-09T10-50-00-04-00-stagekit-render-adapter-deferral-map.md",
+  "latestInteractionAudit": ".agent/interaction-audit/2026-07-09T10-50-00-04-00-hotspot-repeat-command-ledger.md",
+  "latestGameplayAudit": ".agent/gameplay-audit/2026-07-09T10-50-00-04-00-story-route-command-result-loop.md",
+  "latestStoryAuthorityAudit": ".agent/story-authority-audit/2026-07-09T10-50-00-04-00-source-owned-fixture-readback-contract.md",
+  "latestDeployAudit": ".agent/deploy-audit/2026-07-09T10-50-00-04-00-story-fixture-check-gate.md",
   "selection": {
     "selectedRepo": "LuminaryLabs-Publish/TheUnmappedHouse",
-    "reason": "No checked non-Cavalry LuminaryLabs-Publish repo was new, central-ledger absent, missing sampled root .agent state, recently added but undocumented, or otherwise undocumented. TheUnmappedHouse was selected as the oldest eligible central-ledger catch-up target because central tracking still pointed to 2026-07-09T05-20-42-04-00 while repo-local .agent state had advanced to 2026-07-09T07-48-29-04-00.",
+    "reason": "No checked non-Cavalry LuminaryLabs-Publish repo was new, central-ledger absent, missing sampled root .agent state, recently added but undocumented, or otherwise undocumented. TheUnmappedHouse was selected as the oldest eligible documented-selection fallback at this run window.",
     "excludedRepos": [
       {
         "repo": "LuminaryLabs-Publish/TheCavalryOfRome",
@@ -23,23 +23,23 @@
       }
     ],
     "publishReposObserved": [
+      "IntoTheMeadow",
       "HorrorCorridor",
       "AetherVale",
-      "TheOpenAbove",
-      "TheCavalryOfRome",
-      "PhantomCommand",
-      "PrehistoricRush",
       "ZombieOrchard",
-      "IntoTheMeadow",
+      "TheUnmappedHouse",
       "MyCozyIsland",
-      "TheUnmappedHouse"
+      "TheOpenAbove",
+      "PhantomCommand",
+      "TheCavalryOfRome",
+      "PrehistoricRush"
     ]
   },
   "productDirection": {
     "currentRuntime": "fixed-camera anime point-and-click horror prototype",
     "currentGap": "Story progression, source fallback, save intent, interlude intent, reset, debug output, completion logic, source validation, browser adapter decisions, adapter readback, and central ledger readback are not yet source-owned contracts.",
     "recommendedDecision": "Keep StageKit visuals stable and cut story source manifest plus preflight/command/result/projection/readback authority into pure files before renderer extraction, new rooms, audio, inventory, or browser-only automation.",
-    "recommendedVerticalSlice": "TheUnmappedHouse Central Ledger Catch-up + Story Adapter Source Fixture Gate"
+    "recommendedVerticalSlice": "TheUnmappedHouse Story Command Result Ledger + Adapter Readback Fixture Gate"
   },
   "interactionLoop": {
     "currentSource": [
@@ -63,6 +63,7 @@
       "StoryPreflight",
       "StoryCommandResult",
       "StoryEventRecord[]",
+      "StoryCommandLedger",
       "StoryProjection",
       "SaveProjection",
       "InterludeProjection",
@@ -112,6 +113,7 @@
       "story-command-reason-authority",
       "story-command-result-authority",
       "story-event-records",
+      "story-command-ledger",
       "story-result-reducer",
       "story-projection",
       "save-projection",
@@ -149,6 +151,7 @@
       "story-preflight-kit",
       "story-command-result-kit",
       "story-event-record-kit",
+      "story-command-ledger-kit",
       "story-reducer-kit",
       "story-projection-kit",
       "save-projection-kit",
