@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-08T18-51-55-04-00`
+**Updated:** `2026-07-08T21-00-12-04-00`
 
 ## Current validation status
 
@@ -26,11 +26,10 @@ Pushed to main: yes
 ## Source readback performed
 
 ```txt
+package.json read
 src/game.js read
 src/stage-kit.js read
 src/story-data.js read
-src/aspect-frame.js read
-package.json read
 central repo ledger read
 repo-local .agent root docs read
 repo-local kit registry read
@@ -59,7 +58,7 @@ repeat hotspot does not duplicate clue
 room completion opens interlude
 continue advances scene
 KeyR reset preserves expected behavior
-window.GameHost.getState returns additive story/stage/latestCommand/preflight/save/interlude/fixture diagnostics
+window.GameHost.getState returns additive story/stage/latestCommand/preflight/save/interlude/stageProjection/browserAdapter/fixture diagnostics
 ```
 
 ## Fixture proof expected next
@@ -88,6 +87,7 @@ story_projection accepted
 save_projection accepted
 interlude_projection accepted
 stage_projection accepted
+browser_adapter_plan accepted
 GameHost_projection accepted
 ```
 
