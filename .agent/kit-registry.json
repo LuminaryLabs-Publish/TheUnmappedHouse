@@ -1,20 +1,20 @@
 {
-  "schemaVersion": "1.11.0",
+  "schemaVersion": "1.12.0",
   "repo": "LuminaryLabs-Publish/TheUnmappedHouse",
-  "generatedAt": "2026-07-08T23-19-33-04-00",
+  "generatedAt": "2026-07-09T01-40-49-04-00",
   "branchTarget": "main",
-  "status": "story-browser-adapter-readback-central-ledger-catchup-fixture-gate-planned",
-  "latestTracker": ".agent/trackers/2026-07-08T23-19-33-04-00/project-breakdown.md",
-  "latestTurnLedger": ".agent/turn-ledger/2026-07-08T23-19-33-04-00.md",
-  "latestArchitectureAudit": ".agent/architecture-audit/2026-07-08T23-19-33-04-00-story-browser-adapter-readback-dsk-map.md",
-  "latestRenderAudit": ".agent/render-audit/2026-07-08T23-19-33-04-00-stage-projection-consumer-readback.md",
-  "latestInteractionAudit": ".agent/interaction-audit/2026-07-08T23-19-33-04-00-hotspot-command-adapter-readback.md",
-  "latestGameplayAudit": ".agent/gameplay-audit/2026-07-08T23-19-33-04-00-story-result-adapter-loop.md",
-  "latestStoryAuthorityAudit": ".agent/story-authority-audit/2026-07-08T23-19-33-04-00-central-ledger-adapter-readback-contract.md",
-  "latestDeployAudit": ".agent/deploy-audit/2026-07-08T23-19-33-04-00-fixture-check-wire-map.md",
+  "status": "story-adapter-readback-fixture-central-ledger-freshness-gate-planned",
+  "latestTracker": ".agent/trackers/2026-07-09T01-40-49-04-00/project-breakdown.md",
+  "latestTurnLedger": ".agent/turn-ledger/2026-07-09T01-40-49-04-00.md",
+  "latestArchitectureAudit": ".agent/architecture-audit/2026-07-09T01-40-49-04-00-story-adapter-readback-fixture-dsk-map.md",
+  "latestRenderAudit": ".agent/render-audit/2026-07-09T01-40-49-04-00-stage-adapter-readback-fixture-map.md",
+  "latestInteractionAudit": ".agent/interaction-audit/2026-07-09T01-40-49-04-00-hotspot-command-readback-fixture.md",
+  "latestGameplayAudit": ".agent/gameplay-audit/2026-07-09T01-40-49-04-00-story-command-route-replay-loop.md",
+  "latestStoryAuthorityAudit": ".agent/story-authority-audit/2026-07-09T01-40-49-04-00-adapter-readback-central-freshness-contract.md",
+  "latestDeployAudit": ".agent/deploy-audit/2026-07-09T01-40-49-04-00-npm-check-story-fixture-wire-map.md",
   "selection": {
     "selectedRepo": "LuminaryLabs-Publish/TheUnmappedHouse",
-    "reason": "No checked non-Cavalry LuminaryLabs-Publish repo was new, central-ledger absent, missing sampled root .agent state, recently added but undocumented, or otherwise undocumented. TheUnmappedHouse was selected as the central-ledger catch-up fallback because repo-local .agent state had advanced to 2026-07-08T23-08-29-04-00 while the central ledger still pointed at 2026-07-08T21-00-12-04-00.",
+    "reason": "No checked non-Cavalry LuminaryLabs-Publish repo was new, central-ledger absent, missing sampled root .agent state, recently added but undocumented, or otherwise undocumented. TheUnmappedHouse was selected as the oldest eligible central-ledger fallback in the sampled non-excluded set.",
     "excludedRepos": [
       {
         "repo": "LuminaryLabs-Publish/TheCavalryOfRome",
@@ -36,9 +36,9 @@
   },
   "productDirection": {
     "currentRuntime": "fixed-camera anime point-and-click horror stage prototype",
-    "currentGap": "Story progression, source fallback, save intent, interlude intent, reset, debug output, completion logic, source validation, browser adapter decisions, and adapter readback still live in src/game.js DOM handlers instead of source-owned command/result/projection/readback modules.",
+    "currentGap": "Story progression, source fallback, save intent, interlude intent, reset, debug output, completion logic, source validation, browser adapter decisions, adapter readback, and central freshness proof still need source-owned command/result/projection/readback modules.",
     "recommendedDecision": "Keep StageKit visuals stable and cut story source manifest plus preflight/command/result/projection/readback authority into pure files before renderer extraction, new rooms, audio, inventory, or browser automation.",
-    "recommendedVerticalSlice": "TheUnmappedHouse Story Browser Adapter Readback + Central Ledger Catch-up Fixture Gate"
+    "recommendedVerticalSlice": "TheUnmappedHouse Story Adapter Readback Fixture + Central Ledger Freshness Gate"
   },
   "interactionLoop": {
     "currentSource": [
@@ -67,8 +67,8 @@
       "StoryBrowserAdapterPlan",
       "BrowserAdapterReadback",
       "GameHostStoryDiagnostics",
-      "DOM-free fixture rows",
-      "CentralLedgerSnapshot"
+      "CentralLedgerReadback",
+      "DOM-free fixture rows"
     ]
   },
   "domains": [
@@ -84,9 +84,9 @@
     { "id": "story-command-authority", "status": "missing-next", "services": ["command envelope", "validation", "accepted result", "rejected result", "no-mutation result", "terminal result", "stable reason", "clue delta", "text/log delta"] },
     { "id": "story-result-reducer", "status": "missing-next", "services": ["apply inspection", "apply continue", "apply save", "apply load", "apply reset", "project state"] },
     { "id": "host-projection-adapter", "status": "missing-next", "services": ["StoryProjection", "SaveProjection", "InterludeProjection", "StageProjection", "StoryBrowserAdapterPlan", "BrowserAdapterReadback", "DOM adapter", "localStorage adapter", "GameHost adapter"] },
-    { "id": "runtime-diagnostics", "status": "missing-next", "services": ["GameHost projection", "latest result", "preflight result", "journal counters", "save projection", "interlude projection", "stage summary", "browser adapter summary", "readback summary", "fixture status"] },
-    { "id": "fixture-replay", "status": "missing-next", "services": ["DOM-free reducer execution", "inspection fixtures", "transition fixtures", "save/load fixtures", "reset fixtures", "descriptor rejection fixtures", "projection fixtures", "adapter fixtures", "readback fixtures"] },
-    { "id": "central-ledger-sync", "status": "documented-this-pass", "services": ["repo-local latest path readback", "central ledger catch-up", "internal change-log entry"] }
+    { "id": "runtime-diagnostics", "status": "missing-next", "services": ["GameHost projection", "latest result", "preflight result", "journal counters", "save projection", "interlude projection", "stage summary", "browser adapter summary", "readback summary", "central freshness", "fixture status"] },
+    { "id": "fixture-replay", "status": "missing-next", "services": ["DOM-free reducer execution", "inspection fixtures", "transition fixtures", "save/load fixtures", "reset fixtures", "descriptor rejection fixtures", "projection fixtures", "adapter fixtures", "readback fixtures", "central freshness fixtures"] },
+    { "id": "central-ledger-sync", "status": "documented-this-pass", "services": ["repo-local latest path readback", "central ledger update", "internal change-log entry", "central freshness row"] }
   ],
   "implementedKits": [
     "unmapped-house-static-shell-kit",
@@ -148,7 +148,8 @@
     "unmapped-house-scene-completion-fixture-kit",
     "unmapped-house-save-load-fixture-kit",
     "unmapped-house-stage-descriptor-validation-kit",
-    "unmapped-house-fixture-summary-projection-kit"
+    "unmapped-house-fixture-summary-projection-kit",
+    "unmapped-house-central-ledger-readback-row-kit"
   ],
   "recommendedSourceFiles": [
     "src/story-authority/story-source-manifest.js",
@@ -168,11 +169,12 @@
     "src/story-authority/story-browser-adapter-plan.js",
     "src/story-authority/browser-adapter-readback.js",
     "src/story-authority/gamehost-story-diagnostics.js",
+    "src/story-authority/central-ledger-readback.js",
     "src/story-authority/story-fixture-cases.js",
     "scripts/validate-story-authority.mjs"
   ],
   "nextSlice": {
-    "name": "TheUnmappedHouse Story Browser Adapter Readback + Central Ledger Catch-up Fixture Gate",
+    "name": "TheUnmappedHouse Story Adapter Readback Fixture + Central Ledger Freshness Gate",
     "preserve": ["static route", "current visuals", "story copy", "StageKit behavior", "localStorage key", "Pages workflow"],
     "fixtureRows": [
       "source_manifest_created",
@@ -203,7 +205,7 @@
       "browser_adapter_plan",
       "browser_adapter_readback",
       "GameHost_projection",
-      "central_ledger_snapshot"
+      "central_ledger_readback"
     ]
   },
   "validation": {
