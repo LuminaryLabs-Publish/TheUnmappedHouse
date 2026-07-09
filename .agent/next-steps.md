@@ -2,11 +2,11 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T07-48-29-04-00`
+**Updated:** `2026-07-09T08-02-33-04-00`
 
 ## Next safe ledge
 
-Build the story adapter readback ledger refresh and source fixture gate.
+Build the central ledger catch-up and story adapter source fixture gate.
 
 Do not expand story content first.
 
@@ -17,7 +17,7 @@ Do not change the route, localStorage key, story copy, StageKit picking behavior
 ## Current ledge name
 
 ```txt
-TheUnmappedHouse Story Adapter Readback Ledger Refresh + Source Fixture Gate
+TheUnmappedHouse Central Ledger Catch-up + Story Adapter Source Fixture Gate
 ```
 
 ## Build order
@@ -80,6 +80,7 @@ no_mutation
 terminal
 readback
 normalized
+central_sync
 ```
 
 ## Required fixture rows
