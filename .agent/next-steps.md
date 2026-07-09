@@ -2,22 +2,26 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T16-58-52-04-00`
+**Updated:** `2026-07-09T19-00-15-04-00`
 
 ## Next safe ledge
 
-Build the story fixture readback central catch-up and browser adapter gate.
+```txt
+TheUnmappedHouse Story Adapter Ledger Refresh + Browser Fixture Gate
+```
 
-Do not expand story content first.
+Build source-owned story command/result/projection/readback modules before expanding story content or rewriting StageKit.
 
-Do not rewrite StageKit first.
-
-Do not change the route, localStorage key, story copy, StageKit picking behavior, fixed 16:9 frame, public static shell, or Pages workflow unless validation proves it is required.
-
-## Current ledge name
+## Do not start with
 
 ```txt
-TheUnmappedHouse Story Fixture Readback Central Catch-up + Browser Adapter Gate
+new rooms
+audio
+inventory
+StageKit rewrite
+renderer extraction
+browser-only smoke work
+Pages workflow churn
 ```
 
 ## Implementation checklist
@@ -30,7 +34,7 @@ TheUnmappedHouse Story Fixture Readback Central Catch-up + Browser Adapter Gate
 - Add `src/story-reducer.js` to return command results without touching DOM, StageKit, timers, or localStorage.
 - Add `src/story-projections.js` for story panel, hotspot buttons, debug JSON, save intent, interlude intent, and StageKit load intent.
 - Add `src/browser-adapter-plan.js` to convert result projections into browser mutations.
-- Add additive adapter readback to compare DOM, save state, StageKit current descriptor, interlude state, and debug JSON against expected projection.
+- Add `src/browser-adapter-readback.js` to compare DOM, save state, StageKit current descriptor, interlude state, and debug JSON against expected projection.
 - Add additive `globalThis.UnmappedHouseHost.getState()` diagnostics without changing existing route behavior.
 - Add DOM-free fixtures under `tests/fixtures/story-command-results.mjs` or equivalent.
 - Wire `npm run check` to run syntax checks plus the story fixture runner.
@@ -66,4 +70,4 @@ These can be read, but the first implementation should avoid changing them unles
 
 ## Success definition
 
-The next implementation is complete only when a DOM-free fixture can prove first inspect, repeat inspect, completion, continuation, terminal continuation, malformed-save fallback, browser adapter projection, repo-local ledger readback, and central ledger readback.
+The next implementation is complete only when a DOM-free fixture can prove first inspect, repeat inspect, invalid inspect, completion, continue, terminal continue, load fallback, malformed save, reset, projection/readback parity, repo-local ledger readback, and central ledger readback.
