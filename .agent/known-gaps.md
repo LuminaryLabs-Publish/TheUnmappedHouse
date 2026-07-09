@@ -2,22 +2,21 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T16-58-52-04-00`
+**Updated:** `2026-07-09T19-00-15-04-00`
 
 ## Repo-local and central documentation gaps
 
-- There is no source-owned `RepoLocalLedgerReadback` fixture row proving root `.agent` pointers match actual timestamped files.
-- There is no source-owned `CentralLedgerReadback` fixture row proving central ledger pointers match repo-local state.
-- Central tracking had lagged repo-local `.agent` state, so ledger catch-up remains a recurring documentation risk until executable readback exists.
-- Ledger readback is still documentation-only instead of an executable fixture contract.
+- There is no executable `RepoLocalLedgerReadback` fixture row proving root `.agent` pointers match actual timestamped files.
+- There is no executable `CentralLedgerReadback` fixture row proving central ledger pointers match repo-local state.
+- Ledger readback is still documentation-only instead of a source-owned fixture contract.
 
 ## Architecture gaps
 
 - Story authority is embedded in `src/game.js` UI handlers.
 - Module-level `state` and `currentScene` are mutated directly.
-- There is no `StorySourceManifest` that defines product id, route id, save key, scene ids, command ids, source version, public entry route, and central readback expectations.
+- There is no `StorySourceManifest` for product id, route id, save key, scene ids, command ids, source version, public entry route, and central readback expectations.
 - There is no source-owned story command envelope for inspection, continuation, load, save, projection, readback, ledger readback, or reset.
-- There is no explicit `StoryPreflight` that validates source descriptors, loaded state, command shape, current scene, target hotspot, completion requirement, and target scene before mutation.
+- There is no explicit `StoryPreflight` validating source descriptors, loaded state, command shape, current scene, target hotspot, completion requirement, and target scene before mutation.
 - There is no typed `StoryCommandResult` for accepted, rejected, repeated, terminal, completed, load_failed, save_failed, or no_mutation paths.
 - Repeat hotspot inspections return early after DOM writes, log writes, render, and save without emitting a no-mutation result.
 - Terminal `nextScene()` completion writes prototype text directly into DOM state and does not save or emit a terminal route result.
@@ -29,6 +28,7 @@
 - `renderUi()` directly creates buttons and debug JSON from mutable module state.
 - Browser adapter actions are not represented as a plan that can be inspected before DOM mutation.
 - Browser adapter readback is missing; no fixture confirms title/text/buttons/debug/interlude/stage state after a command.
+- There is no additive `globalThis.UnmappedHouseHost.getState()` source/readback surface yet.
 
 ## Render and StageKit gaps
 
@@ -51,11 +51,11 @@
 
 - `npm run check` is syntax-only.
 - There is no DOM-free story fixture runner.
-- There is no reducer fixture for first inspect, repeat inspect, completion, continue, terminal continue, load fallback, malformed save, reset, or projection/readback parity.
+- There is no reducer fixture for first inspect, repeat inspect, invalid inspect, completion, continue, terminal continue, load fallback, malformed save, reset, or projection/readback parity.
 - There is no Pages build gate that requires story fixture proof before static artifact copy.
 
 ## Current priority
 
-Add the story fixture/readback layer first.
+Add the story adapter ledger and fixture/readback layer first.
 
 Do not add rooms, audio, inventory, renderer extraction, or browser-only smoke work before source-owned command/result fixture rows exist.
