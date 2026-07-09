@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Audit timestamp:** `2026-07-09T10-54-04-04-00`
+**Audit timestamp:** `2026-07-09T11-00-39-04-00`
 
 ## Summary
 
@@ -10,21 +10,21 @@
 
 This pass compared the accessible `LuminaryLabs-Publish` repo list against central `LuminaryLabs-Dev/LuminaryLabs` repo-ledger state and sampled root `.agent` state. No non-Cavalry repo was fully new, ledger-absent, missing root `.agent`, recently added but undocumented, or otherwise undocumented.
 
-`TheUnmappedHouse` was selected because it had the oldest central-ledger timestamp among checked eligible repos and because repo-local `.agent/START_HERE.md` had advanced to a missing `2026-07-09T10-50-00-04-00` file set. This pass repairs the root doc pointers, refreshes the required audit files, and keeps the next implementation focused on story command/result fixture authority.
+`TheUnmappedHouse` was selected because it had the oldest central-ledger timestamp among checked eligible repos. This pass also normalizes repo-local pointer drift from partial `2026-07-09T10-50-00-04-00` and `2026-07-09T10-54-04-04-00` handoffs into one complete `2026-07-09T11-00-39-04-00` audit set.
 
 ## Full repo-list comparison result
 
 ```txt
+LuminaryLabs-Publish/IntoTheMeadow        tracked / root .agent present / central latest 2026-07-09T09-50-00-04-00
 LuminaryLabs-Publish/HorrorCorridor       tracked / root .agent present / central latest 2026-07-09T10-10-32-04-00
 LuminaryLabs-Publish/AetherVale           tracked / root .agent present / central latest 2026-07-09T08-50-00-04-00
-LuminaryLabs-Publish/TheOpenAbove         tracked / root .agent present / central latest 2026-07-09T09-36-24-04-00
-LuminaryLabs-Publish/TheCavalryOfRome     excluded by rule
-LuminaryLabs-Publish/PhantomCommand       tracked / root .agent present / central latest 2026-07-09T10-20-44-04-00
-LuminaryLabs-Publish/PrehistoricRush      tracked / root .agent present / central latest 2026-07-09T09-10-50-04-00
 LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T10-40-00-04-00
-LuminaryLabs-Publish/IntoTheMeadow        tracked / root .agent present / central latest 2026-07-09T09-50-00-04-00
+LuminaryLabs-Publish/TheUnmappedHouse     selected / oldest central ledger fallback and mixed pointer repair target
 LuminaryLabs-Publish/MyCozyIsland         tracked / root .agent present / central latest 2026-07-09T08-29-38-04-00
-LuminaryLabs-Publish/TheUnmappedHouse     selected / oldest central ledger and repo-local doc consistency repair target
+LuminaryLabs-Publish/TheOpenAbove         tracked / root .agent present / central latest 2026-07-09T09-36-24-04-00
+LuminaryLabs-Publish/PhantomCommand       tracked / root .agent present / central latest 2026-07-09T10-29-02-04-00
+LuminaryLabs-Publish/TheCavalryOfRome     excluded by rule
+LuminaryLabs-Publish/PrehistoricRush      tracked / root .agent present / central latest 2026-07-09T09-10-50-04-00
 ```
 
 ## Source read
@@ -51,11 +51,11 @@ src/story-data.js:
 
 ## Main finding
 
-The render surface is not the immediate problem. `StageKit` already owns the fixed design frame, camera descriptor consumption, shader material, post-process pass, hotspot volumes, hover label, and raycast picking.
+The render surface is not the immediate problem. `StageKit` already owns the fixed design frame, camera descriptor consumption, shader material, post-process pass, hotspot volumes, hover label, raycast picking, resize, render target, and animation loop.
 
 The source-authority problem remains concentrated in `src/game.js`: it is simultaneously command dispatcher, reducer, browser adapter, localStorage adapter, route adapter, interlude scheduler, debug projector, StageKit consumer, and save writer.
 
-The documentation-state problem was also real: the root start file pointed to `2026-07-09T10-50-00-04-00` artifacts that were not present, while the remaining root audit files and kit registry were not consistently aligned to a complete timestamped set. This pass repairs that inconsistency with a complete `2026-07-09T10-54-04-04-00` audit set.
+The documentation-state problem was also real: central tracking still pointed at `2026-07-09T08-02-33-04-00`, while repo-local files had later mixed timestamps. This pass creates a complete `2026-07-09T11-00-39-04-00` artifact set and syncs the central ledger.
 
 ## Current interaction loop
 
@@ -169,6 +169,7 @@ planned/stage-projection-kit
 planned/browser-adapter-plan-kit
 planned/browser-adapter-readback-kit
 planned/gamehost-story-diagnostics-kit
+planned/repo-local-ledger-readback-kit
 planned/central-ledger-readback-kit
 planned/dom-free-story-fixture-kit
 ```
@@ -176,5 +177,5 @@ planned/dom-free-story-fixture-kit
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Repo-Local Ledger Repair + Story Authority Fixture Gate
+TheUnmappedHouse Central Ledger Sync + Story Adapter Fixture Gate
 ```
