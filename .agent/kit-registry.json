@@ -1,21 +1,21 @@
 {
-  "schemaVersion": "1.16.0",
+  "schemaVersion": "1.16.1",
   "repo": "LuminaryLabs-Publish/TheUnmappedHouse",
-  "generatedAt": "2026-07-09T05-20-42-04-00",
+  "generatedAt": "2026-07-09T07-48-29-04-00",
   "branchTarget": "main",
-  "status": "story-adapter-fixture-readback-source-authority-consumer-freeze-planned",
-  "latestTracker": ".agent/trackers/2026-07-09T05-20-42-04-00/project-breakdown.md",
-  "previousTracker": ".agent/trackers/2026-07-09T02-11-07-04-00/project-breakdown.md",
-  "latestTurnLedger": ".agent/turn-ledger/2026-07-09T05-20-42-04-00.md",
-  "latestArchitectureAudit": ".agent/architecture-audit/2026-07-09T05-20-42-04-00-story-adapter-fixture-readback-dsk-map.md",
-  "latestRenderAudit": ".agent/render-audit/2026-07-09T05-20-42-04-00-stage-projection-render-readback.md",
-  "latestInteractionAudit": ".agent/interaction-audit/2026-07-09T05-20-42-04-00-hotspot-continue-adapter-contract.md",
-  "latestGameplayAudit": ".agent/gameplay-audit/2026-07-09T05-20-42-04-00-story-route-fixture-loop.md",
-  "latestStoryAuthorityAudit": ".agent/story-authority-audit/2026-07-09T05-20-42-04-00-consumer-freeze-source-contract.md",
-  "latestDeployAudit": ".agent/deploy-audit/2026-07-09T05-20-42-04-00-check-fixture-wire-map.md",
+  "status": "story-adapter-readback-ledger-refresh-source-fixture-gate-planned",
+  "latestTracker": ".agent/trackers/2026-07-09T07-48-29-04-00/project-breakdown.md",
+  "previousTracker": ".agent/trackers/2026-07-09T05-20-42-04-00/project-breakdown.md",
+  "latestTurnLedger": ".agent/turn-ledger/2026-07-09T07-48-29-04-00.md",
+  "latestArchitectureAudit": ".agent/architecture-audit/2026-07-09T07-48-29-04-00-story-adapter-readback-ledger-dsk-map.md",
+  "latestRenderAudit": ".agent/render-audit/2026-07-09T07-48-29-04-00-stage-projection-consumer-readback.md",
+  "latestInteractionAudit": ".agent/interaction-audit/2026-07-09T07-48-29-04-00-hotspot-command-readback-freeze.md",
+  "latestGameplayAudit": ".agent/gameplay-audit/2026-07-09T07-48-29-04-00-story-route-command-result-loop.md",
+  "latestStoryAuthorityAudit": ".agent/story-authority-audit/2026-07-09T07-48-29-04-00-source-fixture-ledger-readback-contract.md",
+  "latestDeployAudit": ".agent/deploy-audit/2026-07-09T07-48-29-04-00-story-fixture-validation-wire-map.md",
   "selection": {
     "selectedRepo": "LuminaryLabs-Publish/TheUnmappedHouse",
-    "reason": "No checked non-Cavalry LuminaryLabs-Publish repo was new, central-ledger absent, missing sampled root .agent state, recently added but undocumented, or otherwise undocumented. TheUnmappedHouse was selected as the oldest eligible central-ledger fallback with central latest 2026-07-09T02-11-07-04-00.",
+    "reason": "No checked non-Cavalry LuminaryLabs-Publish repo was new, central-ledger absent, missing sampled root .agent state, recently added but undocumented, or otherwise undocumented. TheUnmappedHouse was selected as the oldest eligible central-ledger fallback with central latest 2026-07-09T05-20-42-04-00.",
     "excludedRepos": [
       {
         "repo": "LuminaryLabs-Publish/TheCavalryOfRome",
@@ -23,23 +23,23 @@
       }
     ],
     "publishReposObserved": [
-      "IntoTheMeadow",
       "HorrorCorridor",
       "AetherVale",
-      "ZombieOrchard",
-      "TheUnmappedHouse",
-      "MyCozyIsland",
       "TheOpenAbove",
-      "PhantomCommand",
       "TheCavalryOfRome",
-      "PrehistoricRush"
+      "PhantomCommand",
+      "PrehistoricRush",
+      "ZombieOrchard",
+      "IntoTheMeadow",
+      "MyCozyIsland",
+      "TheUnmappedHouse"
     ]
   },
   "productDirection": {
     "currentRuntime": "fixed-camera anime point-and-click horror prototype",
     "currentGap": "Story progression, source fallback, save intent, interlude intent, reset, debug output, completion logic, source validation, browser adapter decisions, adapter readback, and central ledger readback are not yet source-owned contracts.",
     "recommendedDecision": "Keep StageKit visuals stable and cut story source manifest plus preflight/command/result/projection/readback authority into pure files before renderer extraction, new rooms, audio, inventory, or browser-only automation.",
-    "recommendedVerticalSlice": "TheUnmappedHouse Story Adapter Fixture Readback + Source Authority Consumer Freeze"
+    "recommendedVerticalSlice": "TheUnmappedHouse Story Adapter Readback Ledger Refresh + Source Fixture Gate"
   },
   "interactionLoop": {
     "currentSource": [
@@ -47,8 +47,10 @@
       "StageKit loads the current fixed-camera scene",
       "hotspot side-panel button or StageKit raycast click calls inspectHotspot(hotspot)",
       "inspectHotspot mutates inspected state, grants clues, writes text/log, checks scene completion, schedules interlude, renders UI, and saves",
+      "repeat hotspot branch writes text/log/UI/save without a typed no_mutation result",
       "continue button calls nextScene()",
       "nextScene mutates scene id, route, interlude DOM, StageKit scene, UI, and save state",
+      "terminal route writes prototype-complete text directly into DOM state",
       "KeyR clears localStorage and reloads",
       "debug panel emits ad hoc JSON"
     ],
@@ -78,7 +80,10 @@
       "static-pages-deploy",
       "browser-app-runtime",
       "story-source",
+      "story-scene-descriptor",
+      "story-hotspot-descriptor",
       "story-state",
+      "inspected-hotspot-state",
       "localstorage-save",
       "notebook-log",
       "route-state",
