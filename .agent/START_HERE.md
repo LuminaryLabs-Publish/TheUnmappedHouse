@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Last aligned:** `2026-07-09T02-02-03-04-00`
+**Last aligned:** `2026-07-09T02-11-07-04-00`
 
 ## Purpose
 
@@ -18,23 +18,23 @@ No checked non-Cavalry Publish repo was fully new, absent from the central ledge
 
 `LuminaryLabs-Publish/TheCavalryOfRome` remains excluded by standing rule.
 
-`TheUnmappedHouse` was selected because repo-local `.agent` state had already advanced to `2026-07-09T01-50-17-04-00` while the central `LuminaryLabs-Dev/LuminaryLabs` ledger still pointed at `2026-07-08T23-19-33-04-00` before this run.
+`TheUnmappedHouse` was selected because repo-local `.agent` state had already advanced to `2026-07-09T02-02-03-04-00` while the central `LuminaryLabs-Dev/LuminaryLabs` ledger still pointed at `2026-07-09T01-50-17-04-00` before this run.
 
-This pass refreshes the repo-local breakdown and central ledger around the same implementation ledge: story authority must move behind command/result/projection/readback contracts before new content or renderer work.
+This pass refreshes the repo-local and central docs around one exact next ledge: story authority must move behind source manifest, preflight, command/result, projection, browser adapter, readback, GameHost, and central-ledger fixture contracts before new story content or renderer work.
 
 ## Publish repos checked
 
 ```txt
-LuminaryLabs-Publish/IntoTheMeadow       tracked / root .agent present / central latest 2026-07-09T00-50-00-04-00
 LuminaryLabs-Publish/HorrorCorridor      tracked / root .agent present / central latest 2026-07-09T01-09-24-04-00
 LuminaryLabs-Publish/AetherVale          tracked / root .agent present / central latest 2026-07-09T00-00-41-04-00
-LuminaryLabs-Publish/ZombieOrchard       tracked / root .agent present / central latest 2026-07-08T23-40-55-04-00
-LuminaryLabs-Publish/TheUnmappedHouse    selected / repo-local latest 2026-07-09T01-50-17-04-00 newer than central 2026-07-08T23-19-33-04-00
-LuminaryLabs-Publish/MyCozyIsland        tracked / root .agent present / central latest 2026-07-09T00-20-08-04-00
 LuminaryLabs-Publish/TheOpenAbove        tracked / root .agent present / central latest 2026-07-09T00-40-20-04-00
-LuminaryLabs-Publish/PhantomCommand      tracked / root .agent present / central latest 2026-07-09T01-28-10-04-00
 LuminaryLabs-Publish/TheCavalryOfRome    excluded by rule
+LuminaryLabs-Publish/PhantomCommand      tracked / root .agent present / central latest 2026-07-09T01-28-10-04-00
 LuminaryLabs-Publish/PrehistoricRush     tracked / root .agent present / central latest 2026-07-09T00-09-22-04-00
+LuminaryLabs-Publish/ZombieOrchard       tracked / root .agent present / central latest 2026-07-08T23-40-55-04-00
+LuminaryLabs-Publish/IntoTheMeadow       tracked / root .agent present / central latest 2026-07-09T00-50-00-04-00
+LuminaryLabs-Publish/MyCozyIsland        tracked / root .agent present / central latest 2026-07-09T00-20-08-04-00
+LuminaryLabs-Publish/TheUnmappedHouse    selected / repo-local latest 2026-07-09T02-02-03-04-00 newer than central 2026-07-09T01-50-17-04-00
 ```
 
 ## Current product read
@@ -100,14 +100,14 @@ UI event or StageKit callback
 .agent/known-gaps.md
 .agent/next-steps.md
 .agent/validation.md
-.agent/architecture-audit/2026-07-09T02-02-03-04-00-story-authority-central-ledger-splice-dsk-breakdown.md
-.agent/render-audit/2026-07-09T02-02-03-04-00-stage-gamehost-readback-consumer-freeze.md
-.agent/interaction-audit/2026-07-09T02-02-03-04-00-inspection-command-result-plan.md
-.agent/gameplay-audit/2026-07-09T02-02-03-04-00-route-save-fixture-loop.md
-.agent/story-authority-audit/2026-07-09T02-02-03-04-00-central-ledger-splice-readback-contract.md
-.agent/deploy-audit/2026-07-09T02-02-03-04-00-npm-check-story-fixture-gate.md
-.agent/trackers/2026-07-09T02-02-03-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-09T02-02-03-04-00.md
+.agent/architecture-audit/2026-07-09T02-11-07-04-00-story-authority-consumer-freeze-dsk-breakdown.md
+.agent/render-audit/2026-07-09T02-11-07-04-00-stage-render-readback-consumer-map.md
+.agent/interaction-audit/2026-07-09T02-11-07-04-00-inspect-continue-command-contract.md
+.agent/gameplay-audit/2026-07-09T02-11-07-04-00-story-fixture-replay-loop.md
+.agent/story-authority-audit/2026-07-09T02-11-07-04-00-source-preflight-consumer-freeze.md
+.agent/deploy-audit/2026-07-09T02-11-07-04-00-npm-check-fixture-wire-freeze.md
+.agent/trackers/2026-07-09T02-11-07-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-09T02-11-07-04-00.md
 .agent/kit-registry.json
 ```
 
@@ -126,5 +126,5 @@ src/aspect-frame.js
 ## Current next safe ledge
 
 ```txt
-TheUnmappedHouse Story Authority Central Ledger Splice + Browser Adapter Readback Fixture Gate
+TheUnmappedHouse Story Authority Consumer Freeze + DOM-free Fixture Gate
 ```
