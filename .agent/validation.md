@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-08T23-19-33-04-00`
+**Updated:** `2026-07-09T01-40-49-04-00`
 
 ## Current validation status
 
@@ -34,7 +34,7 @@ central repo ledger read
 repo-local .agent root docs read
 repo-local kit registry read
 accessible LuminaryLabs-Publish repo list read
-sampled root .agent state for current repo candidates read
+sampled central ledger state for current repo candidates read
 ```
 
 ## Required next validation
@@ -58,7 +58,7 @@ repeat hotspot does not duplicate clue
 room completion opens interlude
 continue advances scene
 KeyR reset preserves expected behavior
-window.GameHost.getState().story returns additive sourceManifest/sourceSnapshot/latestCommand/preflight/save/interlude/stageProjection/browserAdapter/browserAdapterReadback/fixture diagnostics
+window.GameHost.getState().story returns additive sourceManifest/sourceSnapshot/latestCommand/preflight/save/interlude/stageProjection/browserAdapter/browserAdapterReadback/centralLedgerReadback/fixture diagnostics
 ```
 
 ## Fixture proof expected next
@@ -92,7 +92,7 @@ stage_projection accepted
 browser_adapter_plan accepted
 browser_adapter_readback accepted
 GameHost_projection accepted
-central_ledger_snapshot accepted
+central_ledger_readback accepted
 ```
 
 ## Validation boundaries
