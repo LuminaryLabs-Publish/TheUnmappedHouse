@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Last aligned:** `2026-07-09T13-29-43-04-00`
+**Last aligned:** `2026-07-09T13-38-15-04-00`
 
 ## Purpose
 
@@ -12,13 +12,13 @@ Read this folder before implementation changes.
 
 ## Current selection result
 
-The accessible `LuminaryLabs-Publish` repository list was compared against the central `LuminaryLabs-Dev/LuminaryLabs` repo ledger and sampled root `.agent` state.
+The accessible `LuminaryLabs-Publish` repository list was compared against the central `LuminaryLabs-Dev/LuminaryLabs` repo ledger and sampled root `.agent/START_HERE.md` state.
 
 No checked non-Cavalry repo was new, absent from central tracking, missing sampled root `.agent/START_HERE.md`, recently added but undocumented, or otherwise undocumented.
 
 `LuminaryLabs-Publish/TheCavalryOfRome` remains excluded.
 
-`TheUnmappedHouse` was selected as the oldest eligible central-ledger fallback for this pass. Central tracking still pointed at `2026-07-09T11-00-39-04-00`, older than the other checked non-Cavalry Publish repos after same-day ledger catch-ups.
+`TheUnmappedHouse` was selected as the oldest eligible central-ledger fallback and central-sync repair target. The repo-local `.agent` state had already advanced beyond central tracking, so this pass realigns repo-local docs and the central ledger around the story authority/browser adapter fixture gate.
 
 ## Publish repos checked
 
@@ -27,7 +27,7 @@ LuminaryLabs-Publish/IntoTheMeadow        tracked / root .agent present / centra
 LuminaryLabs-Publish/HorrorCorridor       tracked / root .agent present / central latest 2026-07-09T12-30-09-04-00
 LuminaryLabs-Publish/AetherVale           tracked / root .agent present / central latest 2026-07-09T11-30-50-04-00
 LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T13-18-48-04-00
-LuminaryLabs-Publish/TheUnmappedHouse     selected / oldest eligible central-ledger fallback / central latest 2026-07-09T11-00-39-04-00
+LuminaryLabs-Publish/TheUnmappedHouse     selected / oldest eligible central-ledger fallback and central-sync repair
 LuminaryLabs-Publish/MyCozyIsland         tracked / root .agent present / central latest 2026-07-09T11-39-50-04-00
 LuminaryLabs-Publish/TheOpenAbove         tracked / root .agent present / central latest 2026-07-09T11-50-08-04-00
 LuminaryLabs-Publish/PhantomCommand       tracked / root .agent present / central latest 2026-07-09T13-00-37-04-00
@@ -47,6 +47,8 @@ index.html
   -> src/stage-kit.js
   -> src/story-data.js
 ```
+
+`index.html` mounts a 16:9 frame, the WebGL stage, story panel, hotspot list, debug notebook, hover label, interlude overlay, and the `src/game.js` module entry.
 
 `src/game.js` owns browser command dispatch, story mutation, save IO, interlude timing, StageKit scene loading, DOM projection, reset, and debug JSON.
 
@@ -77,7 +79,7 @@ open index.html
 ## Current next safe ledge
 
 ```txt
-TheUnmappedHouse Story Authority Readback + Central Ledger Fixture Gate
+TheUnmappedHouse Story Authority Central Sync + Browser Adapter Fixture Gate
 ```
 
 ## First files to read next
@@ -88,14 +90,14 @@ TheUnmappedHouse Story Authority Readback + Central Ledger Fixture Gate
 .agent/next-steps.md
 .agent/validation.md
 .agent/kit-registry.json
-.agent/architecture-audit/2026-07-09T13-29-43-04-00-story-authority-readback-dsk-map.md
-.agent/render-audit/2026-07-09T13-29-43-04-00-stagekit-consumer-readback-contract.md
-.agent/interaction-audit/2026-07-09T13-29-43-04-00-hotspot-preflight-result-contract.md
-.agent/gameplay-audit/2026-07-09T13-29-43-04-00-story-route-save-adapter-loop.md
-.agent/story-authority-audit/2026-07-09T13-29-43-04-00-dom-free-story-fixture-contract.md
-.agent/deploy-audit/2026-07-09T13-29-43-04-00-check-script-fixture-gate.md
-.agent/trackers/2026-07-09T13-29-43-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-09T13-29-43-04-00.md
+.agent/architecture-audit/2026-07-09T13-38-15-04-00-story-authority-central-sync-dsk-map.md
+.agent/render-audit/2026-07-09T13-38-15-04-00-stagekit-adapter-readback-map.md
+.agent/interaction-audit/2026-07-09T13-38-15-04-00-hotspot-command-result-adapter-contract.md
+.agent/gameplay-audit/2026-07-09T13-38-15-04-00-story-route-save-replay-loop.md
+.agent/story-authority-audit/2026-07-09T13-38-15-04-00-source-command-result-fixture-contract.md
+.agent/deploy-audit/2026-07-09T13-38-15-04-00-check-script-fixture-map.md
+.agent/trackers/2026-07-09T13-38-15-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-09T13-38-15-04-00.md
 ```
 
 ## Main rule
