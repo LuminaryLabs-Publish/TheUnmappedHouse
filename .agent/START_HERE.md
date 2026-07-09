@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Last aligned:** `2026-07-09T16-58-52-04-00`
+**Last aligned:** `2026-07-09T19-00-15-04-00`
 
 ## Purpose
 
@@ -12,27 +12,26 @@ Read this folder before implementation changes.
 
 ## Current selection result
 
-The accessible `LuminaryLabs-Publish` repository list was compared against the central `LuminaryLabs-Dev/LuminaryLabs` repo ledger and sampled root `.agent/START_HERE.md` state.
+The current public `LuminaryLabs-Publish` repository list was compared against the central `LuminaryLabs-Dev/LuminaryLabs` repo ledger and sampled root `.agent` state.
 
-No checked non-Cavalry repo was new, absent from central tracking, missing sampled root `.agent/START_HERE.md`, recently added but undocumented, or otherwise undocumented.
+No checked public non-Cavalry repo was new, absent from central tracking, missing sampled root `.agent`, recently added but undocumented, or otherwise undocumented.
 
 `LuminaryLabs-Publish/TheCavalryOfRome` remains excluded.
 
-`TheUnmappedHouse` was selected as the oldest eligible documented-selection fallback and central readback catch-up target. Central tracking still pointed at `2026-07-09T13-38-15-04-00` while repo-local `.agent` state had already advanced to `2026-07-09T16-50-00-04-00`.
+`TheUnmappedHouse` was selected as the oldest eligible documented-selection fallback. Central tracking was at `2026-07-09T16-58-52-04-00`, older than the other checked eligible public entries after the latest ZombieOrchard refresh.
 
-## Publish repos checked
+## Public Publish repos checked
 
 ```txt
-LuminaryLabs-Publish/HorrorCorridor       tracked / root .agent present / central latest 2026-07-09T16-00-13-04-00
-LuminaryLabs-Publish/AetherVale           tracked / root .agent present / central latest 2026-07-09T14-16-00-04-00
-LuminaryLabs-Publish/TheOpenAbove         tracked / root .agent present / central latest 2026-07-09T15-09-09-04-00
+LuminaryLabs-Publish/MyCozyIsland         tracked / root .agent present / central latest 2026-07-09T17-48-20-04-00
+LuminaryLabs-Publish/TheUnmappedHouse     selected / oldest eligible documented fallback / central latest 2026-07-09T16-58-52-04-00
+LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T18-49-13-04-00
+LuminaryLabs-Publish/PhantomCommand       tracked / root .agent present / central latest 2026-07-09T18-41-55-04-00
+LuminaryLabs-Publish/HorrorCorridor       tracked / root .agent present / central latest 2026-07-09T18-30-30-04-00
+LuminaryLabs-Publish/PrehistoricRush      tracked / root .agent present / central latest 2026-07-09T18-11-58-04-00
+LuminaryLabs-Publish/IntoTheMeadow        tracked / root .agent present / central latest 2026-07-09T18-20-18-04-00
 LuminaryLabs-Publish/TheCavalryOfRome     excluded by rule
-LuminaryLabs-Publish/PhantomCommand       tracked / root .agent present / central latest 2026-07-09T16-29-23-04-00
-LuminaryLabs-Publish/PrehistoricRush      tracked / root .agent present / central latest 2026-07-09T15-31-40-04-00
-LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T16-34-14-04-00
-LuminaryLabs-Publish/IntoTheMeadow        tracked / root .agent present / central latest 2026-07-09T15-39-08-04-00
-LuminaryLabs-Publish/MyCozyIsland         tracked / root .agent present / central latest 2026-07-09T14-39-07-04-00
-LuminaryLabs-Publish/TheUnmappedHouse     selected / oldest eligible fallback / central latest 2026-07-09T13-38-15-04-00 / repo-local latest 2026-07-09T16-50-00-04-00
+LuminaryLabs-Publish/TheOpenAbove         tracked / root .agent present / central latest 2026-07-09T17-58-53-04-00
 ```
 
 ## Current product read
@@ -48,11 +47,9 @@ index.html
   -> src/story-data.js
 ```
 
-`index.html` mounts a 16:9 frame, WebGL stage, story panel, hotspot list, debug notebook, hover label, interlude overlay, and `src/game.js` module entry.
-
 `src/game.js` owns browser command dispatch, story mutation, save IO, interlude timing, StageKit scene loading, DOM projection, reset, and debug JSON.
 
-`src/stage-kit.js` owns the fixed 16:9 WebGL presentation surface, shader material, post-process pass, descriptor-driven stage loading, hotspot volumes, raycast picking, hover labels, resize, and animation.
+`src/stage-kit.js` owns the stable fixed 16:9 WebGL stage surface, shader material, post-process pass, descriptor-driven stage loading, hotspot volumes, raycast picking, hover labels, resize, and animation.
 
 `src/story-data.js` owns the three-room story source: `library-blank-map`, `repeating-hallway`, and `closet-weather`.
 
@@ -63,10 +60,10 @@ open index.html
   -> src/game.js imports StageKit and story descriptors
   -> DOM nodes are captured at module scope
   -> localStorage is shallow-merged into createInitialState()
-  -> currentScene resolves from saved sceneId or falls back to scenes[0]
-  -> StageKit is constructed with inspectHotspot as onHotspot callback
+  -> currentScene resolves from saved sceneId or scenes[0]
+  -> StageKit is constructed with inspectHotspot as callback
   -> StageKit loads the current scene descriptor
-  -> side-panel button or raycast click calls inspectHotspot(hotspot)
+  -> side-panel button or StageKit raycast click calls inspectHotspot(hotspot)
   -> first inspection mutates inspected state, grants clues, writes text/log, checks completion, schedules interlude, renders UI, and saves
   -> repeat inspection writes text/log/UI/save without a typed no_mutation result
   -> continue button calls nextScene()
@@ -79,7 +76,7 @@ open index.html
 ## Current next safe ledge
 
 ```txt
-TheUnmappedHouse Story Fixture Readback Central Catch-up + Browser Adapter Gate
+TheUnmappedHouse Story Adapter Ledger Refresh + Browser Fixture Gate
 ```
 
 ## First files to read next
@@ -90,18 +87,18 @@ TheUnmappedHouse Story Fixture Readback Central Catch-up + Browser Adapter Gate
 .agent/next-steps.md
 .agent/validation.md
 .agent/kit-registry.json
-.agent/architecture-audit/2026-07-09T16-58-52-04-00-story-fixture-readback-central-catchup-dsk-map.md
-.agent/render-audit/2026-07-09T16-58-52-04-00-stagekit-projection-readback-contract.md
-.agent/interaction-audit/2026-07-09T16-58-52-04-00-hotspot-command-noop-result-map.md
-.agent/gameplay-audit/2026-07-09T16-58-52-04-00-story-route-save-fixture-loop.md
-.agent/story-authority-audit/2026-07-09T16-58-52-04-00-command-result-adapter-ledger-contract.md
-.agent/deploy-audit/2026-07-09T16-58-52-04-00-story-fixture-check-central-gate.md
-.agent/trackers/2026-07-09T16-58-52-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-09T16-58-52-04-00.md
+.agent/architecture-audit/2026-07-09T19-00-15-04-00-story-adapter-ledger-refresh-dsk-map.md
+.agent/render-audit/2026-07-09T19-00-15-04-00-stagekit-consumption-readback-gap.md
+.agent/interaction-audit/2026-07-09T19-00-15-04-00-hotspot-command-result-repeat-map.md
+.agent/gameplay-audit/2026-07-09T19-00-15-04-00-story-route-adapter-loop.md
+.agent/story-authority-audit/2026-07-09T19-00-15-04-00-fixture-readback-contract.md
+.agent/deploy-audit/2026-07-09T19-00-15-04-00-check-script-fixture-gate.md
+.agent/trackers/2026-07-09T19-00-15-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-09T19-00-15-04-00.md
 ```
 
 ## Main rule
 
 Keep the current route, `SAVE_KEY`, story copy, fixed 16:9 StageKit surface, hotspot picking, interlude behavior, reset key, and existing debug panel stable.
 
-Do not add rooms, audio, inventory, renderer extraction, or browser-only smoke gates before source-owned story command/result fixtures prove reducer output, repeat/no-op results, terminal-route results, browser adapter plans, adapter readback, stage projection, save/interlude intent, GameHost diagnostics, repo-local ledger consistency, and central ledger readback.
+Do not add rooms, audio, inventory, StageKit rewrite, renderer extraction, or browser-only smoke gates before source-owned story command/result fixtures prove reducer output, repeat/no-op results, terminal-route results, browser adapter plans, adapter readback, stage projection, save/interlude intent, GameHost diagnostics, repo-local ledger consistency, and central ledger readback.
