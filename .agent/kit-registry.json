@@ -1,20 +1,20 @@
 {
-  "schemaVersion": "1.9.0",
+  "schemaVersion": "1.10.0",
   "repo": "LuminaryLabs-Publish/TheUnmappedHouse",
-  "generatedAt": "2026-07-08T21-00-12-04-00",
+  "generatedAt": "2026-07-08T23-08-29-04-00",
   "branchTarget": "main",
-  "status": "story-browser-adapter-projection-map-fixture-contract-planned",
-  "latestTracker": ".agent/trackers/2026-07-08T21-00-12-04-00/project-breakdown.md",
-  "latestTurnLedger": ".agent/turn-ledger/2026-07-08T21-00-12-04-00.md",
-  "latestArchitectureAudit": ".agent/architecture-audit/2026-07-08T21-00-12-04-00-story-adapter-projection-dsk-map.md",
-  "latestRenderAudit": ".agent/render-audit/2026-07-08T21-00-12-04-00-stage-snapshot-adapter-readback.md",
-  "latestInteractionAudit": ".agent/interaction-audit/2026-07-08T21-00-12-04-00-hotspot-to-command-adapter-map.md",
-  "latestGameplayAudit": ".agent/gameplay-audit/2026-07-08T21-00-12-04-00-route-save-projection-loop.md",
-  "latestStoryAuthorityAudit": ".agent/story-authority-audit/2026-07-08T21-00-12-04-00-browser-adapter-fixture-contract.md",
-  "latestDeployAudit": ".agent/deploy-audit/2026-07-08T21-00-12-04-00-syntax-fixture-validation-gate.md",
+  "status": "story-source-manifest-adapter-consumer-fixture-gate-planned",
+  "latestTracker": ".agent/trackers/2026-07-08T23-08-29-04-00/project-breakdown.md",
+  "latestTurnLedger": ".agent/turn-ledger/2026-07-08T23-08-29-04-00.md",
+  "latestArchitectureAudit": ".agent/architecture-audit/2026-07-08T23-08-29-04-00-story-source-manifest-dsk-map.md",
+  "latestRenderAudit": ".agent/render-audit/2026-07-08T23-08-29-04-00-stage-projection-readback-fixture-map.md",
+  "latestInteractionAudit": ".agent/interaction-audit/2026-07-08T23-08-29-04-00-hotspot-command-source-manifest.md",
+  "latestGameplayAudit": ".agent/gameplay-audit/2026-07-08T23-08-29-04-00-story-command-journal-loop.md",
+  "latestStoryAuthorityAudit": ".agent/story-authority-audit/2026-07-08T23-08-29-04-00-source-manifest-adapter-consumer-gate.md",
+  "latestDeployAudit": ".agent/deploy-audit/2026-07-08T23-08-29-04-00-npm-check-fixture-wire-map.md",
   "selection": {
     "selectedRepo": "LuminaryLabs-Publish/TheUnmappedHouse",
-    "reason": "No checked non-Cavalry LuminaryLabs-Publish repo was new, central-ledger absent, missing sampled root .agent state, recently added but undocumented, or otherwise undocumented. TheUnmappedHouse was selected as the oldest sampled eligible fallback because its previous alignment was 2026-07-08T18-51-55-04-00.",
+    "reason": "No checked non-Cavalry LuminaryLabs-Publish repo was new, central-ledger absent, missing sampled root .agent state, recently added but undocumented, or otherwise undocumented. TheUnmappedHouse was selected as the oldest sampled eligible fallback because its previous alignment was 2026-07-08T21-00-12-04-00.",
     "excludedRepos": [
       {
         "repo": "LuminaryLabs-Publish/TheCavalryOfRome",
@@ -36,9 +36,9 @@
   },
   "productDirection": {
     "currentRuntime": "fixed-camera anime point-and-click horror stage prototype",
-    "currentGap": "Story progression, save intent, interlude intent, reset, debug output, completion logic, source validation, and browser adapter decisions still live in src/game.js DOM handlers instead of source-owned command/result/projection modules.",
-    "recommendedDecision": "Keep StageKit visuals stable and cut story preflight plus command/result/projection authority into pure files before renderer extraction, new rooms, audio, inventory, or browser automation.",
-    "recommendedVerticalSlice": "TheUnmappedHouse Story Browser Adapter Projection Map + Fixture Contract"
+    "currentGap": "Story progression, source fallback, save intent, interlude intent, reset, debug output, completion logic, source validation, and browser adapter decisions still live in src/game.js DOM handlers instead of source-owned command/result/projection modules.",
+    "recommendedDecision": "Keep StageKit visuals stable and cut story source manifest plus preflight/command/result/projection authority into pure files before renderer extraction, new rooms, audio, inventory, or browser automation.",
+    "recommendedVerticalSlice": "TheUnmappedHouse Story Source Manifest + Adapter Consumer Fixture Gate"
   },
   "interactionLoop": {
     "currentSource": [
@@ -52,6 +52,7 @@
       "debug panel emits ad hoc JSON"
     ],
     "targetAuthority": [
+      "StorySourceManifest",
       "StoryCommandEnvelope",
       "StorySourceSnapshot",
       "StoryStateSnapshot",
@@ -72,6 +73,7 @@
     { "id": "static-page-shell", "status": "implemented", "services": ["stage mount", "story panel", "hotspot list", "notebook pane", "hover label", "interlude shell", "module script route"] },
     { "id": "browser-app-runtime", "status": "implemented-monolith", "services": ["DOM lookup", "boot order", "state load", "scene binding", "UI projection", "KeyR reset"] },
     { "id": "story-source", "status": "implemented", "services": ["game title", "scene descriptors", "opening text", "interlude text", "completion requirements", "ordered route"] },
+    { "id": "story-source-manifest", "status": "missing-next", "services": ["product id", "route id", "source version", "entry route", "save key", "scene ids", "command types"] },
     { "id": "story-source-preflight", "status": "missing-next", "services": ["duplicate scene rejection", "duplicate hotspot rejection", "required clue validation", "stage descriptor validation", "grantable clue index"] },
     { "id": "story-state", "status": "implemented-inline", "services": ["scene id", "clues", "flags", "inspected map", "route", "log"] },
     { "id": "stage-render-host", "status": "implemented", "services": ["renderer", "scene", "camera", "lights", "render target", "resize", "animation loop"] },
@@ -111,6 +113,7 @@
     "unmapped-house-central-ledger-readback-kit"
   ],
   "nextCutKits": [
+    "unmapped-house-story-source-manifest-kit",
     "unmapped-house-story-source-snapshot-kit",
     "unmapped-house-story-source-preflight-kit",
     "unmapped-house-story-state-snapshot-kit",
@@ -144,6 +147,7 @@
     "unmapped-house-fixture-summary-projection-kit"
   ],
   "recommendedSourceFiles": [
+    "src/story-authority/story-source-manifest.js",
     "src/story-authority/story-source-snapshot.js",
     "src/story-authority/story-state-snapshot.js",
     "src/story-authority/stage-scene-snapshot.js",
@@ -163,9 +167,11 @@
     "scripts/validate-story-authority.mjs"
   ],
   "nextSlice": {
-    "name": "TheUnmappedHouse Story Browser Adapter Projection Map + Fixture Contract",
+    "name": "TheUnmappedHouse Story Source Manifest + Adapter Consumer Fixture Gate",
     "preserve": ["static route", "current visuals", "story copy", "StageKit behavior", "localStorage key", "Pages workflow"],
     "fixtureRows": [
+      "source_manifest_created",
+      "source_snapshot_created",
       "initial_state",
       "load_empty_state",
       "load_malformed_state",
