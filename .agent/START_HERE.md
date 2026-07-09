@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Last aligned:** `2026-07-09T08-02-33-04-00`
+**Last aligned:** `2026-07-09T10-50-00-04-00`
 
 ## Purpose
 
@@ -18,21 +18,21 @@ No checked non-Cavalry Publish repo was new, absent from the central ledger, mis
 
 `LuminaryLabs-Publish/TheCavalryOfRome` remains excluded by standing rule.
 
-`TheUnmappedHouse` was selected as the oldest eligible central-ledger catch-up target. Central tracking still pointed to `2026-07-09T05-20-42-04-00` while repo-local `.agent` state had already advanced to `2026-07-09T07-48-29-04-00`.
+`TheUnmappedHouse` was selected as the oldest eligible documented-selection fallback at this run window. The current central ledger still had `TheUnmappedHouse` at `2026-07-09T08-02-33-04-00`, older than the other checked non-Cavalry ledgers observed in this pass.
 
 ## Publish repos checked
 
 ```txt
-LuminaryLabs-Publish/HorrorCorridor       tracked / root .agent present / central latest 2026-07-09T07-05-52-04-00
-LuminaryLabs-Publish/AetherVale           tracked / root .agent present / central latest 2026-07-09T06-01-30-04-00
-LuminaryLabs-Publish/TheOpenAbove         tracked / root .agent present / central latest 2026-07-09T06-20-00-04-00
+LuminaryLabs-Publish/IntoTheMeadow        tracked / root .agent present / central latest 2026-07-09T09-50-00-04-00
+LuminaryLabs-Publish/HorrorCorridor       tracked / root .agent present / central latest 2026-07-09T10-10-32-04-00
+LuminaryLabs-Publish/AetherVale           tracked / root .agent present / central latest 2026-07-09T08-50-00-04-00
+LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T10-40-00-04-00
+LuminaryLabs-Publish/TheUnmappedHouse     selected / oldest eligible central-ledger timestamp observed at 2026-07-09T08-02-33-04-00
+LuminaryLabs-Publish/MyCozyIsland         tracked / root .agent present / central latest 2026-07-09T08-29-38-04-00
+LuminaryLabs-Publish/TheOpenAbove         tracked / root .agent present / central latest 2026-07-09T09-36-24-04-00
+LuminaryLabs-Publish/PhantomCommand       tracked / root .agent present / central latest 2026-07-09T10-20-44-04-00
 LuminaryLabs-Publish/TheCavalryOfRome     excluded by rule
-LuminaryLabs-Publish/PhantomCommand       tracked / root .agent present / central latest 2026-07-09T07-19-41-04-00
-LuminaryLabs-Publish/PrehistoricRush      tracked / root .agent present / central latest 2026-07-09T06-10-35-04-00
-LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T07-41-29-04-00
-LuminaryLabs-Publish/IntoTheMeadow        tracked / root .agent present / central latest 2026-07-09T06-28-53-04-00
-LuminaryLabs-Publish/MyCozyIsland         tracked / root .agent present / central latest 2026-07-09T05-38-20-04-00
-LuminaryLabs-Publish/TheUnmappedHouse     selected / central stale at 2026-07-09T05-20-42-04-00; repo-local latest 2026-07-09T07-48-29-04-00
+LuminaryLabs-Publish/PrehistoricRush      tracked / root .agent present / central latest 2026-07-09T09-10-50-04-00
 ```
 
 ## Current product read
@@ -48,7 +48,9 @@ index.html
   -> src/story-data.js
 ```
 
-`package.json` exposes `npm run serve` and `npm run check`; the check is syntax-only across `src/aspect-frame.js`, `src/game.js`, `src/stage-kit.js`, and `src/story-data.js`.
+`src/game.js` still owns browser command dispatch, story mutation, save IO, interlude timing, StageKit scene loading, DOM projection, reset, and debug JSON in one module.
+
+`src/stage-kit.js` already owns the fixed 16:9 WebGL presentation surface, shader material, post-process pass, descriptor-driven stage loading, hotspot volumes, raycast picking, hover labels, resize, and animation.
 
 ## Current interaction loop
 
@@ -73,7 +75,7 @@ open index.html
 ## Current next safe ledge
 
 ```txt
-TheUnmappedHouse Central Ledger Catch-up + Story Adapter Source Fixture Gate
+TheUnmappedHouse Story Command Result Ledger + Adapter Readback Fixture Gate
 ```
 
 ## First files to read next
@@ -84,14 +86,14 @@ TheUnmappedHouse Central Ledger Catch-up + Story Adapter Source Fixture Gate
 .agent/next-steps.md
 .agent/validation.md
 .agent/kit-registry.json
-.agent/architecture-audit/2026-07-09T08-02-33-04-00-central-ledger-story-fixture-dsk-map.md
-.agent/render-audit/2026-07-09T08-02-33-04-00-stage-adapter-readback-map.md
-.agent/interaction-audit/2026-07-09T08-02-33-04-00-hotspot-command-reason-freeze.md
-.agent/gameplay-audit/2026-07-09T08-02-33-04-00-story-route-save-ledger-loop.md
-.agent/story-authority-audit/2026-07-09T08-02-33-04-00-central-sync-fixture-contract.md
-.agent/deploy-audit/2026-07-09T08-02-33-04-00-story-fixture-check-validation-gate.md
-.agent/trackers/2026-07-09T08-02-33-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-09T08-02-33-04-00.md
+.agent/architecture-audit/2026-07-09T10-50-00-04-00-story-command-result-ledger-dsk-map.md
+.agent/render-audit/2026-07-09T10-50-00-04-00-stagekit-render-adapter-deferral-map.md
+.agent/interaction-audit/2026-07-09T10-50-00-04-00-hotspot-repeat-command-ledger.md
+.agent/gameplay-audit/2026-07-09T10-50-00-04-00-story-route-command-result-loop.md
+.agent/story-authority-audit/2026-07-09T10-50-00-04-00-source-owned-fixture-readback-contract.md
+.agent/deploy-audit/2026-07-09T10-50-00-04-00-story-fixture-check-gate.md
+.agent/trackers/2026-07-09T10-50-00-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-09T10-50-00-04-00.md
 ```
 
 ## Main rule
