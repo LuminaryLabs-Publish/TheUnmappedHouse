@@ -2,29 +2,28 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Audit timestamp:** `2026-07-09T16-58-52-04-00`
+**Audit timestamp:** `2026-07-09T19-00-15-04-00`
 
 ## Summary
 
 `TheUnmappedHouse` remains a compact fixed-camera anime point-and-click horror prototype with a stable visual route and a browser-bound story authority bottleneck.
 
-This pass compared the accessible `LuminaryLabs-Publish` repo list against central `LuminaryLabs-Dev/LuminaryLabs` repo-ledger state. No non-Cavalry repo was fully new, ledger-absent, missing root `.agent`, recently added but undocumented, or otherwise undocumented.
+This pass compared the current public `LuminaryLabs-Publish` repo list against central `LuminaryLabs-Dev/LuminaryLabs` ledger state. No checked public non-Cavalry repo was new, ledger-absent, missing root `.agent`, recently added but undocumented, or otherwise undocumented.
 
-`TheUnmappedHouse` was selected as the oldest eligible documented-selection fallback because central tracking was still at `2026-07-09T13-38-15-04-00`, while repo-local `.agent` state had already advanced to `2026-07-09T16-50-00-04-00`.
+`TheUnmappedHouse` was selected as the oldest eligible documented-selection fallback because central tracking was still at `2026-07-09T16-58-52-04-00`.
 
-## Full repo-list comparison result
+## Repo-list comparison result
 
 ```txt
-LuminaryLabs-Publish/HorrorCorridor       tracked / root .agent present / central latest 2026-07-09T16-00-13-04-00
-LuminaryLabs-Publish/AetherVale           tracked / root .agent present / central latest 2026-07-09T14-16-00-04-00
-LuminaryLabs-Publish/TheOpenAbove         tracked / root .agent present / central latest 2026-07-09T15-09-09-04-00
+LuminaryLabs-Publish/MyCozyIsland         tracked / root .agent present / central latest 2026-07-09T17-48-20-04-00
+LuminaryLabs-Publish/TheUnmappedHouse     selected / oldest eligible documented fallback / central latest 2026-07-09T16-58-52-04-00
+LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T18-49-13-04-00
+LuminaryLabs-Publish/PhantomCommand       tracked / root .agent present / central latest 2026-07-09T18-41-55-04-00
+LuminaryLabs-Publish/HorrorCorridor       tracked / root .agent present / central latest 2026-07-09T18-30-30-04-00
+LuminaryLabs-Publish/PrehistoricRush      tracked / root .agent present / central latest 2026-07-09T18-11-58-04-00
+LuminaryLabs-Publish/IntoTheMeadow        tracked / root .agent present / central latest 2026-07-09T18-20-18-04-00
 LuminaryLabs-Publish/TheCavalryOfRome     excluded by rule
-LuminaryLabs-Publish/PhantomCommand       tracked / root .agent present / central latest 2026-07-09T16-29-23-04-00
-LuminaryLabs-Publish/PrehistoricRush      tracked / root .agent present / central latest 2026-07-09T15-31-40-04-00
-LuminaryLabs-Publish/ZombieOrchard        tracked / root .agent present / central latest 2026-07-09T16-34-14-04-00
-LuminaryLabs-Publish/IntoTheMeadow        tracked / root .agent present / central latest 2026-07-09T15-39-08-04-00
-LuminaryLabs-Publish/MyCozyIsland         tracked / root .agent present / central latest 2026-07-09T14-39-07-04-00
-LuminaryLabs-Publish/TheUnmappedHouse     selected / central latest 2026-07-09T13-38-15-04-00 / repo-local latest 2026-07-09T16-50-00-04-00
+LuminaryLabs-Publish/TheOpenAbove         tracked / root .agent present / central latest 2026-07-09T17-58-53-04-00
 ```
 
 ## Source read
@@ -32,12 +31,6 @@ LuminaryLabs-Publish/TheUnmappedHouse     selected / central latest 2026-07-09T1
 ```txt
 package.json:
   exposes npm run serve and npm run check; check is syntax-only across src/aspect-frame.js, src/game.js, src/stage-kit.js, and src/story-data.js.
-
-index.html:
-  declares the 16:9 aspect frame, stage renderer mount, story panel, hotspot list, notebook/debug pre, hover label, interlude overlay, continue button, and src/game.js module entry.
-
-src/aspect-frame.js:
-  owns DESIGN_WIDTH 1920, DESIGN_HEIGHT 1080, DESIGN_ASPECT, computeAspectFrame(), and applyAspectFrame().
 
 src/game.js:
   imports StageKit and story-data; captures DOM nodes at module scope; owns SAVE_KEY, load/save, state/currentScene, inspectHotspot, nextScene, renderUi, interlude, reset, and debug JSON.
@@ -54,8 +47,6 @@ src/story-data.js:
 The render surface is not the immediate problem. `StageKit` already owns the fixed design frame, camera descriptor consumption, shader material, post-process pass, hotspot volumes, hover label, raycast picking, resize, render target, and animation loop.
 
 The source-authority problem remains concentrated in `src/game.js`: it is simultaneously command dispatcher, reducer, browser adapter, localStorage adapter, route adapter, interlude scheduler, debug projector, StageKit consumer, and save writer.
-
-The next implementation should add source-owned story command/result/projection records and adapter readback before any route expansion.
 
 ## Current interaction loop
 
@@ -124,6 +115,8 @@ browser debug projection
 static deploy/check script
 repo-local agent ledger
 central ledger readback
+story adapter readback next
+DOM-free story fixture next
 ```
 
 ## Services the kits offer
@@ -177,5 +170,5 @@ planned/dom-free-story-fixture-kit
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Fixture Readback Central Catch-up + Browser Adapter Gate
+TheUnmappedHouse Story Adapter Ledger Refresh + Browser Fixture Gate
 ```
