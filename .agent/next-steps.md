@@ -2,11 +2,11 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T13-38-15-04-00`
+**Updated:** `2026-07-09T16-50-00-04-00`
 
 ## Next safe ledge
 
-Build the story authority central sync and browser adapter fixture gate.
+Build the story fixture readback ledger refresh and browser adapter gate.
 
 Do not expand story content first.
 
@@ -17,45 +17,53 @@ Do not change the route, localStorage key, story copy, StageKit picking behavior
 ## Current ledge name
 
 ```txt
-TheUnmappedHouse Story Authority Central Sync + Browser Adapter Fixture Gate
+TheUnmappedHouse Story Fixture Readback Ledger Refresh + Browser Adapter Gate
 ```
 
-## Implementation order
+## Implementation checklist
 
-1. Add pure story authority modules under `src/story-authority/`.
-2. Add `StorySourceManifest` with product id, route id, save key, scene ids, command ids, source version, and fixture expectations.
-3. Add source and state snapshot builders.
-4. Add command envelope and reason catalog.
-5. Add preflight for inspect, continue, reset intent, save/load, projection, and ledger readback.
-6. Add command result records for accepted, rejected, no-mutation, complete-scene, terminal-complete, corrupted-save-fallback, and reset-intent.
-7. Add projection records for story text, notebook log, save intent, interlude intent, StageKit intent, and debug diagnostics.
-8. Add browser adapter plan and adapter readback contracts.
-9. Add DOM-free fixture rows before wiring browser behavior.
-10. Add compatibility-safe `globalThis.UnmappedHouseHost.getState()` diagnostics.
-11. Wire `src/game.js` to consume the pure records while preserving visible behavior.
-12. Add fixture script to `npm run check`.
+- Add `src/story-source-manifest.js` with product id, route id, save key, story version, scene ids, hotspot ids, command ids, and expected public route.
+- Add `src/story-snapshots.js` with source, state, and stage-scene snapshot helpers.
+- Add `src/story-commands.js` with command envelopes for load, inspect_hotspot, continue_scene, reset, save, project, readback, repo_ledger_readback, and central_ledger_readback.
+- Add `src/story-preflight.js` with descriptor, state, current scene, target hotspot, completion, continuation, and malformed-save checks.
+- Add `src/story-results.js` with canonical status and reason codes.
+- Add `src/story-reducer.js` to return command results without touching DOM, StageKit, timers, or localStorage.
+- Add `src/story-projections.js` for story panel, hotspot buttons, debug JSON, save intent, interlude intent, and StageKit load intent.
+- Add `src/browser-adapter-plan.js` to convert result projections into browser mutations.
+- Add additive adapter readback to compare DOM, save state, StageKit current descriptor, interlude state, and debug JSON against expected projection.
+- Add additive `globalThis.UnmappedHouseHost.getState()` diagnostics without changing existing route behavior.
+- Add DOM-free fixtures under `tests/fixtures/story-command-results.mjs` or equivalent.
+- Wire `npm run check` to run syntax checks plus the story fixture runner.
+- Keep all changes on `main`; do not create branches.
 
-## Validation target
+## Required fixture rows
 
 ```txt
-npm run check
-node scripts/story-authority-fixture.mjs
-manual browser route smoke after fixture rows pass
+load_empty_storage -> accepted / default_state
+load_malformed_storage -> accepted / fallback_default_state
+inspect_new_map -> accepted / clue_granted / save_intent / ui_projection
+inspect_repeat_map -> accepted / repeated_no_mutation / log_projection / save_intent
+inspect_invalid_hotspot -> rejected / hotspot_not_found / no_save
+complete_library -> accepted / scene_complete / interlude_intent
+continue_to_repeating_hallway -> accepted / route_advanced / stage_projection
+continue_terminal -> accepted / prototype_complete / terminal_projection
+reset_route -> accepted / clear_save_intent / reload_intent
+adapter_readback_current_scene -> accepted / dom_matches_projection
+repo_local_ledger_readback -> accepted / agent_pointers_match_files
+central_ledger_readback -> accepted / central_pointers_match_repo_local
 ```
 
-## Stop condition for the next implementation
-
-Stop when fixture rows prove:
+## Files to protect
 
 ```txt
-first inspect accepted + clue grant + save intent
-repeat inspect no_mutation + log/text compatibility
-scene completion + interlude intent
-continue accepted + stage projection
-terminal continue terminal_complete + no scene mutation
-corrupted save fallback
-reset intent without hard browser dependency
-repo-local ledger readback
-central ledger readback
-browser adapter readback skeleton
+index.html
+src/story-data.js
+src/stage-kit.js
+src/aspect-frame.js
 ```
+
+These can be read, but the first implementation should avoid changing them unless the new fixture layer requires an additive hook.
+
+## Success definition
+
+The next implementation is complete only when a DOM-free fixture can prove first inspect, repeat inspect, completion, continuation, terminal continuation, malformed-save fallback, browser adapter projection, repo-local ledger readback, and central ledger readback.
