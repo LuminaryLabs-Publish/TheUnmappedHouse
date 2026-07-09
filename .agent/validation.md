@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T10-50-00-04-00`
+**Updated:** `2026-07-09T10-54-04-04-00`
 
 ## Current validation status
 
@@ -17,6 +17,8 @@ Fixture script run: no
 GitHub Pages live route checked: no
 Full LuminaryLabs-Publish repo list compared to central ledger/root agent state: yes
 Chosen repo root .agent exists before this pass: yes
+Repo-local .agent pointer inconsistency found: yes
+Repo-local .agent pointer inconsistency repaired: yes
 Central ledger updated: yes
 Branch created: no
 Pull request created: no
@@ -26,12 +28,17 @@ Pushed to main: yes
 ## Source readback performed
 
 ```txt
-LuminaryLabs-Publish repository search read
-central repo ledger read for checked Publish repos
-repo-local .agent root docs read
-repo-local kit registry read
+package.json read
+index.html read
+src/aspect-frame.js read
 src/game.js read
 src/stage-kit.js read
+src/story-data.js read
+central repo ledger read
+repo-local .agent root docs read
+repo-local kit registry read
+accessible LuminaryLabs-Publish repo list read
+sampled root .agent state for selected repo read
 ```
 
 ## Required next validation
@@ -55,7 +62,7 @@ repeat hotspot does not duplicate clue
 room completion opens interlude
 continue advances scene
 KeyR reset preserves expected behavior
-window.GameHost.getState().story returns additive sourceManifest/sourceSnapshot/latestCommand/preflight/save/interlude/stageProjection/browserAdapter/browserAdapterReadback/centralLedger/fixture diagnostics
+window.GameHost.getState().story returns additive sourceManifest/sourceSnapshot/latestCommand/preflight/save/interlude/stageProjection/browserAdapter/browserAdapterReadback/repoLocalLedger/centralLedger/fixture diagnostics
 ```
 
 ## Fixture proof expected next
@@ -85,9 +92,10 @@ stage_projection_created readback
 browser_adapter_plan_created readback
 browser_adapter_readback_created readback
 gamehost_story_projection_created readback
+repo_local_ledger_snapshot_created readback
 central_ledger_snapshot_created readback
 ```
 
 ## Validation note
 
-This pass intentionally did not claim runtime success. It updated audit state only, and it preserved the next source validation target.
+This pass intentionally did not claim runtime success. It updated audit state only, repaired repo-local documentation pointers, synced central tracking, and preserved the next source validation target.
