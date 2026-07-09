@@ -2,7 +2,7 @@
 
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-**Updated:** `2026-07-09T16-50-00-04-00`
+**Updated:** `2026-07-09T16-58-52-04-00`
 
 ## Current validation status
 
@@ -17,6 +17,7 @@ Fixture script run: no
 GitHub Pages live route checked: no
 Full LuminaryLabs-Publish repo list compared to central ledger/root agent state: yes
 Chosen repo root .agent exists before this pass: yes
+Repo-local .agent was already newer than central ledger before this pass: yes, repo-local 2026-07-09T16-50-00-04-00 vs central 2026-07-09T13-38-15-04-00
 Central ledger updated: yes
 Branch created: no
 Pull request created: no
@@ -29,17 +30,23 @@ Pushed only to main: yes
 LuminaryLabs-Publish full accessible repository list from installation 142700432
 LuminaryLabs-Dev/LuminaryLabs repo-ledger entries for non-Cavalry Publish repos
 LuminaryLabs-Publish/TheUnmappedHouse:.agent/START_HERE.md
+LuminaryLabs-Publish/TheUnmappedHouse:.agent/current-audit.md
+LuminaryLabs-Publish/TheUnmappedHouse:.agent/known-gaps.md
+LuminaryLabs-Publish/TheUnmappedHouse:.agent/next-steps.md
+LuminaryLabs-Publish/TheUnmappedHouse:.agent/validation.md
+LuminaryLabs-Publish/TheUnmappedHouse:.agent/kit-registry.json
+LuminaryLabs-Publish/TheUnmappedHouse:README.md
+LuminaryLabs-Publish/TheUnmappedHouse:package.json
 LuminaryLabs-Publish/TheUnmappedHouse:src/game.js
 LuminaryLabs-Publish/TheUnmappedHouse:src/stage-kit.js
 LuminaryLabs-Publish/TheUnmappedHouse:src/story-data.js
-LuminaryLabs-Publish/TheUnmappedHouse:package.json
 ```
 
 ## Validation interpretation
 
 This is a documentation-only breakdown pass.
 
-The repo-local `.agent` state and central ledger were updated to point to the latest story fixture/readback ledge.
+The repo-local `.agent` state and central ledger were updated to point to the story fixture/readback central catch-up ledge.
 
 No runtime correctness claim is made for story command fixtures because those fixtures do not exist yet.
 
