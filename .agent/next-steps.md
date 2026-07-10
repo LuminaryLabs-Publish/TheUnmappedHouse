@@ -1,11 +1,11 @@
 # Next steps: The Unmapped House
 
-Timestamp: `2026-07-10T04-22-00-04-00`
+Timestamp: `2026-07-10T05-40-17-04-00`
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Command Fixture Proof + Browser Adapter Readback Gate
+TheUnmappedHouse Browser Adapter Readback Refresh + Story Fixture Gate
 ```
 
 ## First implementation slice
@@ -25,6 +25,8 @@ src/story-authority/results.js
 src/story-authority/projections.js
 src/story-authority/replay.js
 src/story-authority/browser-adapter-plan.js
+src/story-authority/browser-adapter-readback.js
+src/story-authority/gamehost-story-diagnostics.js
 scripts/validate-story-authority.mjs
 ```
 
@@ -42,6 +44,7 @@ scripts/validate-story-authority.mjs
 - `TerminalRouteIntentRecord`
 - `StoryReplayRow`
 - `BrowserAdapterReadback`
+- `GameHostStoryDiagnostics`
 
 ## Fixture cases
 
