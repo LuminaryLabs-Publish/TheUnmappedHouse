@@ -1,11 +1,11 @@
 # Next steps: The Unmapped House
 
-Timestamp: `2026-07-10T05-40-17-04-00`
+Timestamp: `2026-07-10T07-20-08-04-00`
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Browser Adapter Readback Refresh + Story Fixture Gate
+TheUnmappedHouse Story Authority Adapter Ledger Refresh + Browser Fixture Gate
 ```
 
 ## First implementation slice
@@ -25,6 +25,7 @@ src/story-authority/results.js
 src/story-authority/projections.js
 src/story-authority/replay.js
 src/story-authority/browser-adapter-plan.js
+src/story-authority/story-adapter-ledger.js
 src/story-authority/browser-adapter-readback.js
 src/story-authority/gamehost-story-diagnostics.js
 scripts/validate-story-authority.mjs
@@ -32,6 +33,8 @@ scripts/validate-story-authority.mjs
 
 ## Required records
 
+- `StorySourceManifest`
+- `StorySourceFingerprint`
 - `StoryCommandEnvelope`
 - `StoryReasonCode`
 - `StoryPreflight`
@@ -43,6 +46,7 @@ scripts/validate-story-authority.mjs
 - `StageLoadIntentRecord`
 - `TerminalRouteIntentRecord`
 - `StoryReplayRow`
+- `StoryAdapterLedgerRow`
 - `BrowserAdapterReadback`
 - `GameHostStoryDiagnostics`
 
@@ -56,7 +60,7 @@ scripts/validate-story-authority.mjs
 - Completing all required hotspots returns scene completion and interlude intent.
 - Continue from a completed scene returns next scene and stage-load intent.
 - Continue from the final scene returns terminal route intent.
-- Save, projection, interlude, terminal, and stage-load intents are serializable.
+- Save, projection, interlude, terminal, adapter ledger, and stage-load intents are serializable.
 
 ## Then adapt the browser
 
