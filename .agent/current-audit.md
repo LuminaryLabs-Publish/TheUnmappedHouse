@@ -1,56 +1,79 @@
 # Current audit: The Unmapped House
 
-Timestamp: `2026-07-09T23-28-35-04-00`
+Timestamp: `2026-07-10T00-51-03-04-00`
 
 ## Product read
 
-A small fixed-camera horror prototype where the player inspects hotspots across three scene descriptors, gathers clues, advances through interludes, and reaches a terminal prototype-complete route.
+A fixed-camera horror prototype where the player inspects hotspots across three scene descriptors, gathers clues, advances through interludes, and reaches a terminal prototype-complete route.
 
 ## Current interaction loop
 
 ```txt
 open index.html
-  -> src/game.js imports StageKit and story descriptors
+  -> #aspect-frame mounts #stage, #story-panel, #hotspot-list, #state-debug, #hover-label, and #interlude
+  -> script type=module loads ./src/game.js
+  -> src/game.js imports StageKit plus gameTitle/scenes from src/story-data.js
   -> DOM nodes are captured at module scope
-  -> localStorage is shallow-merged into createInitialState()
-  -> currentScene resolves from saved sceneId or falls back to scenes[0]
-  -> StageKit is constructed with inspectHotspot as onHotspot callback
-  -> StageKit loads the current scene descriptor
-  -> side-panel button or StageKit raycast click calls inspectHotspot(hotspot)
-  -> first inspection mutates inspected state, grants clues, writes text/log, checks completion, schedules interlude, renders UI, and saves
-  -> repeat inspection writes text/log/UI/save without a typed no_mutation result
+  -> localStorage key the-unmapped-house.stage-prototype.v1 is shallow-merged into createInitialState()
+  -> currentScene resolves from saved state.sceneId or scenes[0]
+  -> StageKit is constructed with #stage, #hover-label, and inspectHotspot as onHotspot
+  -> StageKit.loadScene(currentScene) consumes camera, stage layers, props, hotspots, fog, background, and post settings
+  -> renderUi() projects title, opening text, hotspot buttons, and ad hoc debug JSON
+  -> side-panel click or StageKit raycast click calls inspectHotspot(hotspot)
+  -> first inspect marks state.inspected, grants clues, writes log/text, may schedule showInterlude(), renders UI, saves
+  -> repeat inspect writes text/log/UI/save without a typed no_mutation result
+  -> sceneComplete() checks requiresToComplete against state.clues
+  -> showInterlude() opens the map-update overlay after completion
   -> continue button calls nextScene()
-  -> nextScene mutates current scene, route, interlude DOM, StageKit scene, UI, and save state
-  -> terminal route writes prototype-complete text directly into DOM state
-  -> KeyR clears localStorage and reloads
-  -> debug panel emits ad hoc JSON
+  -> nextScene loads the next scene into StageKit, mutates route, renders UI, saves
+  -> terminal continue writes Prototype complete copy into the interlude DOM but does not emit a terminal result row
+  -> KeyR removes localStorage and reloads
 ```
 
 ## Domains
 
-- Static browser shell.
-- Story source descriptors.
-- Browser story runtime.
-- Scene route state.
-- Clue collection and inspected hotspot state.
-- Notebook/log projection.
-- Interlude and terminal route state.
-- LocalStorage save/load.
-- Fixed-camera StageKit rendering.
-- Hotspot pointer and side-panel interaction.
-- DOM projection.
-- Debug JSON projection.
-- Static deploy/check validation.
-- Repo-local and central ledger tracking.
+```txt
+static-browser-shell
+fixed-aspect-frame
+story-source-descriptor
+scene-source-descriptor
+hotspot-source-descriptor
+stage-source-descriptor
+post-process-source-descriptor
+browser-story-runtime
+story-state
+save-state
+scene-route-state
+clue-ledger
+inspected-hotspot-ledger
+notebook-log-state
+completion-policy
+interlude-policy
+terminal-route-policy
+stage-render-host
+stage-scene-consumption
+hotspot-volume
+raycast-picking
+hover-label-projection
+side-panel-hotspot-input
+keyboard-reset-input
+debug-json-projection
+story-command-authority-next
+browser-adapter-readback-next
+dom-free-story-fixture-next
+repo-local-agent-ledger
+central-ledger-sync
+```
 
 ## Services
 
-- `story-data-kit`: descriptor source for game title, scenes, hotspots, grants, requirements, interludes, cameras, stage layers, props, and post settings.
+- `story-data-kit`: source descriptors for game title, scenes, hotspots, grants, requirements, interludes, camera, stage, and post settings.
 - `browser-story-runtime-kit`: browser-bound command handling, mutation, persistence, route progression, DOM projection, reset, and debug JSON.
 - `stage-render-kit`: WebGL renderer, fixed frame, camera, lights, fog, scene descriptor consumption, hotspot volumes, picking, hover, and post-process.
 - `aspect-frame-kit`: fixed 16:9 layout calculation and application.
 - `localstorage-save-kit`: shallow story-state persistence.
-- `repo-local-agent-ledger-kit`: internal repo documentation.
+- `debug-json-projection-kit`: ad hoc current scene/clue/route/inspection/completion projection.
+- Planned story authority services: source manifest, snapshots, preflight, command envelopes, reason catalog, command results, projections, adapter readback, diagnostics, and DOM-free fixture rows.
 
 ## Kit inventory
 
@@ -68,14 +91,17 @@ hotspot-picking-kit
 story-data-kit
 browser-story-runtime-kit
 localstorage-save-kit
+notebook-log-kit
 debug-json-projection-kit
 repo-local-agent-ledger-kit
+central-ledger-sync-kit
 ```
 
 Next-cut kits:
 
 ```txt
 story-source-manifest-kit
+story-source-fingerprint-kit
 story-source-snapshot-kit
 story-state-snapshot-kit
 stage-scene-snapshot-kit
@@ -84,11 +110,12 @@ story-command-reason-kit
 story-preflight-kit
 story-command-result-kit
 story-event-record-kit
-story-replay-kit
+story-replay-row-kit
 story-projection-record-kit
-save-projection-kit
-interlude-projection-kit
-stage-projection-kit
+save-intent-record-kit
+interlude-intent-record-kit
+terminal-route-result-kit
+stage-load-intent-kit
 browser-adapter-plan-kit
 browser-adapter-readback-kit
 gamehost-story-diagnostics-kit
