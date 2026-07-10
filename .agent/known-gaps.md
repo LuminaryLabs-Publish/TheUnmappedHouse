@@ -1,6 +1,6 @@
 # Known gaps: The Unmapped House
 
-Timestamp: `2026-07-10T10-11-35-04-00`
+Timestamp: `2026-07-10T11-30-28-04-00`
 
 ## Source authority gaps
 
@@ -8,7 +8,7 @@ Timestamp: `2026-07-10T10-11-35-04-00`
 - `src/game.js` owns command dispatch, mutation, save intent, route transitions, terminal copy, StageKit loading, DOM projection, reset, and debug output together.
 - Repeat hotspot inspection has no typed `no_mutation` result.
 - Unknown, stale, or scene-mismatched hotspot commands do not have stable rejection rows.
-- Completion, interlude scheduling, continue, terminal route, and save intent are browser side effects rather than source-owned records.
+- Completion, interlude scheduling, continue, terminal route, save intent, and reset are browser side effects rather than source-owned records.
 - Replay is not available outside the browser.
 
 ## Projection and adapter gaps
@@ -25,13 +25,14 @@ Timestamp: `2026-07-10T10-11-35-04-00`
 - `StageKit` consumes descriptors but does not expose fixture-readable stage-load rows.
 - Hotspot picking is callback-only and has no click/hover readback row.
 - Browser smoke would not prove story result to stage-load parity.
+- Render/post settings are not tied to scene source ids or story command ids.
 
 ## Validation gaps
 
 - `npm run check` syntax-checks current files only.
 - No DOM-free story authority fixture exists.
 - No adapter ledger/readback fixture exists.
-- No result rows exist for accepted, rejected, repeated/no-mutation, completed, continue, terminal, save, interlude, projection, or stage-load cases.
+- No result rows exist for accepted, rejected, repeated/no-mutation, completed, continue, terminal, save, interlude, projection, stage-load, pick, or reset cases.
 
 ## Deferred work
 
