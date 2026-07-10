@@ -1,6 +1,6 @@
 # Known gaps: The Unmapped House
 
-Timestamp: `2026-07-10T11-30-28-04-00`
+Timestamp: `2026-07-10T13-01-11-04-00`
 
 ## Source authority gaps
 
