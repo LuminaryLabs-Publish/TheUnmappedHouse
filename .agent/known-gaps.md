@@ -1,6 +1,6 @@
 # Known gaps: The Unmapped House
 
-Timestamp: `2026-07-10T04-22-00-04-00`
+Timestamp: `2026-07-10T05-40-17-04-00`
 
 ## Source authority gaps
 
@@ -28,7 +28,8 @@ Timestamp: `2026-07-10T04-22-00-04-00`
 
 - `npm run check` only syntax-checks files.
 - No DOM-free story authority fixture exists.
-- No fixture rows exist for accepted, rejected, repeated/no-mutation, completed, continue, terminal, save, interlude, projection, or stage-load cases.
+- No adapter readback fixture.
+- No result rows exist for accepted, rejected, repeated/no-mutation, completed, continue, terminal, save, interlude, projection, or stage-load cases.
 
 ## Deferred work
 
