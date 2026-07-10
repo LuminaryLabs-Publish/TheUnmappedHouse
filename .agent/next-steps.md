@@ -1,35 +1,52 @@
 # Next steps: The Unmapped House
 
-Timestamp: `2026-07-10T13-01-11-04-00`
+Timestamp: `2026-07-10T14-28-47-04-00`
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Command Adapter Readback Ledger Refresh + DOM-Free Fixture Gate
+TheUnmappedHouse Story Command Correlation Ledger Refresh + StageKit Observation Fixture Gate
 ```
 
-## First implementation slice
+## Goal
 
-Add source-owned story authority without changing visible behavior.
+Add a DOM-free story authority and correlation ledger that preserves the current visible route while making every inspect, continue, and reset action traceable through source validation, result, transition, browser effect, save observation, StageKit observation, and JSON-safe diagnostics.
 
-Suggested files:
+## Implementation checklist
+
+- [ ] Add a source manifest and stable fingerprint for `src/story-data.js`.
+- [ ] Add independently constructible initial state and detached state snapshots.
+- [ ] Define inspect, continue, and reset command envelopes using source ids.
+- [ ] Add deterministic preflight and stable reason codes.
+- [ ] Return typed accepted, no-mutation, and rejected results.
+- [ ] Add transition rows for inspection, clue grant, log, completion, scene, and route changes.
+- [ ] Describe DOM, interlude, terminal, save, and stage operations as effect intents.
+- [ ] Record effect readbacks with command/result correlation.
+- [ ] Add StageKit load and pick observation methods without rewriting the renderer.
+- [ ] Add source-versioned save envelopes and storage-adapter observations.
+- [ ] Convert `src/game.js` into a consumer of source-owned results and effect intents.
+- [ ] Expose additive JSON-safe `GameHost` story diagnostics.
+- [ ] Add a DOM-free fixture and wire it into package validation.
+- [ ] Preserve all current scene copy, hotspot behavior, camera framing, shaders, and post settings.
+
+## Suggested files
 
 ```txt
 src/story-authority/source-manifest.js
 src/story-authority/source-fingerprint.js
-src/story-authority/state-snapshot.js
+src/story-authority/state.js
 src/story-authority/commands.js
 src/story-authority/reasons.js
 src/story-authority/preflight.js
 src/story-authority/results.js
-src/story-authority/projections.js
+src/story-authority/transitions.js
+src/story-authority/correlation.js
+src/story-authority/effects.js
 src/story-authority/replay.js
-src/story-authority/browser-adapter-plan.js
-src/story-authority/story-adapter-ledger.js
-src/story-authority/browser-adapter-readback.js
-src/story-authority/stage-readback.js
-src/story-authority/gamehost-story-diagnostics.js
-scripts/validate-story-authority.mjs
+src/story-authority/diagnostics.js
+src/story-authority/save-envelope.js
+src/story-authority/storage-adapter.js
+scripts/validate-story-correlation.mjs
 ```
 
 ## Required records
@@ -37,50 +54,73 @@ scripts/validate-story-authority.mjs
 ```txt
 StorySourceManifest
 StorySourceFingerprint
-StorySourceSnapshot
-StoryCommandEnvelope
-StoryReasonCode
-StoryPreflight
-StoryCommandResult
 StoryStateSnapshot
+StoryInputRecord
+StoryCommandEnvelope
+StoryPreflightRecord
+StoryCommandResult
+StoryTransitionRecord
+StoryEffectIntent
+StoryEffectReadback
 StoryProjectionRecord
-SaveIntentRecord
-InterludeIntentRecord
-TerminalRouteIntentRecord
-StageLoadIntentRecord
-StageLoadReadback
-StagePickReadback
+SaveEnvelope
+SaveLoadObservation
+SaveWriteObservation
+StageLoadObservation
+StagePickObservation
 StoryReplayRow
-StoryAdapterLedgerRow
-BrowserAdapterReadback
+StoryCommandCorrelationRow
 GameHostStoryDiagnostics
 ```
 
-## Fixture cases
+## First implementation slice
 
-- Initial state resolves the first scene.
-- First hotspot inspect accepts and grants the expected clue.
-- Repeat hotspot inspect returns `no_mutation` with `already_inspected` reason.
-- Unknown hotspot returns `rejected` with stable reason.
-- Scene-mismatched hotspot returns `rejected` with stable reason.
-- Completing all required hotspots returns scene completion and interlude intent.
-- Continue from a completed scene returns next scene and stage-load intent.
-- Continue from the final scene returns terminal route intent.
-- Save, projection, interlude, terminal, adapter ledger, and stage-load intents are serializable.
-- Browser adapter readback preserves command id, result id, projection id, adapter ledger id, and stage-readback id.
+Start with a pure inspect command path:
 
-## Then adapt the browser
+```txt
+source manifest
+  -> initial state
+  -> inspect command by sceneId/hotspotId
+  -> preflight
+  -> typed result
+  -> transitions
+  -> projection/save intents
+  -> correlation row
+```
 
-- Keep `src/game.js` as the browser adapter.
-- Route hotspot and continue events through source-owned story authority.
-- Consume returned projection, save, interlude, terminal, and stage-load records.
-- Add stable readback diagnostics without removing useful existing debug fields.
-- Keep `StageKit` stable and add additive load/pick/readback rows around it.
+Prove these four cases first:
+
+```txt
+inspect accepted
+inspect repeat -> no_mutation/already_inspected
+inspect unknown -> rejected/unknown_hotspot
+inspect scene mismatch -> rejected/scene_mismatch
+```
+
+## Second implementation slice
+
+Add continue and terminal routing:
+
+```txt
+continue incomplete -> rejected/scene_incomplete
+continue completed -> accepted + route transition + stage-load intent
+continue final -> accepted + terminal-route intent
+```
+
+## Third implementation slice
+
+Adapt the browser and StageKit:
+
+- Keep existing DOM structure and visible copy.
+- Wrap StageKit load and pick operations with additive observations.
+- Record side-panel and raycast input origin while requiring equivalent story results.
+- Add save and interlude readbacks.
+- Publish a bounded command/correlation journal.
 
 ## Validation target
 
 ```txt
-node scripts/validate-story-authority.mjs
+node scripts/validate-story-correlation.mjs
 npm run check
 ```
 
@@ -92,5 +132,6 @@ inventory
 audio
 renderer extraction
 StageKit rewrite
+new shader work
 visual polish
 ```
