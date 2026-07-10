@@ -1,10 +1,10 @@
 # START HERE: The Unmapped House
 
-Last updated: `2026-07-10T00-51-03-04-00`
+Last updated: `2026-07-10T02-19-14-04-00`
 
 ## Current state
 
-`TheUnmappedHouse` is a fixed-camera anime horror point-and-click prototype. The visible route is stable and should stay stable while source-owned story command/readback proof is added.
+`TheUnmappedHouse` is a fixed-camera anime horror point-and-click prototype. The visible route is stable and should stay stable while source-owned story command/result/readback proof is added.
 
 Current browser path:
 
@@ -18,26 +18,26 @@ index.html
 ## Read this pass first
 
 ```txt
-.agent/trackers/2026-07-10T00-51-03-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-10T00-51-03-04-00.md
-.agent/architecture-audit/2026-07-10T00-51-03-04-00-story-command-readback-catchup-dsk-map.md
-.agent/render-audit/2026-07-10T00-51-03-04-00-stagekit-consumption-command-readback.md
-.agent/interaction-audit/2026-07-10T00-51-03-04-00-hotspot-command-result-readback.md
-.agent/gameplay-audit/2026-07-10T00-51-03-04-00-story-route-fixture-loop.md
-.agent/story-authority-audit/2026-07-10T00-51-03-04-00-browser-adapter-command-result-contract.md
-.agent/deploy-audit/2026-07-10T00-51-03-04-00-story-fixture-check-gate.md
+.agent/trackers/2026-07-10T02-19-14-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-10T02-19-14-04-00.md
+.agent/architecture-audit/2026-07-10T02-19-14-04-00-story-command-adapter-readback-dsk-map.md
+.agent/render-audit/2026-07-10T02-19-14-04-00-stagekit-load-consumption-readback.md
+.agent/interaction-audit/2026-07-10T02-19-14-04-00-hotspot-repeat-result-contract.md
+.agent/gameplay-audit/2026-07-10T02-19-14-04-00-story-route-terminal-fixture-loop.md
+.agent/story-authority-audit/2026-07-10T02-19-14-04-00-source-command-result-adapter-contract.md
+.agent/deploy-audit/2026-07-10T02-19-14-04-00-story-fixture-check-gate.md
 ```
 
 ## Main finding
 
-`src/game.js` is still the source-authority bottleneck. It owns command interpretation, direct mutation, save writes, interlude timing, route transitions, terminal copy, `StageKit` scene loading, DOM projection, reset, and debug JSON.
+`src/game.js` is still the source-authority bottleneck. It owns command dispatch, mutation, clue grants, completion checks, interlude scheduling, save writes, StageKit scene loading, terminal copy, DOM projection, reset, and debug JSON together.
 
-The next cut should source-own story command/result/projection records and prove them through a DOM-free fixture before touching visuals or adding story content.
+The next cut should source-own story command/result/projection/readback records and prove them through a DOM-free fixture before touching visuals or adding story content.
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Command Readback Catch-up + Browser Adapter Fixture Gate
+TheUnmappedHouse Story Command Adapter Readback Catch-up + Browser Fixture Gate
 ```
 
 ## Do next
