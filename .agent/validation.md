@@ -1,6 +1,6 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-10T04-22-00-04-00`
+Timestamp: `2026-07-10T05-40-17-04-00`
 
 ## This pass
 
@@ -13,7 +13,7 @@ npm run check: not run
 browser smoke: not run
 DOM-free story fixture: not run because fixture files do not exist yet
 repo-local docs pushed to main: yes
-central ledger update: pending this turn
+central ledger updated: yes
 ```
 
 ## Available validation
@@ -67,4 +67,5 @@ interlude-intent
 stage-load-intent
 projection-record
 browser-adapter-readback
+gamehost-story-diagnostics
 ```
