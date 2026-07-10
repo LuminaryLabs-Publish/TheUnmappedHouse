@@ -1,14 +1,14 @@
 # START HERE: The Unmapped House
 
-Last updated: `2026-07-10T14-28-47-04-00`
+Last updated: `2026-07-10T15-58-47-04-00`
 
 ## Current state
 
-`TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three deterministic story scenes.
+`TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three authored scenes, nine hotspots, nine required clues, local browser persistence, and descriptor-driven Three.js rendering.
 
-The visible route is stable. Preserve it while adding source-owned command correlation, browser-effect readback, StageKit observations, save observations, and a DOM-free fixture.
+Preserve the current visible route. The next safe work is source-owned story lifecycle transactions, exactly-once browser effects, save reconciliation, and JSON-safe StageKit load/pick/resource observations.
 
-Current browser path:
+## Runtime path
 
 ```txt
 index.html
@@ -17,56 +17,60 @@ index.html
        -> src/stage-kit.js
             -> src/aspect-frame.js
             -> Three.js 0.160.0 CDN
+       -> localStorage
+       -> DOM / timers / location
 ```
 
-Authority today:
+## Authority today
 
 ```txt
-src/story-data.js  = authored descriptor source
-src/game.js        = story authority + browser adapter + persistence + DOM projection
-src/stage-kit.js   = render host + descriptor consumer + hotspot picker
+src/story-data.js  = authored story, scene, hotspot, stage, camera, fog, material, and post source
+src/game.js        = story state + command policy + lifecycle + browser effects + persistence + projection
+src/stage-kit.js   = render host + descriptor consumer + hotspot picker + permanent frame loop
+src/aspect-frame.js = fixed-aspect viewport policy
 ```
 
 ## Read this pass first
 
 ```txt
-.agent/trackers/2026-07-10T14-28-47-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-10T14-28-47-04-00.md
-.agent/architecture-audit/2026-07-10T14-28-47-04-00-story-command-correlation-dsk-map.md
-.agent/render-audit/2026-07-10T14-28-47-04-00-stagekit-observation-correlation-gap.md
-.agent/interaction-audit/2026-07-10T14-28-47-04-00-input-command-correlation-map.md
-.agent/gameplay-audit/2026-07-10T14-28-47-04-00-clue-route-result-loop.md
-.agent/story-authority-audit/2026-07-10T14-28-47-04-00-command-correlation-record-contract.md
-.agent/save-system-audit/2026-07-10T14-28-47-04-00-localstorage-source-version-readback-gap.md
-.agent/deploy-audit/2026-07-10T14-28-47-04-00-command-correlation-fixture-gate.md
+.agent/trackers/2026-07-10T15-58-47-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-10T15-58-47-04-00.md
+.agent/architecture-audit/2026-07-10T15-58-47-04-00-story-lifecycle-transaction-dsk-map.md
+.agent/render-audit/2026-07-10T15-58-47-04-00-stagekit-resource-lifecycle-observation-gap.md
+.agent/interaction-audit/2026-07-10T15-58-47-04-00-input-origin-lifecycle-command-map.md
+.agent/gameplay-audit/2026-07-10T15-58-47-04-00-scene-completion-interlude-terminal-loop.md
+.agent/story-authority-audit/2026-07-10T15-58-47-04-00-story-lifecycle-transaction-contract.md
+.agent/save-system-audit/2026-07-10T15-58-47-04-00-save-reconciliation-terminal-state-gap.md
+.agent/lifecycle-audit/2026-07-10T15-58-47-04-00-exactly-once-browser-effect-journal.md
+.agent/deploy-audit/2026-07-10T15-58-47-04-00-lifecycle-fixture-check-gate.md
 ```
 
-## Current interaction loop
+## Interaction loop
 
 ```txt
 open page
-  -> restore shallow-merged localStorage state
-  -> resolve current scene
-  -> load scene descriptors into StageKit
-  -> project story panel, hotspot buttons, and debug JSON
-  -> inspect through side-panel button or StageKit raycast
+  -> load and shallow-merge save
+  -> resolve scene
+  -> load descriptors into StageKit
+  -> project story UI and debug JSON
+  -> inspect by side-panel button or raycast
   -> mutate inspected/clues/log and save
-  -> when all required clues exist, schedule interlude
-  -> continue to the next scene and reload StageKit
-  -> final continue writes prototype-complete copy
-  -> KeyR clears the save and reloads
+  -> schedule interlude after completion
+  -> continue and load next scene
+  -> final continue writes terminal DOM copy
+  -> KeyR clears save and reloads
 ```
 
 ## Main finding
 
-The missing capability is not more content or renderer work. It is a stable causal ledger. Inputs currently produce mutation and browser effects without a command id, typed decision, transition rows, projection record, save observation, StageKit observation, or correlated diagnostics.
+The route has no explicit lifecycle state or exactly-once effect boundary. Completion timing, interlude visibility, terminal completion, save writes, StageKit loads, raycast picks, and reset effects are not represented as correlated source-owned records.
 
-`inspectHotspot()`, `nextScene()`, `saveState()`, and `StageKit.clickHotspot()` should first gain additive source/result/readback records while preserving visible behavior.
+`StageKit.loadScene()` also detaches old scene objects without recording or disposing prior geometry/material resources, and the constructor-owned frame loop/listeners have no teardown contract.
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Command Correlation Ledger Refresh + StageKit Observation Fixture Gate
+TheUnmappedHouse Story Lifecycle Transaction Ledger + StageKit Resource Observation Fixture Gate
 ```
 
 ## Do not do first
@@ -75,8 +79,9 @@ TheUnmappedHouse Story Command Correlation Ledger Refresh + StageKit Observation
 new rooms
 inventory
 audio
-renderer extraction
+renderer replacement
 StageKit rewrite
 new shader work
+camera retuning
 visual polish
 ```
