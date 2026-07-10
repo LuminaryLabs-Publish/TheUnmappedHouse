@@ -1,106 +1,111 @@
 # Next steps: The Unmapped House
 
-Timestamp: `2026-07-10T17-29-23-04-00`
+Timestamp: `2026-07-10T19-00-19-04-00`
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Atomic Stage Scene Commit + Resource Lifetime Fixture Gate
+TheUnmappedHouse Story Source Manifest + Save Reconciliation Fixture Gate
 ```
 
 ## Goal
 
-Make scene replacement deterministic and failure-safe without changing the visible route. A story scene transition must preflight descriptors, build replacement resources off to the side, atomically commit one scene epoch, dispose the retired epoch, and acknowledge the first rendered frame before the transition is considered fully presented.
+Make authored story content, persisted state, accepted hotspot commands, completion decisions and rendered scene identity derive from one validated source manifest. Preserve the current three-scene route, copy, pacing and visuals.
 
 ## Plan ledger
 
-### Descriptor preflight
+### Story source contract
 
-- [ ] Add stable scene descriptor schema/version metadata.
-- [ ] Validate camera vectors, FOV, fog, layers, props, hotspot ids, geometry dimensions, materials, and post values before touching the live stage.
-- [ ] Reject duplicate hotspot ids and unsupported prop kinds.
-- [ ] Return typed validation rows with stable reason codes.
-- [ ] Keep the current authored descriptor format compatible.
+- [ ] Add a stable story schema version and manifest id.
+- [ ] Build canonical indexes for scenes, hotspots and clues.
+- [ ] Generate a deterministic source fingerprint from normalized authored data.
+- [ ] Validate unique scene ids and scene-local hotspot ids.
+- [ ] Validate hotspot grants and scene requirements against known clue ids.
+- [ ] Validate route order, camera, stage and interlude descriptor presence.
+- [ ] Freeze the normalized source snapshot used by runtime authority.
 
-### Build plan and resource registry
+### Versioned save envelope
 
-- [ ] Convert validated descriptors into a detached `StageBuildPlan`.
-- [ ] Assign `sceneEpochId`, `sourceSceneId`, and `buildPlanId`.
-- [ ] Track every geometry, material, mesh, hotspot volume, listener, render target, and frame-loop handle in a resource registry.
-- [ ] Record created resource counts and descriptor-to-resource mappings.
-- [ ] Ensure build failure disposes all provisional resources.
+- [ ] Replace the raw state payload with a versioned save envelope.
+- [ ] Store source fingerprint, save schema version and migration metadata.
+- [ ] Validate every field before it reaches live state.
+- [ ] Distinguish parse failure, shape failure, stale source, future version and repairable drift.
+- [ ] Preserve the current save key through a compatibility adapter or explicit migration.
+- [ ] Return a JSON-safe load result with stable reason codes.
 
-### Atomic stage commit
+### Save reconciliation
 
-- [ ] Build the next stage under a detached group without clearing the active group.
-- [ ] Apply background, fog, camera, and post settings only at commit.
-- [ ] Swap the active group and active epoch in one commit step.
-- [ ] Retain the prior epoch until the new epoch commits successfully.
-- [ ] Return typed `accepted`, `rejected`, `failed`, and `rolled_back` load results.
-- [ ] Preserve the existing visual output and scene order.
+- [ ] Repair an unknown `sceneId` and persist the repaired canonical id.
+- [ ] Remove unknown scene, hotspot and clue ids with explicit repair rows.
+- [ ] Rebuild route as a valid prefix of the authored scene order.
+- [ ] Normalize `inspected` into canonical scene/hotspot maps.
+- [ ] Derive clues from canonical inspected hotspots rather than trusting a separate array.
+- [ ] Reconcile log and flags to bounded, supported values.
+- [ ] Define reset behavior for unrecoverable or future-version saves.
 
-### Disposal and teardown
+### Canonical story commands
 
-- [ ] Dispose retired geometries and materials exactly once.
-- [ ] Clear hotspot references only after epoch retirement.
-- [ ] Count created, retained, retired, disposed, and leaked resources.
-- [ ] Add `StageKit.dispose()` to cancel RAF, remove listeners, and dispose renderer targets/materials/geometries.
-- [ ] Make repeated `dispose()` idempotent.
+- [ ] Replace descriptor-object mutation with `{sceneId, hotspotId, inputOrigin, commandId}` requests.
+- [ ] Resolve descriptors through the validated source manifest.
+- [ ] Reject unknown, stale-source and wrong-scene hotspot ids.
+- [ ] Preserve side-panel and raycast behavior through one command path.
+- [ ] Return typed `accepted`, `repeated`, `rejected`, `repaired` and `no_op` results.
+- [ ] Record source fingerprint and before/after state fingerprints.
 
-### Story/render correlation
+### Completion proof
 
-- [ ] Add a story transition id for every scene advance.
-- [ ] Pass `sceneId`, transition id, and expected epoch id into the StageKit load request.
-- [ ] Do not treat scene presentation as complete until StageKit returns a committed load result.
-- [ ] Emit a first-frame acknowledgement containing scene id, epoch id, frame id, viewport, camera fingerprint, and resource counts.
-- [ ] Expose JSON-safe story/stage correlation through diagnostics.
+- [ ] Derive scene completion from canonical inspected hotspots and their grants.
+- [ ] Emit one completion proof per scene/source revision.
+- [ ] Correlate the interlude timer with scene id, command id and source fingerprint.
+- [ ] Reject stale completion effects after scene/source changes.
+- [ ] Persist explicit interlude and terminal lifecycle state.
 
-### Interaction and picking
+### Render and diagnostics correlation
 
-- [ ] Tag hotspot pick observations with active scene id and scene epoch id.
-- [ ] Return hit/miss observations instead of callback-only behavior.
-- [ ] Reject stale picks from retired epochs.
-- [ ] Preserve side-panel and raycast inspection parity.
+- [ ] Pass manifest id, source fingerprint and canonical scene id into StageKit load requests.
+- [ ] Store canonical source refs on hotspot meshes instead of full descriptor objects.
+- [ ] Expose save validation, repair, command and completion rows in diagnostics.
+- [ ] Prove persisted scene id, resolved descriptor scene id and rendered scene id agree.
+- [ ] Keep the existing atomic StageKit scene-commit plan as the next render-host slice.
 
 ### Validation
 
-- [ ] Add `scripts/validate-stage-preflight.mjs`.
-- [ ] Add `scripts/validate-stage-atomic-commit.mjs`.
-- [ ] Add `scripts/validate-stage-resource-lifetime.mjs`.
-- [ ] Add `scripts/validate-story-stage-correlation.mjs`.
-- [ ] Wire the fixtures into `npm run check` after syntax validation.
-- [ ] Prove valid loads for all three authored scenes.
-- [ ] Inject invalid layer, prop, camera, hotspot, and shader inputs.
-- [ ] Prove the active stage survives every rejected/failed replacement.
-- [ ] Prove retired resources are disposed exactly once.
-- [ ] Prove first-frame acknowledgement matches story scene and committed epoch.
+- [ ] Add `scripts/validate-story-manifest.mjs`.
+- [ ] Add `scripts/validate-save-reconciliation.mjs`.
+- [ ] Add `scripts/validate-story-command-authority.mjs`.
+- [ ] Add `scripts/validate-completion-proof.mjs`.
+- [ ] Add `scripts/validate-source-save-render-identity.mjs`.
+- [ ] Wire all fixtures into `npm run check` after syntax checks.
+- [ ] Test valid current saves, empty saves, malformed JSON, wrong field types, unknown ids, stale source, future schema and content drift.
 
 ## First implementation slice
 
 ```txt
-scene descriptor preflight
-  -> detached StageBuildPlan
-  -> provisional resource registry
-  -> typed build result
-  -> no live-stage mutation
+normalized story source
+  -> schema and graph validation
+  -> canonical indexes
+  -> source fingerprint
+  -> JSON-safe manifest diagnostics
 ```
 
 ## Second implementation slice
 
 ```txt
-atomic group/camera/fog/post commit
-  -> prior epoch retirement
-  -> resource disposal ledger
-  -> rollback on injected failure
+versioned save envelope
+  -> shape validation
+  -> source compatibility decision
+  -> reconciliation and repair rows
+  -> canonical story state
 ```
 
 ## Third implementation slice
 
 ```txt
-story transition correlation
-  -> first-frame acknowledgement
-  -> stale hotspot rejection
-  -> JSON-safe GameHost projection
+canonical hotspot command
+  -> typed result
+  -> clue derivation
+  -> completion proof
+  -> source/save/render identity fixture
 ```
 
 ## Validation target
@@ -112,7 +117,7 @@ npm run check
 ## Do not do first
 
 ```txt
-new rooms
+new rooms or branches
 inventory
 audio
 renderer replacement
