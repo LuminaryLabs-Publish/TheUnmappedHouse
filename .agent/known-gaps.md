@@ -1,6 +1,6 @@
 # Known gaps: The Unmapped House
 
-Timestamp: `2026-07-10T02-19-14-04-00`
+Timestamp: `2026-07-10T04-22-00-04-00`
 
 ## Source authority gaps
 
@@ -9,6 +9,7 @@ Timestamp: `2026-07-10T02-19-14-04-00`
 - Unknown, stale, or scene-mismatched hotspot commands do not have stable rejection rows.
 - Completion, interlude scheduling, continue, terminal route, and save intent are browser side effects rather than source-owned records.
 - Replay is not available outside the browser.
+- `src/story-data.js` is the source descriptor file, but there is no manifest or fingerprint layer around it.
 
 ## Browser adapter gaps
 
