@@ -1,74 +1,66 @@
 # Known gaps: The Unmapped House
 
-Timestamp: `2026-07-10T17-29-23-04-00`
+Timestamp: `2026-07-10T19-00-19-04-00`
 
-## Scene descriptor gaps
+## Story source gaps
 
-- Scene descriptors have no schema version, source fingerprint, validation result, or detached normalized snapshot.
-- Camera vectors, FOV, fog, geometry sizes, prop kinds, hotspot ids, material values, and post values are trusted at runtime.
-- Duplicate hotspot ids and unsupported descriptor combinations are not rejected before mutation.
-- No deterministic descriptor-to-resource plan exists.
+- `story-data.js` has no schema version, manifest id, source fingerprint or validation result.
+- Scene, hotspot and clue ids are implicit strings with no canonical indexes.
+- Duplicate scene ids, duplicate hotspot ids, unknown completion requirements and invalid grants are not rejected.
+- Route order is inferred from array position and is not represented as a validated graph.
+- No normalized, frozen story-source snapshot exists for command or save authority.
 
-## Stage-load authority gaps
+## Save-envelope gaps
 
-- `StageKit.loadScene()` mutates the live stage directly and returns no result.
-- The current stage is cleared before the replacement is validated or fully built.
-- Layer, prop, and hotspot creation is incremental; an exception can leave a partial replacement.
-- Background, fog, camera, and post uniforms can be partially updated before failure.
-- No prior-stage retention, rollback, or failed-load recovery path exists.
-- No scene epoch, build-plan id, load request id, commit id, or frame acknowledgement exists.
-
-## Resource-lifetime gaps
-
-- `stageGroup.clear()` detaches meshes but does not dispose their geometries.
-- Shader materials are replaced in `this.materials` before retirement/disposal can be observed.
-- Hotspot geometries and transparent materials are not tracked for disposal.
-- Resource ownership is implicit and split across group children, `materials`, `hotspots`, render targets, and constructor fields.
-- No created/retained/retired/disposed/leaked resource ledger exists.
-- The constructor starts a permanent RAF and browser listeners with no teardown contract.
-- `StageKit.dispose()` does not exist.
-
-## Story/render correlation gaps
-
-- `nextScene()` mutates `currentScene`, `state.sceneId`, and route before any typed StageKit load acknowledgement.
-- Story state has no expected stage epoch or presented frame id.
-- A successful save does not prove the renderer consumed the same scene.
-- A StageKit exception can interrupt the transition with no typed story result or rollback.
-- Terminal projection has no stage/story presentation record.
-
-## Interaction gaps
-
-- Raycast picks forward live hotspot descriptor objects through a callback.
-- Pick hit/miss paths return no JSON-safe observation.
-- Pick observations have no scene id or epoch id.
-- Stale hits from a retired scene cannot be detected by contract.
-- Side-panel and raycast origins are discarded before story mutation.
-
-## Save and lifecycle companion gaps
-
-- Save data has no internal schema/source fingerprint and is shallow-merged.
-- Unknown nested scene/hotspot/clue ids are not reconciled.
-- Story lifecycle remains implicit across clues, timers, DOM classes, and terminal copy.
-- Continue and reset return no typed result.
+- Syntactically valid JSON is shallow-merged directly into live state.
+- Save fields have no schema version, source fingerprint, created/updated revision or migration history.
+- `clues`, `route`, `log`, `flags` and `inspected` are not type-checked before use.
+- Unknown scene, hotspot and clue ids are not removed or reported.
+- An invalid persisted `sceneId` falls back visually without repairing `state.sceneId`.
+- Route order is not reconciled to the authored scene sequence.
+- Clues and inspections can disagree because they are persisted as separate authorities.
 - Interlude and terminal state do not round-trip.
+
+## Interaction-command gaps
+
+- Side-panel and raycast inputs pass live hotspot descriptor objects into mutation.
+- No canonical `{sceneId, hotspotId, inputOrigin, commandId}` request exists.
+- Hotspot membership in the active scene is not checked by contract.
+- Input origin is lost before state mutation.
+- Accepted, repeated, rejected, repaired and no-op outcomes are not typed.
+- Stale descriptors from a prior source or stage epoch cannot be rejected by source identity.
+
+## Completion gaps
+
+- Completion trusts global persisted clue strings.
+- Clues are not derived from canonical inspected hotspots.
+- A repaired or manually edited save can satisfy requirements without valid inspection evidence.
+- There is no completion proof containing source fingerprint, scene id, inspected hotspot ids and derived clue ids.
+- Anonymous interlude timers have no command, scene or source correlation.
+- Terminal projection is not represented in persisted state.
+
+## Render/source correlation gaps
+
+- StageKit receives the resolved descriptor object but no source manifest id or source fingerprint.
+- A fallback-rendered scene can disagree with the uncorrected persisted `state.sceneId`.
+- Pick meshes retain full live hotspot descriptor objects rather than canonical source references.
+- Debug JSON exposes aggregate state but not save validation, repair rows, source identity or command results.
+- The existing atomic StageKit, resource disposal and frame acknowledgement gaps remain unresolved.
 
 ## Validation gaps
 
 - `npm run check` performs syntax checks only.
-- No descriptor-preflight fixture exists.
-- No invalid-descriptor failure-injection matrix exists.
-- No atomic scene replacement or rollback fixture exists.
-- No geometry/material disposal fixture exists.
-- No frame-loop/listener teardown fixture exists.
-- No story-scene/stage-epoch/frame correlation fixture exists.
-- No stale hotspot pick fixture exists.
+- No story manifest or graph validator fixture exists.
+- No malformed, stale, future-version or content-drift save matrix exists.
+- No canonical hotspot command fixture exists.
+- No clue derivation or completion proof fixture exists.
+- No source/save/render identity fixture exists.
 - No browser smoke automation exists.
 
 ## Deferred work
 
 ```txt
-new story rooms
-additional branches
+new story rooms or branches
 inventory
 audio
 renderer replacement
