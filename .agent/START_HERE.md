@@ -1,12 +1,12 @@
 # START HERE: The Unmapped House
 
-Last updated: `2026-07-10T07-20-08-04-00`
+Last updated: `2026-07-10T08-39-05-04-00`
 
 ## Current state
 
 `TheUnmappedHouse` is a fixed-camera anime horror point-and-click prototype.
 
-The visible three-scene route is stable and should stay stable while source-owned story command/result/adapter-ledger proof is added.
+The visible three-scene route is stable and should stay stable while source-owned story command/result/projection/adapter-ledger proof is added.
 
 Current browser path:
 
@@ -22,14 +22,14 @@ index.html
 ## Read this pass first
 
 ```txt
-.agent/trackers/2026-07-10T07-20-08-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-10T07-20-08-04-00.md
-.agent/architecture-audit/2026-07-10T07-20-08-04-00-story-authority-adapter-ledger-dsk-map.md
-.agent/render-audit/2026-07-10T07-20-08-04-00-stagekit-adapter-readback-gap.md
-.agent/interaction-audit/2026-07-10T07-20-08-04-00-hotspot-command-result-ledger-map.md
-.agent/gameplay-audit/2026-07-10T07-20-08-04-00-story-route-result-loop.md
-.agent/story-authority-audit/2026-07-10T07-20-08-04-00-source-command-adapter-contract.md
-.agent/deploy-audit/2026-07-10T07-20-08-04-00-story-authority-fixture-gate.md
+.agent/trackers/2026-07-10T08-39-05-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-10T08-39-05-04-00.md
+.agent/architecture-audit/2026-07-10T08-39-05-04-00-story-command-projection-ledger-dsk-map.md
+.agent/render-audit/2026-07-10T08-39-05-04-00-stagekit-command-projection-readback-gap.md
+.agent/interaction-audit/2026-07-10T08-39-05-04-00-hotspot-command-projection-result-map.md
+.agent/gameplay-audit/2026-07-10T08-39-05-04-00-story-route-projection-result-loop.md
+.agent/story-authority-audit/2026-07-10T08-39-05-04-00-command-projection-ledger-contract.md
+.agent/deploy-audit/2026-07-10T08-39-05-04-00-story-command-fixture-gate.md
 ```
 
 ## Interaction loop
@@ -46,26 +46,28 @@ open index.html
   -> first inspect mutates inspected state, grants clues, logs, checks completion, renders, saves
   -> repeat inspect logs/saves without typed no_mutation result
   -> continue mutates route, StageKit scene, interlude DOM, UI, and save state
-  -> terminal route writes prototype-complete copy directly into DOM state
+  -> terminal route writes prototype-complete copy directly into interlude DOM
   -> KeyR clears localStorage and reloads
 ```
 
 ## Main finding
 
-`src/game.js` is still the browser adapter and source-authority bottleneck. It owns command dispatch, mutation, clue grants, completion checks, interlude scheduling, save writes, StageKit scene loading, terminal copy, DOM projection, reset, and debug JSON together.
+`src/game.js` is still the source-authority and browser-adapter bottleneck. It owns command dispatch, mutation, clue grants, completion checks, interlude scheduling, save writes, StageKit scene loading, terminal copy, DOM projection, reset, and debug JSON together.
+
+`StageKit` consumes descriptors and handles picking, but it exposes no serializable stage-load, pick, hover, or projection readback tied to story command results.
 
 The next cut should source-own story command/result/projection/adapter-ledger records and prove them through a DOM-free fixture before touching visuals or adding story content.
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Authority Adapter Ledger Refresh + Browser Fixture Gate
+TheUnmappedHouse Story Command Projection Ledger Refresh + Browser Adapter Fixture Gate
 ```
 
 ## Do next
 
-- Add pure story-authority modules for command envelopes, reason codes, preflight, command results, snapshots, projection records, save intents, interlude intents, stage-load intents, terminal intents, adapter ledger rows, and replay rows.
-- Add a DOM-free story fixture that proves accepted, repeated/no-mutation, completion, continue, terminal, stale/unknown hotspot, save, and stage-load cases.
+- Add pure story-authority modules for source manifests, fingerprints, command envelopes, reason codes, preflight, command results, projection records, save intents, interlude intents, terminal intents, stage-load intents, adapter ledger rows, and replay rows.
+- Add a DOM-free story fixture that proves accepted, repeated/no-mutation, completion, continue, terminal, stale/unknown hotspot, save, projection, and stage-load cases.
 - Adapt `src/game.js` to consume source-owned records while preserving the current route.
 - Add stable additive browser adapter readback, ideally under `window.GameHost` or a similarly stable diagnostic surface.
 
@@ -74,6 +76,7 @@ TheUnmappedHouse Story Authority Adapter Ledger Refresh + Browser Fixture Gate
 - New story rooms or content.
 - Inventory or audio.
 - Renderer extraction or `StageKit` rewrite.
+- Visual polish.
 - Browser-only smoke gates before fixture rows exist.
 
 ## Validation status
