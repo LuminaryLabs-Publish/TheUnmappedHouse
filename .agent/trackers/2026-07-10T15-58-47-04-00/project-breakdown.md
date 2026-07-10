@@ -21,7 +21,7 @@ Refresh the repo-local architecture record around the actual three-scene browser
 - [x] Add a timestamped turn-ledger entry and audit set.
 - [x] Keep runtime source, dependencies, routes, and deployment unchanged.
 - [x] Push repo-local findings directly to `main`.
-- [ ] Synchronize the central repo ledger and internal change log.
+- [x] Synchronize the central repo ledger and internal change log.
 
 ## Selection comparison
 
@@ -110,8 +110,8 @@ central-ledger-sync
 | `static-page-shell-kit` | Mounts the stage, story panel, hotspot list, hover label, debug panel, and interlude. |
 | `aspect-frame-kit` | Computes and applies the canonical fixed-aspect viewport. |
 | `story-data-kit` | Supplies all story, scene, hotspot, clue, requirement, camera, fog, stage, material, post, and interlude descriptors. |
-| `browser-story-runtime-kit` | Boots state, interprets inspect/continue/reset actions, coordinates mutation, projection, persistence, and StageKit. |
-| `clue-ledger-kit` | Grants unique clues and evaluates scene completion requirements. |
+| `browser-story-runtime-kit` | Boots state and coordinates inspect/continue/reset, mutation, projection, persistence, and StageKit. |
+| `clue-ledger-kit` | Grants unique clues and evaluates completion requirements. |
 | `inspection-ledger-kit` | Stores per-scene hotspot inspection flags. |
 | `notebook-log-kit` | Prepends and caps the latest eight log entries. |
 | `scene-route-kit` | Tracks the active scene and visited route. |
@@ -176,6 +176,6 @@ pull request created: no
 npm run check: not run in connector-only environment
 browser smoke: not run
 DOM-free lifecycle fixture: unavailable
-repo-local docs pushed to main: pending until this audit set is complete
-central ledger sync: pending
+repo-local docs pushed to main: yes
+central ledger sync: complete
 ```
