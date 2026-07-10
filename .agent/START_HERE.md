@@ -1,12 +1,12 @@
 # START HERE: The Unmapped House
 
-Last updated: `2026-07-10T15-58-47-04-00`
+Last updated: `2026-07-10T17-29-23-04-00`
 
 ## Current state
 
 `TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three authored scenes, nine hotspots, nine required clues, local browser persistence, and descriptor-driven Three.js rendering.
 
-Preserve the current visible route. The next safe work is source-owned story lifecycle transactions, exactly-once browser effects, save reconciliation, and JSON-safe StageKit load/pick/resource observations.
+The current visible route should remain unchanged. The next safe work is an atomic StageKit scene commit boundary with descriptor preflight, resource ownership, rollback, disposal, and a frame acknowledgement correlated to the story scene transition.
 
 ## Runtime path
 
@@ -18,59 +18,56 @@ index.html
             -> src/aspect-frame.js
             -> Three.js 0.160.0 CDN
        -> localStorage
-       -> DOM / timers / location
+       -> DOM / timer / reload effects
 ```
 
 ## Authority today
 
 ```txt
-src/story-data.js  = authored story, scene, hotspot, stage, camera, fog, material, and post source
-src/game.js        = story state + command policy + lifecycle + browser effects + persistence + projection
-src/stage-kit.js   = render host + descriptor consumer + hotspot picker + permanent frame loop
+src/story-data.js   = story, scene, hotspot, stage, camera, fog, material, post source
+src/game.js         = state, inspect/continue/reset policy, persistence, UI, StageKit calls
+src/stage-kit.js    = destructive descriptor consumption, render resources, picking, frame loop
 src/aspect-frame.js = fixed-aspect viewport policy
 ```
 
 ## Read this pass first
 
 ```txt
-.agent/trackers/2026-07-10T15-58-47-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-10T15-58-47-04-00.md
-.agent/architecture-audit/2026-07-10T15-58-47-04-00-story-lifecycle-transaction-dsk-map.md
-.agent/render-audit/2026-07-10T15-58-47-04-00-stagekit-resource-lifecycle-observation-gap.md
-.agent/interaction-audit/2026-07-10T15-58-47-04-00-input-origin-lifecycle-command-map.md
-.agent/gameplay-audit/2026-07-10T15-58-47-04-00-scene-completion-interlude-terminal-loop.md
-.agent/story-authority-audit/2026-07-10T15-58-47-04-00-story-lifecycle-transaction-contract.md
-.agent/save-system-audit/2026-07-10T15-58-47-04-00-save-reconciliation-terminal-state-gap.md
-.agent/lifecycle-audit/2026-07-10T15-58-47-04-00-exactly-once-browser-effect-journal.md
-.agent/deploy-audit/2026-07-10T15-58-47-04-00-lifecycle-fixture-check-gate.md
+.agent/trackers/2026-07-10T17-29-23-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-10T17-29-23-04-00.md
+.agent/architecture-audit/2026-07-10T17-29-23-04-00-atomic-stage-scene-commit-dsk-map.md
+.agent/render-audit/2026-07-10T17-29-23-04-00-destructive-stage-load-render-commit-gap.md
+.agent/gameplay-audit/2026-07-10T17-29-23-04-00-story-scene-stage-commit-loop.md
+.agent/interaction-audit/2026-07-10T17-29-23-04-00-hotspot-scene-epoch-correlation-map.md
+.agent/stage-resource-audit/2026-07-10T17-29-23-04-00-stage-resource-ownership-disposal-contract.md
+.agent/deploy-audit/2026-07-10T17-29-23-04-00-atomic-stage-fixture-gate.md
 ```
 
 ## Interaction loop
 
 ```txt
-open page
-  -> load and shallow-merge save
-  -> resolve scene
-  -> load descriptors into StageKit
-  -> project story UI and debug JSON
-  -> inspect by side-panel button or raycast
-  -> mutate inspected/clues/log and save
-  -> schedule interlude after completion
-  -> continue and load next scene
-  -> final continue writes terminal DOM copy
-  -> KeyR clears save and reloads
+load save and resolve scene
+  -> StageKit destructively clears and rebuilds the live scene
+  -> render story UI and debug JSON
+  -> inspect through button or raycast
+  -> mutate clues/inspection/log and save
+  -> open delayed interlude when requirements are complete
+  -> continue mutates story scene/route
+  -> StageKit destructively loads the next scene
+  -> render UI and save
+  -> final continue projects terminal copy
 ```
 
 ## Main finding
 
-The route has no explicit lifecycle state or exactly-once effect boundary. Completion timing, interlude visibility, terminal completion, save writes, StageKit loads, raycast picks, and reset effects are not represented as correlated source-owned records.
+`StageKit.loadScene()` is destructive, incremental, and unobservable. It clears the previous stage and replaces resource tracking before validating or fully constructing the next scene. A descriptor or allocation failure can leave a partial stage with no rollback, while story progression has no scene epoch, load result, render-commit acknowledgement, or proof that the displayed scene matches `state.sceneId`.
 
-`StageKit.loadScene()` also detaches old scene objects without recording or disposing prior geometry/material resources, and the constructor-owned frame loop/listeners have no teardown contract.
+Detached geometries and materials are not disposed, and the permanent frame loop/listeners have no teardown contract.
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Lifecycle Transaction Ledger + StageKit Resource Observation Fixture Gate
+TheUnmappedHouse Atomic Stage Scene Commit + Resource Lifetime Fixture Gate
 ```
 
 ## Do not do first
@@ -80,8 +77,7 @@ new rooms
 inventory
 audio
 renderer replacement
-StageKit rewrite
-new shader work
+new shaders
 camera retuning
 visual polish
 ```
