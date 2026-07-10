@@ -1,0 +1,164 @@
+# Project breakdown: The Unmapped House
+
+Timestamp: `2026-07-10T13-01-11-04-00`
+
+## Selection
+
+`LuminaryLabs-Publish/TheUnmappedHouse` was selected after checking the current public `LuminaryLabs-Publish` repo list against central ledger recency and sampled root `.agent` state.
+
+No checked public non-Cavalry repo was new, central-ledger absent, missing sampled root `.agent` state, recently added, or otherwise undocumented.
+
+`LuminaryLabs-Publish/TheCavalryOfRome` remains excluded by rule.
+
+`TheUnmappedHouse` was the oldest eligible documented fallback after `ZombieOrchard` advanced to `2026-07-10T12-49-54-04-00`.
+
+## Interaction loop
+
+```txt
+open index.html
+  -> #aspect-frame mounts #stage, #story-panel, #hotspot-list, #state-debug, #hover-label, and #interlude
+  -> src/game.js imports StageKit and story descriptors from src/story-data.js
+  -> DOM nodes are captured at module scope
+  -> localStorage is shallow-merged into createInitialState()
+  -> currentScene resolves from saved sceneId or scenes[0]
+  -> StageKit is constructed with inspectHotspot callback
+  -> StageKit.loadScene(currentScene) consumes camera/stage/hotspot/post descriptors
+  -> renderUi() writes title/text/buttons/debug JSON
+  -> side-panel button or StageKit raycast click calls inspectHotspot(hotspot)
+  -> first inspect mutates state, grants clues, logs, checks completion, renders, saves
+  -> repeat inspect writes text/log/UI/save without typed no_mutation result
+  -> completion schedules showInterlude via setTimeout
+  -> continue mutates route, interlude DOM, StageKit scene, UI, and save state
+  -> terminal route writes prototype-complete copy directly into interlude DOM
+  -> KeyR clears localStorage and reloads
+```
+
+## Domains in use
+
+```txt
+static-browser-shell
+fixed-aspect-frame
+story-panel-dom
+interlude-dom-route
+hover-label-dom
+story-source-descriptor
+scene-source-descriptor
+hotspot-source-descriptor
+stage-source-descriptor
+post-process-source-descriptor
+browser-story-runtime
+story-state
+save-state
+scene-route-state
+clue-ledger
+inspected-hotspot-ledger
+notebook-log-state
+completion-policy
+interlude-policy
+terminal-route-policy
+stage-render-host
+three-cdn-runtime
+stage-scene-consumption
+anime-shader-material
+post-process-pass
+hotspot-volume
+raycast-picking
+hover-label-projection
+side-panel-hotspot-input
+keyboard-reset-input
+debug-json-projection
+story-source-manifest-next
+story-command-envelope-next
+story-command-preflight-next
+story-command-result-next
+story-projection-ledger-next
+story-adapter-ledger-next
+browser-adapter-readback-next
+stage-load-readback-next
+stage-pick-readback-next
+dom-free-story-fixture-next
+repo-local-agent-ledger
+central-ledger-sync
+```
+
+## Kit services
+
+- `story-data-kit`: title, scene, hotspot, grant, requirement, interlude, camera, stage, and post descriptors.
+- `browser-story-runtime-kit`: hotspot inspection, continue routing, mutation, persistence, DOM projection, reset, and debug JSON.
+- `stage-render-kit`: Three.js renderer, fixed frame, camera, lights, fog, scene descriptor consumption, hotspot volumes, picking, hover labels, and post-process.
+- `aspect-frame-kit`: fixed 16:9 layout calculation and application.
+- `localstorage-save-kit`: shallow story-state persistence.
+- `notebook-log-kit`: recent story-log row management.
+- `debug-json-projection-kit`: current scene, clue, route, inspection, completion, and latest-log projection.
+- Planned proof services: source manifest, command envelopes, preflight, command results, projection rows, adapter ledger rows, stage load/pick readback, diagnostics, and DOM-free fixture rows.
+
+## Current kits
+
+```txt
+static-page-shell-kit
+aspect-frame-kit
+stage-render-kit
+scene-descriptor-consumer-kit
+anime-material-kit
+post-process-kit
+hotspot-volume-kit
+hotspot-picking-kit
+story-data-kit
+browser-story-runtime-kit
+localstorage-save-kit
+notebook-log-kit
+debug-json-projection-kit
+repo-local-agent-ledger-kit
+central-ledger-sync-kit
+```
+
+## Next-cut kits
+
+```txt
+story-source-manifest-kit
+story-source-fingerprint-kit
+story-source-snapshot-kit
+story-command-envelope-kit
+story-command-reason-kit
+story-command-preflight-kit
+story-command-result-kit
+story-projection-ledger-kit
+save-intent-record-kit
+interlude-intent-record-kit
+terminal-route-result-kit
+stage-load-intent-kit
+stage-load-readback-kit
+stage-pick-readback-kit
+browser-adapter-plan-kit
+story-adapter-ledger-kit
+browser-adapter-readback-kit
+gamehost-story-diagnostics-kit
+dom-free-story-fixture-kit
+repo-local-ledger-readback-kit
+central-ledger-readback-kit
+```
+
+## Main finding
+
+`TheUnmappedHouse` should not start next with new story rooms, inventory, audio, renderer extraction, visual polish, or a `StageKit` rewrite.
+
+The blocker is story command adapter readback. `src/game.js` still owns source command interpretation, mutation, save writes, interlude timing, route changes, StageKit scene loading, terminal DOM copy, reset, and debug JSON together.
+
+## Next safe ledge
+
+```txt
+TheUnmappedHouse Story Command Adapter Readback Ledger Refresh + DOM-Free Fixture Gate
+```
+
+## Validation
+
+```txt
+runtime source changed: no
+branch created: no
+pull request created: no
+npm run check: not run
+browser smoke: not run
+DOM-free story fixture: not run because proof files do not exist yet
+pushed to main: yes
+central ledger updated: pending
+```
