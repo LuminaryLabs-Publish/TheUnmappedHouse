@@ -1,6 +1,6 @@
 # Current audit: The Unmapped House
 
-Timestamp: `2026-07-10T04-22-00-04-00`
+Timestamp: `2026-07-10T05-40-17-04-00`
 
 ## Product read
 
@@ -136,5 +136,5 @@ The next useful work is not a visual rewrite. The blocker is source-owned story 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Command Fixture Proof + Browser Adapter Readback Gate
+TheUnmappedHouse Browser Adapter Readback Refresh + Story Fixture Gate
 ```
