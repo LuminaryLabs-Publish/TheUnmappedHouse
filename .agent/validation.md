@@ -20,7 +20,7 @@ story command fixture: unavailable
 completion proof fixture: unavailable
 source/save/render identity fixture: unavailable
 repo-local docs pushed to main: yes
-central ledger sync: pending until repo-local commit sequence completes
+central ledger sync: prepared and completed in the same run
 ```
 
 ## Available validation
