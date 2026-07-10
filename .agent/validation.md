@@ -1,6 +1,6 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-10T08-39-05-04-00`
+Timestamp: `2026-07-10T10-11-35-04-00`
 
 ## This pass
 
@@ -13,7 +13,7 @@ npm run check: not run
 browser smoke: not run
 DOM-free story fixture: not run because proof files do not exist yet
 repo-local docs pushed to main: yes
-central ledger updated: yes
+central ledger updated: pending central commit
 ```
 
 ## Available validation
@@ -50,8 +50,6 @@ node scripts/validate-story-authority.mjs
 npm run check
 ```
 
-The fixture should be added before any story expansion or render rewrite.
-
 ## Required fixture rows
 
 ```txt
@@ -66,6 +64,8 @@ continue-terminal
 save-intent
 interlude-intent
 stage-load-intent
+stage-load-readback
+stage-pick-readback
 projection-record
 story-adapter-ledger-row
 browser-adapter-readback
