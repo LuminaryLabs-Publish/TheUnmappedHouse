@@ -1,11 +1,11 @@
 # Next steps: The Unmapped House
 
-Timestamp: `2026-07-10T00-51-03-04-00`
+Timestamp: `2026-07-10T02-19-14-04-00`
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Command Readback Catch-up + Browser Adapter Fixture Gate
+TheUnmappedHouse Story Command Adapter Readback Catch-up + Browser Fixture Gate
 ```
 
 ## First implementation slice
