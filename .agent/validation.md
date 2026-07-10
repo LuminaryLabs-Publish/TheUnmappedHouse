@@ -1,6 +1,6 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-10T11-30-28-04-00`
+Timestamp: `2026-07-10T13-01-11-04-00`
 
 ## This pass
 
@@ -13,7 +13,7 @@ npm run check: not run
 browser smoke: not run
 DOM-free story fixture: not run because proof files do not exist yet
 repo-local docs pushed to main: yes
-central ledger updated: yes
+central ledger updated: pending
 ```
 
 ## Available validation
