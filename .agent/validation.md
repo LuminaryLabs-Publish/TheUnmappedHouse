@@ -1,6 +1,6 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-10T02-19-14-04-00`
+Timestamp: `2026-07-10T04-22-00-04-00`
 
 ## This pass
 
@@ -13,7 +13,7 @@ npm run check: not run
 browser smoke: not run
 DOM-free story fixture: not run because fixture files do not exist yet
 repo-local docs pushed to main: yes
-central ledger updated: yes
+central ledger update: pending this turn
 ```
 
 ## Available validation
@@ -40,6 +40,7 @@ src/story-data.js
 - No adapter readback fixture.
 - No result rows for accepted/rejected/no-mutation commands.
 - No fixture rows for continue, terminal, save, interlude, projection, or stage-load intents.
+- No stable `GameHost` story diagnostics.
 
 ## Required next validation gate
 
@@ -49,3 +50,21 @@ npm run check
 ```
 
 The fixture should be added before any story expansion or render rewrite.
+
+## Required fixture rows
+
+```txt
+initial-state
+inspect-accepted
+inspect-repeat-no-mutation
+inspect-unknown-rejected
+inspect-scene-mismatch-rejected
+scene-complete
+continue-next-scene
+continue-terminal
+save-intent
+interlude-intent
+stage-load-intent
+projection-record
+browser-adapter-readback
+```
