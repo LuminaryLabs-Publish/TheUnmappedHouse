@@ -1,6 +1,6 @@
 # Current audit: The Unmapped House
 
-Timestamp: `2026-07-10T05-40-17-04-00`
+Timestamp: `2026-07-10T07-20-08-04-00`
 
 ## Product read
 
@@ -61,8 +61,9 @@ hover-label-projection
 side-panel-hotspot-input
 keyboard-reset-input
 debug-json-projection
-story-command-authority-next
+story-authority-next
 story-command-result-next
+story-adapter-ledger-next
 browser-adapter-readback-next
 stage-load-readback-next
 dom-free-story-fixture-next
@@ -77,8 +78,9 @@ central-ledger-sync
 - `stage-render-kit`: WebGL renderer, fixed frame, camera, lights, fog, scene descriptor consumption, hotspot volumes, picking, hover, and post-process.
 - `aspect-frame-kit`: fixed 16:9 layout calculation and application.
 - `localstorage-save-kit`: shallow story-state persistence.
+- `notebook-log-kit`: recent story log row management.
 - `debug-json-projection-kit`: ad hoc current scene/clue/route/inspection/completion projection.
-- Planned story authority services: source manifest, snapshots, preflight, command envelopes, reason catalog, command results, projections, adapter readback, diagnostics, and DOM-free fixture rows.
+- Planned story authority services: source manifest, snapshots, preflight, command envelopes, reason catalog, command results, projections, adapter ledger rows, diagnostics, and DOM-free fixture rows.
 
 ## Kit inventory
 
@@ -122,6 +124,7 @@ interlude-intent-record-kit
 terminal-route-result-kit
 stage-load-intent-kit
 browser-adapter-plan-kit
+story-adapter-ledger-kit
 browser-adapter-readback-kit
 gamehost-story-diagnostics-kit
 dom-free-story-fixture-kit
@@ -133,8 +136,10 @@ central-ledger-readback-kit
 
 The next useful work is not a visual rewrite. The blocker is source-owned story command proof and browser adapter readback. `src/game.js` should stop being the source of both story truth and browser effects.
 
+The new proof seam is `story authority -> adapter ledger -> browser readback`.
+
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Browser Adapter Readback Refresh + Story Fixture Gate
+TheUnmappedHouse Story Authority Adapter Ledger Refresh + Browser Fixture Gate
 ```
