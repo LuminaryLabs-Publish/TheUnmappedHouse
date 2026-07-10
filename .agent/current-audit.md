@@ -1,6 +1,6 @@
 # Current audit: The Unmapped House
 
-Timestamp: `2026-07-10T02-19-14-04-00`
+Timestamp: `2026-07-10T04-22-00-04-00`
 
 ## Product read
 
@@ -12,7 +12,7 @@ A fixed-camera horror prototype where the player inspects hotspots across three 
 open index.html
   -> #aspect-frame mounts #stage, #story-panel, #hotspot-list, #state-debug, #hover-label, and #interlude
   -> script type=module loads ./src/game.js
-  -> src/game.js imports StageKit and story descriptors
+  -> src/game.js imports StageKit and story descriptors from src/story-data.js
   -> DOM nodes are captured at module scope
   -> localStorage is shallow-merged into createInitialState()
   -> currentScene resolves from saved sceneId or scenes[0]
@@ -62,7 +62,9 @@ side-panel-hotspot-input
 keyboard-reset-input
 debug-json-projection
 story-command-authority-next
+story-command-result-next
 browser-adapter-readback-next
+stage-load-readback-next
 dom-free-story-fixture-next
 repo-local-agent-ledger
 central-ledger-sync
@@ -130,3 +132,9 @@ central-ledger-readback-kit
 ## Current finding
 
 The next useful work is not a visual rewrite. The blocker is source-owned story command proof and browser adapter readback. `src/game.js` should stop being the source of both story truth and browser effects.
+
+## Next safe ledge
+
+```txt
+TheUnmappedHouse Story Command Fixture Proof + Browser Adapter Readback Gate
+```
