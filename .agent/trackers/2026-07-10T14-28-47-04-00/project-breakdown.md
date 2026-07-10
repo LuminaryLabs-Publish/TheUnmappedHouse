@@ -22,7 +22,7 @@ Document the current story, interaction, persistence, and render architecture wi
 - [x] Add timestamped architecture, render, interaction, gameplay, story-authority, save-system, deploy, and turn-ledger audits.
 - [x] Refresh root `.agent` pointers and status docs.
 - [x] Push repo-local documentation to `main` only.
-- [ ] Synchronize the central ledger and internal change log.
+- [x] Synchronize the central ledger and internal change log.
 
 ## Selection comparison
 
@@ -232,5 +232,5 @@ npm run check: not run
 browser smoke: not run
 DOM-free story fixture: not run because proof modules do not exist yet
 pushed to main: yes
-central ledger updated: pending
+central ledger updated: yes
 ```
