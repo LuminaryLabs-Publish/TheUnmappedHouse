@@ -1,11 +1,11 @@
 # Next steps: The Unmapped House
 
-Timestamp: `2026-07-10T02-19-14-04-00`
+Timestamp: `2026-07-10T04-22-00-04-00`
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Command Adapter Readback Catch-up + Browser Fixture Gate
+TheUnmappedHouse Story Command Fixture Proof + Browser Adapter Readback Gate
 ```
 
 ## First implementation slice
@@ -49,6 +49,7 @@ scripts/validate-story-authority.mjs
 - First hotspot inspect accepts and grants the expected clue.
 - Repeat hotspot inspect returns `no_mutation` with `already_inspected` reason.
 - Unknown hotspot returns `rejected` with stable reason.
+- Stale or scene-mismatched hotspot returns `rejected` with stable reason.
 - Completing all required hotspots returns scene completion and interlude intent.
 - Continue from a completed scene returns next scene and stage-load intent.
 - Continue from the final scene returns terminal route intent.
@@ -71,3 +72,14 @@ npm run check
 ```
 
 Wire the fixture into `npm run check` after the new source files exist.
+
+## Do not do first
+
+```txt
+new story rooms
+inventory
+audio
+renderer extraction
+StageKit rewrite
+visual polish
+```
