@@ -1,74 +1,67 @@
 # Known gaps: The Unmapped House
 
-Timestamp: `2026-07-10T15-58-47-04-00`
+Timestamp: `2026-07-10T17-29-23-04-00`
 
-## Source and state gaps
+## Scene descriptor gaps
 
-- `src/story-data.js` has no manifest, schema version, source id, fingerprint, or detached source snapshot.
-- Commands consume live descriptor objects rather than stable scene/hotspot ids.
-- State has no stable id, detached snapshot, completed-scene ledger, lifecycle phase, pending-effect ledger, or terminal field.
-- `flags` exists in state but has no current policy or documented consumer.
-- Source ids in saved state are not validated against the current descriptors.
+- Scene descriptors have no schema version, source fingerprint, validation result, or detached normalized snapshot.
+- Camera vectors, FOV, fog, geometry sizes, prop kinds, hotspot ids, material values, and post values are trusted at runtime.
+- Duplicate hotspot ids and unsupported descriptor combinations are not rejected before mutation.
+- No deterministic descriptor-to-resource plan exists.
 
-## Lifecycle-authority gaps
+## Stage-load authority gaps
 
-- `src/game.js` owns bootstrap, policy, mutation, timer scheduling, effects, persistence, StageKit calls, projection, reset, and diagnostics together.
-- The visible lifecycle is implicit across clue state, a timer callback, DOM classes, and button visibility.
-- No explicit `exploring`, `completion_pending`, `interlude_open`, `advancing`, or `terminal` state exists.
-- Continue has no source-owned preflight; eligibility is implied by the visible interlude.
-- Terminal completion is direct DOM copy and is not stored in state or persistence.
-- Reset has no retained command/result/readback before reload.
-- Deterministic replay is unavailable outside the browser.
+- `StageKit.loadScene()` mutates the live stage directly and returns no result.
+- The current stage is cleared before the replacement is validated or fully built.
+- Layer, prop, and hotspot creation is incremental; an exception can leave a partial replacement.
+- Background, fog, camera, and post uniforms can be partially updated before failure.
+- No prior-stage retention, rollback, or failed-load recovery path exists.
+- No scene epoch, build-plan id, load request id, commit id, or frame acknowledgement exists.
 
-## Command and correlation gaps
+## Resource-lifetime gaps
 
-- No input, command, preflight, result, transition, transaction, effect, readback, state, save, stage, or correlation ids exist.
-- Accepted, rejected, accepted-no-mutation, and effect-only outcomes are not typed.
+- `stageGroup.clear()` detaches meshes but does not dispose their geometries.
+- Shader materials are replaced in `this.materials` before retirement/disposal can be observed.
+- Hotspot geometries and transparent materials are not tracked for disposal.
+- Resource ownership is implicit and split across group children, `materials`, `hotspots`, render targets, and constructor fields.
+- No created/retained/retired/disposed/leaked resource ledger exists.
+- The constructor starts a permanent RAF and browser listeners with no teardown contract.
+- `StageKit.dispose()` does not exist.
+
+## Story/render correlation gaps
+
+- `nextScene()` mutates `currentScene`, `state.sceneId`, and route before any typed StageKit load acknowledgement.
+- Story state has no expected stage epoch or presented frame id.
+- A successful save does not prove the renderer consumed the same scene.
+- A StageKit exception can interrupt the transition with no typed story result or rollback.
+- Terminal projection has no stage/story presentation record.
+
+## Interaction gaps
+
+- Raycast picks forward live hotspot descriptor objects through a callback.
+- Pick hit/miss paths return no JSON-safe observation.
+- Pick observations have no scene id or epoch id.
+- Stale hits from a retired scene cannot be detected by contract.
 - Side-panel and raycast origins are discarded before story mutation.
-- Raycast misses disappear without an observation.
-- Repeat inspection performs reread/log/UI/save work without an explicit `already_inspected` result.
-- No stable reasons exist for scene mismatch, unknown hotspot, incomplete scene, closed interlude, stale state, source mismatch, or terminal repetition.
 
-## Browser-effect gaps
+## Save and lifecycle companion gaps
 
-- DOM projection is not described as serializable effect data.
-- Interlude scheduling uses an anonymous timer with no idempotency key, handle registry, cancellation, or readback.
-- Interlude open/close state exists only in DOM class/ARIA mutations.
-- Stage load, save write, save clear, terminal projection, and reload are inline effects with no acknowledgement.
-- Duplicate, skipped, failed, and replayed effects cannot be distinguished.
-- Aggregate debug JSON cannot prove causal order or effect completion.
-
-## Save-system gaps
-
-- The key includes `v1`, but the payload has no internal schema version.
-- Save data has no source id or source fingerprint.
-- State is shallow-merged without nested type or id validation.
-- An unknown saved scene can fall back visually while leaving `state.sceneId` unreconciled.
-- Saved clues, route ids, inspected scene ids, and hotspot ids are not source-validated.
-- Route order and uniqueness are not validated.
-- Interlude pending/open and terminal state cannot round-trip because they are not part of state.
-- Load, repair, rejection, write, clear, and failure observations do not exist.
-
-## Render and StageKit gaps
-
-- `StageKit.loadScene()` emits no detached scene-load observation.
-- Layer, prop, hotspot, material, camera, fog, post, viewport, and render-target consumption cannot be fixture-read.
-- `stageGroup.clear()` detaches old scene objects without geometry/material disposal calls.
-- Prior material references are replaced before disposal status can be observed.
-- The constructor starts a permanent animation loop and browser listeners with no `dispose()` contract.
-- Hover and click picking are callback/DOM-only and preserve no input or pick rows.
-- Diagnostics would otherwise require exposing live Three.js objects.
+- Save data has no internal schema/source fingerprint and is shallow-merged.
+- Unknown nested scene/hotspot/clue ids are not reconciled.
+- Story lifecycle remains implicit across clues, timers, DOM classes, and terminal copy.
+- Continue and reset return no typed result.
+- Interlude and terminal state do not round-trip.
 
 ## Validation gaps
 
 - `npm run check` performs syntax checks only.
-- No DOM-free source/state/command/lifecycle fixture exists.
-- No exactly-once effect journal fixture exists.
-- No side-panel versus raycast parity fixture exists.
-- No save reconciliation or failure-injection fixture exists.
-- No terminal round-trip fixture exists.
-- No StageKit load/pick/resource-disposal fixture exists.
-- No replay equality or JSON-safe diagnostics fixture exists.
+- No descriptor-preflight fixture exists.
+- No invalid-descriptor failure-injection matrix exists.
+- No atomic scene replacement or rollback fixture exists.
+- No geometry/material disposal fixture exists.
+- No frame-loop/listener teardown fixture exists.
+- No story-scene/stage-epoch/frame correlation fixture exists.
+- No stale hotspot pick fixture exists.
 - No browser smoke automation exists.
 
 ## Deferred work
@@ -79,7 +72,6 @@ additional branches
 inventory
 audio
 renderer replacement
-StageKit rewrite
 new shader work
 camera retuning
 visual polish
