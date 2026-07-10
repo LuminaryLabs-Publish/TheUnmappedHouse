@@ -1,6 +1,6 @@
 # Current audit: The Unmapped House
 
-Timestamp: `2026-07-10T10-11-35-04-00`
+Timestamp: `2026-07-10T11-30-28-04-00`
 
 ## Product read
 
@@ -22,6 +22,7 @@ open index.html
   -> side-panel button or StageKit raycast click calls inspectHotspot(hotspot)
   -> first inspection mutates state, grants clues, logs, checks completion, renders UI, and saves
   -> repeat inspection writes text/log/UI/save without typed no_mutation result
+  -> completion schedules showInterlude via setTimeout
   -> continue mutates current scene, route, interlude DOM, StageKit scene, UI, and save state
   -> terminal route writes prototype-complete text directly into interlude DOM state
   -> KeyR clears localStorage and reloads
@@ -34,6 +35,7 @@ static-browser-shell
 fixed-aspect-frame
 story-panel-dom
 interlude-dom-route
+hover-label-dom
 story-source-descriptor
 scene-source-descriptor
 hotspot-source-descriptor
@@ -62,11 +64,13 @@ keyboard-reset-input
 debug-json-projection
 story-source-manifest-next
 story-command-envelope-next
+story-command-preflight-next
 story-command-result-next
 story-projection-ledger-next
 story-adapter-ledger-next
 browser-adapter-readback-next
 stage-load-readback-next
+stage-pick-readback-next
 dom-free-story-fixture-next
 repo-local-agent-ledger
 central-ledger-sync
@@ -111,7 +115,7 @@ story-source-fingerprint-kit
 story-source-snapshot-kit
 story-command-envelope-kit
 story-command-reason-kit
-story-preflight-kit
+story-command-preflight-kit
 story-command-result-kit
 story-projection-ledger-kit
 save-intent-record-kit
@@ -136,5 +140,5 @@ The next useful work is not a visual rewrite. The blocker is source-owned story 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Adapter Readback Ledger Refresh + DOM-Free Fixture Gate
+TheUnmappedHouse Story Command Readback Ledger Refresh + DOM-Free Fixture Gate
 ```
