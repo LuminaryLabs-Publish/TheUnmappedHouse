@@ -1,6 +1,6 @@
 # Known gaps: The Unmapped House
 
-Timestamp: `2026-07-10T05-40-17-04-00`
+Timestamp: `2026-07-10T07-20-08-04-00`
 
 ## Source authority gaps
 
@@ -14,7 +14,7 @@ Timestamp: `2026-07-10T05-40-17-04-00`
 ## Browser adapter gaps
 
 - The browser adapter is not separate from story authority.
-- There is no adapter readback row for DOM projection, save writes, interlude state, terminal projection, or StageKit loads.
+- There is no adapter ledger row for DOM projection, save writes, interlude state, terminal projection, or StageKit loads.
 - Debug JSON is ad hoc and not linked to command ids or result ids.
 - No additive stable `GameHost` story diagnostics exist yet.
 
@@ -41,4 +41,4 @@ Timestamp: `2026-07-10T05-40-17-04-00`
 - StageKit rewrite.
 - Visual polish.
 
-These should wait until command/result/readback proof exists.
+These should wait until story command/result/adapter-ledger proof exists.
