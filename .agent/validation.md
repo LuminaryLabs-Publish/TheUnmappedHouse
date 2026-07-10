@@ -1,6 +1,6 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-10T00-51-03-04-00`
+Timestamp: `2026-07-10T02-19-14-04-00`
 
 ## This pass
 
@@ -39,7 +39,7 @@ src/story-data.js
 - No DOM-free story authority fixture.
 - No adapter readback fixture.
 - No result rows for accepted/rejected/no-mutation commands.
-- No fixture rows for continue, terminal, save, interlude, or stage-load intents.
+- No fixture rows for continue, terminal, save, interlude, projection, or stage-load intents.
 
 ## Required next validation gate
 
