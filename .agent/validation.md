@@ -1,6 +1,6 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-10T07-20-08-04-00`
+Timestamp: `2026-07-10T08-39-05-04-00`
 
 ## This pass
 
@@ -13,7 +13,7 @@ npm run check: not run
 browser smoke: not run
 DOM-free story fixture: not run because proof files do not exist yet
 repo-local docs pushed to main: yes
-central ledger updated: yes
+central ledger updated: pending in central repo
 ```
 
 ## Available validation
@@ -39,6 +39,7 @@ src/story-data.js
 - No DOM-free story authority fixture.
 - No adapter ledger/readback fixture.
 - No result rows for accepted/rejected/no-mutation commands.
+- No projection rows for DOM updates.
 - No fixture rows for continue, terminal, save, interlude, projection, or stage-load intents.
 - No stable `GameHost` story diagnostics.
 
