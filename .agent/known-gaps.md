@@ -1,46 +1,46 @@
 # Known gaps: The Unmapped House
 
-Timestamp: `2026-07-10T08-39-05-04-00`
+Timestamp: `2026-07-10T10-11-35-04-00`
 
 ## Source authority gaps
 
-- `src/game.js` owns story command dispatch, mutation, save intent, route transitions, terminal copy, StageKit loading, DOM projection, reset, and debug output together.
-- Repeat hotspot inspection has no typed `no_mutation` result, even though it behaves like a repeat read.
+- `src/story-data.js` is the descriptor source, but has no source manifest or fingerprint layer.
+- `src/game.js` owns command dispatch, mutation, save intent, route transitions, terminal copy, StageKit loading, DOM projection, reset, and debug output together.
+- Repeat hotspot inspection has no typed `no_mutation` result.
 - Unknown, stale, or scene-mismatched hotspot commands do not have stable rejection rows.
 - Completion, interlude scheduling, continue, terminal route, and save intent are browser side effects rather than source-owned records.
 - Replay is not available outside the browser.
-- `src/story-data.js` is the source descriptor file, but there is no manifest or fingerprint layer around it.
 
 ## Projection and adapter gaps
 
-- There is no command envelope or result id that ties a click to a state transition.
+- No command envelope/result id ties a click to a state transition.
 - DOM projection is not represented as a serializable `StoryProjectionRecord`.
-- Save writes, interlude opening, terminal copy, and StageKit scene loads are not represented as adapter-intent rows.
+- Save writes, interlude opening, terminal copy, and StageKit scene loads are not adapter-intent rows.
 - The browser adapter is not separate from story authority.
-- Debug JSON is ad hoc and not linked to command ids, result ids, projection ids, or adapter ledger rows.
-- No additive stable `GameHost` story diagnostics exist yet.
+- Debug JSON is not linked to command ids, result ids, projection ids, adapter ledger rows, or stage readback rows.
+- No stable additive `GameHost` story diagnostics exist yet.
 
 ## Render/readback gaps
 
-- `StageKit` consumes descriptors but does not expose fixture-readable stage-load consumption rows.
-- Hotspot picking is visible through callbacks, not through serializable click/hover readback.
+- `StageKit` consumes descriptors but does not expose fixture-readable stage-load rows.
+- Hotspot picking is callback-only and has no click/hover readback row.
 - Browser smoke would not prove story result to stage-load parity.
 
 ## Validation gaps
 
-- `npm run check` only syntax-checks files.
+- `npm run check` syntax-checks current files only.
 - No DOM-free story authority fixture exists.
-- No adapter readback fixture exists.
+- No adapter ledger/readback fixture exists.
 - No result rows exist for accepted, rejected, repeated/no-mutation, completed, continue, terminal, save, interlude, projection, or stage-load cases.
 
 ## Deferred work
 
-- New rooms.
-- More story content.
-- Inventory.
-- Audio.
-- Renderer extraction.
-- StageKit rewrite.
-- Visual polish.
-
-These should wait until story command/result/projection/adapter-ledger proof exists.
+```txt
+new story rooms
+more story content
+inventory
+audio
+renderer extraction
+StageKit rewrite
+visual polish
+```
