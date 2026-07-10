@@ -1,6 +1,6 @@
 # Current audit: The Unmapped House
 
-Timestamp: `2026-07-10T07-20-08-04-00`
+Timestamp: `2026-07-10T08-39-05-04-00`
 
 ## Product read
 
@@ -24,7 +24,7 @@ open index.html
   -> repeat inspection writes text/log/UI/save without typed no_mutation result
   -> continue button calls nextScene()
   -> nextScene mutates current scene, route, interlude DOM, StageKit scene, UI, and save state
-  -> terminal route writes prototype-complete text directly into DOM state
+  -> terminal route writes prototype-complete text directly into interlude DOM state
   -> KeyR clears localStorage and reloads
 ```
 
@@ -61,9 +61,8 @@ hover-label-projection
 side-panel-hotspot-input
 keyboard-reset-input
 debug-json-projection
-story-authority-next
-story-command-result-next
-story-adapter-ledger-next
+story-command-projection-next
+story-result-ledger-next
 browser-adapter-readback-next
 stage-load-readback-next
 dom-free-story-fixture-next
@@ -78,9 +77,9 @@ central-ledger-sync
 - `stage-render-kit`: WebGL renderer, fixed frame, camera, lights, fog, scene descriptor consumption, hotspot volumes, picking, hover, and post-process.
 - `aspect-frame-kit`: fixed 16:9 layout calculation and application.
 - `localstorage-save-kit`: shallow story-state persistence.
-- `notebook-log-kit`: recent story log row management.
+- `notebook-log-kit`: recent story-log row management.
 - `debug-json-projection-kit`: ad hoc current scene/clue/route/inspection/completion projection.
-- Planned story authority services: source manifest, snapshots, preflight, command envelopes, reason catalog, command results, projections, adapter ledger rows, diagnostics, and DOM-free fixture rows.
+- Planned story proof services: source manifest, snapshots, command envelopes, preflight, reason catalog, command results, projection rows, adapter ledger rows, stage-load/readback rows, diagnostics, and DOM-free fixture rows.
 
 ## Kit inventory
 
@@ -110,15 +109,11 @@ Next-cut kits:
 story-source-manifest-kit
 story-source-fingerprint-kit
 story-source-snapshot-kit
-story-state-snapshot-kit
-stage-scene-snapshot-kit
 story-command-envelope-kit
 story-command-reason-kit
 story-preflight-kit
 story-command-result-kit
-story-event-record-kit
-story-replay-row-kit
-story-projection-record-kit
+story-projection-ledger-kit
 save-intent-record-kit
 interlude-intent-record-kit
 terminal-route-result-kit
@@ -134,12 +129,16 @@ central-ledger-readback-kit
 
 ## Current finding
 
-The next useful work is not a visual rewrite. The blocker is source-owned story command proof and browser adapter readback. `src/game.js` should stop being the source of both story truth and browser effects.
+The next useful work is not a visual rewrite. The blocker is source-owned story command projection proof and browser adapter readback. `src/game.js` should stop being the source of both story truth and browser effects.
 
-The new proof seam is `story authority -> adapter ledger -> browser readback`.
+The new proof seam is:
+
+```txt
+story source -> command result -> projection ledger -> adapter ledger -> browser readback
+```
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Authority Adapter Ledger Refresh + Browser Fixture Gate
+TheUnmappedHouse Story Command Projection Ledger Refresh + Browser Adapter Fixture Gate
 ```
