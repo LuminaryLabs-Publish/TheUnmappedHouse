@@ -13,7 +13,7 @@ npm run check: not run
 browser smoke: not run
 DOM-free story correlation fixture: not run because proof modules do not exist yet
 repo-local docs pushed to main: yes
-central ledger updated: pending
+central ledger updated: yes
 ```
 
 ## Available validation
