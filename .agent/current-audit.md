@@ -1,6 +1,6 @@
 # Current audit: The Unmapped House
 
-Timestamp: `2026-07-10T08-39-05-04-00`
+Timestamp: `2026-07-10T10-11-35-04-00`
 
 ## Product read
 
@@ -16,14 +16,13 @@ open index.html
   -> DOM nodes are captured at module scope
   -> localStorage is shallow-merged into createInitialState()
   -> currentScene resolves from saved sceneId or scenes[0]
-  -> StageKit is constructed with inspectHotspot as callback
+  -> StageKit is constructed with inspectHotspot callback
   -> StageKit.loadScene(currentScene) consumes camera/stage/hotspot/post descriptors
   -> renderUi() writes title/text/buttons/debug JSON
   -> side-panel button or StageKit raycast click calls inspectHotspot(hotspot)
-  -> first inspection mutates inspected state, grants clues, writes text/log, checks completion, schedules interlude, renders UI, and saves
+  -> first inspection mutates state, grants clues, logs, checks completion, renders UI, and saves
   -> repeat inspection writes text/log/UI/save without typed no_mutation result
-  -> continue button calls nextScene()
-  -> nextScene mutates current scene, route, interlude DOM, StageKit scene, UI, and save state
+  -> continue mutates current scene, route, interlude DOM, StageKit scene, UI, and save state
   -> terminal route writes prototype-complete text directly into interlude DOM state
   -> KeyR clears localStorage and reloads
 ```
@@ -61,8 +60,11 @@ hover-label-projection
 side-panel-hotspot-input
 keyboard-reset-input
 debug-json-projection
-story-command-projection-next
-story-result-ledger-next
+story-source-manifest-next
+story-command-envelope-next
+story-command-result-next
+story-projection-ledger-next
+story-adapter-ledger-next
 browser-adapter-readback-next
 stage-load-readback-next
 dom-free-story-fixture-next
@@ -70,20 +72,18 @@ repo-local-agent-ledger
 central-ledger-sync
 ```
 
-## Services
+## Kit services
 
-- `story-data-kit`: source descriptors for title, scenes, hotspots, grants, requirements, interludes, camera, stage, and post settings.
-- `browser-story-runtime-kit`: browser-bound command handling, mutation, persistence, route progression, DOM projection, reset, and debug JSON.
-- `stage-render-kit`: WebGL renderer, fixed frame, camera, lights, fog, scene descriptor consumption, hotspot volumes, picking, hover, and post-process.
+- `story-data-kit`: title, scene, hotspot, grant, requirement, interlude, camera, stage, and post descriptors.
+- `browser-story-runtime-kit`: hotspot inspection, continue routing, mutation, persistence, DOM projection, reset, and debug JSON.
+- `stage-render-kit`: WebGL renderer, fixed frame, camera, lights, fog, scene descriptor consumption, hotspot volumes, picking, hover labels, and post-process.
 - `aspect-frame-kit`: fixed 16:9 layout calculation and application.
 - `localstorage-save-kit`: shallow story-state persistence.
 - `notebook-log-kit`: recent story-log row management.
-- `debug-json-projection-kit`: ad hoc current scene/clue/route/inspection/completion projection.
-- Planned story proof services: source manifest, snapshots, command envelopes, preflight, reason catalog, command results, projection rows, adapter ledger rows, stage-load/readback rows, diagnostics, and DOM-free fixture rows.
+- `debug-json-projection-kit`: ad hoc current scene, clue, route, inspection, completion, and latest-log projection.
+- Planned proof services: source manifest, command envelopes, preflight, command results, projection rows, adapter ledger rows, stage load/pick readback, diagnostics, and DOM-free fixture rows.
 
-## Kit inventory
-
-Current kits:
+## Current kits
 
 ```txt
 static-page-shell-kit
@@ -103,7 +103,7 @@ repo-local-agent-ledger-kit
 central-ledger-sync-kit
 ```
 
-Next-cut kits:
+## Next-cut kits
 
 ```txt
 story-source-manifest-kit
@@ -118,6 +118,8 @@ save-intent-record-kit
 interlude-intent-record-kit
 terminal-route-result-kit
 stage-load-intent-kit
+stage-load-readback-kit
+stage-pick-readback-kit
 browser-adapter-plan-kit
 story-adapter-ledger-kit
 browser-adapter-readback-kit
@@ -129,16 +131,10 @@ central-ledger-readback-kit
 
 ## Current finding
 
-The next useful work is not a visual rewrite. The blocker is source-owned story command projection proof and browser adapter readback. `src/game.js` should stop being the source of both story truth and browser effects.
-
-The new proof seam is:
-
-```txt
-story source -> command result -> projection ledger -> adapter ledger -> browser readback
-```
+The next useful work is not a visual rewrite. The blocker is source-owned story command/result/projection proof plus browser adapter and StageKit readback. `src/game.js` should stop being both story authority and effect adapter.
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Command Projection Ledger Refresh + Browser Adapter Fixture Gate
+TheUnmappedHouse Story Adapter Readback Ledger Refresh + DOM-Free Fixture Gate
 ```
