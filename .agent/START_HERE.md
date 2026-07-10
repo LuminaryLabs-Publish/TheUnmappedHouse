@@ -1,68 +1,82 @@
 # START HERE: The Unmapped House
 
-Last updated: `2026-07-10T13-01-11-04-00`
+Last updated: `2026-07-10T14-28-47-04-00`
 
 ## Current state
 
-`TheUnmappedHouse` is a fixed-camera anime horror point-and-click prototype.
+`TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three deterministic story scenes.
 
-The visible three-scene route is stable. Keep it stable while source-owned story command/result/projection rows, browser adapter readback, and StageKit load/pick readback proof are added.
+The visible route is stable. Preserve it while adding source-owned command correlation, browser-effect readback, StageKit observations, save observations, and a DOM-free fixture.
 
 Current browser path:
 
 ```txt
 index.html
   -> src/game.js
-  -> src/stage-kit.js
-  -> src/story-data.js
+       -> src/story-data.js
+       -> src/stage-kit.js
+            -> src/aspect-frame.js
+            -> Three.js 0.160.0 CDN
 ```
 
-`src/story-data.js` is the descriptor source of truth.
+Authority today:
 
-`src/game.js` is still both story command authority and browser adapter.
+```txt
+src/story-data.js  = authored descriptor source
+src/game.js        = story authority + browser adapter + persistence + DOM projection
+src/stage-kit.js   = render host + descriptor consumer + hotspot picker
+```
 
 ## Read this pass first
 
 ```txt
-.agent/trackers/2026-07-10T13-01-11-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-10T13-01-11-04-00.md
-.agent/architecture-audit/2026-07-10T13-01-11-04-00-story-command-adapter-readback-dsk-map.md
-.agent/render-audit/2026-07-10T13-01-11-04-00-stagekit-command-adapter-readback-gap.md
-.agent/interaction-audit/2026-07-10T13-01-11-04-00-hotspot-command-adapter-result-map.md
-.agent/gameplay-audit/2026-07-10T13-01-11-04-00-story-route-command-adapter-loop.md
-.agent/story-authority-audit/2026-07-10T13-01-11-04-00-source-command-adapter-readback-contract.md
-.agent/deploy-audit/2026-07-10T13-01-11-04-00-story-authority-fixture-gate.md
+.agent/trackers/2026-07-10T14-28-47-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-10T14-28-47-04-00.md
+.agent/architecture-audit/2026-07-10T14-28-47-04-00-story-command-correlation-dsk-map.md
+.agent/render-audit/2026-07-10T14-28-47-04-00-stagekit-observation-correlation-gap.md
+.agent/interaction-audit/2026-07-10T14-28-47-04-00-input-command-correlation-map.md
+.agent/gameplay-audit/2026-07-10T14-28-47-04-00-clue-route-result-loop.md
+.agent/story-authority-audit/2026-07-10T14-28-47-04-00-command-correlation-record-contract.md
+.agent/save-system-audit/2026-07-10T14-28-47-04-00-localstorage-source-version-readback-gap.md
+.agent/deploy-audit/2026-07-10T14-28-47-04-00-command-correlation-fixture-gate.md
 ```
 
 ## Current interaction loop
 
 ```txt
-open index.html
-  -> #aspect-frame mounts #stage, #story-panel, #hotspot-list, #state-debug, #hover-label, and #interlude
-  -> src/game.js imports StageKit and story descriptors from src/story-data.js
-  -> DOM nodes are captured at module scope
-  -> localStorage is shallow-merged into createInitialState()
-  -> currentScene resolves from saved sceneId or scenes[0]
-  -> StageKit is constructed with inspectHotspot callback
-  -> StageKit.loadScene(currentScene) consumes camera/stage/hotspot/post descriptors
-  -> renderUi() writes title/text/buttons/debug JSON
-  -> side-panel button or StageKit raycast click calls inspectHotspot(hotspot)
-  -> first inspect mutates state, grants clues, logs, checks completion, renders, saves
-  -> repeat inspect writes text/log/UI/save without typed no_mutation result
-  -> completion schedules showInterlude via setTimeout
-  -> continue mutates route, interlude DOM, StageKit scene, UI, and save state
-  -> terminal route writes prototype-complete copy directly into interlude DOM
-  -> KeyR clears localStorage and reloads
+open page
+  -> restore shallow-merged localStorage state
+  -> resolve current scene
+  -> load scene descriptors into StageKit
+  -> project story panel, hotspot buttons, and debug JSON
+  -> inspect through side-panel button or StageKit raycast
+  -> mutate inspected/clues/log and save
+  -> when all required clues exist, schedule interlude
+  -> continue to the next scene and reload StageKit
+  -> final continue writes prototype-complete copy
+  -> KeyR clears the save and reloads
 ```
 
 ## Main finding
 
-`TheUnmappedHouse` should not start next with new story rooms, inventory, audio, renderer extraction, visual polish, or a `StageKit` rewrite.
+The missing capability is not more content or renderer work. It is a stable causal ledger. Inputs currently produce mutation and browser effects without a command id, typed decision, transition rows, projection record, save observation, StageKit observation, or correlated diagnostics.
 
-The blocker is story command adapter readback. `src/game.js` still owns command interpretation, mutation, save writes, interlude timing, route changes, StageKit scene loading, terminal DOM copy, reset, and debug JSON together.
+`inspectHotspot()`, `nextScene()`, `saveState()`, and `StageKit.clickHotspot()` should first gain additive source/result/readback records while preserving visible behavior.
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Command Adapter Readback Ledger Refresh + DOM-Free Fixture Gate
+TheUnmappedHouse Story Command Correlation Ledger Refresh + StageKit Observation Fixture Gate
+```
+
+## Do not do first
+
+```txt
+new rooms
+inventory
+audio
+renderer extraction
+StageKit rewrite
+new shader work
+visual polish
 ```
