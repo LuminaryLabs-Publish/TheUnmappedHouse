@@ -1,11 +1,11 @@
 # Next steps: The Unmapped House
 
-Timestamp: `2026-07-10T07-20-08-04-00`
+Timestamp: `2026-07-10T08-39-05-04-00`
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Authority Adapter Ledger Refresh + Browser Fixture Gate
+TheUnmappedHouse Story Command Projection Ledger Refresh + Browser Adapter Fixture Gate
 ```
 
 ## First implementation slice
@@ -44,6 +44,7 @@ scripts/validate-story-authority.mjs
 - `SaveIntentRecord`
 - `InterludeIntentRecord`
 - `StageLoadIntentRecord`
+- `StageLoadReadback`
 - `TerminalRouteIntentRecord`
 - `StoryReplayRow`
 - `StoryAdapterLedgerRow`
@@ -61,6 +62,7 @@ scripts/validate-story-authority.mjs
 - Continue from a completed scene returns next scene and stage-load intent.
 - Continue from the final scene returns terminal route intent.
 - Save, projection, interlude, terminal, adapter ledger, and stage-load intents are serializable.
+- Browser adapter readback preserves command id, result id, projection id, and stage-load intent id.
 
 ## Then adapt the browser
 
@@ -70,6 +72,7 @@ After the DOM-free fixture passes:
 - Route hotspot and continue events through the source-owned story authority.
 - Consume returned projection, save, interlude, terminal, and stage-load records.
 - Add stable readback diagnostics without removing useful existing debug fields.
+- Keep `StageKit` stable and add additive load/pick/readback rows around it.
 
 ## Validation target
 
