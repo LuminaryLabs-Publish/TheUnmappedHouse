@@ -1,19 +1,19 @@
 # Known gaps: The Unmapped House
 
-Timestamp: `2026-07-09T23-28-35-04-00`
+Timestamp: `2026-07-10T00-51-03-04-00`
 
 ## Source authority gaps
 
-- `src/game.js` owns story command dispatch, mutation, save intent, route transitions, StageKit loading, DOM projection, reset, and debug output together.
-- Repeat hotspot inspection has no typed `no_mutation` result.
-- Unknown or stale hotspot commands do not have stable rejection rows.
+- `src/game.js` owns story command dispatch, mutation, save intent, route transitions, terminal copy, StageKit loading, DOM projection, reset, and debug output together.
+- Repeat hotspot inspection has no typed `no_mutation` result, even though it behaves like a repeat read.
+- Unknown, stale, or scene-mismatched hotspot commands do not have stable rejection rows.
 - Completion, interlude scheduling, continue, terminal route, and save intent are browser side effects rather than source-owned records.
 - Replay is not available outside the browser.
 
 ## Browser adapter gaps
 
 - The browser adapter is not separate from story authority.
-- There is no adapter readback row for DOM projection, save writes, interlude state, or StageKit loads.
+- There is no adapter readback row for DOM projection, save writes, interlude state, terminal projection, or StageKit loads.
 - Debug JSON is ad hoc and not linked to command ids or result ids.
 - No additive stable `GameHost` story diagnostics exist yet.
 
@@ -26,8 +26,8 @@ Timestamp: `2026-07-09T23-28-35-04-00`
 ## Validation gaps
 
 - `npm run check` only syntax-checks files.
-- No DOM-free story fixture exists.
-- No fixture rows exist for accepted, repeated, completed, continue, terminal, save, interlude, or stage-load cases.
+- No DOM-free story authority fixture exists.
+- No fixture rows exist for accepted, rejected, repeated/no-mutation, completed, continue, terminal, save, interlude, or stage-load cases.
 
 ## Deferred work
 
