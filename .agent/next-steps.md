@@ -1,124 +1,107 @@
 # Next steps: The Unmapped House
 
-Timestamp: `2026-07-10T15-58-47-04-00`
+Timestamp: `2026-07-10T17-29-23-04-00`
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Lifecycle Transaction Ledger + StageKit Resource Observation Fixture Gate
+TheUnmappedHouse Atomic Stage Scene Commit + Resource Lifetime Fixture Gate
 ```
 
 ## Goal
 
-Separate pure story lifecycle authority from browser, storage, and render effects so every inspect, continue, and reset input produces a deterministic command/result/transaction, every external effect is exactly-once and acknowledged, save data is reconciled against the current story source, and StageKit reports detached load/pick/resource observations without changing the visible route.
+Make scene replacement deterministic and failure-safe without changing the visible route. A story scene transition must preflight descriptors, build replacement resources off to the side, atomically commit one scene epoch, dispose the retired epoch, and acknowledge the first rendered frame before the transition is considered fully presented.
 
 ## Plan ledger
 
-### Source and state
+### Descriptor preflight
 
-- [ ] Add a stable source manifest for three scenes, nine hotspots, nine clues, route order, and descriptor schema.
-- [ ] Add a deterministic source fingerprint.
-- [ ] Move initial state construction into a DOM-free module.
-- [ ] Add detached state ids/snapshots.
-- [ ] Add explicit lifecycle values: `booting`, `exploring`, `completion_pending`, `interlude_open`, `advancing`, `terminal`, and `resetting`.
-- [ ] Persist completed-scene ids, terminal state, and pending effects.
+- [ ] Add stable scene descriptor schema/version metadata.
+- [ ] Validate camera vectors, FOV, fog, layers, props, hotspot ids, geometry dimensions, materials, and post values before touching the live stage.
+- [ ] Reject duplicate hotspot ids and unsupported prop kinds.
+- [ ] Return typed validation rows with stable reason codes.
+- [ ] Keep the current authored descriptor format compatible.
 
-### Commands and transitions
+### Build plan and resource registry
 
-- [ ] Define input records for side-panel, stage raycast, continue button, and keyboard reset origins.
-- [ ] Convert live descriptor inputs to stable `sceneId` and `hotspotId` command payloads.
-- [ ] Add deterministic preflight and stable reason codes.
-- [ ] Return typed accepted-mutation, accepted-no-mutation, rejected, and effect-only results.
-- [ ] Emit detached before/after state snapshots.
-- [ ] Emit transitions for inspection, clue grant, log, completion, lifecycle, scene, route, terminal, and reset changes.
-- [ ] Group command, result, transitions, and effects into one lifecycle transaction.
+- [ ] Convert validated descriptors into a detached `StageBuildPlan`.
+- [ ] Assign `sceneEpochId`, `sourceSceneId`, and `buildPlanId`.
+- [ ] Track every geometry, material, mesh, hotspot volume, listener, render target, and frame-loop handle in a resource registry.
+- [ ] Record created resource counts and descriptor-to-resource mappings.
+- [ ] Ensure build failure disposes all provisional resources.
 
-### Exactly-once effects
+### Atomic stage commit
 
-- [ ] Describe DOM, timer, StageKit, storage, and reload operations as effect intents.
-- [ ] Assign stable effect ids and idempotency keys.
-- [ ] Add browser effect readbacks with `applied`, `skipped`, or `failed` status.
-- [ ] Ensure one scene-completion transaction schedules at most one interlude timer.
-- [ ] Retain timer handles and support cancellation/readback during reset or disposal.
-- [ ] Commit `interlude_open` only after the open effect is acknowledged.
-- [ ] Commit scene advance only after required stage/projection/save effects are acknowledged.
-- [ ] Enter and persist `terminal` before projecting terminal copy.
+- [ ] Build the next stage under a detached group without clearing the active group.
+- [ ] Apply background, fog, camera, and post settings only at commit.
+- [ ] Swap the active group and active epoch in one commit step.
+- [ ] Retain the prior epoch until the new epoch commits successfully.
+- [ ] Return typed `accepted`, `rejected`, `failed`, and `rolled_back` load results.
+- [ ] Preserve the existing visual output and scene order.
 
-### Save reconciliation
+### Disposal and teardown
 
-- [ ] Add a payload schema version, source id, and source fingerprint.
-- [ ] Replace shallow merge with nested validation and reconciliation.
-- [ ] Validate scene, hotspot, clue, route, lifecycle, and terminal fields against the source manifest.
-- [ ] Add load, write, clear, repair, reject, and failure observations.
-- [ ] Preserve the existing v1 key behind a compatibility adapter until migration fixtures pass.
+- [ ] Dispose retired geometries and materials exactly once.
+- [ ] Clear hotspot references only after epoch retirement.
+- [ ] Count created, retained, retired, disposed, and leaked resources.
+- [ ] Add `StageKit.dispose()` to cancel RAF, remove listeners, and dispose renderer targets/materials/geometries.
+- [ ] Make repeated `dispose()` idempotent.
 
-### StageKit observations and lifetime
+### Story/render correlation
 
-- [ ] Return a JSON-safe `StageLoadObservation` from `loadScene()`.
-- [ ] Return a JSON-safe `StagePickObservation` for hit and miss paths.
-- [ ] Add bounded frame/viewport/camera/material/hotspot readback.
-- [ ] Dispose detached scene geometries and materials before rebuilding.
-- [ ] Add resource-disposal counts.
-- [ ] Add `dispose()` to stop the frame loop and remove browser listeners.
-- [ ] Keep camera, fog, shaders, post settings, hotspot volumes, and visible rendering unchanged.
+- [ ] Add a story transition id for every scene advance.
+- [ ] Pass `sceneId`, transition id, and expected epoch id into the StageKit load request.
+- [ ] Do not treat scene presentation as complete until StageKit returns a committed load result.
+- [ ] Emit a first-frame acknowledgement containing scene id, epoch id, frame id, viewport, camera fingerprint, and resource counts.
+- [ ] Expose JSON-safe story/stage correlation through diagnostics.
 
-### Browser adapter and diagnostics
+### Interaction and picking
 
-- [ ] Convert `src/game.js` into a consumer of pure lifecycle transactions and effect intents.
-- [ ] Preserve current copy, button behavior, 450 ms pacing, route order, and reset UX.
-- [ ] Expose bounded JSON-safe `GameHost` diagnostics.
-- [ ] Do not expose DOM nodes, timers, localStorage, or Three.js objects.
+- [ ] Tag hotspot pick observations with active scene id and scene epoch id.
+- [ ] Return hit/miss observations instead of callback-only behavior.
+- [ ] Reject stale picks from retired epochs.
+- [ ] Preserve side-panel and raycast inspection parity.
 
 ### Validation
 
-- [ ] Add `scripts/validate-story-lifecycle.mjs`.
-- [ ] Add `scripts/validate-save-reconciliation.mjs`.
-- [ ] Add `scripts/validate-stage-observations.mjs`.
-- [ ] Wire fixtures into `npm run check` after syntax validation.
-- [ ] Prove side-panel/raycast result parity.
-- [ ] Prove single completion/interlude effect.
-- [ ] Prove next-scene and terminal transitions.
-- [ ] Prove save repair and terminal round-trip.
-- [ ] Prove StageKit load/pick/resource observations.
-- [ ] Prove replay equality and JSON-safe diagnostics.
+- [ ] Add `scripts/validate-stage-preflight.mjs`.
+- [ ] Add `scripts/validate-stage-atomic-commit.mjs`.
+- [ ] Add `scripts/validate-stage-resource-lifetime.mjs`.
+- [ ] Add `scripts/validate-story-stage-correlation.mjs`.
+- [ ] Wire the fixtures into `npm run check` after syntax validation.
+- [ ] Prove valid loads for all three authored scenes.
+- [ ] Inject invalid layer, prop, camera, hotspot, and shader inputs.
+- [ ] Prove the active stage survives every rejected/failed replacement.
+- [ ] Prove retired resources are disposed exactly once.
+- [ ] Prove first-frame acknowledgement matches story scene and committed epoch.
 
 ## First implementation slice
 
 ```txt
-source manifest + fingerprint
-  -> pure initial state with lifecycle=exploring
-  -> inspect command by sceneId/hotspotId
-  -> preflight
-  -> typed result
-  -> transitions
-  -> lifecycle transaction
-  -> projection/save effect intents
-  -> fake effect readbacks
-```
-
-Prove:
-
-```txt
-inspect accepted
-inspect repeat -> accepted_no_mutation/already_inspected
-inspect unknown -> rejected/unknown_hotspot
-inspect scene mismatch -> rejected/scene_mismatch
-third required clue -> one scene_completed transition + one schedule_interlude intent
+scene descriptor preflight
+  -> detached StageBuildPlan
+  -> provisional resource registry
+  -> typed build result
+  -> no live-stage mutation
 ```
 
 ## Second implementation slice
 
 ```txt
-timer acknowledgement
-  -> interlude_open lifecycle
-  -> continue preflight
-  -> next scene transaction
-  -> terminal transaction
+atomic group/camera/fog/post commit
+  -> prior epoch retirement
+  -> resource disposal ledger
+  -> rollback on injected failure
 ```
 
 ## Third implementation slice
 
-Adapt localStorage, DOM, and StageKit as effect consumers and add resource observations/disposal.
+```txt
+story transition correlation
+  -> first-frame acknowledgement
+  -> stale hotspot rejection
+  -> JSON-safe GameHost projection
+```
 
 ## Validation target
 
@@ -133,7 +116,6 @@ new rooms
 inventory
 audio
 renderer replacement
-StageKit rewrite
 new shaders
 camera retuning
 visual polish
