@@ -1,10 +1,12 @@
 # START HERE: The Unmapped House
 
-Last updated: `2026-07-10T02-19-14-04-00`
+Last updated: `2026-07-10T04-22-00-04-00`
 
 ## Current state
 
-`TheUnmappedHouse` is a fixed-camera anime horror point-and-click prototype. The visible route is stable and should stay stable while source-owned story command/result/readback proof is added.
+`TheUnmappedHouse` is a fixed-camera anime horror point-and-click prototype.
+
+The visible three-scene route is stable and should stay stable while source-owned story command/result/readback proof is added.
 
 Current browser path:
 
@@ -15,17 +17,19 @@ index.html
   -> src/story-data.js
 ```
 
+`src/story.js` is not present. The story source of truth is `src/story-data.js`.
+
 ## Read this pass first
 
 ```txt
-.agent/trackers/2026-07-10T02-19-14-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-10T02-19-14-04-00.md
-.agent/architecture-audit/2026-07-10T02-19-14-04-00-story-command-adapter-readback-dsk-map.md
-.agent/render-audit/2026-07-10T02-19-14-04-00-stagekit-load-consumption-readback.md
-.agent/interaction-audit/2026-07-10T02-19-14-04-00-hotspot-repeat-result-contract.md
-.agent/gameplay-audit/2026-07-10T02-19-14-04-00-story-route-terminal-fixture-loop.md
-.agent/story-authority-audit/2026-07-10T02-19-14-04-00-source-command-result-adapter-contract.md
-.agent/deploy-audit/2026-07-10T02-19-14-04-00-story-fixture-check-gate.md
+.agent/trackers/2026-07-10T04-22-00-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-10T04-22-00-04-00.md
+.agent/architecture-audit/2026-07-10T04-22-00-04-00-story-command-fixture-proof-dsk-map.md
+.agent/render-audit/2026-07-10T04-22-00-04-00-stagekit-consumption-readback-gap.md
+.agent/interaction-audit/2026-07-10T04-22-00-04-00-hotspot-command-result-proof.md
+.agent/gameplay-audit/2026-07-10T04-22-00-04-00-story-route-command-fixture-loop.md
+.agent/story-authority-audit/2026-07-10T04-22-00-04-00-story-command-fixture-contract.md
+.agent/deploy-audit/2026-07-10T04-22-00-04-00-story-fixture-check-gate.md
 ```
 
 ## Main finding
@@ -37,7 +41,7 @@ The next cut should source-own story command/result/projection/readback records 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Command Adapter Readback Catch-up + Browser Fixture Gate
+TheUnmappedHouse Story Command Fixture Proof + Browser Adapter Readback Gate
 ```
 
 ## Do next
