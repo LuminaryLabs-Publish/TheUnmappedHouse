@@ -1,6 +1,6 @@
 # Known gaps: The Unmapped House
 
-Timestamp: `2026-07-10T07-20-08-04-00`
+Timestamp: `2026-07-10T08-39-05-04-00`
 
 ## Source authority gaps
 
@@ -11,11 +11,13 @@ Timestamp: `2026-07-10T07-20-08-04-00`
 - Replay is not available outside the browser.
 - `src/story-data.js` is the source descriptor file, but there is no manifest or fingerprint layer around it.
 
-## Browser adapter gaps
+## Projection and adapter gaps
 
+- There is no command envelope or result id that ties a click to a state transition.
+- DOM projection is not represented as a serializable `StoryProjectionRecord`.
+- Save writes, interlude opening, terminal copy, and StageKit scene loads are not represented as adapter-intent rows.
 - The browser adapter is not separate from story authority.
-- There is no adapter ledger row for DOM projection, save writes, interlude state, terminal projection, or StageKit loads.
-- Debug JSON is ad hoc and not linked to command ids or result ids.
+- Debug JSON is ad hoc and not linked to command ids, result ids, projection ids, or adapter ledger rows.
 - No additive stable `GameHost` story diagnostics exist yet.
 
 ## Render/readback gaps
@@ -28,7 +30,7 @@ Timestamp: `2026-07-10T07-20-08-04-00`
 
 - `npm run check` only syntax-checks files.
 - No DOM-free story authority fixture exists.
-- No adapter readback fixture.
+- No adapter readback fixture exists.
 - No result rows exist for accepted, rejected, repeated/no-mutation, completed, continue, terminal, save, interlude, projection, or stage-load cases.
 
 ## Deferred work
@@ -41,4 +43,4 @@ Timestamp: `2026-07-10T07-20-08-04-00`
 - StageKit rewrite.
 - Visual polish.
 
-These should wait until story command/result/adapter-ledger proof exists.
+These should wait until story command/result/projection/adapter-ledger proof exists.
