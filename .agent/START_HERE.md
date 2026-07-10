@@ -1,6 +1,6 @@
 # START HERE: The Unmapped House
 
-Last updated: `2026-07-10T04-22-00-04-00`
+Last updated: `2026-07-10T05-40-17-04-00`
 
 ## Current state
 
@@ -22,26 +22,26 @@ index.html
 ## Read this pass first
 
 ```txt
-.agent/trackers/2026-07-10T04-22-00-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-10T04-22-00-04-00.md
-.agent/architecture-audit/2026-07-10T04-22-00-04-00-story-command-fixture-proof-dsk-map.md
-.agent/render-audit/2026-07-10T04-22-00-04-00-stagekit-consumption-readback-gap.md
-.agent/interaction-audit/2026-07-10T04-22-00-04-00-hotspot-command-result-proof.md
-.agent/gameplay-audit/2026-07-10T04-22-00-04-00-story-route-command-fixture-loop.md
-.agent/story-authority-audit/2026-07-10T04-22-00-04-00-story-command-fixture-contract.md
-.agent/deploy-audit/2026-07-10T04-22-00-04-00-story-fixture-check-gate.md
+.agent/trackers/2026-07-10T05-40-17-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-10T05-40-17-04-00.md
+.agent/architecture-audit/2026-07-10T05-40-17-04-00-browser-adapter-readback-dsk-map.md
+.agent/render-audit/2026-07-10T05-40-17-04-00-stagekit-source-consumption-readback-gap.md
+.agent/interaction-audit/2026-07-10T05-40-17-04-00-hotspot-command-adapter-result-map.md
+.agent/gameplay-audit/2026-07-10T05-40-17-04-00-story-route-adapter-result-loop.md
+.agent/story-authority-audit/2026-07-10T05-40-17-04-00-story-result-readback-contract.md
+.agent/deploy-audit/2026-07-10T05-40-17-04-00-story-fixture-check-gate.md
 ```
 
 ## Main finding
 
-`src/game.js` is still the source-authority bottleneck. It owns command dispatch, mutation, clue grants, completion checks, interlude scheduling, save writes, StageKit scene loading, terminal copy, DOM projection, reset, and debug JSON together.
+`src/game.js` is still the browser adapter and source-authority bottleneck. It owns command dispatch, mutation, clue grants, completion checks, interlude scheduling, save writes, StageKit scene loading, terminal copy, DOM projection, reset, and debug JSON together.
 
 The next cut should source-own story command/result/projection/readback records and prove them through a DOM-free fixture before touching visuals or adding story content.
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Command Fixture Proof + Browser Adapter Readback Gate
+TheUnmappedHouse Browser Adapter Readback Refresh + Story Fixture Gate
 ```
 
 ## Do next
