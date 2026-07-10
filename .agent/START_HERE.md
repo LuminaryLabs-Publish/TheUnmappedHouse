@@ -1,12 +1,12 @@
 # START HERE: The Unmapped House
 
-Last updated: `2026-07-10T05-40-17-04-00`
+Last updated: `2026-07-10T07-20-08-04-00`
 
 ## Current state
 
 `TheUnmappedHouse` is a fixed-camera anime horror point-and-click prototype.
 
-The visible three-scene route is stable and should stay stable while source-owned story command/result/readback proof is added.
+The visible three-scene route is stable and should stay stable while source-owned story command/result/adapter-ledger proof is added.
 
 Current browser path:
 
@@ -22,31 +22,49 @@ index.html
 ## Read this pass first
 
 ```txt
-.agent/trackers/2026-07-10T05-40-17-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-10T05-40-17-04-00.md
-.agent/architecture-audit/2026-07-10T05-40-17-04-00-browser-adapter-readback-dsk-map.md
-.agent/render-audit/2026-07-10T05-40-17-04-00-stagekit-source-consumption-readback-gap.md
-.agent/interaction-audit/2026-07-10T05-40-17-04-00-hotspot-command-adapter-result-map.md
-.agent/gameplay-audit/2026-07-10T05-40-17-04-00-story-route-adapter-result-loop.md
-.agent/story-authority-audit/2026-07-10T05-40-17-04-00-story-result-readback-contract.md
-.agent/deploy-audit/2026-07-10T05-40-17-04-00-story-fixture-check-gate.md
+.agent/trackers/2026-07-10T07-20-08-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-10T07-20-08-04-00.md
+.agent/architecture-audit/2026-07-10T07-20-08-04-00-story-authority-adapter-ledger-dsk-map.md
+.agent/render-audit/2026-07-10T07-20-08-04-00-stagekit-adapter-readback-gap.md
+.agent/interaction-audit/2026-07-10T07-20-08-04-00-hotspot-command-result-ledger-map.md
+.agent/gameplay-audit/2026-07-10T07-20-08-04-00-story-route-result-loop.md
+.agent/story-authority-audit/2026-07-10T07-20-08-04-00-source-command-adapter-contract.md
+.agent/deploy-audit/2026-07-10T07-20-08-04-00-story-authority-fixture-gate.md
+```
+
+## Interaction loop
+
+```txt
+open index.html
+  -> #aspect-frame mounts #stage, #story-panel, #hotspot-list, #state-debug, #hover-label, and #interlude
+  -> src/game.js imports StageKit and story descriptors
+  -> localStorage is shallow-merged into createInitialState()
+  -> currentScene resolves from saved sceneId or scenes[0]
+  -> StageKit.loadScene(currentScene)
+  -> renderUi() writes title/text/buttons/debug JSON
+  -> hotspot click calls inspectHotspot(hotspot)
+  -> first inspect mutates inspected state, grants clues, logs, checks completion, renders, saves
+  -> repeat inspect logs/saves without typed no_mutation result
+  -> continue mutates route, StageKit scene, interlude DOM, UI, and save state
+  -> terminal route writes prototype-complete copy directly into DOM state
+  -> KeyR clears localStorage and reloads
 ```
 
 ## Main finding
 
 `src/game.js` is still the browser adapter and source-authority bottleneck. It owns command dispatch, mutation, clue grants, completion checks, interlude scheduling, save writes, StageKit scene loading, terminal copy, DOM projection, reset, and debug JSON together.
 
-The next cut should source-own story command/result/projection/readback records and prove them through a DOM-free fixture before touching visuals or adding story content.
+The next cut should source-own story command/result/projection/adapter-ledger records and prove them through a DOM-free fixture before touching visuals or adding story content.
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Browser Adapter Readback Refresh + Story Fixture Gate
+TheUnmappedHouse Story Authority Adapter Ledger Refresh + Browser Fixture Gate
 ```
 
 ## Do next
 
-- Add pure story-authority modules for command envelopes, reason codes, preflight, command results, snapshots, projection records, save intents, interlude intents, stage-load intents, terminal intents, and replay rows.
+- Add pure story-authority modules for command envelopes, reason codes, preflight, command results, snapshots, projection records, save intents, interlude intents, stage-load intents, terminal intents, adapter ledger rows, and replay rows.
 - Add a DOM-free story fixture that proves accepted, repeated/no-mutation, completion, continue, terminal, stale/unknown hotspot, save, and stage-load cases.
 - Adapt `src/game.js` to consume source-owned records while preserving the current route.
 - Add stable additive browser adapter readback, ideally under `window.GameHost` or a similarly stable diagnostic surface.
