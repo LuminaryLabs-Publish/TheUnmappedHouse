@@ -13,7 +13,7 @@ npm run check: not run
 browser smoke: not run
 DOM-free story fixture: not run because fixture files do not exist yet
 repo-local docs pushed to main: yes
-central ledger update planned: yes
+central ledger updated: yes
 ```
 
 ## Available validation
