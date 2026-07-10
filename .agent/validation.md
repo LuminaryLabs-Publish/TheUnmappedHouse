@@ -17,7 +17,7 @@ browser smoke: not run
 DOM-free lifecycle fixture: not run because proof modules do not exist
 StageKit resource fixture: not run because observation/disposal modules do not exist
 repo-local docs pushed to main: yes
-central ledger sync: pending
+central ledger sync: complete
 ```
 
 ## Available validation
