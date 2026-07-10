@@ -1,12 +1,12 @@
 # START HERE: The Unmapped House
 
-Last updated: `2026-07-10T10-11-35-04-00`
+Last updated: `2026-07-10T11-30-28-04-00`
 
 ## Current state
 
 `TheUnmappedHouse` is a fixed-camera anime horror point-and-click prototype.
 
-The visible three-scene route is stable. Keep it stable while source-owned story command/result/projection and browser adapter readback proof are added.
+The visible three-scene route is stable. Keep it stable while source-owned story command/result/projection, browser adapter readback, and StageKit readback proof are added.
 
 Current browser path:
 
@@ -17,19 +17,21 @@ index.html
   -> src/story-data.js
 ```
 
-`src/story-data.js` is the story descriptor source of truth.
+`src/story-data.js` is the descriptor source of truth.
+
+`src/game.js` is still both story command authority and browser adapter.
 
 ## Read this pass first
 
 ```txt
-.agent/trackers/2026-07-10T10-11-35-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-10T10-11-35-04-00.md
-.agent/architecture-audit/2026-07-10T10-11-35-04-00-story-adapter-readback-ledger-dsk-map.md
-.agent/render-audit/2026-07-10T10-11-35-04-00-stagekit-adapter-readback-gap.md
-.agent/interaction-audit/2026-07-10T10-11-35-04-00-hotspot-adapter-result-readback-map.md
-.agent/gameplay-audit/2026-07-10T10-11-35-04-00-story-route-adapter-readback-loop.md
-.agent/story-authority-audit/2026-07-10T10-11-35-04-00-story-source-command-readback-contract.md
-.agent/deploy-audit/2026-07-10T10-11-35-04-00-story-adapter-fixture-gate.md
+.agent/trackers/2026-07-10T11-30-28-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-10T11-30-28-04-00.md
+.agent/architecture-audit/2026-07-10T11-30-28-04-00-story-command-readback-ledger-dsk-map.md
+.agent/render-audit/2026-07-10T11-30-28-04-00-stagekit-command-readback-gap.md
+.agent/interaction-audit/2026-07-10T11-30-28-04-00-hotspot-command-result-map.md
+.agent/gameplay-audit/2026-07-10T11-30-28-04-00-story-route-command-loop.md
+.agent/story-authority-audit/2026-07-10T11-30-28-04-00-source-command-readback-contract.md
+.agent/deploy-audit/2026-07-10T11-30-28-04-00-story-command-fixture-gate.md
 ```
 
 ## Current interaction loop
@@ -47,6 +49,7 @@ open index.html
   -> side-panel button or StageKit raycast click calls inspectHotspot(hotspot)
   -> first inspect mutates state, grants clues, logs, checks completion, renders, saves
   -> repeat inspect writes text/log/UI/save without typed no_mutation result
+  -> completion schedules showInterlude via setTimeout
   -> continue mutates route, interlude DOM, StageKit scene, UI, and save state
   -> terminal route writes prototype-complete copy directly into interlude DOM
   -> KeyR clears localStorage and reloads
@@ -56,10 +59,10 @@ open index.html
 
 `TheUnmappedHouse` should not start next with new story rooms, inventory, audio, renderer extraction, visual polish, or a `StageKit` rewrite.
 
-The blocker is browser adapter readback. `src/game.js` still owns command interpretation, mutation, save writes, interlude timing, route changes, StageKit scene loading, terminal DOM copy, reset, and debug JSON together.
+The blocker is story command readback. `src/game.js` still owns command interpretation, mutation, save writes, interlude timing, route changes, StageKit scene loading, terminal DOM copy, reset, and debug JSON together.
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Adapter Readback Ledger Refresh + DOM-Free Fixture Gate
+TheUnmappedHouse Story Command Readback Ledger Refresh + DOM-Free Fixture Gate
 ```
