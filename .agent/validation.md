@@ -1,6 +1,6 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-11T04-00-07-04-00`
+Timestamp: `2026-07-11T06-21-57-04-00`
 
 ## This pass
 
@@ -15,15 +15,15 @@ branch created: no
 pull request created: no
 npm run check: not run in connector-only environment
 browser smoke: not run
-story phase recovery fixture: unavailable
-Continue admission fixture: unavailable
-stage preparation fixture: unavailable
-atomic transition fixture: unavailable
-rollback fixture: unavailable
-first-frame acknowledgement fixture: unavailable
-resource retirement fixture: unavailable
+story manifest fixture: unavailable
+inspection admission fixture: unavailable
+clue provenance fixture: unavailable
+dual-ingress fixture: unavailable
+stage-epoch fixture: unavailable
+scene completion proof fixture: unavailable
+transition fixtures: unavailable
 repo-local docs pushed to main: yes
-central ledger sync: complete
+central ledger sync: pending until central commit
 ```
 
 ## Available validation
@@ -44,87 +44,89 @@ src/stage-kit.js
 src/story-data.js
 ```
 
-It does not execute story rules, persistence effects, stage preparation, transition rollback, first-frame proof, resource retirement or browser reload behavior.
+It does not execute story ownership, inspection admission, clue provenance, completion proofs, persistence effects, stage epochs, dual-ingress races, transitions, rollback or resource lifecycle.
 
 ## Required next validation gate
 
 ```txt
-node scripts/validate-story-source.mjs
-node scripts/validate-save-reconciliation.mjs
-node scripts/validate-story-phase-recovery.mjs
-node scripts/validate-continue-admission.mjs
-node scripts/validate-stage-preparation.mjs
+node scripts/validate-story-manifest.mjs
+node scripts/validate-hotspot-index.mjs
+node scripts/validate-inspection-admission.mjs
+node scripts/validate-clue-provenance.mjs
+node scripts/validate-scene-completion-proof.mjs
+node scripts/validate-dual-ingress-idempotency.mjs
+node scripts/validate-hotspot-stage-epoch.mjs
+node scripts/validate-inspection-reload.mjs
 node scripts/validate-story-stage-transition.mjs
-node scripts/validate-transition-rollback.mjs
-node scripts/validate-stage-resource-retirement.mjs
-node scripts/validate-first-frame-ack.mjs
 npm run check
 ```
 
-## Required transition rows
+## Required authority rows
 
 ```txt
-continue-command-carries-scene-phase-story-revision-stage-epoch
-invalid-descriptor-rejected-before-live-clear
-prepare-success-does-not-change-live-stage
-prepare-failure-keeps-prior-story-stage-and-interlude
-save-failure-discards-prepared-stage
-stage-commit-failure-restores-prior-story-and-stage
-accepted-transition-commits-story-stage-and-projection-once
-repeated-continue-does-not-skip-scene
-final-continue-commits-terminal-once
+story-manifest-id-and-fingerprint-present
+three-scenes-nine-hotspots-nine-owned-clues
+command-carries-source-sequence-scene-hotspot-story-revision-stage-epoch
+canonical-hotspot-resolved-by-scene-and-id
+caller-descriptor-text-and-grants-not-trusted
+inspection-result-status-and-reason-present
+clue-grant-receipt-carries-owner-and-source
+completion-proof-carries-scene-and-grant-receipts
 ```
 
-## Required correlation rows
+## Required admission rows
 
 ```txt
-request-id-present
-transition-id-present
-story-revision-present
-save-revision-present
-stage-epoch-present
-stage-commit-id-present
-first-frame-id-present
-scene-id-agrees-across-story-save-stage-and-frame
+unknown-scene-rejected
+unknown-hotspot-rejected
+cross-scene-hotspot-rejected
+stale-story-revision-rejected
+stale-stage-epoch-rejected
+inspection-rejected-during-interlude
+inspection-rejected-during-transition
+same-command-idempotent
+same-hotspot-dual-ingress-idempotent
+repeat-inspection-explicit-no-op
 ```
 
-## Required lifecycle rows
+## Required effect rows
 
 ```txt
-candidate-resources-disposed-on-discard
-prior-stage-remains-live-until-first-frame
-prior-stage-disposed-once-after-first-frame
-failed-commit-does-not-dispose-prior-stage
-duplicate-dispose-is-safe
-remount-has-one-canvas-one-raf-one-listener-set
-resource-journal-json-safe-and-bounded
+accepted-first-inspection-commits-once
+canonical-clues-only
+final-clue-creates-one-completion-proof
+completion-schedules-one-interlude
+accepted-result-persists-with-save-revision
+failed-persistence-does-not-project-committed-feedback
+accepted-result-correlates-to-stage-epoch-and-frame
+old-stage-pick-does-not-mutate-new-scene
+hover-state-cleared-on-stage-commit
+journal-json-safe-and-bounded
 ```
 
-## Required failure rows
+## Required migration and reload rows
 
 ```txt
-storage-denied-before-stage-commit
-quota-failure-discards-candidate
-geometry-construction-failure-keeps-prior-stage
-material-construction-failure-keeps-prior-stage
-projection-failure-enters-recoverable-result
-first-frame-timeout-is-observable
-reload-after-failed-transition-restores-prior-scene
-reload-after-accepted-transition-restores-next-scene
+unknown-persisted-scene-dropped
+unknown-persisted-hotspot-dropped
+orphaned-clue-dropped
+cross-scene-clue-dropped
+valid-inspections-reconstruct-clue-receipts
+reload-preserves-story-revision-and-provenance
+reload-after-completion-restores-interlude-phase
 ```
 
 ## Browser smoke after fixtures
 
 ```txt
-complete scene one
-inject stage-preparation failure and press Continue
-verify scene one and its interlude remain visible
-remove fault and Continue once
-verify scene two, one transition id and one stage epoch increment
-reload and verify scene two
-repeat with storage write failure and verify scene one remains committed
-complete final scene and verify terminal reload
-inspect resource counts across all transitions
-dispose and remount with one canvas, RAF and listener set
-confirm story copy, framing, shaders and pacing remain unchanged
+complete scene one with side-panel input
+reset and complete scene one with canvas input
+rapid-double-click final hotspot
+submit side-panel and canvas input for the same hotspot together
+invoke an old-scene button callback after Continue
+attempt an old-stage pick after stage replacement
+reload after each accepted inspection
+verify one receipt, clue grant, checkmark and notebook effect per first inspection
+verify one completion proof and one interlude
+confirm current copy, framing, shaders and 450 ms pacing remain unchanged
 ```
