@@ -1,153 +1,163 @@
 # Next steps: The Unmapped House
 
-Timestamp: `2026-07-11T10-12-03-04-00`
+Timestamp: `2026-07-11T10-18-05-04-00`
 
 ## Goal
 
-Preserve the current three-scene story, copy, 450 ms interlude pacing and visual output while making definition, persistence, inspection and Continue transitions deterministic, recoverable and fixture-backed.
+Preserve the current three-scene story, copy, 450 ms interlude pacing, fixed composition, and visual output while making story authority, scene transitions, runtime callbacks, and Three.js resources deterministic, recoverable, and fixture-backed.
 
 ## Plan ledger
 
 ### Prerequisite 1: canonical story and persistence
 
-- [ ] Add a stable StoryManifest id, schema version and deterministic fingerprint.
-- [ ] Normalize and validate scene, hotspot, clue, camera, stage, material and post descriptors.
-- [ ] Build immutable scene, hotspot and clue indexes.
-- [ ] Replace the raw save object with a versioned StorySnapshot.
-- [ ] Add typed load admission, v1 migration and canonical reconciliation.
-- [ ] Add typed save results, save revisions, state fingerprints and a bounded persistence journal.
+- [ ] Add a stable `StoryManifest` id, schema version, canonical indexes, and deterministic fingerprint.
+- [ ] Replace the raw save object with an admitted versioned `StorySnapshot`.
+- [ ] Add typed load admission, v1 migration, canonical reconciliation, save revisions, and persistence results.
+- [ ] Reconstruct clue and completion proof from canonical inspection receipts.
 
 ### Prerequisite 2: inspection authority
 
-- [ ] Convert side-panel and raycast input into one canonical inspection command.
-- [ ] Admit commands against scene id, hotspot id, story revision and stage epoch.
-- [ ] Resolve text and clue grants from the canonical manifest, not caller descriptors.
-- [ ] Emit scene-scoped clue receipts and a canonical completion proof.
-- [ ] Make duplicate inspection explicit and mutation-free.
+- [ ] Replace full descriptor ingress with canonical scene/hotspot command ids.
+- [ ] Add command sequence, expected story revision, expected stage epoch, and typed results.
+- [ ] Make side-panel and raycast ingress share one authority path.
+- [ ] Make completion proof explicit and scene-scoped.
 
-### Continue command and admission
+### Prerequisite 3: atomic Continue transition
 
-- [ ] Add a stable command id and monotonic input sequence.
-- [ ] Include expected story revision, expected stage epoch and completion-proof id.
-- [ ] Classify commands as `accepted`, `blocked`, `stale`, `duplicate`, `terminal_noop` or `failed`.
-- [ ] Reject Continue before canonical completion.
-- [ ] Reject stale Continue after another transition commits.
-- [ ] Ensure repeated final Continue is a typed no-op.
+- [ ] Admit Continue against completion proof, story revision, and stage epoch.
+- [ ] Prepare the successor stage in a detached group.
+- [ ] Build and durably persist a candidate `StorySnapshot`.
+- [ ] Commit the successor stage atomically and acknowledge its first frame.
+- [ ] Roll back or recover explicitly on failure.
 
-### Transition plan
+### Runtime session authority
 
-- [ ] Resolve the target scene from canonical manifest order.
-- [ ] Build an immutable plan containing transition id, source/target scene ids, story revisions, source/target stage epochs and expected save revision.
-- [ ] Build the candidate StorySnapshot without mutating committed state.
-- [ ] Carry manifest and scene-definition fingerprints into stage preparation.
+- [ ] Add a stable `sessionId` and monotonic `sessionGeneration`.
+- [ ] Add lifecycle states: `created`, `starting`, `running`, `stopping`, `stopped`, `disposing`, `disposed`, and `failed`.
+- [ ] Route all interaction, timeout, and frame work through current-generation admission.
+- [ ] Expose detached, immutable, JSON-safe session snapshots.
 
-### Detached stage preparation
+### Frame-loop lease
 
-- [ ] Refactor StageKit to prepare a detached group and resource bundle.
-- [ ] Build camera, fog, post settings, layers, props and hotspot meshes without clearing the live stage.
-- [ ] Validate resource counts and hotspot bindings.
-- [ ] Return a typed preparation result.
-- [ ] Dispose all candidate resources on preparation failure.
+- [ ] Retain the active RAF id.
+- [ ] Schedule at most one successor frame per running session.
+- [ ] Cancel pending RAF work during stop.
+- [ ] Reject stale queued callbacks after generation retirement.
+- [ ] Prevent stale callbacks from scheduling successors.
 
-### Durable and atomic commit
+### Listener leases
 
-- [ ] Write the candidate StorySnapshot through the typed persistence transaction.
-- [ ] Atomically swap the prepared stage bundle into the live scene.
-- [ ] Advance story revision and stage epoch together.
-- [ ] Project title, text, hotspot list, interlude and debug DOM from the committed snapshot.
-- [ ] Emit one typed transition result containing save revision, story revision and stage epoch.
+- [ ] Replace anonymous resize, mousemove, canvas click, keydown, and Continue handlers with named functions.
+- [ ] Store exact target/type/function/options tuples.
+- [ ] Remove all listeners during stop or dispose.
+- [ ] Fence old hotspot-button closures by session generation and story revision.
+- [ ] Make retirement idempotent.
 
-### Rollback and recovery
+### Timeout leases
 
-- [ ] Leave the prior story, DOM, save and stage untouched for all pre-commit failures.
-- [ ] Define compensation for durable-save success followed by live-stage commit failure.
-- [ ] Retain the previous stage bundle until the new live swap succeeds.
-- [ ] Record rollback reason, affected revisions and resource counts.
-- [ ] Make rollback idempotent.
+- [ ] Retain the interlude timeout id.
+- [ ] Correlate it to session generation, scene id, story revision, and completion proof.
+- [ ] Allow one active interlude lease per completion proof.
+- [ ] Cancel it on reset, transition, stop, or dispose.
+- [ ] Reject stale timeout callbacks without DOM mutation.
 
-### Resource retirement
+### Stage resource inventory
 
-- [ ] Track every geometry, material, mesh, group and hotspot resource per stage epoch.
-- [ ] Dispose the previous stage bundle only after the new swap commits.
-- [ ] Add idempotent `disposeSceneBundle()` and `StageKit.dispose()`.
-- [ ] Retire render target, post resources, renderer, listeners, timeout leases and RAF during full disposal.
-- [ ] Expose bounded JSON-safe resource-retirement diagnostics.
+- [ ] Assign each committed scene a `stageEpoch`.
+- [ ] Register every geometry, material, mesh, group, target, and renderer-owned resource.
+- [ ] Include hotspot materials, which are currently outside `this.materials`.
+- [ ] Seal prepared resource counts before live commit.
+- [ ] Expose current and retired counts through detached diagnostics.
 
-### First-frame acknowledgement
+### Scene resource retirement
 
-- [ ] Add monotonic frame ids.
-- [ ] Tag render work with stage epoch and story revision.
-- [ ] Acknowledge the first frame that contains the committed stage.
-- [ ] Correlate camera, hotspot bindings, post settings and DOM projection.
-- [ ] Distinguish `stage_committed` from `first_frame_visible`.
+- [ ] Commit the successor stage epoch before retiring the predecessor.
+- [ ] Acknowledge the first rendered successor frame.
+- [ ] Traverse and dispose predecessor geometries and materials exactly once.
+- [ ] Return a typed retirement receipt with counts and failures.
+- [ ] Keep the predecessor live if successor preparation fails.
 
-### Interlude timing
+### Full renderer disposal
 
-- [ ] Replace raw timeout with a cancellable lease.
-- [ ] Fence the callback by scene id, story revision, stage epoch and runtime session.
-- [ ] Make duplicate completion scheduling explicit.
-- [ ] Cancel stale leases during transition, reset and disposal.
-- [ ] Preserve the current 450 ms pacing.
+- [ ] Dispose all remaining scene resource graphs.
+- [ ] Dispose the render target, post-plane geometry, and post material.
+- [ ] Dispose the renderer and remove its canvas.
+- [ ] Make WebGL context retirement an explicit result.
+- [ ] Clear owned references after disposal.
+- [ ] Return `disposed`, `already_disposed`, `partially_disposed`, or `failed`.
 
-### Validation
+### Reset transaction
 
-- [ ] Add `scripts/validate-story-manifest.mjs`.
-- [ ] Add `scripts/validate-save-admission.mjs`.
-- [ ] Add `scripts/validate-inspection-authority.mjs`.
-- [ ] Add `scripts/validate-continue-transition.mjs`.
-- [ ] Add `scripts/validate-stage-resource-disposal.mjs`.
-- [ ] Add `scripts/validate-first-frame-ack.mjs`.
-- [ ] Add a browser smoke for scene one -> two -> three -> terminal.
-- [ ] Wire fixtures into `npm run check`.
+- [ ] Replace direct storage removal plus reload with a typed reset request.
+- [ ] Stop and dispose the active session before creating the next generation.
+- [ ] Clear or replace persistence through a typed result.
+- [ ] Commit the initial scene and first frame under the new generation.
+- [ ] Reject all old-generation callbacks.
+- [ ] Permit page reload only after a disposal receipt, not as the lifecycle mechanism.
 
-## Required Continue fixture rows
+### Lifecycle journal and validation
+
+- [ ] Record session transitions, callback leases, stage epochs, resource counts, retirement receipts, and failures.
+- [ ] Keep all observations bounded, detached, and JSON-safe.
+- [ ] Add `validate-runtime-session.mjs`.
+- [ ] Add `validate-frame-loop-lease.mjs`.
+- [ ] Add `validate-listener-retirement.mjs`.
+- [ ] Add `validate-timeout-retirement.mjs`.
+- [ ] Add `validate-stage-resource-retirement.mjs`.
+- [ ] Add `validate-renderer-disposal.mjs`.
+- [ ] Add `validate-reset-generation.mjs`.
+- [ ] Wire lifecycle fixtures into `npm run check` after syntax checks.
+- [ ] Add a real browser teardown smoke.
+
+## Required lifecycle fixture rows
 
 ```txt
-continue-before-completion-blocked
-continue-with-valid-completion-proof-accepted
-stale-story-revision-rejected
-stale-stage-epoch-rejected
-duplicate-command-id-no-mutation
-transition-plan-deterministic
-target-scene-derived-from-manifest-order
-story-state-unchanged-during-detached-preparation
-injected-layer-failure-retains-old-stage
-injected-prop-failure-disposes-candidate-resources
-injected-hotspot-failure-retains-old-story-and-save
-storage-failure-retains-old-live-stage
-successful-commit-advances-story-save-and-stage-once
-old-stage-resources-disposed-exactly-once
-first-frame-receipt-matches-story-revision-and-stage-epoch
-interlude-timeout-cancelled-after-transition
-terminal-continue-produces-idempotent-noop
-transition-journal-json-safe-and-bounded
+single-active-frame-loop
+stop-cancels-pending-raf
+stale-raf-does-not-recurse
+all-window-and-canvas-listeners-retired
+pending-interlude-timeout-cancelled
+stale-interlude-callback-no-op
+old-button-closure-cannot-mutate-new-generation
+successor-stage-commits-before-predecessor-retirement
+failed-successor-keeps-current-stage-live
+all-layer-prop-hotspot-geometries-disposed
+all-scene-and-hotspot-materials-disposed
+render-target-and-post-resources-disposed
+renderer-disposed-and-canvas-removed
+context-retirement-result-explicit
+dispose-idempotent
+reset-creates-new-generation
+old-generation-callbacks-no-op
+zero-live-resources-after-full-dispose
+lifecycle-journal-json-safe-and-bounded
 ```
 
 ## Implementation order
 
 ```txt
-1. StoryManifest and StorySnapshot
-2. save admission, migration and reconciliation
-3. inspection authority and completion proof
-4. Continue command and immutable transition plan
-5. detached StageKit preparation
-6. durable snapshot and atomic live-stage commit
-7. rollback, resource retirement and first-frame acknowledgement
-8. browser transition smoke
-9. full runtime lifecycle disposal
+1. StoryManifest, StorySnapshot, and persistence admission
+2. Inspection command and completion proof
+3. Atomic Continue transition and first-frame acknowledgement
+4. Session identity, generation, and lifecycle state machine
+5. Frame/listener/timeout lease registries
+6. Stage resource inventory and retirement
+7. Renderer, canvas, and context disposal
+8. Typed stop/dispose/reset results and lifecycle journal
+9. Node lifecycle fixtures and browser teardown smoke
 ```
 
-## Current audit ledge
+## Next safe ledge
 
 ```txt
-TheUnmappedHouse Atomic Story/Stage Continue Transition Authority
-+ Rollback, Resource Retirement and First-Frame Fixture Gate
+TheUnmappedHouse Runtime Session Lifecycle Authority
++ Scene Resource Retirement and Browser Teardown Fixture Gate
 ```
 
 ## Do not do first
 
 ```txt
-new rooms or story branches
+new rooms or branches
 inventory
 audio or voice work
 renderer replacement
