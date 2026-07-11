@@ -1,55 +1,54 @@
 # Current audit: The Unmapped House
 
-Timestamp: `2026-07-11T10-12-03-04-00`
+Timestamp: `2026-07-11T10-18-05-04-00`
 
 ## Product read
 
-A fixed-camera anime-horror point-and-click prototype with three authored scenes, three hotspots per scene and nine total required clues. Completing a scene schedules a 450 ms interlude; Continue advances the story and replaces the live Three.js stage; the final Continue projects prototype-complete copy.
+A fixed-camera anime-horror point-and-click prototype with three authored scenes, three hotspots per scene, nine required clues, delayed interludes, browser persistence, and a descriptor-driven Three.js renderer.
 
 ## Plan ledger
 
-**Goal:** identify the exact authority boundary required to make Continue a single durable story, stage, persistence and visible-frame transaction.
+**Goal:** identify the exact ownership and fixture boundary required to stop, reset, replace, and dispose one browser runtime session without stale callbacks or retained GPU resources.
 
-- [x] Trace startup, inspection, completion, interlude and Continue.
-- [x] Trace story mutation order.
-- [x] Trace StageKit replacement and Three.js resource ownership.
-- [x] Trace persistence timing and failure behavior.
-- [x] Trace frame-loop acknowledgement and terminal behavior.
-- [x] Inventory all domains, kits and services.
-- [x] Define the candidate transition DSK composition.
-- [x] Define deterministic fixture rows.
-- [ ] Implement the authority boundary.
-- [ ] Run Node and browser fixtures.
+- [x] Trace module boot and StageKit construction.
+- [x] Trace recursive frame scheduling.
+- [x] Trace all browser listener registrations.
+- [x] Trace completion timeout scheduling.
+- [x] Trace scene replacement and resource tracking.
+- [x] Trace reset and page teardown assumptions.
+- [x] Inventory all domains, kits, and services.
+- [x] Define runtime-session lifecycle DSK composition.
+- [x] Define deterministic Node and browser fixture rows.
+- [ ] Implement lifecycle authority.
+- [ ] Run lifecycle and teardown fixtures.
 
 ## Interaction loop
 
 ```txt
-load `.v1` state
-  -> shallow-merge into initial state
+module boot
+  -> load mutable persisted state
   -> resolve current scene
-  -> create StageKit
-  -> StageKit starts recursive requestAnimationFrame
-  -> load current scene into live stage
-  -> inspect scene hotspots
-  -> mutate inspection/clue/log state
-  -> derive completion
-  -> setTimeout(showInterlude, 450)
-  -> Continue invokes nextScene()
-  -> mutate story identity and route
-  -> hide interlude
-  -> StageKit clears live stage and builds replacement
-  -> update DOM projection
-  -> localStorage write
-  -> later RAF renders whatever stage state exists
+  -> construct StageKit
+  -> create renderer, render target, post scene, camera, lights, and canvas
+  -> add resize, mousemove, and click listeners
+  -> start recursive requestAnimationFrame
+  -> load current scene resources
+  -> inspect via button or raycast
+  -> mutate story/DOM/persistence
+  -> completion schedules an unretained timeout
+  -> Continue mutates story and replaces live scene resources
+  -> RAF submits stage and post passes forever
+  -> R clears storage and relies on page reload for teardown
 ```
 
 ## Source ownership
 
 | Source | Current responsibilities |
 |---|---|
-| `src/story-data.js` | Three mutable scene descriptors, nine hotspots, clue requirements, copy, camera, stage, material and post data. |
-| `src/game.js` | Persistence, active scene, inspection, completion, delayed interlude, Continue, terminal copy and DOM projection. |
-| `src/stage-kit.js` | Three.js renderer, scene resources, live scene replacement, picking, resize listeners and recursive RAF. |
+| `index.html` | Fixed shell, stage mount, story panel, hotspot list, hover label, interlude, Continue button, module entry. |
+| `src/story-data.js` | Three mutable scene descriptors, nine hotspots, clue requirements, camera, stage, material, post, and copy data. |
+| `src/game.js` | Persistence, active story state, inspection, completion, unowned interlude timer, Continue, reset, and DOM projection. |
+| `src/stage-kit.js` | Three.js renderer, target, scene resources, picking, listeners, recursive RAF, and destructive live replacement. |
 | `src/aspect-frame.js` | Fixed 1920×1080 composition and browser fitting. |
 | `package.json` | Syntax-only checks and local static serving. |
 
@@ -62,29 +61,25 @@ story source descriptors
 scene order and identity
 hotspot and clue identity
 mutable story state
-scene route state
-inspection ledger
-clue ledger
-notebook ledger
-scene completion policy
-implicit story phase
-interlude timing and projection
-Continue transition policy
-terminal projection
-localStorage load, write and clear effects
-story copy and debug projection
+route, inspection, clue, and notebook ledgers
+completion, interlude, Continue, and terminal policy
+side-panel, canvas, keyboard, and button input
+localStorage effects
+story, hover, interlude, and debug projection
 Three.js CDN runtime
 stage render host
 scene descriptor consumption
-procedural anime materials
+anime shader materials
 post-processing pass
 hotspot volumes and raycast picking
 camera parallax
 render-target composition
 live scene replacement
-Three.js geometry/material resource lifecycle
-recursive frame loop
+recursive frame-loop lifecycle
 browser listener lifecycle
+interlude timeout lifecycle
+scene resource lifecycle
+renderer and WebGL context lifecycle
 syntax validation
 static Pages deployment
 repo-local and central audit tracking
@@ -93,189 +88,134 @@ repo-local and central audit tracking
 Missing authority domains:
 
 ```txt
-versioned StoryManifest and StorySnapshot
-inspection command authority
-scene completion proof
-Continue command and admission
-transition transaction identity
-detached stage preparation
-story transition candidate
-durable persistence commit
-atomic live-stage commit
-transition rollback
-stage epoch
-first rendered frame acknowledgement
-retired resource ledger
-geometry/material disposal
-interlude timeout lease
-transition journal
-behavioral fixture execution
+versioned story manifest and admitted StorySnapshot
+inspection command and completion proof
+atomic story/stage transition
+runtime session identity and generation
+frame-loop leases
+listener leases
+timeout leases
+stage resource inventory
+scene resource retirement
+Three.js resource disposal
+renderer and context retirement
+idempotent stop/dispose results
+lifecycle journal and fixtures
 ```
 
 ## Implemented kits and services
 
 | Kit | Services |
 |---|---|
-| `static-page-shell-kit` | Stage, story panel, hotspot list, hover label, debug panel and interlude shell. |
+| `static-page-shell-kit` | Stage, story panel, hotspot list, hover label, debug panel, interlude, and Continue shell. |
 | `aspect-frame-kit` | Compute and apply the fixed 16:9 viewport. |
-| `story-data-kit` | Scene, hotspot, clue, camera, fog, stage, material, post and interlude descriptors. |
-| `browser-story-runtime-kit` | Coordinate load, inspection, completion, Continue, reset, projection, persistence and StageKit calls. |
-| `scene-route-kit` | Resolve the active scene and mutate route order. |
+| `story-data-kit` | Scene, hotspot, clue, camera, fog, stage, material, post, and interlude descriptors. |
+| `browser-story-runtime-kit` | Coordinate load, inspection, completion, Continue, reset, projection, persistence, and StageKit calls. |
+| `scene-route-kit` | Resolve and mutate active scene and route ids. |
 | `inspection-ledger-kit` | Track scene-keyed hotspot flags. |
-| `clue-ledger-kit` | Grant unique global clue strings and evaluate requirements. |
-| `notebook-log-kit` | Prepend and cap recent story rows. |
-| `interlude-timer-kit` | Schedule the unowned 450 ms completion callback. |
-| `terminal-route-kit` | Project prototype-complete copy without a durable terminal phase. |
-| `localstorage-save-kit` | Parse, shallow-merge, stringify, write and clear browser state without typed results. |
-| `stage-render-kit` | Own renderer, camera, lights, target, post scene and recursive RAF. |
-| `scene-descriptor-consumer-kit` | Convert one scene descriptor into live Three.js resources. |
+| `clue-ledger-kit` | Grant global clue strings and evaluate requirements. |
+| `notebook-log-kit` | Prepend and cap story rows. |
+| `interlude-timer-kit` | Schedule the unretained 450 ms completion callback. |
+| `terminal-route-kit` | Project prototype-complete copy without durable terminal state. |
+| `localstorage-save-kit` | Parse, shallow-merge, write, and clear browser state without typed results. |
+| `stage-render-kit` | Create renderer, camera, lights, render target, post scene, canvas, and recursive RAF. |
+| `scene-descriptor-consumer-kit` | Convert mutable scene descriptors into live Three.js resources. |
 | `anime-material-kit` | Build FBM/toon shader materials. |
-| `post-process-kit` | Apply grain, vignette, chromatic offset, distortion, memory warp and scan lines. |
+| `post-process-kit` | Apply grain, vignette, chromatic offset, distortion, memory warp, and scan lines. |
 | `hotspot-volume-kit` | Build invisible pick meshes carrying full descriptor objects. |
 | `hotspot-picking-kit` | Perform hover/click raycasts and return descriptor payloads. |
 | `camera-parallax-kit` | Apply pointer-driven locked-camera offsets. |
-| `render-target-composition-kit` | Render the stage target and post-process pass. |
+| `render-target-composition-kit` | Submit stage-target and post-process passes. |
 | `debug-json-projection-kit` | Project mutable story state into the debug panel. |
-| `package-syntax-check-kit` | Syntax-check the four JavaScript sources. |
+| `package-syntax-check-kit` | Syntax-check four JavaScript sources. |
 | `static-pages-deploy-kit` | Deploy the static route from `main`. |
 | `repo-local-agent-ledger-kit` | Maintain current pointers and timestamped audits. |
 | `central-ledger-sync-kit` | Maintain central selection and findings history. |
 
-## Main finding: story advancement precedes transition proof
+## Main finding: callbacks and resources have no session owner
 
-`nextScene()` executes this order:
+### Frame loop
 
-```txt
-resolve next scene
-  -> assign currentScene
-  -> assign state.sceneId
-  -> append route
-  -> append notebook row
-  -> hide interlude
-  -> stage.loadScene(next)
-  -> renderUi()
-  -> saveState()
-```
+`animate()` immediately schedules its successor with an anonymous closure. The returned RAF id is not retained, there is no running/disposed guard, and a stale queued callback can recurse indefinitely.
 
-The story has already advanced before stage preparation or storage succeeds.
+### Listener lifecycle
 
-## Stage replacement is destructive before success
+The constructor registers anonymous window resize and canvas mousemove/click handlers. Exact handler references are not retained, so they cannot be removed through `removeEventListener`.
 
-`StageKit.loadScene()` begins by:
+### Timeout lifecycle
+
+Scene completion schedules `setTimeout(() => showInterlude(currentScene), 450)`. No timeout id, scene id, story revision, completion proof, or session generation is retained. A future reset or session replacement cannot cancel or reject stale callbacks deterministically.
+
+### Scene resource lifecycle
+
+`loadScene()` begins with:
 
 ```txt
-assign sceneData
+sceneData assignment
 stageGroup.clear()
 hotspots = []
 materials = []
 ```
 
-It then mutates background, fog, camera, post uniforms and creates each layer, prop and hotspot directly in the live group.
+It then creates fresh layer, prop, and hotspot geometries and materials. `Group.clear()` detaches child objects but does not dispose geometry or material allocations. Resetting `materials` discards the tracked shader-material references before disposal, and hotspot materials are not in that list.
 
-Consequences:
+### Renderer lifecycle
 
-- No detached candidate stage exists.
-- A descriptor or Three.js construction failure can leave a partial live stage.
-- The previous stage cannot be restored because its children were detached first.
-- No typed preparation or commit result exists.
-- Story and stage revisions cannot be correlated.
-
-## Resource-retirement gap
-
-`stageGroup.clear()` does not dispose:
-
-```txt
-PlaneGeometry
-BoxGeometry
-CylinderGeometry
-hotspot BoxGeometry
-scene shader materials
-hotspot materials
-```
-
-`this.materials = []` discards the tracked scene-material references. Each successful scene transition therefore leaves prior GPU resources eligible for leakage until page teardown, but page teardown also has no `dispose()` path.
-
-## Persistence and terminal gaps
-
-`saveState()` runs after live mutation and exposes no result. Quota, security or serialization failure can leave the visible next scene active while persistence remains stale.
-
-For the final scene, Continue only replaces interlude copy. It does not write an explicit terminal phase, transition id or durable completion receipt, and repeated Continue presses have no typed no-op result.
-
-## Frame-correlation gap
-
-The recursive RAF has no frame id, stage epoch or callback for the first frame containing the replacement scene. Continue cannot distinguish:
-
-```txt
-prepared
-story-committed
-stage-committed
-saved
-first-frame-visible
-failed
-rolled-back
-```
+The renderer, render target, post-plane geometry, post material, canvas, and optional WebGL context loss have no explicit teardown. The current reset depends on `location.reload()` and browser destruction rather than a testable lifecycle contract.
 
 ## Required parent domain
 
 ```txt
-the-unmapped-house-story-stage-transition-domain
+the-unmapped-house-runtime-session-lifecycle-domain
 ```
 
-Candidate coordinating kits:
+Candidate kits:
 
 ```txt
-continue-command-kit
-continue-admission-kit
-scene-transition-plan-kit
-detached-stage-preparation-kit
-story-transition-candidate-kit
-durable-story-commit-kit
-atomic-stage-commit-kit
-transition-rollback-kit
-transition-result-kit
-stage-epoch-kit
-first-frame-acknowledgement-kit
-retired-stage-resource-kit
-stage-resource-disposal-kit
+runtime-session-authority-kit
+runtime-session-generation-kit
+frame-loop-lease-kit
+listener-lease-kit
 interlude-timeout-lease-kit
-transition-journal-kit
-continue-transition-fixture-kit
-browser-first-frame-smoke-kit
+stage-resource-inventory-kit
+scene-resource-retirement-kit
+three-resource-disposal-kit
+renderer-disposal-kit
+webgl-context-retirement-kit
+idempotent-session-stop-kit
+session-disposal-result-kit
+lifecycle-journal-kit
+lifecycle-fixture-kit
+browser-teardown-smoke-kit
 ```
 
-## Required authority flow
+## Required lifecycle flow
 
 ```txt
-Continue command
-  -> admit completion proof, story revision and current stage epoch
-  -> build immutable transition plan
-  -> prepare next scene in a detached Three.js group
-  -> validate prepared resource counts and hotspot bindings
-  -> build candidate StorySnapshot
-  -> durably write candidate snapshot
-  -> atomically swap live stage group and stage epoch
-  -> project DOM from committed snapshot
-  -> retire and dispose previous stage resources
-  -> acknowledge first rendered frame
-  -> emit typed committed result and journal row
+create session and generation
+  -> register frame/listener/timeout/resource leases
+  -> run callbacks only while generation is current
+  -> prepare and commit scene epochs
+  -> retire predecessor scene resources after successor commit
+  -> stop by retiring generation, RAF, timeouts, listeners, and new command admission
+  -> dispose scene, target, post, renderer, canvas, and context ownership
+  -> publish detached counts, failures, and idempotent result
 ```
-
-Failure before the live swap must leave the prior story, DOM, save and stage untouched. Failure after durable save but before live swap must execute a defined compensation or recovery policy.
 
 ## Ordered implementation queue
 
 ```txt
 1. Versioned StoryManifest and StorySnapshot
-2. Save admission, migration and reconciliation
+2. Save admission, migration, and reconciliation
 3. Inspection Command Authority and completion proof
 4. Atomic Story/Stage Continue Transition
-5. Runtime Session Lifecycle and complete disposal
+5. Runtime Session Lifecycle and Resource Retirement
 6. Committed-frame diagnostics
 ```
 
 ## Current audit ledge
 
 ```txt
-TheUnmappedHouse Atomic Story/Stage Continue Transition Authority
-+ Rollback, Resource Retirement and First-Frame Fixture Gate
+TheUnmappedHouse Runtime Session Lifecycle Authority
++ Scene Resource Retirement and Browser Teardown Fixture Gate
 ```
