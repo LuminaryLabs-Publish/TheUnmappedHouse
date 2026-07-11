@@ -1,145 +1,160 @@
 # Next steps: The Unmapped House
 
-Timestamp: `2026-07-10T22-21-17-04-00`
+Timestamp: `2026-07-11T00-00-26-04-00`
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Resume-Safe Story Phase Authority + Transition Fixture Gate
+TheUnmappedHouse Durable Story Commit Authority
++ Persistence Failure and Recovery Fixture Gate
 ```
 
 ## Goal
 
-Preserve the current three-scene route, copy, pacing and visuals while making every saved state resumable and every inspection, interlude and Continue transition explicit, validated and observable. A reload at any point must reconstruct the same story phase without depending on a lost browser timer or DOM-only state.
+Preserve the current three-scene route, copy, pacing and visuals while making every visible story revision attributable to a durable save revision or an explicit recoverable transaction. Storage denial, quota errors, serialization failures, interrupted transitions and clear failures must return typed results rather than leaving memory, DOM, timers, StageKit and localStorage on different revisions.
 
 ## Plan ledger
 
-### Story source identity
+### Pure story and source authority
 
-- [ ] Add a versioned story schema.
-- [ ] Add a stable story manifest id and source revision.
-- [ ] Compute a canonical source fingerprint from scene, hotspot, clue and route descriptors.
-- [ ] Validate unique scene ids, hotspot ids and clue ownership.
-- [ ] Validate route order and completion requirements.
+- [ ] Add a versioned story schema, manifest id and source fingerprint.
+- [ ] Validate scene, hotspot, clue and route identity.
+- [ ] Introduce a detached immutable `StorySnapshot`.
+- [ ] Add explicit phases: `exploring`, `interlude_pending`, `interlude_open`, `transitioning`, `recovering` and `terminal`.
+- [ ] Derive completion from scene-scoped canonical evidence.
 
-### Versioned save envelope
+### Persistence capability and results
 
-- [ ] Replace the shallow object merge with a versioned save envelope.
-- [ ] Validate every field before use.
-- [ ] Reconcile unknown scenes, hotspots, clues and route rows against the active source.
-- [ ] Normalize corrupt arrays, records and log rows without throwing.
-- [ ] Record source fingerprint, schema version and saved-at metadata.
-- [ ] Return a typed load result with accepted, migrated, repaired or reset status.
+- [ ] Put localStorage behind an injected adapter.
+- [ ] Admit storage capability before StageKit resource acquisition.
+- [ ] Return typed load status: accepted, migrated, repaired, reset, unavailable or failed.
+- [ ] Return typed write status: committed, rejected or failed.
+- [ ] Return typed clear status: cleared, already-empty, unavailable or failed.
+- [ ] Distinguish invalid JSON, access denial, serialization failure, quota failure and stale revision.
 
-### Story phase authority
+### Versioned durable envelope
 
-- [ ] Introduce explicit phases: `exploring`, `interlude_pending`, `interlude_open`, `transitioning` and `terminal`.
-- [ ] Derive completion from canonical scene-scoped inspection evidence.
-- [ ] Persist completion proof and phase in the same state transaction.
-- [ ] Replace the unretained timer with a persisted readiness rule or deterministic deadline.
-- [ ] Reconstruct the correct interlude projection on load.
-- [ ] Persist the terminal route state and terminal copy identity.
+- [ ] Add `schemaVersion`, `storyManifestId` and `storySourceFingerprint`.
+- [ ] Add monotonic `saveRevision` and `stateFingerprint`.
+- [ ] Persist phase, completion proof, interlude readiness and terminal state.
+- [ ] Add `pendingTransaction` for interrupted scene transitions.
+- [ ] Record command, transaction, persistence attempt and stage commit identity.
+- [ ] Reconcile old or corrupt saves through typed results.
 
-### Typed commands and results
+### Command admission
 
-- [ ] Normalize side-panel and raycast inspection into one `InspectHotspot` command.
-- [ ] Add a `ContinueStory` command with phase, scene, request and source identity.
-- [ ] Return accepted, rejected, failed or no-op results.
-- [ ] Reject unknown, stale, already-applied and wrong-phase commands.
-- [ ] Include before/after state fingerprints and completion evidence.
-- [ ] Retain parent/child results when a story command requests a stage transition.
+- [ ] Normalize side-panel and raycast inputs into canonical `InspectHotspot` commands.
+- [ ] Add canonical `ContinueStory` and `ResetStory` commands.
+- [ ] Include request id, origin, expected scene, expected phase and expected save revision.
+- [ ] Reject unknown, stale, duplicate and wrong-phase commands before mutation.
+- [ ] Produce a pure next snapshot and effect plan before browser effects.
 
-### Story transition transaction
+### Durable commit protocol
 
-- [ ] Prepare the next story snapshot without mutating committed state.
-- [ ] Request an atomic stage commit through a typed adapter result.
-- [ ] Commit story scene, route, phase and stage identity together after stage success.
-- [ ] Retain the previous story/stage observation if stage preparation or commit fails.
-- [ ] Save only the committed transaction result.
-- [ ] Make repeated Continue requests idempotent.
+- [ ] For inspection, write the next snapshot before projecting success or scheduling an interlude.
+- [ ] For scene transitions, prepare StageKit resources without replacing the committed stage.
+- [ ] Durably record a pending transition before committing the prepared stage.
+- [ ] Finalize the save envelope after stage commit succeeds.
+- [ ] Resolve interrupted pending transitions deterministically on reload.
+- [ ] Keep the previous committed story and stage when persistence preparation fails.
+- [ ] Expose a recoverable state when finalization fails after stage commit.
+- [ ] Make repeated commands idempotent by request and save revision.
+
+### Projection and lifecycle
+
+- [ ] Project normal UI only from the committed snapshot.
+- [ ] Schedule interlude readiness only from a committed phase/deadline.
+- [ ] Correlate each rendered scene with save revision, state fingerprint, stage commit id and epoch.
+- [ ] Add a startup acquisition ledger and reverse-order cleanup stack.
+- [ ] Retain and cancel RAF ids.
+- [ ] Remove window, canvas and keyboard listeners during rollback/dispose.
+- [ ] Dispose render targets, materials, geometries and renderer on terminal boot failure.
+- [ ] Add idempotent `StageKit.dispose()` and runtime-session disposal.
 
 ### Diagnostics
 
-- [ ] Add a bounded JSON-safe command/result/event journal.
-- [ ] Expose current story phase, source fingerprint and state fingerprint.
-- [ ] Expose pending interlude readiness and terminal state.
-- [ ] Correlate story transition id with stage commit id and stage epoch.
-- [ ] Keep DOM nodes and raw Three.js objects out of diagnostics.
+- [ ] Add bounded JSON-safe command, persistence, recovery and stage rows.
+- [ ] Expose persistence capability and mode.
+- [ ] Expose current and pending save revisions.
+- [ ] Expose the last load, write, clear and recovery results.
+- [ ] Keep DOM nodes, errors with cyclic fields and raw Three.js objects out of diagnostics.
 
 ### Validation
 
 - [ ] Add `scripts/validate-story-source.mjs`.
 - [ ] Add `scripts/validate-save-reconciliation.mjs`.
 - [ ] Add `scripts/validate-story-phase-resume.mjs`.
-- [ ] Add `scripts/validate-story-command-results.mjs`.
-- [ ] Add `scripts/validate-story-stage-transition.mjs`.
-- [ ] Wire the fixtures into `npm run check` after syntax checks.
-- [ ] Add a browser smoke covering reloads in every phase.
+- [ ] Add `scripts/validate-persistence-results.mjs`.
+- [ ] Add `scripts/validate-story-commit-protocol.mjs`.
+- [ ] Add `scripts/validate-boot-rollback.mjs`.
+- [ ] Wire them into `npm run check` after syntax checks.
+- [ ] Add browser smoke for storage denial, quota failure, interrupted transition, clear failure and remount.
 
 ## Required fixture rows
 
 ```txt
-fresh-save-starts-exploring-scene-one
-invalid-save-shape-repaired-without-throw
-unknown-scene-id-reconciled
-future-scene-clue-does-not-complete-current-scene
-final-required-inspection-commits-completion-proof
-completion-and-interlude-phase-save-together
-reload-during-interlude-pending-resumes
-reload-during-interlude-open-resumes
-reinspect-after-resume-is-idempotent
-continue-before-ready-rejected
-continue-from-current-phase-accepted-once
-duplicate-continue-is-no-op
-stage-failure-retains-previous-story-state
-stage-success-commits-story-and-stage-identities-together
-final-continue-commits-terminal-state
-reload-terminal-state-restores-terminal-copy
-command-result-journal-json-safe
-state-fingerprints-stable
+fresh-envelope-commits-revision-one
+legacy-v1-save-migrates-with-result
+invalid-json-distinguished-from-access-denial
+successful-write-increments-save-revision
+stale-write-rejected-before-mutation
+inspection-write-failure-projects-no-success-state
+final-inspection-write-failure-schedules-no-interlude
+continue-persistence-failure-keeps-previous-stage
+pending-transition-written-before-stage-commit
+pending-transition-recovers-exactly-once
+finalize-write-failure-remains-recoverable
+finalized-transition-reloads-target-scene
+reset-clear-failure-does-not-reload
+boot-storage-denial-acquires-no-stage-resources
+boot-write-failure-releases-raf-listeners-and-gpu
+command-persistence-stage-result-json-safe
 ```
 
 ## Implementation order
 
 ```txt
-1. pure source schema, manifest and fingerprint
-2. versioned save envelope and reconciliation
-3. pure story phase reducer and completion proof
-4. typed inspect/continue command results
-5. deterministic interlude readiness and resume projection
-6. terminal state persistence
-7. atomic Stage Commit and Resource Lifecycle companion
-8. composed StoryStageTransition transaction
-9. browser reload smoke across every phase
+1. pure StorySnapshot, source schema and fingerprint
+2. injected storage adapter and typed persistence results
+3. versioned envelope, save revision and reconciliation
+4. story phase reducer and typed commands
+5. inspection durable-commit path
+6. StageKit prepare/commit/discard companion
+7. recoverable scene-transition commit protocol
+8. projection from committed revision
+9. boot cleanup stack and idempotent disposal
+10. deterministic fixtures and browser smoke
 ```
 
 ## First implementation slice
 
 ```txt
-pure StorySnapshot
-  -> source validator
-  -> save validator/reconciler
-  -> story phase reducer
-  -> headless resume fixture
+storage adapter
+  -> PersistenceLoadResult
+  -> PersistenceWriteResult
+  -> PersistenceClearResult
+  -> versioned envelope
+  -> save revision
+  -> deterministic failure fixtures
 ```
 
 ## Second implementation slice
 
 ```txt
-InspectHotspot and ContinueStory commands
-  -> typed results
-  -> completion proof
-  -> interlude readiness
-  -> terminal state
+pure InspectHotspot reducer
+  -> write next envelope
+  -> project committed result
+  -> derive persisted interlude readiness
 ```
 
 ## Third implementation slice
 
 ```txt
-atomic stage result adapter
-  -> staged story transition
-  -> one committed story/stage observation
-  -> browser route and reload smoke
+StageKit prepare/commit/discard
+  -> pending transition envelope
+  -> final save revision
+  -> recovery on reload
+  -> browser denial/quota/interruption smoke
 ```
 
 ## Validation target
@@ -150,7 +165,7 @@ npm run check
 
 ## Companion queue
 
-The existing `TheUnmappedHouse Atomic Stage Commit + Resource Lifecycle Fixture Gate` remains required. It should expose a typed stage result that the story transaction can consume; it must not own story mutation or save writes.
+The existing resume-safe phase authority and Atomic Stage Commit work remain required. Story rules own the next snapshot, persistence authority owns durable revisions and recovery, and StageKit owns visual preparation, commit and disposal.
 
 ## Do not do first
 
