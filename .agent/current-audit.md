@@ -1,6 +1,6 @@
 # Current audit: The Unmapped House
 
-Timestamp: `2026-07-11T04-00-07-04-00`
+Timestamp: `2026-07-11T06-21-57-04-00`
 
 ## Product read
 
@@ -12,21 +12,16 @@ A fixed-camera anime-horror point-and-click prototype with three authored scenes
 load save
   -> shallow-merge mutable state
   -> resolve current scene
-  -> construct StageKit and start RAF
+  -> construct StageKit and start recursive RAF
   -> load scene and project UI
-  -> inspect hotspot by DOM button or raycast
-     -> mutate inspection/clue/log state
-     -> derive completion from clues
+  -> inspect through side-panel button or canvas raycast
+     -> pass full hotspot descriptor object
+     -> record descriptor.id under currentScene.id
+     -> grant descriptor.grants to global clue array
+     -> derive current-scene completion
      -> optionally schedule 450 ms interlude timer
-     -> project UI
-     -> write localStorage
-  -> interlude callback mutates DOM
-  -> Continue mutates story scene, route and log
-     -> hide interlude
-     -> replace live StageKit scene in place
-     -> project UI
-     -> write localStorage
-     -> render on a later RAF
+     -> project UI and write localStorage
+  -> Continue mutates story and replaces live StageKit scene
   -> final Continue changes DOM copy only
 ```
 
@@ -35,52 +30,59 @@ load save
 | Source | Current responsibilities |
 |---|---|
 | `src/story-data.js` | Three scenes, nine hotspots, clue requirements, interlude copy, camera, fog, stage, material and post descriptors. |
-| `src/game.js` | Save load/write/clear, mutable story state, implicit phase, inspection, completion, timer, Continue, terminal copy and DOM projection. |
-| `src/stage-kit.js` | Three.js renderer, scene, camera, lights, render target, shaders, descriptor consumption, picking, resize, recursive RAF and in-place scene replacement. |
+| `src/game.js` | Save effects, mutable story state, inspection, clue grants, completion, timers, Continue and DOM projection. |
+| `src/stage-kit.js` | Three.js renderer, scene, camera, render target, shaders, hotspot meshes, picking, resize, RAF and scene replacement. |
 | `src/aspect-frame.js` | Canonical fixed 1920×1080 framing and DOM sizing. |
 
 ## Domains in use
 
 ```txt
-browser-shell
-fixed-aspect-layout
-story-source-descriptors
-scene-order and scene identity
-hotspot identity and clue identity
-mutable story state
-scene route state
-inspection ledger
-clue ledger
+browser shell
+fixed-aspect layout
+story source descriptors
+scene, hotspot and clue identity
+mutable story and route state
+inspection and clue ledgers
 notebook log
 scene completion policy
 implicit story phase
-interlude timer policy
-interlude DOM projection
-Continue input and transition policy
-terminal DOM projection
+interlude timer and projection
+Continue and terminal policy
 side-panel input
 raycast input
 keyboard reset input
-localStorage read/write/clear effects
-story copy projection
-debug JSON projection
+localStorage effects
+story and debug projection
 Three.js CDN runtime
 stage render host
 scene descriptor consumption
-anime shader material
+anime materials
 post-process pass
-hotspot volume and picking
+hotspot volumes and picking
 camera parallax
 render-target composition
 live scene replacement
-stage resource lifecycle
-RAF authority
-resize/pointer/click listener lifecycle
-GPU resource disposal
-package syntax validation
+stage resource and RAF lifecycle
+syntax validation
 static Pages deployment
-repo-local audit ledger
-central ledger synchronization
+repo-local and central audit ledgers
+```
+
+Missing authority domains:
+
+```txt
+versioned story manifest
+hotspot manifest index
+inspection command normalization
+inspection admission
+scene/hotspot membership proof
+story revision and stage epoch checks
+scene-scoped clue provenance
+scene completion proof
+inspection transaction result
+bounded command/result journal
+feedback and rendered-frame correlation
+behavioral fixture execution
 ```
 
 ## Implemented kits and services
@@ -91,7 +93,7 @@ central ledger synchronization
 | `aspect-frame-kit` | Compute and apply the fixed 16:9 viewport. |
 | `story-data-kit` | Scene, hotspot, clue, camera, fog, stage, material, post and interlude descriptors. |
 | `browser-story-runtime-kit` | Coordinate inspect, Continue, reset, projection, persistence and StageKit calls. |
-| `clue-ledger-kit` | Grant unique clue strings and evaluate requirements. |
+| `clue-ledger-kit` | Grant unique global clue strings and evaluate requirements. |
 | `inspection-ledger-kit` | Track scene-keyed hotspot inspection flags. |
 | `notebook-log-kit` | Prepend and cap recent story rows. |
 | `scene-route-kit` | Resolve active scene and retain visited scene ids. |
@@ -102,8 +104,8 @@ central ledger synchronization
 | `scene-descriptor-consumer-kit` | Convert descriptors directly into live Three.js resources. |
 | `anime-material-kit` | Build FBM/toon shader materials. |
 | `post-process-kit` | Grain, vignette, chromatic offset, distortion, memory warp and scan lines. |
-| `hotspot-volume-kit` | Build invisible pick meshes with attached descriptor objects. |
-| `hotspot-picking-kit` | Hover and click raycasts. |
+| `hotspot-volume-kit` | Build invisible pick meshes with attached full descriptor objects. |
+| `hotspot-picking-kit` | Hover and click raycasts that return descriptor payloads. |
 | `camera-parallax-kit` | Pointer-driven locked-camera offsets. |
 | `render-target-composition-kit` | Stage target plus post-process pass. |
 | `debug-json-projection-kit` | Aggregate mutable story-state projection. |
@@ -112,63 +114,68 @@ central ledger synchronization
 | `repo-local-agent-ledger-kit` | Current pointers and timestamped audits. |
 | `central-ledger-sync-kit` | Central selection and findings history. |
 
-## Main finding: the story-stage transition is not atomic
+## Main finding: inspection payloads bypass authority
 
-`nextScene()` mutates `currentScene`, `state.sceneId`, route and log, then hides the interlude before `StageKit.loadScene()` succeeds. `loadScene()` clears the committed stage and builds the next scene directly into live renderer state. Only after that does the runtime project the DOM and attempt to save.
-
-A stage-construction failure can leave:
+`inspectHotspot(hotspot)` accepts the object provided by the input surface and trusts these fields:
 
 ```txt
-in-memory story = next scene
-durable save    = prior scene
-interlude       = hidden
-DOM copy        = prior or partial
-stage           = blank or partial
+id
+label
+text
+changesText
+grants
 ```
 
-A save failure after successful stage construction can leave the visible stage and DOM on the next scene while reload returns to the prior scene.
+It combines them with the mutable `currentScene.id` rather than validating that the object belongs to that scene. No story phase, story revision, stage epoch, command id, input sequence or manifest fingerprint is checked.
 
-## Render and lifecycle consequences
+Consequences:
 
 ```txt
-stage preparation   = absent
-atomic stage swap   = absent
-story commit result = absent
-stage commit result = absent
-transition id       = absent
-stage epoch         = absent
-first-frame ack     = absent
-retired disposal    = absent
-rollback result     = absent
+stale old-scene descriptor may mutate new-scene inspection map
+caller-supplied grants may enter the global clue array
+side-panel and raycast admissions are not deduplicated
+re-read requests create repeated log and storage effects
+completion has no clue provenance or immutable proof
+interlude scheduling has no one-shot transaction result
+feedback has no command/result/frame correlation
 ```
 
-`stageGroup.clear()` detaches prior objects without disposing geometry or materials. Resetting the material and hotspot arrays removes the remaining references. RAF and listener teardown are still not centrally owned.
-
-## Candidate transition-authority kits
+## Required parent domain
 
 ```txt
-transition-command-kit
-transition-admission-kit
-transition-plan-kit
-story-candidate-snapshot-kit
-stage-build-plan-kit
-stage-preparation-kit
-durable-story-commit-kit
-atomic-stage-commit-kit
-transition-rollback-kit
-retired-resource-ledger-kit
-stage-epoch-kit
-first-frame-acknowledgement-kit
-transition-result-kit
-transition-journal-kit
-transition-fixture-kit
+the-unmapped-house-inspection-authority-domain
+```
+
+Update the existing story, browser runtime, inspection, clue, hotspot volume, picking, persistence and debug kits first. Add only the missing coordination surfaces:
+
+```txt
+inspection-command-envelope-kit
+inspection-command-admission-kit
+hotspot-manifest-index-kit
+hotspot-pick-observation-kit
+inspection-result-kit
+scene-scoped-clue-grant-kit
+scene-completion-proof-kit
+inspection-transaction-kit
+inspection-journal-kit
+inspection-feedback-projection-kit
+inspection-frame-correlation-kit
+inspection-authority-fixture-kit
+```
+
+## Ordered implementation queue
+
+```txt
+1. Versioned Story Manifest and StorySnapshot
+2. Inspection Command Authority
+3. Atomic Story/Stage Continue Transition
+4. Runtime Session Lifecycle and Resource Retirement
+5. Committed frame and diagnostics proof
 ```
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Atomic Story/Stage Transition Authority
-+ Prepare/Commit/Discard and First-Frame Fixture Gate
+TheUnmappedHouse Inspection Command Authority
++ Scene/Hotspot/Clue and Dual-Ingress Fixture Gate
 ```
-
-This depends on the previously identified versioned save envelope, typed persistence results, explicit story phase and admitted Continue command. The immediate goal is to preserve the previous committed scene until both persistence and detached stage preparation are ready, then publish one correlated story, stage, DOM and first-frame result.
