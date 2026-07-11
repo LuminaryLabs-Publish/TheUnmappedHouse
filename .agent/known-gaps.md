@@ -1,90 +1,96 @@
 # Known gaps: The Unmapped House
 
-Timestamp: `2026-07-11T06-21-57-04-00`
+Timestamp: `2026-07-11T08-11-14-04-00`
+
+## Story-manifest gaps
+
+- The exported `scenes` array has no manifest id, schema version or content fingerprint.
+- Nested scene, hotspot, clue, stage, material and post descriptors remain mutable.
+- Scene ids are not checked for uniqueness.
+- Hotspot ids are not checked for uniqueness within a scene.
+- Granted and required clues have no canonical ownership index.
+- Requirements are not checked against scene-owned grants.
+- Descriptor shape, numeric bounds and canonical ordering are not validated.
+- The renderer and story runtime cannot prove they consumed the same immutable definition.
+
+## Save-envelope gaps
+
+- The storage key ends in `.v1`, but the stored value is not a versioned envelope.
+- No schema version, manifest id, manifest fingerprint, story revision or save revision is stored.
+- No explicit story phase, migration version or state fingerprint is stored.
+- No writer/session identity or expected-revision conflict check exists.
+- Save size and collection bounds are unrestricted.
+
+## Load-admission gaps
+
+- Parsed data is shallow-merged over the initial object without field validation.
+- Missing save, malformed JSON and incompatible data collapse into silent fallback behavior.
+- Non-array `clues`, `route` or `log` values can fail later runtime operations.
+- Unknown saved scene ids silently display scene zero while the invalid `state.sceneId` remains persisted.
+- Unknown flags, inspected entries, clue strings and route ids are retained.
+- No typed load result, reason, migration record or reconciliation report exists.
+
+## Reconciliation and migration gaps
+
+- The current raw object shape has no explicit migration adapter.
+- Inspected hotspot ids are not checked against scene ownership.
+- Global clue strings are not reconstructed from canonical inspections.
+- Forged clue strings can satisfy scene requirements without a valid source inspection.
+- Orphaned, unknown and cross-scene data cannot be distinguished.
+- Route order is not reconciled against canonical scene order.
+- Completion and interlude phase are not recomputed after load.
+- A successful migration cannot be proven idempotent.
+
+## Save-transaction gaps
+
+- Live state and DOM mutate before localStorage write success is known.
+- `saveState()` exposes no typed result and does not catch quota, security or serialization failures.
+- Save revision and state fingerprint are absent.
+- Concurrent tabs can overwrite each other without conflict detection.
+- No persistence journal correlates before/after revisions, fingerprints and storage outcomes.
+
+## Story-state gaps
+
+- `flags` is persisted but has no current contract or validation.
+- `clues` and `inspected` are independent mutable authority sources.
+- Notebook rows are persisted as free-form strings without bounded schema validation.
+- Completion is derived from global clue inclusion rather than canonical receipts.
+- Interlude pending/open and terminal state are not persisted.
+- The final scene has no durable terminal phase.
 
 ## Inspection-command gaps
 
-- Both input paths pass full hotspot descriptor objects directly into the mutator.
-- No canonical `InspectHotspotCommand` exists.
-- No command id, input sequence, source, expected story revision or expected stage epoch exists.
-- No typed `accepted`, `rejected`, `duplicate`, `no_op` or `failed` result exists.
-- Re-read behavior is an implicit mutation path rather than an explicit no-op/read result.
-
-## Scene and hotspot authority gaps
-
-- `inspectHotspot()` does not prove that the supplied hotspot belongs to `currentScene`.
-- The caller supplies hotspot id, label, text, log copy and clue grants.
-- Side-panel callbacks capture descriptor objects instead of stable scene/hotspot ids.
-- Pick meshes store full descriptor objects in `mesh.userData.hotspot`.
-- No story manifest id, definition fingerprint or canonical hotspot index exists.
-- No stale-scene or unknown-hotspot rejection policy exists.
-
-## Clue and completion gaps
-
-- Clues are global strings without owner scene, source hotspot, command id or story revision.
-- Caller-supplied `grants` are trusted.
-- Current-scene completion checks only global string inclusion.
-- Old-scene, future-scene, orphaned or forged clue provenance is not distinguishable.
-- No immutable `SceneCompletionProof` exists for Continue admission.
-- Multiple near-simultaneous final inspections have no one-shot completion/interlude result.
-
-## Dual-ingress gaps
-
-- Side-panel and raycast requests are not normalized through one queue.
-- Same-hotspot input from both surfaces is not deduplicated.
-- A queued old button closure can carry an old descriptor after `currentScene` changes.
-- A raycast observation has no frame id or stage epoch.
-- Input source and causal ordering are absent from diagnostics.
-
-## Story-phase gaps
-
-- No explicit story phase is persisted.
-- Completion, interlude pending, interlude open, transitioning and terminal state are split across clues, timers, mutable variables and DOM classes.
-- A completed scene can reload with no visible or scheduled interlude.
-- Inspections are not rejected while an interlude or transition is active.
-- The final scene has no persisted terminal state.
+- Both input paths still pass full hotspot descriptor objects directly into mutation.
+- No canonical command id, source, input sequence, expected story revision or expected stage epoch exists.
+- No typed accepted, rejected, duplicate, no-op or failed result exists.
+- Caller-supplied text and clue grants remain trusted.
+- Inspection authority cannot be made reliable until manifest and save admission are canonical.
 
 ## Continue and transition gaps
 
-- Continue remains a direct button callback.
-- `nextScene()` does not require a scene-scoped completion proof.
+- Continue remains a direct button callback with no completion-proof admission.
 - Story identity mutates before detached stage preparation or durable persistence succeeds.
 - `StageKit.loadScene()` clears the live stage before replacement success.
 - Story, stage, DOM, save and first rendered frame have no shared transaction id.
 - No rollback result exists.
 
-## Render and stage-epoch gaps
+## Render and lifecycle gaps
 
+- StageKit consumes mutable descriptors directly.
+- Scene render preparation has no manifest fingerprint or scene-definition fingerprint.
 - Hotspot meshes have no committed stage epoch.
-- Pick observations have no rendered frame id.
-- Hover state and hover-label state are not explicitly retired on scene replacement.
-- Accepted inspection feedback is not correlated to a rendered frame.
-- Old-stage observations cannot be deterministically rejected.
-
-## Resource-lifecycle gaps
-
 - `stageGroup.clear()` detaches objects without disposing geometry or materials.
-- RAF ids are not retained or cancellable.
-- Resize, pointer, click and keyboard listeners lack centralized teardown.
+- RAF ids and listeners are not centrally owned or retired.
 - No idempotent runtime or `StageKit.dispose()` exists.
-
-## Persistence gaps
-
-- The save has no schema version, story manifest id or source fingerprint.
-- Parsed data is shallow-merged without field validation.
-- Save revisions and expected-revision checks are absent.
-- Existing inspection/clue data cannot be reconciled against canonical story ownership.
-- Storage failures do not return typed results.
 
 ## Validation gaps
 
 - `npm run check` performs syntax checks only.
-- No story-manifest or hotspot-index fixture exists.
-- No stale, forged, duplicate or cross-scene inspection fixture exists.
-- No clue-provenance or scene-completion-proof fixture exists.
-- No dual-ingress idempotency fixture exists.
-- No hotspot-stage-epoch or committed-feedback-frame fixture exists.
-- Existing transition, rollback, resource-retirement and browser fault fixtures are also absent.
+- No manifest uniqueness, clue-ownership or definition-fingerprint fixture exists.
+- No snapshot schema or state-fingerprint fixture exists.
+- No malformed-save, incompatible-version, migration or reconciliation fixture exists.
+- No storage-failure or concurrent-save conflict fixture exists.
+- Inspection, transition, render-correlation and lifecycle fixtures remain absent.
 
 ## Deferred work
 
