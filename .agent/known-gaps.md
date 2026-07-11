@@ -1,118 +1,92 @@
 # Known gaps: The Unmapped House
 
-Timestamp: `2026-07-11T12-08-47-04-00`
+Timestamp: `2026-07-11T13-49-30-04-00`
 
 ## Plan ledger
 
-**Goal:** keep story, persistence, inspection, completion, transition, lifecycle, render-resource, and validation gaps explicit while promoting inspection-command authority and scene completion proof into an implementation-ready contract.
+**Goal:** keep manifest, persistence, inspection, Continue, stage-resource, lifecycle, and validation gaps explicit while promoting the atomic Continue boundary into an implementation-ready contract.
 
-- [x] Preserve StoryManifest and persistence prerequisites.
-- [x] Trace side-panel and raycast descriptor ingress.
-- [x] Trace stale-scene, duplicate, clue-provenance, completion, timeout, and persistence behavior.
-- [x] Define inspection-command, canonical-resolution, completion-proof, and dual-ingress fixture gaps.
-- [x] Preserve atomic Continue and runtime lifecycle follow-on gates.
+- [x] Preserve StoryManifest, StorySnapshot, and inspection-proof prerequisites.
+- [x] Trace completion timeout, Continue, story mutation, live stage replacement, projection, persistence, terminal handling, and frame submission.
+- [x] Define admission, detached preparation, atomic commit, rollback, retirement, first-frame, result, journal, and fixture gaps.
+- [x] Preserve runtime lifecycle and committed-frame follow-on gates.
 
-## Story-manifest and persistence gaps
+## Manifest and persistence gaps
 
-- No stable story manifest id, schema version, canonical scene/hotspot/clue indexes, or definition fingerprint exists.
-- Nested story and render descriptors remain mutable.
-- The `.v1` storage key contains an unversioned raw object.
-- Parsed save data is shallow-merged without field validation.
-- Unknown scenes, hotspots, clues, route entries, and malformed collection types are not reconciled safely.
-- Story revision, save revision, explicit phase, state fingerprint, typed load/save results, and bounded persistence journal are absent.
-- Live state and DOM can mutate before storage success is known.
+- No stable manifest id, schema version, canonical indexes, or manifest fingerprint exists.
+- The `.v1` save is an unversioned raw object shallow-merged without field admission.
+- No explicit story phase, story revision, save revision, state fingerprint, typed result, migration, reconciliation, or rollback exists.
+- `localStorage.setItem()` happens after live story, stage, and DOM mutation.
 
-## Inspection command gaps
+## Inspection and completion-proof gaps
 
-- Side-panel buttons capture and submit full hotspot descriptor objects.
-- Raycast meshes store and submit full hotspot descriptor objects through `userData`.
-- No `commandId`, input sequence, source, scene id, expected story revision, expected stage epoch, or observed frame id exists.
-- The mutation path does not resolve a canonical hotspot after admission.
-- Caller-supplied `id`, `grants`, `label`, `text`, and `changesText` are trusted.
-- No typed applied, duplicate, stale, unknown, rejected, persistence-failed, or completion-produced result exists.
-- No bounded command/result journal exists.
+- Side-panel and raycast paths submit full hotspot descriptors.
+- No command identity, sequence, scene/revision/stage admission, immutable inspection receipt, clue provenance, or typed result exists.
+- Completion is derived from global clue strings rather than accepted current-scene receipts.
+- No immutable `SceneCompletionProof`, consumption state, or exactly-once interlude lease exists.
 
-## Stale scene and stage gaps
+## Continue admission gaps
 
-- `inspectHotspot()` chooses the inspection ledger from `currentScene.id` at callback execution time.
-- A retained old button closure can submit a scene-one descriptor after scene two becomes current.
-- A stale descriptor can be recorded under the new scene while granting old-scene clues and copy.
-- Pick results contain no `stageEpoch`, frame id, or scene revision.
-- Retired stage observations cannot be rejected deterministically.
-- Old and current ingress have no session-generation fence.
+- Continue is a direct click callback with no command envelope.
+- No completion-proof id, expected story revision, expected stage epoch, sequence, source, or session fence is required.
+- Duplicate or programmatic Continue calls can advance repeatedly.
+- No transition lock or proof reservation prevents double consumption.
 
-## Inspection ledger gaps
+## Completion timeout gaps
 
-- Inspections are stored as scene-keyed booleans rather than immutable receipts.
-- Receipt identity, command identity, source, accepted revision, stage epoch, timestamp, and before/after fingerprints are absent.
-- Re-read behavior still mutates text, log, DOM, and persistence without an explicit presentation-only result.
-- Duplicate command sequence and duplicate hotspot inspection are not distinguished.
-- Exactly-once mutation cannot be proven.
+- The 450 ms timeout id is not retained.
+- The callback reads mutable `currentScene` when it executes.
+- No completion-proof id, story revision, stage epoch, session generation, cancellation, or stale-callback result exists.
+- A scene change before callback execution can project the wrong interlude copy.
 
-## Clue provenance gaps
+## Story and stage atomicity gaps
 
-- Clues are global strings with no declared owner or grant provenance.
-- Any submitted descriptor can grant arbitrary clue strings.
-- A clue does not identify the accepted scene, hotspot, inspection receipt, command, or story revision that produced it.
-- Cross-scene clue grants are not rejected.
-- Migration or forged save values can satisfy requirements without canonical inspection.
-- Duplicate grants are silently ignored but produce no explicit idempotency receipt.
+- `currentScene`, `state.sceneId`, route, and log mutate before successor stage preparation.
+- `StageKit.loadScene()` clears the active group before replacement success is known.
+- Successor layers, props, materials, hotspots, camera, fog, and post settings are constructed incrementally in live ownership.
+- No detached successor group, resource inventory, preparation result, candidate stage epoch, or validation step exists.
+- A constructor or descriptor failure can leave a partial successor under successor story identity.
 
-## Completion-proof gaps
+## Persistence and rollback gaps
 
-- Completion is derived from `requiresToComplete.every(hasClue)` against global clue strings.
-- Completion does not require accepted current-scene inspection receipts.
-- No immutable `SceneCompletionProof` exists.
-- Proof id, fingerprint, required hotspot set, receipt set, story revision, and consumption state are absent.
-- Duplicate completion detection is absent.
-- A newly accepted descriptor after completion can schedule another interlude timeout.
-- Continue cannot admit against a specific unconsumed proof.
+- The candidate snapshot is not built before live mutation.
+- Persistence occurs after story, stage, and UI changes.
+- Storage failure can leave visible and persisted scenes divergent.
+- No rollback snapshot, rollback result, recovery state, or retry contract exists.
+- Completion proof consumption cannot be coordinated with durable commit.
 
-## Projection and persistence gaps
+## Render and frame-proof gaps
 
-- Inspection mutates in-memory state and text before persistence success is known.
-- `localStorage.setItem()` has no typed success/failure result.
-- A quota or security failure can leave live state and persisted state divergent.
-- UI and debug projection are not correlated to a committed story revision.
-- The 450 ms interlude lease is not correlated to a completion proof.
-- No rollback path restores the prior live projection on persistence failure.
+- `loadScene()` returns no transition id, stage epoch, resource revision, or commit receipt.
+- The recursive RAF is independent of Continue and renders whichever mutable state exists next.
+- No first-successor-frame id or consumer acknowledgement exists.
+- Story revision, stage epoch, camera, hotspot set, fog, materials, post settings, and frame id are not correlated.
 
-## Dual-ingress parity gaps
+## Resource-retirement gaps
 
-- Side-panel and raycast paths are assumed equivalent but have no command-level proof.
-- Raycast output includes a descriptor object while side-panel output comes from a closure; neither produces a normalized observation.
-- No fixture proves equal result, revision, receipt, clue grants, proof identity, persistence, or journal output.
-- Mixed button/raycast repeats can only be inspected through aggregate state, not typed idempotency results.
+- `stageGroup.clear()` detaches resources without disposing geometry or materials.
+- Resetting `materials` and `hotspots` loses ownership references.
+- No predecessor resource inventory or retirement receipt exists.
+- There is no rule requiring predecessor retirement to wait for successor first-frame acknowledgement.
+- Partial successor resources have no deterministic cleanup on preparation failure.
 
-## Continue and transition gaps
+## Terminal-state gaps
 
-- Continue is a direct button callback with no completion-proof admission or duplicate guard.
-- Story identity and route mutate before stage preparation or persistence succeeds.
-- `StageKit.loadScene()` clears the live stage before replacement success.
-- No detached successor group, transition id, rollback result, or durable terminal phase exists.
-- Story, stage, DOM, persistence, and first rendered frame have no shared transaction identity.
+- When no successor exists, only interlude text changes.
+- No terminal story phase, terminal proof consumption, terminal transition id, or persisted terminal result exists.
+- Reload behavior after prototype completion is undefined.
 
-## Runtime-session and resource gaps
+## Runtime lifecycle gaps
 
-- No `sessionId`, monotonic session generation, or lifecycle state machine exists.
-- RAF, listeners, hotspot-button closures, and interlude timeouts are not owned by leases.
-- `stageGroup.clear()` detaches objects without disposing geometry or material allocations.
-- Scene loads have no `stageEpoch` or resource inventory.
-- Render target, post resources, renderer, canvas, and WebGL context have no explicit teardown result.
-- Stop, dispose, and reset idempotency cannot be proven.
+- No `sessionId`, session generation, lifecycle state, or callback lease authority exists.
+- RAF, resize, pointer, click, keyboard, button closures, and interlude timeouts are not revocable.
+- Renderer, render target, post resources, canvas, and WebGL context have no explicit teardown result.
 
 ## Validation gaps
 
 - `npm run check` performs syntax checks only.
-- No StoryManifest or StorySnapshot fixture exists.
-- No inspection-command admission fixture exists.
-- No stale-scene, stale-revision, or stale-stage fixture exists.
-- No duplicate inspection or input-sequence fixture exists.
-- No clue-provenance or cross-scene grant fixture exists.
-- No scene-completion-proof or duplicate-interlude fixture exists.
-- No inspection persistence rollback fixture exists.
-- No side-panel/raycast parity fixture or browser smoke exists.
-- Atomic Continue, lifecycle, callback, resource-retirement, and teardown fixtures remain absent.
+- No Continue admission, duplicate, stale revision, stale stage, prepare failure, persistence failure, rollback, terminal, resource retirement, or first-frame fixture exists.
+- No browser failure-injection smoke proves predecessor preservation or retry.
 
 ## Deferred work
 
