@@ -1,131 +1,145 @@
 # Next steps: The Unmapped House
 
-Timestamp: `2026-07-10T20-38-24-04-00`
+Timestamp: `2026-07-10T22-21-17-04-00`
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Atomic Stage Commit + Resource Lifecycle Fixture Gate
+TheUnmappedHouse Resume-Safe Story Phase Authority + Transition Fixture Gate
 ```
 
 ## Goal
 
-Preserve the current three-scene route and visual output while making every stage replacement transactional, source-identifiable, observable, and leak-free. The old committed scene must remain visible until a complete replacement is ready, every created Three.js resource must have one owner, and the host must support idempotent teardown.
+Preserve the current three-scene route, copy, pacing and visuals while making every saved state resumable and every inspection, interlude and Continue transition explicit, validated and observable. A reload at any point must reconstruct the same story phase without depending on a lost browser timer or DOM-only state.
 
 ## Plan ledger
 
-### Stage build plan
+### Story source identity
 
-- [ ] Convert a scene descriptor into a pure JSON-safe `StageBuildPlan` before touching live Three.js state.
-- [ ] Validate camera, fog, post, layer, prop and hotspot rows.
-- [ ] Count expected meshes, geometries, materials, hotspot volumes and lights.
-- [ ] Include requested scene id, source revision and request id.
-- [ ] Reject invalid descriptors before clearing or mutating the committed stage.
+- [ ] Add a versioned story schema.
+- [ ] Add a stable story manifest id and source revision.
+- [ ] Compute a canonical source fingerprint from scene, hotspot, clue and route descriptors.
+- [ ] Validate unique scene ids, hotspot ids and clue ownership.
+- [ ] Validate route order and completion requirements.
 
-### Resource ownership
+### Versioned save envelope
 
-- [ ] Create one scene-local resource ledger for geometries, materials, textures and object roots.
-- [ ] Track hotspot materials as well as anime materials.
-- [ ] Track persistent host resources separately from scene-local resources.
-- [ ] Define one owner for renderer, render target, post geometry, post material and post mesh.
-- [ ] Make ledger disposal idempotent and return structured counts.
-- [ ] Prevent duplicate disposal across shared resources.
+- [ ] Replace the shallow object merge with a versioned save envelope.
+- [ ] Validate every field before use.
+- [ ] Reconcile unknown scenes, hotspots, clues and route rows against the active source.
+- [ ] Normalize corrupt arrays, records and log rows without throwing.
+- [ ] Record source fingerprint, schema version and saved-at metadata.
+- [ ] Return a typed load result with accepted, migrated, repaired or reset status.
 
-### Atomic scene transaction
+### Story phase authority
 
-- [ ] Build the replacement scene under a detached group.
-- [ ] Keep the previous committed group alive if preparation fails.
-- [ ] Commit group, camera, fog and post settings in one transaction.
-- [ ] Increment `stageEpoch` only after successful commit.
-- [ ] Record requested scene id, committed scene id and resource counts.
-- [ ] Dispose the previous scene ledger only after the replacement commits.
-- [ ] Return typed `committed`, `rejected`, `failed` or `no_op` results.
+- [ ] Introduce explicit phases: `exploring`, `interlude_pending`, `interlude_open`, `transitioning` and `terminal`.
+- [ ] Derive completion from canonical scene-scoped inspection evidence.
+- [ ] Persist completion proof and phase in the same state transaction.
+- [ ] Replace the unretained timer with a persisted readiness rule or deterministic deadline.
+- [ ] Reconstruct the correct interlude projection on load.
+- [ ] Persist the terminal route state and terminal copy identity.
 
-### Hotspot and interaction admission
+### Typed commands and results
 
-- [ ] Store canonical `{sceneId, hotspotId, stageEpoch, sourceRevision}` refs on hotspot meshes.
-- [ ] Clear hover state and hide the hover label on each successful stage commit.
-- [ ] Reject picks from stale epochs.
-- [ ] Correlate click results with the committed stage result.
-- [ ] Preserve side-panel and raycast behavior through the same story-command path.
+- [ ] Normalize side-panel and raycast inspection into one `InspectHotspot` command.
+- [ ] Add a `ContinueStory` command with phase, scene, request and source identity.
+- [ ] Return accepted, rejected, failed or no-op results.
+- [ ] Reject unknown, stale, already-applied and wrong-phase commands.
+- [ ] Include before/after state fingerprints and completion evidence.
+- [ ] Retain parent/child results when a story command requests a stage transition.
 
-### Host lifecycle
+### Story transition transaction
 
-- [ ] Replace anonymous listeners with retained handler references.
-- [ ] Retain the RAF id and running/disposed state.
-- [ ] Add explicit `start()`, `pause()`, `resume()` and `dispose()` semantics.
-- [ ] Cancel RAF during disposal.
-- [ ] Remove resize, mousemove and click listeners during disposal.
-- [ ] Dispose scene-local and persistent resources exactly once.
-- [ ] Make repeated `dispose()` calls safe and observable.
+- [ ] Prepare the next story snapshot without mutating committed state.
+- [ ] Request an atomic stage commit through a typed adapter result.
+- [ ] Commit story scene, route, phase and stage identity together after stage success.
+- [ ] Retain the previous story/stage observation if stage preparation or commit fails.
+- [ ] Save only the committed transaction result.
+- [ ] Make repeated Continue requests idempotent.
 
 ### Diagnostics
 
-- [ ] Expose a bounded JSON-safe stage journal.
-- [ ] Record build request, validation, preparation, commit, disposal and failure rows.
-- [ ] Expose current stage epoch and committed scene identity.
-- [ ] Expose live resource counts and cumulative disposed counts.
-- [ ] Keep raw Three.js objects out of diagnostics.
+- [ ] Add a bounded JSON-safe command/result/event journal.
+- [ ] Expose current story phase, source fingerprint and state fingerprint.
+- [ ] Expose pending interlude readiness and terminal state.
+- [ ] Correlate story transition id with stage commit id and stage epoch.
+- [ ] Keep DOM nodes and raw Three.js objects out of diagnostics.
 
 ### Validation
 
-- [ ] Add `scripts/validate-stage-build-plan.mjs`.
-- [ ] Add `scripts/validate-atomic-stage-commit.mjs`.
-- [ ] Add `scripts/validate-resource-ledger.mjs`.
-- [ ] Add `scripts/validate-hotspot-stage-epoch.mjs`.
-- [ ] Add `scripts/validate-stage-host-disposal.mjs`.
-- [ ] Wire fixtures into `npm run check` after existing syntax checks.
-- [ ] Add a browser lifecycle smoke for repeated scene loads and final teardown.
+- [ ] Add `scripts/validate-story-source.mjs`.
+- [ ] Add `scripts/validate-save-reconciliation.mjs`.
+- [ ] Add `scripts/validate-story-phase-resume.mjs`.
+- [ ] Add `scripts/validate-story-command-results.mjs`.
+- [ ] Add `scripts/validate-story-stage-transition.mjs`.
+- [ ] Wire the fixtures into `npm run check` after syntax checks.
+- [ ] Add a browser smoke covering reloads in every phase.
 
 ## Required fixture rows
 
 ```txt
-valid-scene-plan-counts
-invalid-descriptor-rejected-before-live-mutation
-old-scene-retained-on-build-failure
-commit-increments-stage-epoch-once
-committed-scene-identity-matches-request
-previous-ledger-disposed-after-commit
-hotspot-ref-includes-stage-epoch
-stale-pick-rejected
-hover-cleared-on-commit
-three-scene-route-has-one-live-stage-ledger
-all-retired-geometries-disposed
-all-retired-materials-disposed
-raf-cancelled-on-dispose
-listeners-removed-on-dispose
-render-target-disposed-once
-renderer-disposed-once
-second-dispose-is-no-op
-stage-journal-json-safe
+fresh-save-starts-exploring-scene-one
+invalid-save-shape-repaired-without-throw
+unknown-scene-id-reconciled
+future-scene-clue-does-not-complete-current-scene
+final-required-inspection-commits-completion-proof
+completion-and-interlude-phase-save-together
+reload-during-interlude-pending-resumes
+reload-during-interlude-open-resumes
+reinspect-after-resume-is-idempotent
+continue-before-ready-rejected
+continue-from-current-phase-accepted-once
+duplicate-continue-is-no-op
+stage-failure-retains-previous-story-state
+stage-success-commits-story-and-stage-identities-together
+final-continue-commits-terminal-state
+reload-terminal-state-restores-terminal-copy
+command-result-journal-json-safe
+state-fingerprints-stable
+```
+
+## Implementation order
+
+```txt
+1. pure source schema, manifest and fingerprint
+2. versioned save envelope and reconciliation
+3. pure story phase reducer and completion proof
+4. typed inspect/continue command results
+5. deterministic interlude readiness and resume projection
+6. terminal state persistence
+7. atomic Stage Commit and Resource Lifecycle companion
+8. composed StoryStageTransition transaction
+9. browser reload smoke across every phase
 ```
 
 ## First implementation slice
 
 ```txt
-pure StageBuildPlan
-  -> descriptor validation
-  -> expected resource counts
-  -> headless fixture
+pure StorySnapshot
+  -> source validator
+  -> save validator/reconciler
+  -> story phase reducer
+  -> headless resume fixture
 ```
 
 ## Second implementation slice
 
 ```txt
-detached scene preparation
-  -> resource ledger
-  -> atomic commit
-  -> previous-ledger disposal
-  -> typed StageCommitResult
+InspectHotspot and ContinueStory commands
+  -> typed results
+  -> completion proof
+  -> interlude readiness
+  -> terminal state
 ```
 
 ## Third implementation slice
 
 ```txt
-stage epoch and canonical hotspot refs
-  -> stale-pick rejection
-  -> host start/pause/resume/dispose
-  -> browser lifecycle smoke
+atomic stage result adapter
+  -> staged story transition
+  -> one committed story/stage observation
+  -> browser route and reload smoke
 ```
 
 ## Validation target
@@ -134,9 +148,9 @@ stage epoch and canonical hotspot refs
 npm run check
 ```
 
-## Dependency note
+## Companion queue
 
-The existing story-source manifest and save-reconciliation plan remains required for canonical gameplay authority. The stage transaction should accept source identity fields additively so the two boundaries compose without coupling render resource ownership to save mutation.
+The existing `TheUnmappedHouse Atomic Stage Commit + Resource Lifecycle Fixture Gate` remains required. It should expose a typed stage result that the story transaction can consume; it must not own story mutation or save writes.
 
 ## Do not do first
 
