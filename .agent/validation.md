@@ -1,6 +1,6 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-10T22-21-17-04-00`
+Timestamp: `2026-07-11T00-00-26-04-00`
 
 ## This pass
 
@@ -18,10 +18,12 @@ browser smoke: not run
 story source fixture: unavailable
 save reconciliation fixture: unavailable
 story phase resume fixture: unavailable
-story command result fixture: unavailable
-story-stage transition fixture: unavailable
+persistence result fixture: unavailable
+story commit protocol fixture: unavailable
+boot rollback fixture: unavailable
+browser storage-failure smoke: unavailable
 repo-local docs pushed to main: yes
-central ledger sync: complete
+central ledger sync: pending
 ```
 
 ## Available validation
@@ -42,118 +44,132 @@ src/stage-kit.js
 src/story-data.js
 ```
 
+It does not execute story rules, persistence effects, StageKit lifecycle or browser behavior.
+
 ## Required next validation gate
 
 ```txt
 node scripts/validate-story-source.mjs
 node scripts/validate-save-reconciliation.mjs
 node scripts/validate-story-phase-resume.mjs
-node scripts/validate-story-command-results.mjs
-node scripts/validate-story-stage-transition.mjs
+node scripts/validate-persistence-results.mjs
+node scripts/validate-story-commit-protocol.mjs
+node scripts/validate-boot-rollback.mjs
 npm run check
 ```
 
-## Required source rows
+## Required persistence capability rows
 
 ```txt
-story-schema-version-present
-story-manifest-id-stable
-story-source-fingerprint-stable
-scene-ids-unique
-hotspot-ids-unique-within-scene
-clue-ownership-valid
-completion-requirements-resolve
-route-order-valid
-source-snapshot-json-safe
+storage-available-admitted
+storage-read-denied-distinguished
+storage-write-denied-distinguished
+quota-failure-distinguished
+serialization-failure-distinguished
+clear-failure-distinguished
+ephemeral-or-fatal-policy-explicit
 ```
 
-## Required save rows
+## Required envelope and revision rows
 
 ```txt
-fresh-save-accepted
+fresh-envelope-commits-revision-one
 legacy-v1-save-migrated
-invalid-json-resets-with-result
-invalid-field-types-repaired
-unknown-scene-id-reconciled
-unknown-hotspot-rows-removed
-unknown-clues-removed
-route-normalized-to-source-order
-log-normalized-and-bounded
+invalid-json-repaired-with-result
 source-mismatch-reconciled
-load-result-json-safe
+successful-write-increments-revision
+stale-expected-revision-rejected
+state-fingerprint-stable
+pending-transaction-json-safe
 ```
 
-## Required story-phase rows
+## Required inspection rows
 
 ```txt
-fresh-state-is-exploring
-final-inspection-commits-completion-proof
-completion-enters-interlude-pending
-readiness-enters-interlude-open
-reload-during-pending-resumes
-reload-during-open-resumes
-reinspect-complete-scene-is-idempotent
-future-scene-clue-does-not-complete-current-scene
-continue-before-ready-rejected
-continue-from-open-accepted-once
-final-continue-enters-terminal
-reload-terminal-restores-terminal-copy
+button-and-raycast-normalize-to-same-command
+accepted-inspection-returns-save-revision
+already-inspected-is-idempotent
+failed-inspection-write-keeps-previous-committed-state
+failed-final-inspection-write-schedules-no-interlude
+successful-final-inspection-persists-phase-and-deadline
+reload-during-interlude-pending-resumes
 ```
 
-## Required command-result rows
+## Required transition rows
 
 ```txt
-inspect-command-has-request-scene-hotspot-source-identity
-side-panel-and-raycast-normalize-to-same-command
-unknown-hotspot-rejected
-stale-scene-command-rejected
-already-inspected-command-no-op
-duplicate-request-id-no-op
 continue-wrong-phase-rejected
-accepted-result-has-before-after-fingerprints
-completion-result-has-proof
-journal-json-safe-and-bounded
+next-story-snapshot-prepared-without-live-mutation
+stage-prepared-before-committed-replacement
+pending-save-written-before-stage-commit
+persistence-prepare-failure-keeps-previous-stage
+stage-failure-retains-previous-finalized-save
+stage-success-finalizes-next-save-revision
+finalize-write-failure-remains-recoverable
+reload-pending-transition-resolves-exactly-once
+story-scene-save-revision-and-stage-epoch-correlate
+final-continue-persists-terminal-state
 ```
 
-## Required story-stage transaction rows
+## Required reset rows
 
 ```txt
-next-story-snapshot-prepared-without-live-mutation
-stage-failure-retains-previous-story-state
-stage-failure-retains-previous-save
-stage-success-commits-story-and-stage-once
-story-scene-id-matches-stage-scene-id
-transition-id-correlates-stage-commit-id
-stage-epoch-recorded
-save-written-after-commit
-repeated-continue-is-no-op
-transaction-result-json-safe
+reset-clear-success-reloads-fresh-state
+reset-already-empty-is-idempotent
+reset-clear-failure-does-not-reload
+reset-result-json-safe
+```
+
+## Required boot/lifecycle rows
+
+```txt
+storage-denial-admitted-before-stage-acquisition
+initial-write-failure-cancels-raf
+initial-write-failure-removes-window-listeners
+initial-write-failure-removes-canvas-listeners
+initial-write-failure-disposes-render-targets
+initial-write-failure-disposes-scene-resources
+initial-write-failure-removes-canvas
+runtime-dispose-idempotent
+remount-owns-one-raf-and-one-listener-set
+```
+
+## Required diagnostics rows
+
+```txt
+load-write-clear-results-json-safe
+command-persistence-stage-correlation-complete
+persistence-journal-bounded
+pending-recovery-visible
+no-dom-node-in-diagnostics
+no-raw-three-object-in-diagnostics
 ```
 
 ## Browser smoke after fixtures
 
 ```txt
-load scene one from a fresh save
-inspect final required hotspot
-reload before 450 ms and confirm progression remains available
-open interlude and reload again
-continue once and confirm scene two and stage identity agree
-attempt duplicate Continue and confirm no second transition
-repeat through scene three
-continue to terminal state
-reload and confirm terminal copy persists
-inject a stage transition failure and confirm the prior story/stage remain committed
-reset with KeyR and confirm a fresh source-compatible save
+load scene one with working storage
+complete scene and reload during interlude pending
+reload during interlude open
+continue once and verify save revision and stage epoch agree
+simulate write denial before an inspection
+simulate quota failure on final inspection and confirm no interlude
+simulate persistence failure before Continue and confirm prior stage remains
+simulate finalization failure and reload into deterministic recovery
+simulate clear failure and confirm no forced reload
+simulate boot write failure and confirm no live canvas or RAF remains
+restore storage and remount once
 confirm visuals, copy, framing and pacing remain unchanged
 ```
 
-## Retained stage lifecycle validation
+## Retained companion validation
 
 ```txt
-stage build-plan fixture
-atomic stage-commit fixture
-resource-ledger fixture
-stage-epoch interaction fixture
-host-disposal fixture
+story source schema and graph fixture
+save shape and reconciliation fixture
+story phase and terminal reload fixture
+atomic StageKit build/commit/discard fixture
+stage resource ledger and disposal fixture
+stage epoch interaction fixture
 repeated three-scene browser lifecycle smoke
 ```
