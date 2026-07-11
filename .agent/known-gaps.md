@@ -1,128 +1,121 @@
 # Known gaps: The Unmapped House
 
-Timestamp: `2026-07-11T10-12-03-04-00`
+Timestamp: `2026-07-11T10-18-05-04-00`
 
 ## Plan ledger
 
-**Goal:** keep all known story, persistence, interaction, transition, render and lifecycle gaps explicit while promoting the Continue transaction findings from general notes to an implementation-ready contract.
+**Goal:** keep all story, persistence, inspection, transition, callback, render-resource, teardown, and validation gaps explicit while promoting runtime-session lifecycle into an implementation-ready contract.
 
-- [x] Preserve manifest and save-admission prerequisites.
-- [x] Preserve inspection-command prerequisites.
-- [x] Expand Continue mutation-order failures.
-- [x] Expand stage preparation and rollback failures.
-- [x] Expand Three.js resource-retirement failures.
-- [x] Expand first-frame and terminal-state failures.
-- [x] Record missing validation rows.
+- [x] Preserve StoryManifest and save-admission prerequisites.
+- [x] Preserve inspection-command and completion-proof prerequisites.
+- [x] Preserve atomic Continue transition and first-frame prerequisites.
+- [x] Add callback lease, session generation, resource retirement, renderer disposal, reset, and teardown gaps.
+- [x] Define the lifecycle fixture gate.
 
-## Story-manifest gaps
+## Story-manifest and persistence gaps
 
-- The exported `scenes` array has no manifest id, schema version or content fingerprint.
-- Nested scene, hotspot, clue, stage, material and post descriptors remain mutable.
-- Scene and hotspot identity, clue ownership and requirement resolution are not validated.
-- Story and StageKit cannot prove they consumed the same immutable definition.
+- No stable story manifest id, schema version, canonical indexes, or definition fingerprint exists.
+- Nested story and render descriptors remain mutable.
+- The `.v1` storage key contains an unversioned raw object.
+- Parsed save data is shallow-merged without field validation.
+- Unknown scenes, hotspots, clues, route entries, and malformed collection types are not reconciled safely.
+- Story revision, save revision, explicit phase, state fingerprint, typed load/save results, and bounded persistence journal are absent.
+- Live state and DOM mutate before storage success is known.
 
-## Save and load gaps
+## Inspection and completion gaps
 
-- The `.v1` key stores an unversioned raw object.
-- Parsed data is shallow-merged without field validation.
-- Unknown scene ids, route ids, inspected ids and clue strings are not reconciled.
-- Story phase, story revision, save revision, manifest fingerprint and state fingerprint are absent.
-- `saveState()` has no typed result, conflict check or storage-failure handling.
-- Live state can advance even when persistence fails.
+- Side-panel and raycast ingress still pass full hotspot descriptors into mutation.
+- No command id, input sequence, expected story revision, expected stage epoch, or typed result exists.
+- Caller-supplied clue grants and copy remain trusted.
+- Completion is derived from global clue strings rather than canonical inspection and clue-grant receipts.
+- Re-reading completed scenes can write new log rows and persistence effects without a typed no-op result.
 
-## Inspection-command gaps
+## Continue and transition gaps
 
-- Side-panel and raycast paths pass full descriptor objects directly into mutation.
-- No canonical hotspot lookup, command id, input sequence, expected story revision or expected stage epoch exists.
-- Caller-supplied text and clue grants are trusted.
-- No accepted, duplicate, rejected, no-op or failed inspection result exists.
-- Completion has no canonical proof receipt.
+- Continue is a direct button callback with no completion-proof admission or duplicate guard.
+- Story identity and route mutate before stage preparation or persistence succeeds.
+- `StageKit.loadScene()` clears the live stage before replacement success.
+- No detached successor group, transition id, rollback result, or durable terminal phase exists.
+- Story, stage, DOM, persistence, and first rendered frame have no shared transaction identity.
 
-## Interlude gaps
+## Runtime-session gaps
 
-- Completion schedules an unretained 450 ms timeout.
-- The callback has no story revision, scene id, stage epoch or runtime-session fence.
-- No timeout lease can be cancelled during reset, disposal or a future overlapping transition.
-- Interlude pending/open state is not durable.
-- Multiple completion evaluations have no duplicate scheduling result.
+- No `sessionId`, monotonic session generation, or lifecycle state machine exists.
+- The browser runtime cannot report `running`, `stopping`, `stopped`, `disposing`, `disposed`, or `failed`.
+- Public interaction paths are not fenced by a current session generation.
+- No detached session snapshot, stop result, disposal result, or lifecycle journal exists.
+- Stop and dispose idempotency cannot be proven.
 
-## Continue-admission gaps
+## Frame-loop gaps
 
-- Continue is a direct button callback.
-- No command id, expected story revision, expected stage epoch or completion proof is supplied.
-- No explicit policy distinguishes next-scene, terminal, duplicate, stale and blocked commands.
-- Repeated button presses have no typed no-op or duplicate result.
+- The recursive RAF id is not retained.
+- No cancel path exists.
+- No running/disposed check prevents queued callbacks from rendering or recursing.
+- No stale-generation rejection exists.
+- Frame ids and stage epochs are absent from render observations.
 
-## Story-transition gaps
+## Listener gaps
 
-- `currentScene`, `state.sceneId`, route and notebook mutate before stage preparation.
-- Interlude DOM hides before transition success.
-- No immutable transition plan or candidate StorySnapshot exists.
-- Story, DOM, persistence and stage changes have no shared transaction id.
-- No monotonic story revision or transition revision exists.
-- No compensation policy exists for partial failure.
+- Window resize is registered through an anonymous function.
+- Canvas mousemove and click are registered through anonymous functions.
+- Global keydown is registered through an anonymous function.
+- Exact target/type/function/options tuples are not retained.
+- Listeners cannot be deterministically removed or counted.
+- Old hotspot-button closures are not fenced by session generation or story revision.
 
-## Stage-preparation gaps
+## Timeout gaps
 
-- `StageKit.loadScene()` clears the live stage before constructing the replacement.
-- Background, fog, camera, post uniforms and children mutate directly on the live scene.
-- No detached stage group is prepared and validated first.
-- A failure can leave a partial replacement scene.
-- No preparation result reports resource counts, hotspot bindings or descriptor identity.
-- No rollback can restore the previous stage.
+- The 450 ms interlude timeout handle is not retained.
+- The timeout has no scene id, story revision, completion proof, or session generation.
+- Reset, transition, stop, and dispose cannot cancel it deterministically.
+- A stale queued callback has no typed no-op path.
 
-## Resource-retirement gaps
+## Scene-resource gaps
 
-- `stageGroup.clear()` detaches objects without disposing geometry or materials.
-- `this.materials = []` loses tracked scene-material references before retirement.
-- Hotspot geometries and transparent materials are not disposed.
-- No retired-resource ledger identifies the previous stage epoch.
-- No idempotent scene-resource disposal contract exists.
-- No full `StageKit.dispose()` retires renderer, render target, post material, post geometry, listeners or RAF.
+- Scene loads have no `stageEpoch`.
+- `stageGroup.clear()` detaches objects without disposing geometries or materials.
+- `this.materials = []` discards tracked shader-material references before retirement.
+- Hotspot materials are never included in the material list.
+- Layer, prop, and hotspot resources have no inventory or ownership metadata.
+- Predecessor resource retirement is not correlated to a committed successor or first visible frame.
+- Preparation failure can leave a partial live stage and no rollback resource graph.
 
-## Persistence-commit gaps
+## Renderer-resource gaps
 
-- Persistence occurs after story and stage mutation.
-- A failed write can leave visible and durable state divergent.
-- No expected save revision or conflict result exists.
-- No durable transition receipt correlates save revision to story revision and stage epoch.
-- No recovery policy exists for save success followed by stage commit failure.
+- The WebGL render target is never disposed.
+- Post-plane geometry and post material are never disposed.
+- The renderer is never disposed.
+- The renderer canvas is never explicitly removed.
+- WebGL context retirement is not requested or reported.
+- Remaining resource counts cannot be observed after teardown.
 
-## Frame-acknowledgement gaps
+## Reset gaps
 
-- Recursive RAF frames have no ids.
-- Stage epochs are absent.
-- Continue receives no first-rendered-frame receipt.
-- Debug output cannot distinguish prepared, committed, visible, failed or rolled back.
-- Camera, hotspots, post uniforms and story DOM have no shared committed-frame fingerprint.
-
-## Terminal-state gaps
-
-- Final Continue changes only interlude copy.
-- No durable terminal phase, terminal receipt or terminal transition revision is stored.
-- Repeated final Continue presses are not classified.
-- Reset and reload behavior from terminal state is not explicitly specified.
+- `KeyR` clears storage and calls `location.reload()`.
+- No stop or disposal receipt precedes reload.
+- Reset does not prove that callbacks, listeners, timeouts, resources, or context ownership were retired.
+- No new session generation or first post-reset frame receipt exists.
+- Lifecycle correctness depends on page destruction rather than a testable domain.
 
 ## Validation gaps
 
-- `npm run check` is syntax-only.
-- No Continue admission fixture exists.
-- No detached stage preparation or injected-failure fixture exists.
-- No story/save/stage rollback fixture exists.
-- No geometry/material disposal-count fixture exists.
-- No first-frame acknowledgement fixture exists.
-- No terminal idempotency fixture exists.
-- No stale timeout or stale Continue fixture exists.
-- No browser scene-transition smoke exists.
+- `npm run check` performs syntax checks only.
+- No StoryManifest, StorySnapshot, save-admission, migration, inspection, transition, or first-frame fixtures exist.
+- No frame-loop cancellation fixture exists.
+- No listener or timeout retirement fixture exists.
+- No stage resource census or disposal fixture exists.
+- No renderer/canvas/context teardown fixture exists.
+- No reset-generation or stale-callback fixture exists.
+- No browser teardown smoke exists.
 
 ## Deferred work
 
 ```txt
-new rooms or story branches
+new story rooms or branches
 inventory
 audio
 renderer replacement
-shader redesign
+new shader work
 camera retuning
 visual polish
 ```
