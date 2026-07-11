@@ -1,111 +1,111 @@
 # Next steps: The Unmapped House
 
-Timestamp: `2026-07-11T01-38-28-04-00`
+Timestamp: `2026-07-11T04-00-07-04-00`
 
 ## Goal
 
-Preserve the current three-scene story, copy, pacing and visual output while making scene completion, delayed interludes, Continue admission, transitions and terminal progress explicit, durable and reload-safe.
+Preserve the current three-scene story, copy, pacing and visual output while making Continue a typed transaction that commits durable story state, StageKit resources, DOM projection and the first rendered frame as one recoverable operation.
 
 ## Plan ledger
 
-### Durable snapshot prerequisite
+### Prerequisites
 
 - [ ] Add a versioned `StorySnapshot` with manifest identity, save revision and state fingerprint.
-- [ ] Validate scene, hotspot, clue, inspection, route and log fields.
 - [ ] Put localStorage behind an injected adapter with typed load, write and clear results.
-- [ ] Reconcile legacy, corrupt, unavailable and source-mismatched saves explicitly.
+- [ ] Add explicit `exploring`, `interlude_pending`, `interlude_open`, `transitioning`, `recovering` and `terminal` phases.
+- [ ] Normalize Continue into a command with request id, expected scene, phase, story revision and stage epoch.
 
-### Story phase authority
+### Transition admission
 
-- [ ] Add phases: `exploring`, `interlude_pending`, `interlude_open`, `transitioning`, `recovering` and `terminal`.
-- [ ] Persist phase, current scene, completion proof and terminal state.
-- [ ] Make scene completion evidence scene-scoped and source-versioned.
-- [ ] Reject impossible phase/snapshot combinations during load reconciliation.
+- [ ] Accept Continue only from committed `interlude_open` state with scene-scoped completion proof.
+- [ ] Reject scene, phase, story-revision and stage-epoch mismatches.
+- [ ] Make duplicate Continue requests idempotent.
+- [ ] Create a stable `transitionId` before any mutation or side effect.
 
-### Interlude authority
+### Candidate story state
 
-- [ ] Replace direct `setTimeout` use with an injected timer adapter.
-- [ ] Persist `interludeTargetSceneId`, `interludeReadyAt`, source command id and save revision.
-- [ ] Retain timer ids and cancel them on transition, reset and dispose.
-- [ ] On boot, open an already-ready interlude or schedule only the remaining delay.
-- [ ] Ignore stale timer callbacks whose scene, phase, revision or runtime epoch no longer matches.
+- [ ] Derive the next story snapshot without mutating the committed snapshot.
+- [ ] Validate target scene, route, log and terminal transition.
+- [ ] Keep the current interlude and scene committed until the transaction succeeds.
 
-### Continue admission
+### Detached stage preparation
 
-- [ ] Normalize UI activation into a canonical `ContinueStory` command.
-- [ ] Include request id, origin, expected scene, expected phase and expected save revision.
-- [ ] Accept Continue only from `interlude_open` with valid completion proof.
-- [ ] Return accepted, rejected, duplicate or no-op results.
-- [ ] Make repeated Continue commands idempotent.
-- [ ] Persist terminal state on the final Continue.
+- [ ] Split `StageKit.loadScene()` into `prepareScene`, `commitPreparedScene` and `discardPreparedScene`.
+- [ ] Validate descriptors before clearing or replacing live resources.
+- [ ] Build the replacement in a detached group with an acquisition ledger.
+- [ ] Return typed preparation success or failure with resource counts.
 
-### Projection and stage correlation
+### Atomic commit
 
-- [ ] Project interlude visibility and button availability from the committed phase.
-- [ ] Correlate phase revision, story fingerprint, stage commit id and stage epoch.
-- [ ] Prevent a story transition from becoming visible before durable and stage commits agree.
-- [ ] Keep the previous committed scene when persistence or stage preparation fails.
-- [ ] Expose bounded JSON-safe phase, timer, command and transition rows.
+- [ ] Persist the candidate story snapshot with expected-revision checking.
+- [ ] Atomically swap the prepared stage only after durable success.
+- [ ] Project DOM only from the committed story snapshot.
+- [ ] Correlate story revision, transition id, stage epoch and stage commit id.
+- [ ] Acknowledge the first frame that rendered the committed stage.
+
+### Rollback and retirement
+
+- [ ] Discard prepared resources when persistence fails.
+- [ ] Restore prior story, interlude and stage if stage commit fails.
+- [ ] Keep prior stage resources alive until the replacement first frame is acknowledged.
+- [ ] Dispose retired geometry, materials and hotspot resources exactly once.
+- [ ] Return `accepted`, `rejected`, `duplicate`, `failed` or `rolled_back` results.
 
 ### Lifecycle
 
-- [ ] Give the browser story runtime an explicit session id and runtime epoch.
 - [ ] Retain and cancel RAF and timer ids.
 - [ ] Remove keyboard, resize, pointer and click listeners on dispose.
-- [ ] Add idempotent `StageKit.dispose()` and runtime disposal.
-- [ ] Dispose retired geometries, materials, targets and renderer resources.
+- [ ] Add idempotent runtime and `StageKit.dispose()` operations.
+- [ ] Reject load, pick and frame operations after terminal disposal.
 
 ### Validation
 
-- [ ] Add `scripts/validate-story-phase-recovery.mjs`.
-- [ ] Add `scripts/validate-interlude-timer.mjs`.
-- [ ] Add `scripts/validate-continue-admission.mjs`.
-- [ ] Add `scripts/validate-terminal-reload.mjs`.
-- [ ] Add `scripts/validate-phase-stage-correlation.mjs`.
+- [ ] Add `scripts/validate-stage-preparation.mjs`.
+- [ ] Add `scripts/validate-story-stage-transition.mjs`.
+- [ ] Add `scripts/validate-transition-rollback.mjs`.
+- [ ] Add `scripts/validate-stage-resource-retirement.mjs`.
+- [ ] Add `scripts/validate-first-frame-ack.mjs`.
 - [ ] Wire behavioral fixtures into `npm run check` after syntax checks.
-- [ ] Add browser reload smoke for pending, open, transitioning and terminal phases.
+- [ ] Add browser fault-injection smoke for stage and storage failure.
 
 ## Required fixture rows
 
 ```txt
-fresh-scene-starts-exploring
-final-inspection-commits-interlude-pending
-reload-before-deadline-schedules-remaining-delay
-reload-after-deadline-opens-interlude-immediately
-completed-scene-never-reloads-with-hidden-progress
-already-inspected-click-does-not-duplicate-timer
-stale-timer-scene-rejected
-stale-timer-save-revision-rejected
-reset-cancels-pending-interlude
-continue-before-completion-rejected
-continue-before-interlude-open-rejected
-continue-from-open-interlude-accepted-once
-duplicate-continue-is-idempotent
-transition-failure-restores-prior-phase-and-stage
-final-continue-persists-terminal-state
-terminal-reload-restores-terminal-projection
-phase-command-timer-stage-rows-json-safe
+invalid-descriptor-rejected-before-live-clear
+stage-prepare-failure-keeps-prior-story-and-stage
+save-failure-discards-prepared-stage
+stage-commit-failure-restores-prior-stage
+projection-failure-remains-recoverable
+first-frame-timeout-is-observable
+accepted-transition-correlates-story-save-stage-frame
+prior-stage-disposed-after-first-frame-only
+repeated-continue-does-not-skip-scene
+final-continue-commits-terminal-once
+reload-after-accepted-transition-restores-next-scene
+reload-after-failed-transition-restores-prior-scene
+transition-journal-json-safe-and-bounded
 ```
 
 ## Implementation order
 
 ```txt
-1. versioned durable StorySnapshot and load reconciliation
-2. pure story-phase reducer and completion proof
-3. injected timer adapter and persisted interlude deadline
-4. boot phase recovery
-5. typed Continue command, admission and result
-6. durable transition plus StageKit prepare/commit/discard
-7. persisted terminal state
-8. lifecycle teardown and JSON-safe journals
-9. Node fixtures and browser reload smoke
+1. versioned durable StorySnapshot and typed persistence results
+2. explicit phase reducer and Continue admission
+3. pure transition candidate
+4. detached StageKit preparation
+5. durable story write with expected revision
+6. atomic stage and DOM commit
+7. first-frame acknowledgement
+8. prior-stage retirement and disposal
+9. rollback, lifecycle and bounded diagnostics
+10. Node fixtures and browser fault smoke
 ```
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Phase Recovery Authority
-+ Interlude/Continue Admission Fixture Gate
+TheUnmappedHouse Atomic Story/Stage Transition Authority
++ Prepare/Commit/Discard and First-Frame Fixture Gate
 ```
 
 ## Do not do first
