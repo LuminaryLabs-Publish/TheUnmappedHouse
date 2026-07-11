@@ -1,36 +1,36 @@
 # START HERE: The Unmapped House
 
-Last updated: `2026-07-11T15-30-50-04-00`
+Last updated: `2026-07-11T17-10-50-04-00`
 
 ## Summary
 
 `TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three authored scenes, nine hotspots, browser persistence, a fixed 16:9 shell, and a descriptor-driven Three.js stage.
 
-The current audit isolates StorySnapshot startup authority. `loadState()` parses one raw localStorage value and shallow-merges arbitrary fields over defaults. Unknown scenes, forged clues, impossible routes, unknown inspections, invalid field types, and oversized logs can enter the candidate. `StageKit` then allocates WebGL resources, installs listeners, and starts its recursive RAF before UI projection or the startup storage write proves the candidate is usable.
+The current audit isolates render-surface resolution authority. The CSS aspect frame is deterministic, but `StageKit` directly multiplies the live viewport by device pixel ratio for both the renderer drawing buffer and a two-sample post target. Boot performs an initial design-sized allocation and then immediately resizes it. Later resize events synchronously reallocate surfaces with no pixel budget, quality fallback, resize generation, rollback, or visible-frame acknowledgement.
 
-Malformed JSON is silently converted to defaults and then overwritten during the unconditional startup save. Semantically invalid JSON can crash after the renderer is already live. An unknown `sceneId` can show scene one while persistence keeps the unknown id. Storage write failure can occur after stage and UI state are visible with no rollback.
+A `3840 x 2160` viewport at DPR `2` requests a `7680 x 4320` post target, more than 33 million pixels before multisample and depth overhead.
 
 ## Plan ledger
 
-**Goal:** admit one versioned, manifest-bound, canonical StorySnapshot before any renderer, stage, UI, listener, RAF, or persistence mutation becomes authoritative.
+**Goal:** preserve the authored 16:9 composition while making internal renderer and post-target resolution bounded, revisioned, recoverable, observable, and frame-proven.
 
 - [x] Compare all ten accessible `LuminaryLabs-Publish` repositories with the central ledger.
 - [x] Exclude `TheCavalryOfRome`.
 - [x] Confirm all nine eligible repositories have central ledger and root `.agent` state.
 - [x] Select only `TheUnmappedHouse` under the oldest eligible fallback rule.
-- [x] Trace storage read, parse, shallow merge, scene fallback, StageKit allocation, live scene construction, UI projection, startup write, reset, and reload.
-- [x] Identify the interaction loop, domains, implemented kits, and offered services.
-- [x] Define manifest admission, versioned envelope, migration, semantic validation, reconciliation, non-destructive rejection, bootstrap preparation, rollback, first-frame, result, journal, and fixture boundaries.
-- [x] Add timestamped architecture, render, gameplay, interaction, StorySnapshot, deploy, tracker, and turn-ledger records.
+- [x] Trace aspect framing, DPR sampling, renderer sizing, target sizing, resize admission, post composition, and RAF submission.
+- [x] Identify all active domains, 24 implemented kits, and offered services.
+- [x] Define pixel budget, resolution policy, resize generation, preparation, commit, fallback, rollback, retirement, observation, and fixture boundaries.
+- [x] Add timestamped architecture, render, gameplay, interaction, render-surface, deploy, tracker, and turn-ledger records.
 - [x] Refresh all required root `.agent` state.
 - [x] Change no runtime source.
 - [x] Push only to `main` and create no branch or pull request.
-- [ ] Implement the prerequisite StoryManifest and StorySnapshot startup authority.
+- [ ] Implement the prerequisite story authorities, runtime lifecycle, and render-surface transaction.
 
 ## Read this first
 
 ```txt
-.agent/trackers/2026-07-11T15-30-50-04-00/project-breakdown.md
+.agent/trackers/2026-07-11T17-10-50-04-00/project-breakdown.md
 .agent/current-audit.md
 .agent/next-steps.md
 .agent/known-gaps.md
@@ -41,99 +41,95 @@ Malformed JSON is silently converted to defaults and then overwritten during the
 ## Current audit set
 
 ```txt
-.agent/architecture-audit/2026-07-11T15-30-50-04-00-story-snapshot-startup-admission-dsk-map.md
-.agent/render-audit/2026-07-11T15-30-50-04-00-invalid-save-bootstrap-stage-projection-gap.md
-.agent/gameplay-audit/2026-07-11T15-30-50-04-00-save-hydration-scene-clue-route-divergence-loop.md
-.agent/interaction-audit/2026-07-11T15-30-50-04-00-boot-reset-load-result-admission-map.md
-.agent/story-snapshot-audit/2026-07-11T15-30-50-04-00-versioned-load-reconciliation-contract.md
-.agent/deploy-audit/2026-07-11T15-30-50-04-00-story-snapshot-bootstrap-fixture-gate.md
+.agent/architecture-audit/2026-07-11T17-10-50-04-00-render-surface-resolution-dsk-map.md
+.agent/render-audit/2026-07-11T17-10-50-04-00-dpr-multisample-target-budget-gap.md
+.agent/gameplay-audit/2026-07-11T17-10-50-04-00-resize-reallocation-visible-story-loop.md
+.agent/interaction-audit/2026-07-11T17-10-50-04-00-resize-command-surface-result-map.md
+.agent/render-surface-audit/2026-07-11T17-10-50-04-00-resolution-budget-recovery-contract.md
+.agent/deploy-audit/2026-07-11T17-10-50-04-00-render-resolution-fixture-gate.md
 ```
 
 ## Main finding
 
 ```txt
-raw localStorage value
-  -> broad read/parse catch
-  -> shallow merge without schema or semantic admission
-  -> currentScene resolves separately from state.sceneId
-  -> StageKit allocates renderer, target, canvas, listeners and RAF
-  -> live scene resources are built
-  -> UI assumes valid field shapes
-  -> mutable state is written back unconditionally
+browser dimensions and DPR
+  -> compute CSS 16:9 frame
+  -> set renderer pixel ratio
+  -> resize renderer drawing buffer
+  -> resize multisampled post target
+  -> continue RAF
 ```
 
 Missing evidence:
 
 ```txt
-StoryManifest id, schema and fingerprint
-save envelope version
-raw-read and parse results
-migration receipts
-semantic admission result
-manifest-aware reconciliation receipts
-story and save revisions
-canonical snapshot fingerprint
-corrupt-save quarantine
-bootstrap generation and stage epoch
+immutable resolution policy
+pixel and capability budget
+resize command and generation
+surface revision
+candidate preparation result
+allocation failure classification
+quality fallback receipt
+atomic surface commit
 rollback result
-first-bootstrap-frame acknowledgement
-typed save and clear results
-bounded persistence journal
+stale resize rejection
+resource retirement receipt
+actual renderer and target dimensions
+first visible frame surface acknowledgement
+bounded render-surface journal
 ```
 
 ## Required next parent domain
 
 ```txt
-the-unmapped-house-story-snapshot-startup-authority-domain
+the-unmapped-house-render-surface-resolution-authority-domain
 ```
 
 Required composition:
 
 ```txt
-story-manifest-schema-kit
-story-manifest-index-kit
-story-manifest-fingerprint-kit
-story-save-envelope-kit
-story-save-raw-read-kit
-story-save-parse-kit
-story-save-migration-kit
-story-snapshot-schema-kit
-story-snapshot-semantic-admission-kit
-story-snapshot-reconciliation-kit
-story-snapshot-fingerprint-kit
-story-load-result-kit
-story-save-result-kit
-corrupt-save-quarantine-kit
-bootstrap-candidate-kit
-bootstrap-stage-preparation-kit
-bootstrap-commit-kit
-bootstrap-rollback-kit
-first-bootstrap-frame-ack-kit
-story-persistence-journal-kit
-story-snapshot-fixture-kit
-browser-bootstrap-failure-smoke-kit
+display-frame-observation-kit
+device-pixel-ratio-admission-kit
+render-resolution-policy-kit
+render-pixel-budget-kit
+resize-command-kit
+resize-coalescing-kit
+resize-generation-kit
+render-surface-revision-kit
+render-surface-plan-kit
+renderer-buffer-preparation-kit
+post-target-preparation-kit
+allocation-failure-classification-kit
+render-quality-fallback-kit
+render-surface-commit-kit
+render-surface-rollback-kit
+stale-resize-result-rejection-kit
+render-surface-resource-retirement-kit
+visible-frame-surface-ack-kit
+render-surface-observation-kit
+render-surface-journal-kit
+render-resolution-fixture-kit
+browser-resize-dpr-smoke-kit
 ```
 
-## Required startup invariant
+## Required invariant
 
 ```txt
-No rejected or failed save candidate may:
-  overwrite the raw stored payload
-  mutate the committed StorySnapshot
-  expose a partial stage or UI projection
-  leave listeners, RAF chains or WebGL resources alive
-  publish a false ready state
-  advance story or save revisions
+No surface revision may become authoritative unless CSS frame, camera aspect,
+renderer drawing buffer, post target, post texture binding, budget decision,
+and first visible frame all reference the same admitted plan.
+
+Failed or superseded preparation must leave the predecessor surface visible.
 ```
 
 ## Dependency order
 
 ```txt
-1. Versioned StoryManifest and canonical indexes
-2. StorySnapshot startup admission, migration, reconciliation and typed persistence
-3. Inspection Command Authority and scene-completion proof
-4. Atomic Continue transition and first-frame acknowledgement
-5. Runtime session lifecycle and resource retirement
+1. Versioned StoryManifest and StorySnapshot startup authority
+2. Inspection Command Authority and scene-completion proof
+3. Atomic Continue transition and first-frame acknowledgement
+4. Runtime session lifecycle and resource retirement
+5. Render Surface Resolution Authority
 6. Committed-frame diagnostics
 ```
 
@@ -149,10 +145,10 @@ branch created: no
 pull request created: no
 npm run check: not run
 browser smoke: not run
-StorySnapshot admission fixtures: unavailable
-migration/reconciliation fixtures: unavailable
-bootstrap rollback fixtures: unavailable
-first-bootstrap-frame fixture: unavailable
+render-resolution fixtures: unavailable
+allocation-failure fixtures: unavailable
+resize-generation fixtures: unavailable
+visible-frame surface fixture: unavailable
 ```
 
-Do not claim startup, persistence, migration, reconciliation, recovery, or first-frame correctness until the documented fixture gate passes.
+Do not claim bounded high-DPI rendering, resize recovery, allocation fallback, or surface/frame correlation until the documented fixture gate passes.
