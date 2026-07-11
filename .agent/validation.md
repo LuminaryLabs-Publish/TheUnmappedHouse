@@ -26,7 +26,8 @@ persistence rollback fixture: unavailable
 dual-ingress parity fixture: unavailable
 browser dual-ingress smoke: unavailable
 repo-local docs pushed to main: yes
-central ledger sync: pending until repo-local audit completion
+central ledger sync: complete
+central internal change log: complete
 ```
 
 ## Available validation
