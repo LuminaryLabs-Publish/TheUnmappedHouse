@@ -1,6 +1,6 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-11T17-10-50-04-00`
+Timestamp: `2026-07-11T18-38-45-04-00`
 
 ## This pass
 
@@ -16,17 +16,28 @@ branch created: no
 pull request created: no
 npm run check: not run
 browser smoke: not run
-render-resolution policy fixture: unavailable
-pixel-budget fixture: unavailable
-resize-generation fixture: unavailable
-allocation-failure fixture: unavailable
-fallback and rollback fixture: unavailable
-picking-parity fixture: unavailable
-visible-frame surface fixture: unavailable
+context-state fixture: unavailable
+context-loss admission fixture: unavailable
+resource-generation fixture: unavailable
+restore rollback fixture: unavailable
+input-suspension fixture: unavailable
+recovered-frame fixture: unavailable
+repeated-cycle resource fixture: unavailable
 repo-local docs pushed to main: yes
-central ledger sync: pending during repo-local update
-central internal change log: pending during repo-local update
+central ledger sync: complete after central update
+central internal change log: complete after central update
 ```
+
+## Plan ledger
+
+**Goal:** define the executable evidence required before WebGL context loss, resource rebuilding, resumed interaction, and recovered-frame parity can be claimed.
+
+- [x] Record the current syntax-only validation boundary.
+- [x] Define context-state and generation fixtures.
+- [x] Define resource rebuild, rollback, and stale-result fixtures.
+- [x] Define interaction suspension and story-preservation fixtures.
+- [x] Define browser and deployed-Page recovery evidence.
+- [ ] Implement and execute the validation gate.
 
 ## Available validation
 
@@ -39,123 +50,169 @@ src/stage-kit.js
 src/story-data.js
 ```
 
-It does not execute display observation, DPR admission, resolution policy, pixel budgeting, renderer/target preparation, resize coalescing, allocation failure, fallback, rollback, surface retirement, input parity, or visible-frame acknowledgement.
+It does not instantiate a WebGL renderer, force context loss, restore a context, rebuild GPU resources, inspect context generations, fence input, measure resource counts, or acknowledge a recovered visible frame.
 
-## Required render-surface validation gate
+## Required validation commands
 
 ```txt
-node scripts/validate-render-resolution-policy.mjs
-node scripts/validate-render-surface-transactions.mjs
-node scripts/validate-render-surface-failures.mjs
-node scripts/validate-render-surface-observations.mjs
+node scripts/validate-context-state.mjs
+node scripts/validate-context-resource-generations.mjs
+node scripts/validate-context-recovery-failures.mjs
+node scripts/validate-context-input-admission.mjs
+node scripts/validate-context-observations.mjs
 npm run check
 ```
 
 Recommended aggregate:
 
 ```txt
-npm run validate:render-surface
+npm run validate:webgl-context-recovery
 ```
 
-## Required policy rows
+## Required context-state rows
 
 ```txt
-design-aspect-is-16-by-9
-css-frame-wide-window-contained
-css-frame-tall-window-contained
-fractional-dimensions-canonicalized
-observed-dpr-separated-from-admitted-dpr
-quality-tier-declares-max-dpr
-quality-tier-declares-max-long-edge
-quality-tier-declares-max-pixel-count
-quality-tier-declares-samples
-fallback-chain-acyclic-and-deterministic
-highest-valid-tier-selected
-oversized-plan-rejected-or-falls-back
+context-state-transition-table-valid
+context-loss-command-idempotent
+repeated-loss-does-not-advance-generation
+restore-command-admitted-only-from-valid-state
+context-generation-monotonic
+resource-generation-bound-to-context-generation
+ready-requires-complete-resource-registry
+ready-requires-recovered-frame-ack
+failed-and-disposed-never-report-ready
+late-context-event-after-dispose-rejected
 ```
 
-## Required transaction rows
+## Required loss and suspension rows
 
 ```txt
-boot-and-resize-use-same-command-path
-resize-generation-monotonic
-duplicate-resize-idempotent
-rapid-resize-coalesces-to-latest
-stale-plan-cannot-commit
-predecessor-remains-committed-during-prepare
-renderer-buffer-prepared-before-commit
-post-target-prepared-before-commit
-renderer-and-target-actual-dimensions-match-plan
-post-material-samples-current-target
-css-camera-renderer-target-commit-atomically
-surface-revision-advances-once
+accepted-loss-suspends-ready-frame-commit
+accepted-loss-preserves-story-snapshot
+accepted-loss-preserves-stage-and-surface-descriptors
+raycast-hover-rejected-while-lost
+raycast-click-rejected-while-lost
+side-panel-inspection-loss-policy-explicit
+continue-rejected-while-lost-or-restoring
+completion-timeout-fenced-during-loss
+resize-observation-retained-without-resource-commit
+reset-retry-dispose-capabilities-explicit
 ```
 
-## Required failure and recovery rows
+## Required resource-generation rows
 
 ```txt
-capability-rejection-classified
-memory-like-allocation-failure-classified
-context-failure-classified
-unknown-failure-classified
-partial-candidate-resources-disposed
-failed-required-preparation-keeps-predecessor
-fallback-tier-attempted-in-declared-order
-fallback-result-reports-actual-values
-exhausted-fallback-publishes-failure
-failed-plan-does-not-change-story-state
-superseded-surface-retires-after-frame-ack
-retirement-failure-reported
+renderer-state-reinitialized-for-candidate-generation
+render-target-storage-rebuilt
+post-material-rebound-to-rebuilt-target
+stage-material-programs-ready
+post-material-program-ready
+stage-geometries-ready
+hotspot-geometries-and-materials-ready
+picking-set-revision-matches-stage
+complete-resource-registry-required-before-commit
+same-surface-revision-does-not-bypass-resource-rebuild
 ```
 
-## Required interaction and frame rows
+## Required failure and rollback rows
 
 ```txt
-hotspot-hover-matches-committed-css-frame
-hotspot-click-matches-committed-camera-and-surface
-interlude-remains-visible-across-resize
-continue-after-resize-references-current-stage-epoch
-first-visible-frame-has-surface-revision
-first-visible-frame-has-resize-generation
-first-visible-frame-has-renderer-dimensions
-first-visible-frame-has-target-dimensions
-first-visible-frame-has-quality-tier
-surface-observation-detached-json-safe
-surface-journal-bounded
+partial-renderer-rebuild-disposed
+partial-target-rebuild-disposed
+partial-material-rebuild-disposed
+partial-scene-rebuild-disposed
+failed-candidate-never-becomes-visible
+stale-session-restore-result-rejected
+stale-stage-restore-result-rejected
+stale-surface-restore-result-rejected
+newer-loss-supersedes-active-restore
+rollback-reports-all-resource-rows
+exhausted-recovery-policy-enters-failed
+```
+
+## Required recovered-frame rows
+
+```txt
+first-recovered-frame-has-story-revision
+first-recovered-frame-has-stage-epoch
+first-recovered-frame-has-surface-revision
+first-recovered-frame-has-context-generation
+first-recovered-frame-has-resource-generation
+first-recovered-frame-has-target-generation
+first-recovered-frame-has-hotspot-set-revision
+first-recovered-frame-uses-rebuilt-post-target
+first-post-recovery-input-cites-recovered-frame
+second-frame-retains-active-generation
+```
+
+## Required repeated-cycle rows
+
+```txt
+three-loss-restore-cycles-complete
+live-renderer-count-stable
+live-target-count-stable
+live-material-count-stable
+live-geometry-count-stable
+listener-count-stable
+raf-chain-count-stable
+context-journal-bounded
+context-observation-detached-json-safe
 ```
 
 ## Browser matrix
 
 ```txt
+Chrome current, WebGL2 available
+Chrome current, WebGL1 fallback if supported
+Firefox current
+Safari current where extension-based loss is available
 1280x720 DPR 1
-1920x1080 DPR 1
 1920x1080 DPR 2
-2560x1440 DPR 1.5
-3840x2160 DPR 2
-portrait window
-narrow landscape window
-fractional zoom level
-rapid resize storm
-DPR transition between displays
-injected renderer-buffer preparation failure
-injected post-target preparation failure
-exhausted fallback chain
+3840x2160 DPR 2 under admitted surface policy
+context loss during idle frame
+context loss during resize
+context loss during interlude delay
+context loss during scene-transition preparation
+context loss during page visibility change
+context restore after repeated loss
+context event after runtime disposal
 ```
 
 ## Browser smoke
 
 ```txt
-boot and capture CSS frame, renderer buffer, target, tier, generation and revision
-verify 4K/high-DPI input stays within declared pixel budget
-resize rapidly and verify only the latest generation commits
-change DPR and verify one revisioned commit
-inject target failure and verify predecessor remains visible
-verify explicit fallback reports actual applied dimensions
-click and hover hotspots after each committed resize
-verify first visible frame acknowledges the committed surface revision
-verify superseded resources retire only after acknowledgement
+boot and capture story, stage, surface, context, resource and frame identities
+force WebGL context loss
+verify context state becomes LOST
+verify no ready frames commit while lost
+verify render-dependent input is fenced
+verify story snapshot does not advance from rejected input
+restore context under the declared policy
+verify context and resource generations advance exactly once
+verify renderer, target, post binding, scene resources and hotspots rebuild
+verify first recovered frame carries all active identities
+verify hotspot input resumes only after recovered-frame acknowledgement
+repeat loss/restore three times and compare live resource/listener counts
+dispose the runtime and verify later context events are rejected
+```
+
+## Deployment evidence
+
+```txt
+commit SHA
+GitHub Pages route URL
+browser and GPU/backend details
+initial context/resource generations
+context-loss result
+suspended capabilities
+resource rebuild rows
+rollback rows for injected failure
+first recovered frame id
+story/stage/surface/context parity record
+resource counts before and after repeated cycles
+bounded logs or artifact references
 ```
 
 ## Validation claim
 
-This pass documents the proof surface for bounded DPR admission, pixel budgeting, resize generation, candidate preparation, allocation fallback, rollback, resource retirement, input parity, and visible-frame correlation. It does not claim that those runtime authorities or fixtures are implemented.
+This pass documents the proof surface for context state, context/resource generations, render suspension, input fencing, complete resource rebuilding, rollback, stale-result rejection, story preservation, repeated-cycle resource bounds, and recovered-frame correlation. It does not claim those runtime authorities or fixtures are implemented.
