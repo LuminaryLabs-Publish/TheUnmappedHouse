@@ -1,81 +1,98 @@
 # Known gaps: The Unmapped House
 
-Timestamp: `2026-07-10T22-21-17-04-00`
+Timestamp: `2026-07-11T00-00-26-04-00`
+
+## Persistence capability gaps
+
+- Storage availability is not admitted before runtime construction.
+- `loadState()` collapses invalid JSON, read denial and other access errors into one silent fresh-state fallback.
+- `saveState()` calls `localStorage.setItem()` without catch, result or reason.
+- Reset calls `localStorage.removeItem()` without catch, result or reason.
+- There is no explicit ephemeral-versus-fatal policy when persistence is unavailable.
+
+## Durable commit gaps
+
+- The save has no revision or state fingerprint.
+- Callers cannot know which story snapshot was durably committed.
+- Story mutation, timer scheduling and DOM projection occur before inspection writes.
+- Story mutation, StageKit replacement and DOM projection occur before Continue writes.
+- A failed write can leave the visible story ahead of the durable save.
+- A failed final inspection write can still open the delayed interlude.
+- A failed Continue write can show the next scene until reload returns to the previous scene.
+- No pending transition envelope supports interrupted scene-change recovery.
+- No compare-and-set or expected-revision rule rejects stale writes.
 
 ## Save-envelope gaps
 
 - The save has no schema version, story manifest id or source fingerprint.
-- `loadState()` shallow-merges arbitrary parsed JSON over the initial object.
+- Parsed JSON is shallow-merged over the initial object.
 - Field types, scene ids, hotspot ids, clue ids, route rows and log rows are not validated.
 - Unknown or stale source identities are not reconciled.
-- Corrupt `clues`, `route` or `log` values can make normal array operations throw.
+- Corrupt arrays can make normal runtime operations throw.
 - `flags` is persisted but has no current owner or contract.
+- No saved-at metadata, command id, transaction id or persistence attempt id exists.
 
 ## Story-phase and resume gaps
 
 - No explicit story phase exists.
-- Completion is saved before the delayed interlude is projected.
+- Completion is saved separately from delayed interlude projection.
 - Interlude pending/open state is DOM-only and is lost on reload.
 - The 450 ms timer id, target scene, command id and readiness deadline are not retained.
-- Reloading a completed scene hides the interlude permanently.
-- Re-inspecting an already-seen final hotspot does not reschedule the interlude.
+- Reloading a completed scene can hide progression permanently.
 - The terminal route is DOM-only and is not persisted.
 
 ## Completion-authority gaps
 
 - Completion trusts one global clue-string array.
-- Persisted clues from another scene can satisfy the current scene requirements.
+- Persisted clues from another scene can satisfy current-scene requirements.
 - There is no scene-scoped completion proof.
-- There is no source identity attached to clue or inspection evidence.
-- Completion has no command, result, event or state-fingerprint record.
+- Evidence has no source identity or save revision.
 
 ## Interaction-command gaps
 
-- Side-panel and raycast inspection paths pass descriptor objects directly to mutation logic.
-- No canonical `InspectHotspot` command exists.
-- Continue has no phase, scene, request, source or expected-state identity.
-- Continue returns no accepted, rejected, failed or no-op result.
-- Wrong-phase, stale and duplicate Continue requests are not rejected by contract.
-- No command/result/event journal exists.
+- Side-panel and raycast paths pass live descriptor objects directly to mutation logic.
+- No canonical Inspect, Continue or Reset command exists.
+- Input origin, request id, expected phase, expected scene and expected save revision are absent.
+- Unknown, stale, duplicate and wrong-phase requests have no typed rejection contract.
+- Accepted results do not prove persistence success.
 
-## Story-transition gaps
+## Story-stage transaction gaps
 
-- `nextScene()` mutates current story state before stage loading succeeds.
-- Interlude visibility is cleared before stage success is known.
-- Story save occurs only after direct StageKit mutation.
-- No previous/next state fingerprints exist.
-- No transaction correlates story scene id, stage scene id, stage epoch and save revision.
-- A stage failure can leave in-memory story state and rendered stage identity divergent.
-- Repeated final Continue clicks have no terminal result identity.
+- `nextScene()` mutates story state before stage loading and persistence succeed.
+- Interlude visibility is cleared before commit success is known.
+- No detached next-story snapshot exists.
+- No StageKit prepare/commit/discard boundary exists.
+- No transaction correlates story scene, save revision, stage commit and stage epoch.
+- A stage or final-save failure can leave story, storage and rendering divergent.
 
-## Render-host companion gaps
+## Boot and lifecycle gaps
 
-- `StageKit.loadScene()` clears the committed group before replacement preparation.
-- Old scene geometries and materials are detached but not disposed.
-- Hotspot materials are not tracked in the material list.
-- No scene-local resource ledger exists.
-- No stage epoch or typed stage-commit result exists.
-- RAF and event listeners have no idempotent host teardown boundary.
+- StageKit starts RAF in its constructor.
+- RAF ids are not retained or cancellable.
+- Window, canvas and keyboard listeners have no centralized teardown.
+- The initial save occurs after WebGL resources, listeners and RAF are acquired.
+- A boot write failure has no reverse-order cleanup stack.
+- StageKit has no idempotent `dispose()` method.
+- Retired scene geometries, materials and hotspot resources are not disposed.
 
 ## Diagnostics gaps
 
 - Debug JSON exposes aggregate mutable story state only.
-- No story phase, source fingerprint or state fingerprint is exposed.
-- Pending interlude readiness and terminal state are unavailable.
-- No story transition to stage commit correlation exists.
-- No bounded JSON-safe command/result/event journal exists.
+- Persistence capability, mode, attempt, result and save revision are unavailable.
+- Pending transaction and recovery state are unavailable.
+- No command-to-persistence-to-stage correlation exists.
+- No bounded JSON-safe effect journal exists.
 
 ## Validation gaps
 
 - `npm run check` performs syntax checks only.
-- No story-source schema fixture exists.
-- No save validation or reconciliation fixture exists.
-- No reload-during-interlude fixture exists.
-- No duplicate/wrong-phase Continue fixture exists.
-- No terminal-state reload fixture exists.
-- No story-stage transaction failure fixture exists.
-- No browser smoke reloads each story phase.
-- Existing stage build, resource, epoch and host-disposal fixtures remain absent.
+- No injected storage adapter exists.
+- No read-denial, write-denial, quota, stale-revision or clear-failure fixture exists.
+- No inspection write-failure fixture exists.
+- No pending/final transition recovery fixture exists.
+- No boot rollback or remount fixture exists.
+- No browser smoke exercises storage denial or interrupted persistence.
+- Existing story source, phase, stage commit, resource and disposal fixtures remain absent.
 
 ## Deferred work
 
