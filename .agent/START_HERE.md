@@ -1,89 +1,116 @@
 # START HERE: The Unmapped House
 
-Last updated: `2026-07-10T20-38-24-04-00`
+Last updated: `2026-07-10T22-21-17-04-00`
 
 ## Summary
 
 `TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three authored scenes, nine hotspots, nine required clues, browser persistence, a descriptor-driven Three.js stage, and a post-processing pass.
 
-This documentation pass changes no runtime source. It promotes the next render-host boundary: scene loading must become an atomic prepare/commit/dispose transaction with explicit stage epochs, resource accounting, and a stoppable host lifecycle.
+This documentation pass changes no runtime source. It identifies a resume-breaking story-state boundary: completion is persisted before the delayed interlude is projected, but the save contains no story phase, pending interlude, transition identity, or terminal state. Reloading a completed scene can therefore leave the route permanently unable to advance.
 
 ## Selection
 
-The accessible `LuminaryLabs-Publish` inventory contains ten repositories. `TheCavalryOfRome` remains excluded. All nine eligible repositories are centrally tracked and have root `.agent` state.
+The complete accessible `LuminaryLabs-Publish` inventory contains ten repositories:
 
-`ZombieOrchard` had a newer repo-local documentation sequence actively landing while its central ledger still showed the older timestamp. To avoid colliding with an in-progress audit, `TheUnmappedHouse` was selected as the oldest stable eligible ledger entry.
+```txt
+AetherVale
+HorrorCorridor
+IntoTheMeadow
+MyCozyIsland
+PhantomCommand
+PrehistoricRush
+TheCavalryOfRome
+TheOpenAbove
+TheUnmappedHouse
+ZombieOrchard
+```
+
+`TheCavalryOfRome` remains excluded. All nine eligible repositories are centrally tracked and have root `.agent` state. `TheUnmappedHouse` was the oldest eligible documented fallback after `ZombieOrchard` advanced.
 
 ## Runtime path
 
 ```txt
 index.html
   -> src/game.js
-       -> load mutable story state
-       -> resolve current scene
-       -> src/story-data.js descriptors
-       -> StageKit.loadScene(scene)
-            -> clear current group immediately
-            -> create layer, prop, hotspot geometry/materials
-            -> update camera, fog and post uniforms
-       -> side-panel and raycast inspection
-       -> clue/completion/interlude/continue loop
-       -> localStorage and DOM projection
+       -> shallow-merge localStorage state
+       -> resolve currentScene from sceneId
+       -> construct StageKit
+       -> StageKit.loadScene(currentScene)
+       -> render side-panel and debug state
+       -> inspect by side-panel or raycast
+       -> mutate inspected, clues and notebook log
+       -> persist completion state
+       -> schedule interlude projection after 450 ms
+       -> Continue mutates route and loads the next stage
+       -> final Continue changes DOM copy only
 ```
 
 ## Interaction loop
 
 ```txt
 load save
-  -> resolve current scene
-  -> construct StageKit
-  -> load scene descriptors
-  -> RAF renders stage to WebGLRenderTarget
-  -> post pass renders to canvas
-  -> pointer hover raycasts hotspot volumes
-  -> click or side-panel button inspects hotspot
-  -> grant clues and evaluate scene completion
-  -> delayed interlude opens
-  -> continue loads the next scene
-  -> final continue projects terminal copy
-  -> KeyR clears save and reloads
+  -> inspect hotspots
+  -> grant scene clues
+  -> evaluate completion from global clue strings
+  -> save completed state
+  -> wait 450 ms
+  -> open non-persisted interlude
+  -> Continue advances to the next scene
+  -> final Continue projects non-persisted terminal copy
 ```
 
 ## Current authority
 
 ```txt
 src/story-data.js   = authored story and render descriptors
-src/game.js         = story mutation, persistence, DOM and transition effects
-src/stage-kit.js    = Three.js resource creation, picking, frame loop and scene replacement
+src/game.js         = mutable story state, persistence, timer, DOM and scene transition orchestration
+src/stage-kit.js    = Three.js resource creation, picking, rendering and scene replacement
 src/aspect-frame.js = fixed 16:9 layout policy
 ```
 
 ## Main finding
 
-`StageKit.loadScene()` clears the live `stageGroup` before the replacement scene is fully prepared. A build failure can therefore leave a partial or blank stage. The method returns no typed result, stage epoch, committed scene identity, or resource ledger.
+The save records `sceneId`, `clues`, `flags`, `inspected`, `route` and `log`, but it does not record a story phase such as `exploring`, `interlude_pending`, `interlude_open`, `transitioning` or `terminal`.
 
-`Group.clear()` only detaches children. The old geometries and materials are not disposed, `this.materials` is reset before disposal, hotspot materials are never tracked, and repeated scene loads accumulate GPU resources. The constructor also installs anonymous resize/pointer listeners and starts an untracked recursive RAF, so the host has no idempotent `dispose()` boundary.
+`inspectHotspot()` saves the completed clue state immediately and only then schedules `showInterlude()` with `setTimeout(..., 450)`. A reload after completion, including after the interlude has opened, restores a complete scene with the interlude hidden. Re-inspecting the final hotspot returns through the already-seen branch and never reschedules the interlude, so the user cannot continue.
+
+`nextScene()` also has no typed command/result boundary. It mutates story state and hides the interlude before `StageKit.loadScene()` succeeds, while the final route state exists only as DOM text and is not persisted.
 
 ## Read this pass first
 
 ```txt
-.agent/trackers/2026-07-10T20-38-24-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-10T20-38-24-04-00.md
-.agent/architecture-audit/2026-07-10T20-38-24-04-00-stage-resource-lifecycle-authority-dsk-map.md
-.agent/render-audit/2026-07-10T20-38-24-04-00-atomic-scene-commit-resource-lifecycle-gap.md
-.agent/gameplay-audit/2026-07-10T20-38-24-04-00-scene-transition-render-commit-loop.md
-.agent/interaction-audit/2026-07-10T20-38-24-04-00-hotspot-stage-epoch-admission-map.md
-.agent/resource-lifecycle-audit/2026-07-10T20-38-24-04-00-three-resource-disposal-contract.md
-.agent/deploy-audit/2026-07-10T20-38-24-04-00-stage-lifecycle-fixture-gate.md
+.agent/trackers/2026-07-10T22-21-17-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-10T22-21-17-04-00.md
+.agent/architecture-audit/2026-07-10T22-21-17-04-00-resume-safe-story-transition-dsk-map.md
+.agent/render-audit/2026-07-10T22-21-17-04-00-story-stage-commit-correlation-gap.md
+.agent/gameplay-audit/2026-07-10T22-21-17-04-00-completion-interlude-resume-loop.md
+.agent/interaction-audit/2026-07-10T22-21-17-04-00-continue-command-admission-map.md
+.agent/persistence-audit/2026-07-10T22-21-17-04-00-save-schema-reconciliation-contract.md
+.agent/story-authority-audit/2026-07-10T22-21-17-04-00-story-phase-transition-transaction.md
+.agent/deploy-audit/2026-07-10T22-21-17-04-00-resume-transition-fixture-gate.md
 ```
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Atomic Stage Commit + Resource Lifecycle Fixture Gate
+TheUnmappedHouse Resume-Safe Story Phase Authority + Transition Fixture Gate
 ```
 
-The earlier story-source manifest and save-reconciliation plan remains an upstream gameplay-authority requirement. This pass isolates the render-host contract that can be implemented without changing story content, pacing, camera framing, or visual output.
+Implementation order:
+
+```txt
+versioned story source and save envelope
+  -> validated and reconciled StorySnapshot
+  -> explicit story phase state machine
+  -> typed inspect/continue command results
+  -> deterministic interlude readiness
+  -> persisted terminal state
+  -> atomic StoryStageTransition composition
+  -> JSON-safe command/result/event journal
+  -> headless reload and browser route fixtures
+```
+
+The earlier Atomic Stage Commit and Resource Lifecycle work remains the required render-host companion. Story mutation should not be coupled directly to Three.js construction.
 
 ## Do not do first
 
