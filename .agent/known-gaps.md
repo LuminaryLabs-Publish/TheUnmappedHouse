@@ -1,14 +1,14 @@
 # Known gaps: The Unmapped House
 
-Timestamp: `2026-07-11T17-10-50-04-00`
+Timestamp: `2026-07-11T18-38-45-04-00`
 
 ## Plan ledger
 
-**Goal:** keep story, lifecycle, rendering, resolution, recovery, and validation gaps explicit while promoting render-surface resolution into an implementation-ready contract.
+**Goal:** keep story, lifecycle, rendering, resolution, WebGL recovery, input, and validation gaps explicit while promoting context recovery into an implementation-ready contract.
 
-- [x] Preserve StoryManifest, StorySnapshot, inspection, Continue, and lifecycle authority as prerequisites.
-- [x] Trace design-frame sizing, live viewport sizing, DPR admission, renderer allocation, target allocation, resize callbacks, and frame submission.
-- [x] Define pixel budget, resize generation, surface revision, fallback, rollback, retirement, frame acknowledgement, and fixture gaps.
+- [x] Preserve StoryManifest, StorySnapshot, inspection, Continue, lifecycle, and render-surface authority as prerequisites.
+- [x] Trace renderer, target, post binding, materials, geometries, hotspots, input, resize, scene loading, and RAF ownership.
+- [x] Define context state, generation, resource registry, suspension, rebuild, rollback, stale-result, recovered-frame, observation, and fixture gaps.
 - [x] Preserve committed-frame diagnostics as the downstream proof gate.
 
 ## Story and persistence gaps
@@ -26,65 +26,79 @@ Timestamp: `2026-07-11T17-10-50-04-00`
 - Continue mutates live story state before replacement stage and persistence success.
 - No transition lock, rollback, stage epoch, first-successor-frame, retirement result, or durable terminal phase exists.
 
-## Runtime lifecycle gaps
+## Runtime lifecycle and resource gaps
 
-- RAF, resize, pointer, click, keyboard, button closures, and timeouts are not revocable.
+- RAF, resize, pointer, click, keyboard, button closures, context events, and timeouts are not managed through revocable leases.
 - `stageGroup.clear()` detaches resources without disposing geometries or materials.
 - Renderer, target, post resources, canvas, and WebGL context have no explicit teardown result.
-- No `sessionId`, session generation, callback fence, or idempotent stop/dispose contract exists.
+- No `sessionId`, session generation, callback fence, resource inventory, or idempotent stop/dispose contract exists.
 
 ## Render composition and resolution gaps
 
 - CSS aspect-frame geometry and internal GPU resolution are conflated inside `StageKit.resize()`.
 - DPR is sampled directly and capped only at `2`; no pixel or capability budget exists.
 - The constructor allocates design-sized renderer and target storage, then immediately resizes both.
-- A 4K viewport at DPR 2 requests a 7680×4320 target with two samples and depth overhead.
 - Renderer and target dimensions are derived independently without one canonical plan or read-back result.
-- Fractional CSS dimensions have no explicit canonicalization policy across CSS, renderer, target, camera, and picking.
 - No immutable quality tiers, maximum long edge, maximum pixel count, sample policy, or fallback chain exists.
-- Maximum texture/renderbuffer dimensions and sample support are not admitted before allocation.
+- No resize generation, surface revision, detached preparation, atomic commit, rollback, stale-result rejection, or first-visible-frame surface acknowledgement exists.
 
-## Resize admission gaps
+## WebGL context lifecycle gaps
 
-- Every browser resize event executes a full resize synchronously.
-- Duplicate and superseded resize observations are not coalesced.
-- No resize command id, session generation, resize generation, or surface revision exists.
-- Old asynchronous or deferred candidate work could not be rejected because no generation identity is available.
-- Boot sizing, later resize, DPR change, retry, and quality fallback do not share a typed command path.
+- The application installs no `webglcontextlost` listener.
+- The application installs no `webglcontextrestored` listener.
+- No canonical context state distinguishes ready, lost, restoring, failed, or disposed rendering.
+- No `contextGeneration` or `resourceGeneration` exists.
+- No typed loss command/result records predecessor story, stage, surface, and frame identities.
+- No render-suspension result prevents ready-frame commits during loss.
+- No capability fence rejects raycast-dependent input while no valid frame exists.
+- No canonical context-bound resource inventory exists.
+- No complete rebuild plan covers renderer state, target storage, post binding, materials, geometries, hotspot resources, and picking state.
+- No restore transaction stages candidate resources before authority transfer.
+- No rollback result proves partial candidate resources were disposed.
+- No stale context/session/stage/surface result rejection exists.
+- No first recovered frame acknowledgement exists.
+- No context observation or bounded recovery journal exists.
 
-## Allocation and recovery gaps
+## Story/render divergence gaps during loss
 
-- Renderer and target mutations occur directly in committed ownership.
-- No detached candidate preparation or predecessor checkpoint exists.
-- No failure classification distinguishes capability, memory, context, or unknown allocation failures.
-- No lower-resolution fallback is attempted through a declared policy.
-- No rollback result proves the predecessor surface stayed visible.
-- Partial candidate resources have no explicit disposal result.
-- Superseded allocations have no retirement receipt.
+- Side-panel inspection can mutate clues without any visible-frame requirement.
+- Canvas click remains wired even when render availability is unknown.
+- Completion timers can fire while the renderer is unavailable or restoring.
+- Continue can replace the story/stage while no recovered frame exists.
+- Persistence can commit story state that has never been proven visible.
+- Reset/reload has no context-aware result or cleanup acknowledgement.
+
+## Context recovery resource gaps
+
+- Renderer-internal recovery behavior is not surfaced as application evidence.
+- The post material has no proof that `tDiffuse` references storage rebuilt for the active context generation.
+- Stage and hotspot geometries/materials have no generation identity or readiness receipt.
+- Render target, target texture, depth/multisample storage, shader programs, and picking state have no rebuild rows.
+- Repeated loss/restore cycles have no live-resource-count or listener-count bound.
+- Late restoration events after disposal have no rejection path.
 
 ## Input and visible-frame gaps
 
-- No barrier proves CSS frame geometry, raycast coordinates, camera projection, renderer buffer, post target, and visible output share one surface revision.
-- Hotspot hover and click parity after a resize is not tested.
-- No first-visible-frame surface acknowledgement exists.
-- Story and stage frame provenance does not include render-surface identity.
+- No barrier proves pointer observations, camera projection, hotspot set, renderer surface, context generation, and visible output share one committed frame.
+- A click uses the stored pointer rather than sampling the click event directly; no frame/context identity proves the stored pointer remains current.
+- No first-post-recovery input admission exists.
+- No recovered-frame story/stage/surface/context parity record exists.
 
 ## Diagnostics gaps
 
-- The debug panel exposes story state but no render-surface state.
-- Observed and admitted DPR are not distinguished.
-- CSS frame, renderer drawing-buffer, post-target dimensions, samples, pixel count, quality tier, generation, revision, fallback, and allocation results are absent.
-- Requested values could be mistaken for actual applied values because no read-back observation exists.
-- No bounded render-surface journal exists.
+- The debug panel exposes story state but no context or resource state.
+- Context state, context generation, resource generation, suspended capabilities, rebuild rows, rollback rows, last ready frame, and last recovered frame are absent.
+- No detached clone-safe context observation exists.
+- No bounded context recovery journal exists.
 
 ## Validation gaps
 
 - `npm run check` performs syntax checks only.
-- No render-resolution policy, pixel-budget, resize-generation, allocation-failure, fallback, rollback, picking-parity, or visible-frame fixture exists.
-- No high-DPI or 4K browser matrix exists.
-- No rapid-resize or DPR-transition smoke exists.
-- No context-loss or exhausted-fallback smoke exists.
-- Existing validation does not execute StoryManifest, persistence, interaction, transition, lifecycle, resource retirement, or committed-frame behavior.
+- No WebGL context is created during validation.
+- No context-loss or restoration event is exercised.
+- No resource-generation, rebuild, rollback, stale-result, input-fence, repeated-cycle, or recovered-frame fixture exists.
+- No browser matrix covers context loss during resize, interlude, transition preparation, visibility changes, or disposal.
+- Existing validation does not execute StoryManifest, persistence, interaction, transition, lifecycle, render-surface, resource retirement, context recovery, or committed-frame behavior.
 
 ## Deferred work
 
