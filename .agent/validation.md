@@ -21,7 +21,7 @@ story phase resume fixture: unavailable
 story command result fixture: unavailable
 story-stage transition fixture: unavailable
 repo-local docs pushed to main: yes
-central ledger sync: pending until repo-local documentation is complete
+central ledger sync: complete
 ```
 
 ## Available validation
