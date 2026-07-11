@@ -1,130 +1,153 @@
 # Next steps: The Unmapped House
 
-Timestamp: `2026-07-11T08-11-14-04-00`
+Timestamp: `2026-07-11T10-12-03-04-00`
 
 ## Goal
 
-Preserve the current three-scene story, copy, pacing and visual output while giving story definitions and persisted state one canonical, versioned and reconcilable authority boundary.
+Preserve the current three-scene story, copy, 450 ms interlude pacing and visual output while making definition, persistence, inspection and Continue transitions deterministic, recoverable and fixture-backed.
 
 ## Plan ledger
 
-### Canonical story manifest
+### Prerequisite 1: canonical story and persistence
 
-- [ ] Add a stable `storyManifestId` and integer `schemaVersion`.
-- [ ] Normalize scene, hotspot, clue, requirement, camera, stage, material and post descriptors.
-- [ ] Reject duplicate scene ids and duplicate hotspot ids within a scene.
-- [ ] Require every granted and required clue to have exactly one canonical owner scene and source hotspot.
+- [ ] Add a stable StoryManifest id, schema version and deterministic fingerprint.
+- [ ] Normalize and validate scene, hotspot, clue, camera, stage, material and post descriptors.
 - [ ] Build immutable scene, hotspot and clue indexes.
-- [ ] Compute a deterministic manifest fingerprint from canonical serialized content.
-- [ ] Deep-freeze the admitted manifest or expose immutable snapshots only.
+- [ ] Replace the raw save object with a versioned StorySnapshot.
+- [ ] Add typed load admission, v1 migration and canonical reconciliation.
+- [ ] Add typed save results, save revisions, state fingerprints and a bounded persistence journal.
 
-### Versioned StorySnapshot
+### Prerequisite 2: inspection authority
 
-- [ ] Replace the raw mutable save object with a versioned `StorySnapshot`.
-- [ ] Include manifest id, manifest fingerprint, schema version, story revision, save revision and explicit phase.
-- [ ] Store canonical route, inspection receipts, clue-grant receipts, notebook rows and completion proofs.
-- [ ] Derive clue and completion projections from receipts instead of trusting raw strings.
-- [ ] Add a deterministic story-state fingerprint.
+- [ ] Convert side-panel and raycast input into one canonical inspection command.
+- [ ] Admit commands against scene id, hotspot id, story revision and stage epoch.
+- [ ] Resolve text and clue grants from the canonical manifest, not caller descriptors.
+- [ ] Emit scene-scoped clue receipts and a canonical completion proof.
+- [ ] Make duplicate inspection explicit and mutation-free.
 
-### Load admission
+### Continue command and admission
 
-- [ ] Distinguish `missing`, `parsed`, `invalid`, `incompatible`, `migrated`, `reconciled` and `failed` load results.
-- [ ] Validate the top-level envelope before reading fields.
-- [ ] Validate every field type and bounded collection size.
-- [ ] Require a known schema version and story manifest id.
-- [ ] Compare the saved manifest fingerprint with the active definition.
-- [ ] Correct unknown saved scene ids through an explicit reconciliation result.
-- [ ] Never retain a different persisted `sceneId` from the admitted active scene.
+- [ ] Add a stable command id and monotonic input sequence.
+- [ ] Include expected story revision, expected stage epoch and completion-proof id.
+- [ ] Classify commands as `accepted`, `blocked`, `stale`, `duplicate`, `terminal_noop` or `failed`.
+- [ ] Reject Continue before canonical completion.
+- [ ] Reject stale Continue after another transition commits.
+- [ ] Ensure repeated final Continue is a typed no-op.
 
-### Reconciliation and migration
+### Transition plan
 
-- [ ] Add a one-time adapter for the current raw `.v1` object shape.
-- [ ] Reconcile route ids against canonical scene order.
-- [ ] Reconcile inspected hotspot ids against scene ownership.
-- [ ] Reconstruct clue receipts only from admitted canonical inspections.
-- [ ] Drop unknown, orphaned, forged and cross-scene data with explicit reasons.
-- [ ] Recompute completion and phase from reconciled receipts.
-- [ ] Write the upgraded envelope only after successful admission.
+- [ ] Resolve the target scene from canonical manifest order.
+- [ ] Build an immutable plan containing transition id, source/target scene ids, story revisions, source/target stage epochs and expected save revision.
+- [ ] Build the candidate StorySnapshot without mutating committed state.
+- [ ] Carry manifest and scene-definition fingerprints into stage preparation.
 
-### Save transaction
+### Detached stage preparation
 
-- [ ] Build a candidate snapshot before mutating committed persistence metadata.
-- [ ] Increment save revision monotonically.
-- [ ] Return typed `written`, `unchanged`, `conflict`, `quota_failed`, `security_failed` and `serialization_failed` results.
-- [ ] Correlate storage results with story revision and state fingerprint.
-- [ ] Do not report committed persistence when localStorage rejects the write.
-- [ ] Retain a bounded JSON-safe persistence journal.
+- [ ] Refactor StageKit to prepare a detached group and resource bundle.
+- [ ] Build camera, fog, post settings, layers, props and hotspot meshes without clearing the live stage.
+- [ ] Validate resource counts and hotspot bindings.
+- [ ] Return a typed preparation result.
+- [ ] Dispose all candidate resources on preparation failure.
 
-### Renderer and interaction prerequisites
+### Durable and atomic commit
 
-- [ ] Pass immutable scene projections from the admitted manifest to StageKit.
-- [ ] Attach manifest fingerprint, scene id and future stage epoch to render preparation.
-- [ ] Keep the inspection authority plan immediately after manifest and save admission.
-- [ ] Keep the atomic Continue transition plan after inspection authority.
+- [ ] Write the candidate StorySnapshot through the typed persistence transaction.
+- [ ] Atomically swap the prepared stage bundle into the live scene.
+- [ ] Advance story revision and stage epoch together.
+- [ ] Project title, text, hotspot list, interlude and debug DOM from the committed snapshot.
+- [ ] Emit one typed transition result containing save revision, story revision and stage epoch.
+
+### Rollback and recovery
+
+- [ ] Leave the prior story, DOM, save and stage untouched for all pre-commit failures.
+- [ ] Define compensation for durable-save success followed by live-stage commit failure.
+- [ ] Retain the previous stage bundle until the new live swap succeeds.
+- [ ] Record rollback reason, affected revisions and resource counts.
+- [ ] Make rollback idempotent.
+
+### Resource retirement
+
+- [ ] Track every geometry, material, mesh, group and hotspot resource per stage epoch.
+- [ ] Dispose the previous stage bundle only after the new swap commits.
+- [ ] Add idempotent `disposeSceneBundle()` and `StageKit.dispose()`.
+- [ ] Retire render target, post resources, renderer, listeners, timeout leases and RAF during full disposal.
+- [ ] Expose bounded JSON-safe resource-retirement diagnostics.
+
+### First-frame acknowledgement
+
+- [ ] Add monotonic frame ids.
+- [ ] Tag render work with stage epoch and story revision.
+- [ ] Acknowledge the first frame that contains the committed stage.
+- [ ] Correlate camera, hotspot bindings, post settings and DOM projection.
+- [ ] Distinguish `stage_committed` from `first_frame_visible`.
+
+### Interlude timing
+
+- [ ] Replace raw timeout with a cancellable lease.
+- [ ] Fence the callback by scene id, story revision, stage epoch and runtime session.
+- [ ] Make duplicate completion scheduling explicit.
+- [ ] Cancel stale leases during transition, reset and disposal.
+- [ ] Preserve the current 450 ms pacing.
 
 ### Validation
 
 - [ ] Add `scripts/validate-story-manifest.mjs`.
-- [ ] Add `scripts/validate-story-snapshot.mjs`.
 - [ ] Add `scripts/validate-save-admission.mjs`.
-- [ ] Add `scripts/validate-save-migration.mjs`.
-- [ ] Add `scripts/validate-save-reconciliation.mjs`.
-- [ ] Add `scripts/validate-save-write-results.mjs`.
-- [ ] Wire all fixtures into `npm run check` after syntax checks.
+- [ ] Add `scripts/validate-inspection-authority.mjs`.
+- [ ] Add `scripts/validate-continue-transition.mjs`.
+- [ ] Add `scripts/validate-stage-resource-disposal.mjs`.
+- [ ] Add `scripts/validate-first-frame-ack.mjs`.
+- [ ] Add a browser smoke for scene one -> two -> three -> terminal.
+- [ ] Wire fixtures into `npm run check`.
 
-## Required fixture rows
+## Required Continue fixture rows
 
 ```txt
-manifest-has-stable-id-version-and-fingerprint
-three-scenes-nine-hotspots-nine-owned-clues
-scene-ids-unique
-hotspot-ids-unique-per-scene
-all-required-clues-resolve-to-owned-grants
-canonical-manifest-serialization-stable
-missing-save-produces-initial-snapshot
-malformed-json-produces-explicit-invalid-result
-non-object-save-rejected
-malformed-field-types-rejected
-unknown-schema-version-rejected
-manifest-mismatch-reconciled-or-rejected-by-policy
-unknown-scene-id-corrected-and-not-repersisted
-unknown-hotspot-dropped
-orphaned-clue-dropped
-cross-scene-clue-dropped
-forged-clue-cannot-complete-scene
-valid-v1-save-migrates-once
-migration-is-idempotent
-save-revision-monotonic
-state-fingerprint-stable-after-reload
-storage-failure-does-not-report-commit
-journal-json-safe-and-bounded
+continue-before-completion-blocked
+continue-with-valid-completion-proof-accepted
+stale-story-revision-rejected
+stale-stage-epoch-rejected
+duplicate-command-id-no-mutation
+transition-plan-deterministic
+target-scene-derived-from-manifest-order
+story-state-unchanged-during-detached-preparation
+injected-layer-failure-retains-old-stage
+injected-prop-failure-disposes-candidate-resources
+injected-hotspot-failure-retains-old-story-and-save
+storage-failure-retains-old-live-stage
+successful-commit-advances-story-save-and-stage-once
+old-stage-resources-disposed-exactly-once
+first-frame-receipt-matches-story-revision-and-stage-epoch
+interlude-timeout-cancelled-after-transition
+terminal-continue-produces-idempotent-noop
+transition-journal-json-safe-and-bounded
 ```
 
 ## Implementation order
 
 ```txt
-1. story manifest schema and canonical normalization
-2. scene/hotspot/clue indexes and definition fingerprint
-3. StorySnapshot schema and state fingerprint
-4. typed load admission
-5. v1 migration and canonical reconciliation
-6. typed save transaction and persistence journal
-7. manifest/snapshot/admission/migration fixtures
-8. inspection command authority
-9. atomic Continue transition and lifecycle gates
+1. StoryManifest and StorySnapshot
+2. save admission, migration and reconciliation
+3. inspection authority and completion proof
+4. Continue command and immutable transition plan
+5. detached StageKit preparation
+6. durable snapshot and atomic live-stage commit
+7. rollback, resource retirement and first-frame acknowledgement
+8. browser transition smoke
+9. full runtime lifecycle disposal
 ```
 
-## Next safe ledge
+## Current audit ledge
 
 ```txt
-TheUnmappedHouse Versioned Story Manifest Authority
-+ Save Admission, Migration and Reconciliation Fixture Gate
+TheUnmappedHouse Atomic Story/Stage Continue Transition Authority
++ Rollback, Resource Retirement and First-Frame Fixture Gate
 ```
 
 ## Do not do first
 
 ```txt
-new rooms or branches
+new rooms or story branches
 inventory
 audio or voice work
 renderer replacement
