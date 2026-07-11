@@ -22,8 +22,8 @@ persistence rollback fixture: unavailable
 resource retirement fixture: unavailable
 first-successor-frame fixture: unavailable
 repo-local docs pushed to main: yes
-central ledger sync: pending
-central internal change log: pending
+central ledger sync: complete
+central internal change log: complete
 ```
 
 ## Available validation
