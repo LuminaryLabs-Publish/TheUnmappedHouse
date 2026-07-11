@@ -20,7 +20,7 @@ resource-ledger fixture: unavailable
 stage-epoch interaction fixture: unavailable
 host-disposal fixture: unavailable
 repo-local docs pushed to main: yes
-central ledger sync: pending until repo-local documentation is complete
+central ledger sync: complete
 ```
 
 ## Available validation
