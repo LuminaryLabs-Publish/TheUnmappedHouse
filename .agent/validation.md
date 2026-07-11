@@ -1,6 +1,6 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-11T15-30-50-04-00`
+Timestamp: `2026-07-11T17-10-50-04-00`
 
 ## This pass
 
@@ -16,17 +16,16 @@ branch created: no
 pull request created: no
 npm run check: not run
 browser smoke: not run
-StoryManifest fixture: unavailable
-StorySnapshot schema fixture: unavailable
-migration fixture: unavailable
-semantic admission fixture: unavailable
-reconciliation fixture: unavailable
-storage failure fixture: unavailable
-bootstrap rollback fixture: unavailable
-first-bootstrap-frame fixture: unavailable
+render-resolution policy fixture: unavailable
+pixel-budget fixture: unavailable
+resize-generation fixture: unavailable
+allocation-failure fixture: unavailable
+fallback and rollback fixture: unavailable
+picking-parity fixture: unavailable
+visible-frame surface fixture: unavailable
 repo-local docs pushed to main: yes
-central ledger sync: complete
-central internal change log: complete
+central ledger sync: pending during repo-local update
+central internal change log: pending during repo-local update
 ```
 
 ## Available validation
@@ -40,131 +39,123 @@ src/stage-kit.js
 src/story-data.js
 ```
 
-It does not execute manifest admission, raw storage read behavior, StorySnapshot parsing, migration, semantic validation, reconciliation, quarantine, bootstrap preparation, rollback, rendering, resource disposal, retry, reset, or first-frame behavior.
+It does not execute display observation, DPR admission, resolution policy, pixel budgeting, renderer/target preparation, resize coalescing, allocation failure, fallback, rollback, surface retirement, input parity, or visible-frame acknowledgement.
 
-## Required startup validation gate
+## Required render-surface validation gate
 
 ```txt
-node scripts/validate-story-manifest.mjs
-node scripts/validate-story-snapshot-schema.mjs
-node scripts/validate-story-snapshot-semantics.mjs
-node scripts/validate-story-snapshot-migrations.mjs
-node scripts/validate-story-snapshot-reconciliation.mjs
-node scripts/validate-story-persistence-results.mjs
-node scripts/validate-story-bootstrap-rollback.mjs
-node scripts/validate-first-bootstrap-frame.mjs
+node scripts/validate-render-resolution-policy.mjs
+node scripts/validate-render-surface-transactions.mjs
+node scripts/validate-render-surface-failures.mjs
+node scripts/validate-render-surface-observations.mjs
 npm run check
 ```
 
 Recommended aggregate:
 
 ```txt
-npm run validate:story-startup
+npm run validate:render-surface
 ```
 
-## Required manifest rows
+## Required policy rows
 
 ```txt
-manifest-id-present
-manifest-schema-version-present
-scene-ids-unique
-hotspot-ids-scene-scoped
-clues-known
-completion-requirements-known
-successors-canonical
-stage-descriptors-valid
-manifest-deep-frozen
-manifest-fingerprint-stable
+design-aspect-is-16-by-9
+css-frame-wide-window-contained
+css-frame-tall-window-contained
+fractional-dimensions-canonicalized
+observed-dpr-separated-from-admitted-dpr
+quality-tier-declares-max-dpr
+quality-tier-declares-max-long-edge
+quality-tier-declares-max-pixel-count
+quality-tier-declares-samples
+fallback-chain-acyclic-and-deterministic
+highest-valid-tier-selected
+oversized-plan-rejected-or-falls-back
 ```
 
-## Required raw and schema rows
+## Required transaction rows
 
 ```txt
-absent-save-default-result
-raw-read-result-typed
-malformed-json-rejected-without-overwrite
-wrong-top-level-type-rejected
-unknown-version-rejected
-known-version-migrated-once
-migration-receipt-has-input-output-fingerprints
-manifest-mismatch-rejected
-required-envelope-fields-present
-field-types-admitted
-rejected-raw-payload-retained
+boot-and-resize-use-same-command-path
+resize-generation-monotonic
+duplicate-resize-idempotent
+rapid-resize-coalesces-to-latest
+stale-plan-cannot-commit
+predecessor-remains-committed-during-prepare
+renderer-buffer-prepared-before-commit
+post-target-prepared-before-commit
+renderer-and-target-actual-dimensions-match-plan
+post-material-samples-current-target
+css-camera-renderer-target-commit-atomically
+surface-revision-advances-once
 ```
 
-## Required semantic rows
+## Required failure and recovery rows
 
 ```txt
-scene-id-known
-route-is-canonical-prefix
-route-ends-at-current-scene
-route-duplicates-rejected-or-canonicalized
-inspection-scene-ids-known
-inspection-hotspot-ids-belong-to-scene
-clue-receipts-reference-known-clues
-clue-provenance-required
-phase-agrees-with-completion-and-terminal-state
-log-budget-enforced
-flags-known-and-type-correct
-snapshot-fingerprint-stable
-roundtrip-fingerprint-equal
+capability-rejection-classified
+memory-like-allocation-failure-classified
+context-failure-classified
+unknown-failure-classified
+partial-candidate-resources-disposed
+failed-required-preparation-keeps-predecessor
+fallback-tier-attempted-in-declared-order
+fallback-result-reports-actual-values
+exhausted-fallback-publishes-failure
+failed-plan-does-not-change-story-state
+superseded-surface-retires-after-frame-ack
+retirement-failure-reported
 ```
 
-## Required storage and recovery rows
+## Required interaction and frame rows
 
 ```txt
-getItem-security-error-reported
-setItem-security-error-reported
-setItem-quota-error-reported
-failed-read-does-not-delete-raw-save
-failed-parse-does-not-overwrite-raw-save
-failed-write-does-not-advance-save-revision
-quarantine-preserves-exact-payload
-retry-result-references-predecessor-load-result
-clear-failure-does-not-reload
-clear-success-publishes-result-before-reload
-load-save-clear-results-detached-json-safe
-persistence-journal-bounded
+hotspot-hover-matches-committed-css-frame
+hotspot-click-matches-committed-camera-and-surface
+interlude-remains-visible-across-resize
+continue-after-resize-references-current-stage-epoch
+first-visible-frame-has-surface-revision
+first-visible-frame-has-resize-generation
+first-visible-frame-has-renderer-dimensions
+first-visible-frame-has-target-dimensions
+first-visible-frame-has-quality-tier
+surface-observation-detached-json-safe
+surface-journal-bounded
 ```
 
-## Required bootstrap rows
+## Browser matrix
 
 ```txt
-invalid-state-rejected-before-stage-allocation
-bootstrap-candidate-detached
-stage-resources-prepared-off-line
-ui-projection-prepared-off-line
-resource-inventory-complete
-stage-prepare-failure-disposes-all-candidate-resources
-ui-projection-failure-disposes-all-candidate-resources
-storage-write-failure-rolls-back-bootstrap
-failed-bootstrap-publishes-no-ready-state
-retry-creates-one-session-generation
-retry-creates-one-canvas
-retry-creates-one-listener-set
-retry-creates-one-raf-chain
-first-bootstrap-frame-has-load-result-id
-first-bootstrap-frame-has-manifest-fingerprint
-first-bootstrap-frame-has-snapshot-fingerprint
-first-bootstrap-frame-has-stage-epoch
+1280x720 DPR 1
+1920x1080 DPR 1
+1920x1080 DPR 2
+2560x1440 DPR 1.5
+3840x2160 DPR 2
+portrait window
+narrow landscape window
+fractional zoom level
+rapid resize storm
+DPR transition between displays
+injected renderer-buffer preparation failure
+injected post-target preparation failure
+exhausted fallback chain
 ```
 
-## Browser failure smoke
+## Browser smoke
 
 ```txt
-boot a valid current save and capture manifest, snapshot, stage and frame identities
-seed malformed JSON and verify the raw save remains unchanged
-verify rejected boot leaves no candidate canvas, listener, RAF or WebGL resource
-seed valid JSON with invalid field types and reject before StageKit allocation
-inject stage construction failure and verify complete disposal
-inject UI projection failure and verify complete disposal
-inject localStorage write failure and verify no committed bootstrap or revision advance
-retry and verify exactly one committed generation
-verify first visible frame matches accepted snapshot and stage epoch
-press reset and verify a typed clear result before reload
+boot and capture CSS frame, renderer buffer, target, tier, generation and revision
+verify 4K/high-DPI input stays within declared pixel budget
+resize rapidly and verify only the latest generation commits
+change DPR and verify one revisioned commit
+inject target failure and verify predecessor remains visible
+verify explicit fallback reports actual applied dimensions
+click and hover hotspots after each committed resize
+verify first visible frame acknowledges the committed surface revision
+verify superseded resources retire only after acknowledgement
 ```
 
 ## Validation claim
 
-This pass documents the proof surface for StoryManifest admission, versioned StorySnapshot loading, migration, semantic reconciliation, non-destructive rejection, bootstrap rollback, first-frame correlation, retry, and reset. It does not claim that those runtime authorities or fixtures are implemented.
+This pass documents the proof surface for bounded DPR admission, pixel budgeting, resize generation, candidate preparation, allocation fallback, rollback, resource retirement, input parity, and visible-frame correlation. It does not claim that those runtime authorities or fixtures are implemented.
