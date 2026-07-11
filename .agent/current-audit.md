@@ -1,6 +1,6 @@
 # Current audit: The Unmapped House
 
-Timestamp: `2026-07-11T12-08-47-04-00`
+Timestamp: `2026-07-11T13-49-30-04-00`
 
 ## Product read
 
@@ -8,85 +8,72 @@ A fixed-camera anime-horror point-and-click prototype with three authored scenes
 
 ## Plan ledger
 
-**Goal:** identify the exact authority and fixture boundary required to turn side-panel and raycast observations into canonical, scene-scoped, revision-fenced inspection transactions and explicit completion proof.
+**Goal:** identify the authority and fixture boundary required to make Continue an atomic transaction across completion proof, story state, stage resources, persistence, projection, and first visible frame.
 
-- [x] Trace side-panel button creation and callback capture.
-- [x] Trace StageKit hotspot-volume creation, raycast selection, and callback dispatch.
-- [x] Trace inspection, duplicate handling, clue grants, notebook mutation, completion, timeout scheduling, UI projection, and persistence.
-- [x] Trace stale-descriptor behavior across scene transitions.
-- [x] Inventory all current domains, kits, and services.
-- [x] Define inspection-command, canonical resolution, completion-proof, journal, and fixture kits.
-- [ ] Implement StoryManifest admission and inspection authority.
-- [ ] Run deterministic Node and browser parity fixtures.
+- [x] Trace scene completion and interlude scheduling.
+- [x] Trace Continue through scene selection, route mutation, stage replacement, DOM projection, and save.
+- [x] Trace terminal behavior when no successor scene exists.
+- [x] Trace stage clearing, material/geometry ownership, and first-frame submission.
+- [x] Inventory all domains, kits, and services.
+- [x] Define Continue admission, detached preparation, atomic commit, rollback, retirement, result, journal, and fixture kits.
+- [ ] Implement prerequisite manifest, persistence, and completion-proof authority.
+- [ ] Implement and run transition failure, rollback, duplicate, and first-frame fixtures.
 
 ## Interaction loop
 
 ```txt
-module boot
-  -> shallow-load mutable story state
-  -> resolve current scene
-  -> construct StageKit and current scene hotspot meshes
-  -> render side-panel buttons from current scene descriptors
+boot
+  -> shallow-load raw state
+  -> select current scene
+  -> construct StageKit
+  -> load current scene directly into live stage
+  -> project UI and write state
 
-side-panel path
-  -> button closure captures a full hotspot descriptor
-  -> click calls inspectHotspot(descriptor)
+completion
+  -> derive from global clue strings
+  -> schedule anonymous 450 ms timeout
+  -> timeout reads mutable currentScene when it fires
+  -> open interlude without proof identity
 
-raycast path
-  -> invisible mesh stores a full hotspot descriptor in userData
-  -> click raycasts current hotspot meshes
-  -> StageKit calls inspectHotspot(descriptor)
-
-inspection mutation
-  -> select inspection ledger using currentScene.id at callback time
-  -> trust caller-supplied hotspot.id, grants, label, text, and changesText
-  -> mark inspection or treat duplicate as a re-read
-  -> grant global clue strings
-  -> derive scene completion from global clue strings
-  -> schedule an unretained 450 ms interlude callback
-  -> mutate DOM, notebook, debug projection, and localStorage
-  -> return no command receipt or typed result
+Continue click
+  -> call nextScene directly
+  -> find successor from mutable currentScene
+  -> mutate currentScene and state.sceneId
+  -> append route and log
+  -> hide interlude
+  -> StageKit.loadScene(successor)
+  -> render UI
+  -> write raw localStorage state
+  -> next RAF eventually renders successor
 ```
 
 ## Source ownership
 
 | Source | Current responsibilities |
 |---|---|
-| `index.html` | Fixed shell, stage mount, hotspot list, hover label, debug panel, interlude, and Continue controls. |
-| `src/story-data.js` | Three scene descriptors, nine hotspot descriptors, clue grants, completion requirements, stage, camera, material, post, and copy data. |
-| `src/game.js` | Mutable story state, side-panel ingress, inspection mutation, clue grants, completion, timeout scheduling, DOM projection, persistence, Continue, and reset. |
-| `src/stage-kit.js` | Hotspot-volume construction, descriptor storage in `userData`, hover/click raycasts, callback dispatch, camera parallax, and rendering. |
+| `index.html` | Fixed shell, stage mount, side-panel, hover label, debug panel, interlude, and Continue button. |
+| `src/story-data.js` | Scene order, hotspots, clue requirements, stage descriptors, camera, materials, post settings, and interlude copy. |
+| `src/game.js` | Mutable story state, completion, timeout scheduling, Continue, terminal copy, UI projection, and persistence. |
+| `src/stage-kit.js` | Live stage replacement, Three.js resource construction, hotspot meshes, input, camera parallax, and recursive RAF. |
 | `src/aspect-frame.js` | Fixed 1920×1080 composition and browser fitting. |
 | `package.json` | Syntax-only source checks and local static serving. |
 
 ## Domains in use
 
 ```txt
-browser shell
-fixed-aspect layout
-story source descriptors
-scene order and identity
-hotspot identity and descriptor payloads
-clue identity and global clue ledger
-mutable story state
-scene-keyed inspection ledger
-notebook log
-scene completion policy
-implicit story phase
-side-panel input
-raycast input
-hotspot volume and pick observation
-inspection mutation
-duplicate inspection and re-read behavior
-completion timeout and interlude projection
+browser shell and fixed-aspect layout
+story and scene descriptors
+mutable story state and scene route
+scene-keyed inspection and global clue state
+completion and interlude timing
 Continue and terminal routing
-localStorage load/write/clear effects
-story, hover, interlude, and debug projection
-Three.js CDN runtime
-stage rendering and scene descriptor consumption
-anime shader materials and post-processing
-camera parallax and render-target composition
-runtime callbacks and scene resources
+localStorage effects
+DOM and debug projection
+Three.js runtime and renderer
+live stage-group replacement
+scene geometry, material, hotspot, camera, fog, and post resources
+raycast input and pointer parallax
+render-target composition and recursive RAF
 syntax validation and Pages deployment
 repo-local and central audit tracking
 ```
@@ -95,19 +82,22 @@ Missing authority domains:
 
 ```txt
 versioned StoryManifest and canonical indexes
-versioned StorySnapshot and persistence admission
-inspection command identity and sequence
-scene/story/stage revision admission
-canonical hotspot resolution
-pick observation separate from mutation command
-scene-scoped clue provenance
-exactly-once inspection transaction
-scene completion proof identity
-completion-proof consumption and duplicate guard
-typed inspection and no-op results
-bounded inspection journal
-dual-ingress parity validation
-stale descriptor and stale callback rejection
+versioned StorySnapshot and typed persistence
+scene-completion proof and proof consumption
+Continue command identity and sequence
+transition admission and duplicate guard
+transition id and revision fences
+successor story candidate
+successor stage detached preparation
+stage preparation result
+atomic story/stage/persistence commit
+transition rollback and recovery
+stage epoch and resource inventory
+predecessor resource retirement
+first-successor-frame acknowledgement
+transition result and bounded journal
+terminal phase persistence
+runtime session lifecycle
 ```
 
 ## Implemented kits and services
@@ -116,129 +106,146 @@ stale descriptor and stale callback rejection
 |---|---|
 | `static-page-shell-kit` | Stage, story panel, hotspot list, hover label, debug panel, interlude, and Continue shell. |
 | `aspect-frame-kit` | Compute and apply the fixed 16:9 viewport. |
-| `story-data-kit` | Scene, hotspot, clue, camera, fog, stage, material, post, and interlude descriptors. |
+| `story-data-kit` | Scene, hotspot, clue, stage, camera, material, post, and interlude descriptors. |
 | `browser-story-runtime-kit` | Coordinate load, inspection, completion, Continue, reset, projection, persistence, and StageKit calls. |
 | `scene-route-kit` | Resolve and mutate current scene and route ids. |
-| `inspection-ledger-kit` | Track scene-keyed hotspot-id booleans. |
+| `inspection-ledger-kit` | Track scene-keyed hotspot booleans. |
 | `clue-ledger-kit` | Grant and query global clue strings. |
 | `notebook-log-kit` | Prepend and cap story log rows. |
 | `interlude-timer-kit` | Schedule the unretained 450 ms completion callback. |
 | `terminal-route-kit` | Project prototype-complete copy without durable terminal state. |
 | `localstorage-save-kit` | Parse, shallow-merge, write, and clear raw browser state without typed results. |
-| `stage-render-kit` | Create renderer, camera, lights, target, post scene, canvas, listeners, and recursive RAF. |
-| `scene-descriptor-consumer-kit` | Convert scene descriptors into live Three.js resources. |
-| `anime-material-kit` | Build FBM/toon shader materials. |
+| `stage-render-kit` | Create renderer, camera, lights, render target, post scene, canvas, listeners, and recursive RAF. |
+| `scene-descriptor-consumer-kit` | Convert one scene descriptor into live Three.js resources. |
+| `anime-material-kit` | Build procedural shader materials. |
 | `post-process-kit` | Apply grain, vignette, chromatic offset, distortion, memory warp, and scan lines. |
-| `hotspot-volume-kit` | Build invisible pick meshes and attach full hotspot descriptors to `userData`. |
-| `hotspot-picking-kit` | Raycast hover/click input and dispatch the selected descriptor. |
+| `hotspot-volume-kit` | Build invisible pick meshes and attach hotspot descriptors. |
+| `hotspot-picking-kit` | Raycast hover/click input and dispatch selected hotspots. |
 | `camera-parallax-kit` | Apply pointer-driven fixed-camera offsets. |
 | `render-target-composition-kit` | Submit stage-target and post-process passes. |
-| `debug-json-projection-kit` | Project current scene, clues, route, inspection flags, completion, and log rows. |
+| `debug-json-projection-kit` | Project aggregate story state into the debug panel. |
 | `package-syntax-check-kit` | Syntax-check four JavaScript sources. |
 | `static-pages-deploy-kit` | Deploy the static route from `main`. |
 | `repo-local-agent-ledger-kit` | Maintain current pointers and timestamped audits. |
 | `central-ledger-sync-kit` | Maintain central selection and findings history. |
 
-## Main finding: observation payloads are treated as mutation authority
+## Main finding: Continue is a partial mutation sequence
 
-### Full descriptor ingress
+### No admission or proof consumption
 
-The side-panel closure and raycast mesh both pass the complete hotspot descriptor to `inspectHotspot()`. The mutation function does not resolve `sceneId + hotspotId` through a canonical manifest. It trusts the incoming descriptor's id, grants, label, text, and log copy.
+`continueButton` always calls `nextScene()`. The function does not require a completion proof, expected story revision, stage epoch, command id, sequence, or transition lock. A duplicate or programmatic Continue can advance more than once.
 
-### Current-scene rebinding
+### Story mutates before stage preparation
 
-`inspectHotspot()` does not receive or validate a scene id. It reads `currentScene.id` when the callback executes. A stale scene-one descriptor invoked after Continue can therefore be recorded in scene two's inspection ledger while granting scene-one clues and projecting scene-one copy.
+`nextScene()` replaces `currentScene`, writes `state.sceneId`, appends route/log state, and hides the interlude before `stage.loadScene()` returns. There is no candidate state or rollback snapshot.
 
-### Global clue completion
+### Stage replacement is destructive and incremental
 
-Completion is `requiresToComplete.every(hasClue)`, where `hasClue` searches the global clue-string array. It does not prove which accepted inspection granted each clue, which story revision produced it, or whether the clue belongs to the current scene. Loaded or forged clue strings can satisfy completion independently of canonical inspection receipts.
+`StageKit.loadScene()` assigns the successor descriptor, clears the live group, resets hotspot/material arrays, then creates layers, props, and hotspots directly in the active group. A construction failure can leave a partial successor while story state already names that successor.
 
-### Duplicate and scheduling behavior
+### Persistence happens last
 
-A duplicate inspection still mutates text, log, UI, and persistence but returns no typed `duplicate` or `re_read` result. A newly accepted descriptor after completion schedules another interlude timeout because there is no completion-proof id or exactly-once consumption guard.
+The raw `localStorage.setItem()` occurs after story mutation, stage replacement, and DOM projection. A storage exception can leave the visible successor live while the persisted snapshot remains on the predecessor.
 
-### No result or journal
+### No visible-frame proof
 
-Inspection returns `undefined`. Callers cannot distinguish applied, duplicate, stale scene, stale story revision, stale stage epoch, unknown hotspot, persistence failure, or completion produced. Debug output shows aggregate mutable state but no command/result correlation.
+`loadScene()` returns no stage epoch or preparation/commit receipt. The recursive RAF is independent of transition identity. Continue cannot prove which story revision, stage resource set, camera, hotspots, or post settings produced the first visible successor frame.
+
+### Terminal state is projection-only
+
+When no successor exists, `nextScene()` changes only interlude copy. It does not persist an explicit terminal phase, proof consumption, or terminal transition result.
 
 ## Required parent domain
 
 ```txt
-the-unmapped-house-inspection-completion-authority-domain
+the-unmapped-house-atomic-continue-transition-authority-domain
 ```
 
 Candidate kits:
 
 ```txt
-hotspot-manifest-index-kit
-inspection-command-envelope-kit
-inspection-command-admission-kit
-hotspot-pick-observation-kit
-canonical-hotspot-resolution-kit
-inspection-result-kit
-scene-scoped-inspection-ledger-kit
-scene-scoped-clue-grant-kit
-scene-completion-proof-kit
+continue-command-envelope-kit
+continue-admission-kit
 completion-proof-consumption-kit
-inspection-transaction-kit
-inspection-journal-kit
-inspection-authority-fixture-kit
-browser-dual-ingress-parity-smoke-kit
+scene-transition-id-kit
+scene-transition-plan-kit
+successor-story-candidate-kit
+detached-stage-preparation-kit
+stage-preparation-result-kit
+transition-persistence-kit
+atomic-story-stage-commit-kit
+transition-rollback-kit
+stage-epoch-kit
+predecessor-resource-retirement-kit
+first-successor-frame-ack-kit
+transition-result-kit
+transition-journal-kit
+continue-transition-fixture-kit
+browser-transition-failure-smoke-kit
 ```
 
 ## Required command and result contract
 
 ```txt
-InspectionCommand
+ContinueCommand
   commandId
   inputSequence
-  source: side-panel | raycast | replay | automation
+  source
   sceneId
-  hotspotId
+  completionProofId
   expectedStoryRevision
   expectedStageEpoch
-  observedFrameId?
 
-InspectionResult
-  status: applied | duplicate | stale_scene | stale_story_revision |
-          stale_stage_epoch | unknown_hotspot | rejected | failed
+ContinueResult
+  status: committed | duplicate | incomplete | stale_scene |
+          stale_story_revision | stale_stage_epoch | proof_consumed |
+          prepare_failed | persistence_failed | commit_failed | rolled_back |
+          terminal_committed
   commandId
-  sceneId
-  hotspotId
+  transitionId
+  predecessorSceneId
+  successorSceneId?
   storyRevisionBefore
-  storyRevisionAfter
-  grantedClues[]
-  inspectionReceiptId?
-  completionProofId?
-  completionProduced
-  persistenceResult?
+  storyRevisionAfter?
+  predecessorStageEpoch
+  successorStageEpoch?
+  completionProofId
+  firstVisibleFrameId?
+  retiredResourceReceiptId?
+  rollbackResult?
 ```
 
 ## Required authority flow
 
 ```txt
-input observation
-  -> construct id-only InspectionCommand
-  -> admit session, scene, story revision, stage epoch, and sequence
-  -> resolve canonical hotspot from StoryManifest index
-  -> reject stale, unknown, or cross-scene commands
-  -> detect exact duplicate without mutation
-  -> apply one inspection receipt
-  -> grant canonical scene-owned clues exactly once
-  -> derive scene completion from accepted receipts
-  -> create one immutable completion proof
-  -> commit StorySnapshot and persistence transaction
-  -> project DOM and diagnostics from committed state
-  -> publish typed result and bounded journal row
+Continue observation
+  -> construct ContinueCommand
+  -> admit session, scene, proof, story revision, stage epoch, and sequence
+  -> reserve proof and transition id
+  -> build successor StorySnapshot candidate
+  -> prepare successor stage in detached ownership
+  -> validate stage preparation result
+  -> persist candidate snapshot with typed result
+  -> atomically publish story and stage commit
+  -> advance stage epoch and story revision
+  -> acknowledge first visible successor frame
+  -> retire predecessor resources
+  -> consume proof and publish immutable result/journal row
+
+any failure before commit
+  -> keep predecessor story, stage, DOM, and persistence authoritative
+  -> dispose detached successor resources
+  -> release proof reservation
+  -> publish typed failed or rolled-back result
 ```
 
 ## Ordered implementation queue
 
 ```txt
-1. Versioned StoryManifest and canonical scene/hotspot/clue indexes
-2. StorySnapshot and save admission/migration/reconciliation
-3. Inspection Command Authority and scene completion proof
-4. Atomic Continue transition and first-frame acknowledgement
+1. StoryManifest schema, indexes, validation, and fingerprint
+2. StorySnapshot schema, migration, reconciliation, and persistence results
+3. InspectionCommand, receipts, clue provenance, and completion proof
+4. Atomic Continue transition and first-visible-frame acknowledgement
 5. Runtime session lifecycle and resource retirement
 6. Committed-frame diagnostics
 ```
@@ -246,6 +253,6 @@ input observation
 ## Current audit ledge
 
 ```txt
-TheUnmappedHouse Inspection Command Authority
-+ Scene Completion Proof and Dual-Ingress Parity Fixture Gate
+TheUnmappedHouse Atomic Continue Transition Authority
++ Rollback, Resource Retirement, and First-Successor-Frame Fixture Gate
 ```
