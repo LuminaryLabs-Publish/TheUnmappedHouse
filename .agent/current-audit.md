@@ -1,10 +1,10 @@
 # Current audit: The Unmapped House
 
-Timestamp: `2026-07-10T20-38-24-04-00`
+Timestamp: `2026-07-10T22-21-17-04-00`
 
 ## Product read
 
-A fixed-camera anime-horror point-and-click prototype. Three authored scenes expose three hotspots each. First inspections grant nine required clues, completion opens a delayed interlude, continue advances the route, and the final continue projects a prototype-complete message.
+A fixed-camera anime-horror point-and-click prototype. Three authored scenes expose three hotspots each. First inspections grant nine required clues, completion opens a delayed interlude, Continue advances the route, and the final Continue projects a prototype-complete message.
 
 ## Current interaction loop
 
@@ -13,18 +13,15 @@ open index.html
   -> import src/game.js
   -> parse localStorage and shallow-merge state
   -> resolve currentScene
-  -> construct StageKit
-  -> StageKit.loadScene(currentScene)
-       -> clear the live group
-       -> reset hotspot/material arrays
-       -> apply background/fog/camera/post values
-       -> create layer, prop and hotspot resources directly into the live group
-  -> RAF renders scene into a target and then through the post pass
-  -> pointer movement raycasts hotspots and moves the hover label
-  -> canvas click or side-panel button calls inspectHotspot
-  -> mutate inspected/clues/log, save and render UI
-  -> completion schedules a delayed interlude
-  -> continue changes scene and calls StageKit.loadScene again
+  -> construct StageKit and load the scene
+  -> render stage to target and post-process to canvas
+  -> inspect by raycast or side-panel button
+  -> mutate inspected/clues/log
+  -> evaluate completion from global clue membership
+  -> save completed state
+  -> schedule interlude after 450 ms
+  -> Continue mutates sceneId/route and loads the next scene
+  -> final Continue changes interlude copy only
   -> KeyR clears storage and reloads
 ```
 
@@ -34,26 +31,33 @@ open index.html
 |---|---|
 | `src/story-data.js` | Three scenes; nine hotspots; clue requirements; camera, fog, stage, material, post and interlude descriptors. |
 | `src/game.js` | Save parse/write, mutable story state, inspection, completion, timer, progression, terminal copy, DOM projection, reset and StageKit calls. |
-| `src/stage-kit.js` | Three.js renderer, scene, camera, lights, render target, post pass, descriptor consumption, resource creation, picking, resize and RAF. |
+| `src/stage-kit.js` | Three.js renderer, scene, camera, lights, render target, post pass, descriptor consumption, picking, resize and RAF. |
 | `src/aspect-frame.js` | Fixed 1920×1080 aspect-frame computation and DOM projection. |
 
-## Authored render inventory
+## Current persisted state
 
 ```txt
-scenes: 3
-stage layers: 6
-stage props: 13
-hotspot volumes: 9
-stage meshes created across one complete route: 28
-scene-one live meshes: 10
-scene-two live meshes: 9
-scene-three live meshes: 9
-persistent post meshes: 1
-persistent render targets: 1
-explicit StageKit dispose method: absent
-stage load result: absent
-stage epoch: absent
-resource ledger: absent
+sceneId
+clues[]
+flags{}
+inspected{sceneId -> hotspotId -> boolean}
+route[]
+log[]
+```
+
+Missing persisted authority:
+
+```txt
+schemaVersion
+storyManifestId
+storySourceFingerprint
+storyPhase
+completionProof
+pendingInterlude
+interludeReadyAt
+transitionRequestId
+terminalState
+stateFingerprint
 ```
 
 ## Domains in use
@@ -98,6 +102,8 @@ pointer-listener-lifecycle
 hover-state-lifecycle
 gpu-resource-disposal
 stage-commit-identity
+package-syntax-validation
+static-pages-deployment
 repo-local-agent-ledger
 central-ledger-sync
 ```
@@ -110,82 +116,102 @@ central-ledger-sync
 | `aspect-frame-kit` | Compute and apply the canonical fixed-aspect viewport. |
 | `story-data-kit` | Supply scene, hotspot, clue, stage, camera, fog, material, post and interlude descriptors. |
 | `browser-story-runtime-kit` | Coordinate inspect, continue, reset, projection, persistence and StageKit. |
-| `clue-ledger-kit` | Grant unique clue strings and evaluate requirement membership. |
+| `clue-ledger-kit` | Grant unique global clue strings and evaluate requirement membership. |
 | `inspection-ledger-kit` | Track scene-keyed hotspot inspection flags. |
 | `notebook-log-kit` | Prepend and cap recent story entries. |
 | `scene-route-kit` | Resolve the active scene and retain visited scene ids. |
-| `interlude-timer-kit` | Schedule delayed interlude projection. |
-| `terminal-route-kit` | Project terminal prototype copy. |
+| `interlude-timer-kit` | Schedule delayed interlude projection through an unretained browser timer. |
+| `terminal-route-kit` | Project terminal prototype copy without persisted terminal state. |
 | `localstorage-save-kit` | Parse, shallow-merge, write and clear browser state. |
 | `stage-render-kit` | Own renderer, camera, scene, lights, target, post scene and recursive RAF. |
 | `scene-descriptor-consumer-kit` | Convert scene descriptors directly into live Three.js resources. |
-| `anime-material-kit` | Build FBM/toon shader materials and retain only those materials in an array. |
+| `anime-material-kit` | Build FBM/toon shader materials. |
 | `post-process-kit` | Apply grain, vignette, chromatic offset, distortion, memory warp and scan lines. |
-| `hotspot-volume-kit` | Build invisible hotspot meshes and attach full descriptor objects. |
+| `hotspot-volume-kit` | Build invisible hotspot meshes and attach descriptor objects. |
 | `hotspot-picking-kit` | Perform hover/click raycasts and forward selected hotspot objects. |
-| `debug-json-projection-kit` | Project aggregate story state, not render-host lifecycle state. |
+| `camera-parallax-kit` | Offset the locked camera from pointer movement. |
+| `render-target-composition-kit` | Render stage to a target and pass it through the post shader. |
+| `debug-json-projection-kit` | Project aggregate story state. |
+| `package-syntax-check-kit` | Syntax-check the four JavaScript sources. |
+| `static-pages-deploy-kit` | Publish the static project from `main`. |
 | `repo-local-agent-ledger-kit` | Store current pointers and timestamped audits. |
 | `central-ledger-sync-kit` | Mirror selection, findings and next ledge centrally. |
 
-## Render-host lifecycle finding
+## Resume failure finding
 
-`loadScene()` mutates the live host incrementally. It clears the current group before validating or fully building the replacement. If descriptor consumption throws after the clear, the previous scene is already gone and the new scene may be partial.
+`inspectHotspot()` writes the final clue, marks the hotspot inspected, renders the UI and persists the completed state. `showInterlude()` is not part of that state transaction; it is scheduled 450 ms later and only changes DOM classes and text.
 
-`stageGroup.clear()` detaches objects but does not call `dispose()` on their geometries or materials. `this.materials = []` drops references to prior anime materials before cleanup, hotspot `MeshBasicMaterial` instances are never included in that array, and no scene-local resource ledger exists. Traversing all three scenes therefore creates 28 stage meshes while only the newest 9 remain attached.
+A reload after the final clue restores a complete scene with every required hotspot already seen, but the interlude is hidden. Re-inspecting any hotspot enters the already-seen branch and does not schedule the interlude. The route is therefore stuck even though the save says the scene is complete.
 
-The constructor starts a self-recursing `requestAnimationFrame` without retaining its id. Resize, mousemove and click listeners are installed through anonymous closures, which prevents deterministic removal. Render target, post geometry/material, renderer, scene-local resources and listeners have no single lifecycle owner or idempotent teardown contract.
+## Save reconciliation finding
 
-## Interaction and epoch finding
+`loadState()` shallow-merges arbitrary parsed JSON over the initial state. It does not validate field types, scene ids, hotspot ids, route order, clue ownership or source compatibility. Corrupt arrays can make `includes`, `unshift` or `slice` fail. Future-scene clue strings can satisfy an earlier scene because completion reads one global clue set.
 
-Hotspot meshes store the full descriptor object in `userData.hotspot`. No `stageEpoch`, committed scene id, source revision or canonical hotspot reference is attached to the pick result. `hovered` and hover-label state are not explicitly cleared during scene replacement. The runtime cannot prove that a click result was produced by the currently committed stage.
+## Transition transaction finding
+
+`nextScene()` mutates `currentScene`, `state.sceneId`, `state.route` and interlude visibility before `stage.loadScene()` completes. It returns no accepted/rejected/failed result and has no request identity, source fingerprint, previous/next state fingerprints or stage commit correlation.
+
+The final route has no persisted terminal phase. The terminal message is DOM-only and disappears on reload.
+
+## Render-host companion finding
+
+The prior audit remains valid: `StageKit.loadScene()` clears the live group before replacement preparation, does not dispose retired resources, and returns no stage epoch or typed commit result. Story transition authority and stage commit authority must compose through explicit results rather than direct mutation.
 
 ## Next-cut domains
 
 ```txt
-stage-build-plan
-stage-build-validation
-stage-resource-ledger
-stage-resource-ownership
-atomic-stage-commit
-stage-commit-result
-stage-epoch
-committed-scene-identity
-hotspot-stage-reference
-stale-pick-rejection
-hover-reset-policy
-frame-loop-lifecycle
-listener-lifecycle
-render-target-lifecycle
-idempotent-stage-disposal
-headless-stage-plan-fixture
-browser-stage-lifecycle-smoke
+story-source-schema
+story-manifest
+story-source-fingerprint
+versioned-save-envelope
+save-shape-validation
+save-reconciliation
+scene-scoped-clue-derivation
+story-phase-state-machine
+story-command-admission
+story-command-result
+completion-proof
+interlude-readiness
+resume-projection
+terminal-state
+story-transition-transaction
+story-stage-transition-composition
+story-state-fingerprint
+story-command-result-event-journal
+headless-resume-fixture
+browser-route-resume-smoke
 ```
 
 ## Next-cut kits
 
 ```txt
-stage-build-plan-kit
-stage-descriptor-validator-kit
-stage-resource-ledger-kit
-stage-resource-owner-kit
-atomic-stage-commit-kit
-stage-commit-result-kit
-stage-epoch-kit
-hotspot-stage-reference-kit
-stale-pick-rejection-kit
-hover-reset-kit
-frame-loop-lifecycle-kit
-event-listener-lifecycle-kit
-render-target-lifecycle-kit
-stage-disposal-kit
-headless-stage-plan-fixture-kit
-browser-stage-lifecycle-smoke-kit
+story-source-schema-kit
+story-manifest-kit
+story-source-fingerprint-kit
+versioned-save-envelope-kit
+save-shape-validator-kit
+save-reconciliation-kit
+scene-clue-derivation-kit
+story-phase-state-machine-kit
+story-command-kit
+story-command-admission-kit
+story-command-result-kit
+completion-proof-kit
+interlude-readiness-kit
+resume-projection-kit
+terminal-state-kit
+story-transition-transaction-kit
+story-stage-transition-adapter-kit
+story-state-fingerprint-kit
+story-journal-kit
+headless-resume-fixture-kit
+browser-route-resume-smoke-kit
 ```
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Atomic Stage Commit + Resource Lifecycle Fixture Gate
+TheUnmappedHouse Resume-Safe Story Phase Authority + Transition Fixture Gate
 ```
 
-The goal is to preserve the current scene descriptors and visuals while making replacement transactional, observable and leak-free. Story-source/save authority remains a separate upstream gameplay contract.
+The goal is to make every persisted state resumable and every inspect/continue transition explicit, deterministic and observable while preserving the current scenes, copy, pacing and visual output.
