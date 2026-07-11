@@ -23,7 +23,7 @@ rollback fixture: unavailable
 first-frame acknowledgement fixture: unavailable
 resource retirement fixture: unavailable
 repo-local docs pushed to main: yes
-central ledger sync: pending until central commit
+central ledger sync: complete
 ```
 
 ## Available validation
