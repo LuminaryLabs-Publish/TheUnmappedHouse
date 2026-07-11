@@ -1,61 +1,68 @@
 # Known gaps: The Unmapped House
 
-Timestamp: `2026-07-10T19-00-19-04-00`
+Timestamp: `2026-07-10T20-38-24-04-00`
 
-## Story source gaps
+## Atomic scene replacement gaps
 
-- `story-data.js` has no schema version, manifest id, source fingerprint or validation result.
-- Scene, hotspot and clue ids are implicit strings with no canonical indexes.
-- Duplicate scene ids, duplicate hotspot ids, unknown completion requirements and invalid grants are not rejected.
-- Route order is inferred from array position and is not represented as a validated graph.
-- No normalized, frozen story-source snapshot exists for command or save authority.
+- `StageKit.loadScene()` clears the committed group before the replacement is validated or fully built.
+- Scene creation mutates live camera, fog, post uniforms and group membership incrementally.
+- A descriptor or resource-construction failure can leave a partial or blank stage.
+- No prepare/commit split exists.
+- No typed stage-load result records request, validation, preparation, commit or failure.
+- No committed scene identity or monotonically increasing `stageEpoch` exists.
 
-## Save-envelope gaps
+## Three.js resource gaps
 
-- Syntactically valid JSON is shallow-merged directly into live state.
-- Save fields have no schema version, source fingerprint, created/updated revision or migration history.
-- `clues`, `route`, `log`, `flags` and `inspected` are not type-checked before use.
-- Unknown scene, hotspot and clue ids are not removed or reported.
-- An invalid persisted `sceneId` falls back visually without repairing `state.sceneId`.
-- Route order is not reconciled to the authored scene sequence.
-- Clues and inspections can disagree because they are persisted as separate authorities.
-- Interlude and terminal state do not round-trip.
+- `Group.clear()` detaches prior meshes but does not dispose their geometries or materials.
+- `this.materials = []` drops prior anime-material references before cleanup.
+- Hotspot `MeshBasicMaterial` resources are never included in the material list.
+- No scene-local ledger owns geometries, materials, textures or object roots.
+- Persistent post geometry, post material, render target and renderer have no teardown owner.
+- No duplicate-disposal guard or disposed-resource accounting exists.
+- Traversing the current route creates 28 stage meshes while only the newest scene remains attached.
 
-## Interaction-command gaps
+## Frame-loop and listener gaps
 
-- Side-panel and raycast inputs pass live hotspot descriptor objects into mutation.
-- No canonical `{sceneId, hotspotId, inputOrigin, commandId}` request exists.
-- Hotspot membership in the active scene is not checked by contract.
-- Input origin is lost before state mutation.
-- Accepted, repeated, rejected, repaired and no-op outcomes are not typed.
-- Stale descriptors from a prior source or stage epoch cannot be rejected by source identity.
+- Recursive RAF starts in the constructor and its id is not retained.
+- The frame loop has no explicit running, paused or disposed state.
+- Resize, pointer-move and click handlers are anonymous closures and cannot be deterministically removed.
+- No visibility or host-detachment policy exists.
+- Repeated construction can create additional frame loops and listener sets.
+- `dispose()` is absent and idempotent teardown is unproven.
 
-## Completion gaps
+## Hotspot and interaction gaps
 
-- Completion trusts global persisted clue strings.
-- Clues are not derived from canonical inspected hotspots.
-- A repaired or manually edited save can satisfy requirements without valid inspection evidence.
-- There is no completion proof containing source fingerprint, scene id, inspected hotspot ids and derived clue ids.
-- Anonymous interlude timers have no command, scene or source correlation.
-- Terminal projection is not represented in persisted state.
+- Hotspot meshes retain full live descriptor objects rather than canonical source refs.
+- Pick results contain no scene id, source revision, stage epoch or commit id.
+- Stale picks cannot be rejected by contract.
+- `hovered` and hover-label visibility are not explicitly reset during scene replacement.
+- Side-panel and raycast paths still lack one typed canonical story-command result.
 
-## Render/source correlation gaps
+## Diagnostics gaps
 
-- StageKit receives the resolved descriptor object but no source manifest id or source fingerprint.
-- A fallback-rendered scene can disagree with the uncorrected persisted `state.sceneId`.
-- Pick meshes retain full live hotspot descriptor objects rather than canonical source references.
-- Debug JSON exposes aggregate state but not save validation, repair rows, source identity or command results.
-- The existing atomic StageKit, resource disposal and frame acknowledgement gaps remain unresolved.
+- Debug JSON exposes story state but not renderer lifecycle state.
+- No stage build, commit, failure or disposal journal exists.
+- Current live resource counts and cumulative disposed counts are unavailable.
+- No JSON-safe record proves which scene is actually committed for rendering.
+- Raw Three.js objects remain the only detailed runtime evidence.
 
 ## Validation gaps
 
 - `npm run check` performs syntax checks only.
-- No story manifest or graph validator fixture exists.
-- No malformed, stale, future-version or content-drift save matrix exists.
-- No canonical hotspot command fixture exists.
-- No clue derivation or completion proof fixture exists.
-- No source/save/render identity fixture exists.
-- No browser smoke automation exists.
+- No pure stage-build-plan fixture exists.
+- No failure-injection test proves the old scene survives replacement failure.
+- No resource-ledger test proves exact disposal counts.
+- No stale-stage-epoch pick fixture exists.
+- No listener/RAF teardown fixture exists.
+- No browser smoke repeatedly loads all scenes and disposes the host.
+
+## Upstream story-authority gaps retained
+
+- `story-data.js` still has no schema version, manifest id or source fingerprint.
+- Saves are shallow-merged without schema validation or source reconciliation.
+- Descriptor objects still cross the input-to-mutation boundary.
+- Completion still trusts persisted global clue strings.
+- Interlude timers still lack command, scene and source correlation.
 
 ## Deferred work
 
