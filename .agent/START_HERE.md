@@ -1,16 +1,28 @@
 # START HERE: The Unmapped House
 
-Last updated: `2026-07-11T01-38-28-04-00`
+Last updated: `2026-07-11T04-00-07-04-00`
 
 ## Summary
 
-`TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three authored scenes, nine hotspots, nine required clues, browser persistence, a descriptor-driven Three.js stage and a post-processing pass.
+`TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three authored scenes, nine hotspots, nine required clues, browser persistence, a descriptor-driven Three.js stage and post processing.
 
-This documentation pass changes no runtime source. It isolates a story-phase recovery defect: scene completion is stored only as clues, while interlude pending/open state lives in an unretained timer and DOM classes. Reloading a completed scene can therefore strand the player with every hotspot already inspected, no interlude, and no admitted Continue path.
+This documentation pass changes no runtime source. It drills into the next transition boundary: Continue mutates story identity before durable save or StageKit replacement is proven, while `StageKit.loadScene()` clears the committed stage before the replacement is fully prepared.
+
+## Plan ledger
+
+**Goal:** keep story state, browser persistence, DOM projection and the committed rendered scene on one atomic transition revision.
+
+- [x] Compare all ten accessible Publish repositories.
+- [x] Exclude `TheCavalryOfRome`.
+- [x] Confirm all eligible repositories are tracked and have root `.agent` state.
+- [x] Select `TheUnmappedHouse` as the oldest eligible documented repository.
+- [x] Identify the interaction loop, domains, kits and services.
+- [x] Trace Continue through mutation, stage replacement, projection, save and first frame.
+- [x] Document prepare, commit, rollback, resource retirement and validation gaps.
+- [x] Add a new timestamped tracker and audit set.
+- [x] Push only to `main`; create no branch or pull request.
 
 ## Selection
-
-The accessible `LuminaryLabs-Publish` inventory contains ten repositories:
 
 ```txt
 AetherVale
@@ -19,92 +31,90 @@ IntoTheMeadow
 MyCozyIsland
 PhantomCommand
 PrehistoricRush
-TheCavalryOfRome
+TheCavalryOfRome      excluded
 TheOpenAbove
-TheUnmappedHouse
+TheUnmappedHouse      selected
 ZombieOrchard
 ```
 
-`TheCavalryOfRome` remains excluded. All nine eligible repositories are centrally tracked and have root `.agent` state. `ZombieOrchard` was receiving active same-minute documentation writes, so `TheUnmappedHouse` was selected as the oldest stable eligible fallback. Only this product repository was changed.
+No eligible repository was new, missing from the central ledger or missing root `.agent` state. `TheUnmappedHouse` had the oldest prior central update, `2026-07-11T01-38-28-04-00`.
 
 ## Runtime path
 
 ```txt
 index.html
   -> src/game.js
-  -> shallow-merge localStorage state
-  -> resolve currentScene
-  -> construct StageKit, listeners, render target and recursive RAF
-  -> load scene descriptors and project UI
-  -> inspect by side-panel or raycast
-     -> mutate inspected/clues/log
-     -> derive sceneComplete
-     -> schedule unretained 450 ms callback
-     -> project UI
-     -> write localStorage
-  -> timer callback opens interlude in the DOM
-  -> Continue mutates route, replaces stage, projects UI and writes localStorage
-  -> KeyR clears storage and reloads
+  -> load and shallow-merge localStorage
+  -> construct StageKit and start recursive RAF
+  -> load current scene descriptors
+  -> inspect hotspot through DOM or raycast
+  -> mutate inspections, clues and notebook log
+  -> derive completion and schedule delayed interlude
+  -> Continue mutates story scene, route and log
+  -> hide interlude
+  -> StageKit clears the live committed group
+  -> allocate the next scene directly into live renderer state
+  -> project DOM
+  -> save state
+  -> eventually render the next frame
 ```
 
 ## Main finding
 
-The runtime has no explicit persisted story phase.
+The transition is not atomic.
 
 ```txt
-completion evidence = clues[]
-interlude pending    = unretained setTimeout
-interlude open       = DOM class and aria-hidden
-continue admission   = button event only
-terminal state       = DOM copy only
+story mutation       happens before stage preparation
+interlude close       happens before stage preparation
+live stage clear      happens before replacement success
+DOM projection        happens before durable save result
+resource retirement   has no disposal proof
+first rendered frame  has no acknowledgement
 ```
 
-A reload after the final required clue preserves `sceneComplete(currentScene) === true`, but boot does not restore or reschedule the interlude. Every hotspot is already marked inspected, and the re-read branch does not evaluate completion. The player can remain permanently stuck in a completed scene.
-
-The timer has no id, target scene id, save revision, deadline or epoch. Its callback closes over mutable `currentScene`. `nextScene()` has no phase/completion guard, so a hidden or repeated Continue activation can advance without authoritative admission. The final scene has no persisted terminal state.
+A stage-construction failure can leave in-memory story state on the next scene, the durable save on the prior scene, the interlude hidden and the stage blank or partial. A save failure after successful stage construction can leave the visible scene ahead of the reload state.
 
 ## Current authority
 
 ```txt
-src/story-data.js   = story, completion requirements and visual descriptors
-src/game.js         = mutable story state, implicit phase, timer, persistence and DOM orchestration
-src/stage-kit.js    = Three.js resource creation, picking, rendering and scene replacement
+src/story-data.js   = story and visual descriptors
+src/game.js         = mutable story, phase, Continue, DOM and persistence orchestration
+src/stage-kit.js    = live Three.js resources, picking, scene replacement and rendering
 src/aspect-frame.js = fixed 16:9 layout policy
 ```
 
 ## Read this pass first
 
 ```txt
-.agent/trackers/2026-07-11T01-38-28-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-11T01-38-28-04-00.md
-.agent/architecture-audit/2026-07-11T01-38-28-04-00-story-phase-recovery-dsk-map.md
-.agent/render-audit/2026-07-11T01-38-28-04-00-phase-projection-render-correlation-gap.md
-.agent/gameplay-audit/2026-07-11T01-38-28-04-00-completion-reload-continue-loop.md
-.agent/interaction-audit/2026-07-11T01-38-28-04-00-continue-admission-and-stale-timer-map.md
-.agent/story-phase-audit/2026-07-11T01-38-28-04-00-interlude-resume-terminal-contract.md
-.agent/deploy-audit/2026-07-11T01-38-28-04-00-story-phase-resume-fixture-gate.md
+.agent/trackers/2026-07-11T04-00-07-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-11T04-00-07-04-00.md
+.agent/architecture-audit/2026-07-11T04-00-07-04-00-story-stage-transition-dsk-map.md
+.agent/render-audit/2026-07-11T04-00-07-04-00-live-stage-replacement-commit-gap.md
+.agent/gameplay-audit/2026-07-11T04-00-07-04-00-continue-transition-failure-loop.md
+.agent/interaction-audit/2026-07-11T04-00-07-04-00-continue-to-first-frame-result-map.md
+.agent/lifecycle-audit/2026-07-11T04-00-07-04-00-stage-resource-retirement-contract.md
+.agent/deploy-audit/2026-07-11T04-00-07-04-00-story-stage-transition-fixture-gate.md
 ```
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Phase Recovery Authority
-+ Interlude/Continue Admission Fixture Gate
+TheUnmappedHouse Atomic Story/Stage Transition Authority
++ Prepare/Commit/Discard and First-Frame Fixture Gate
 ```
 
 Implementation order:
 
 ```txt
-versioned durable StorySnapshot
-  -> explicit exploring/interlude_pending/interlude_open/transitioning/terminal phases
-  -> scene-scoped completion proof
-  -> persisted interlude deadline and target scene
-  -> boot phase reconciliation
-  -> typed Continue admission and idempotent result
-  -> retained/cancellable timer adapter
-  -> persisted terminal state
-  -> phase/projection/stage correlation rows
-  -> Node fixtures and browser reload smoke
+versioned durable StorySnapshot and typed persistence results
+  -> explicit story phase and Continue admission
+  -> transition command and candidate snapshot
+  -> detached StageKit preparation
+  -> durable story commit
+  -> atomic stage and DOM commit
+  -> first-frame acknowledgement
+  -> prior-stage retirement and disposal
+  -> rollback and deterministic fixtures
 ```
 
 ## Do not do first
