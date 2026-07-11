@@ -21,8 +21,8 @@ rollback fixture: unavailable
 resource disposal fixture: unavailable
 first-frame acknowledgement fixture: unavailable
 terminal idempotency fixture: unavailable
-repo-local docs pushed to main: pending until commit
-central ledger sync: pending until central commit
+repo-local docs pushed to main: yes
+central ledger sync: complete
 ```
 
 ## Available validation
