@@ -1,6 +1,6 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-11T10-18-05-04-00`
+Timestamp: `2026-07-11T12-08-47-04-00`
 
 ## This pass
 
@@ -14,18 +14,19 @@ rendering changed: no
 deployment changed: no
 branch created: no
 pull request created: no
-npm run check: not run in connector-only environment
+npm run check: not run; GitHub was unavailable from the local execution container
 browser smoke: not run
-runtime-session fixture: unavailable
-frame-loop fixture: unavailable
-listener-retirement fixture: unavailable
-timeout-retirement fixture: unavailable
-stage-resource-retirement fixture: unavailable
-renderer-disposal fixture: unavailable
-reset-generation fixture: unavailable
-browser teardown smoke: unavailable
+story manifest fixture: unavailable
+story snapshot fixture: unavailable
+inspection command fixture: unavailable
+stale inspection fixture: unavailable
+clue provenance fixture: unavailable
+completion proof fixture: unavailable
+persistence rollback fixture: unavailable
+dual-ingress parity fixture: unavailable
+browser dual-ingress smoke: unavailable
 repo-local docs pushed to main: yes
-central ledger sync: complete
+central ledger sync: pending until repo-local audit completion
 ```
 
 ## Available validation
@@ -46,127 +47,166 @@ src/stage-kit.js
 src/story-data.js
 ```
 
-It does not execute runtime lifecycle behavior or prove callback and resource retirement.
+It does not execute story admission, inspection, completion, persistence, transition, rendering, or lifecycle behavior.
 
-## Required lifecycle validation gate
+## Required inspection validation gate
 
 ```txt
-node scripts/validate-runtime-session.mjs
-node scripts/validate-frame-loop-lease.mjs
-node scripts/validate-listener-retirement.mjs
-node scripts/validate-timeout-retirement.mjs
-node scripts/validate-stage-resource-retirement.mjs
-node scripts/validate-renderer-disposal.mjs
-node scripts/validate-reset-generation.mjs
+node scripts/validate-story-manifest.mjs
+node scripts/validate-story-snapshot-admission.mjs
+node scripts/validate-inspection-command.mjs
+node scripts/validate-stale-inspection.mjs
+node scripts/validate-clue-provenance.mjs
+node scripts/validate-scene-completion-proof.mjs
+node scripts/validate-inspection-persistence-rollback.mjs
+node scripts/validate-dual-ingress-parity.mjs
 npm run check
 ```
 
-## Required runtime-session rows
+## Required manifest rows
 
 ```txt
-session-id-and-generation-present
-lifecycle-state-machine-valid
-only-current-generation-admitted
-session-snapshot-detached-and-json-safe
-stop-result-typed
-disposal-result-typed
-stop-idempotent
-dispose-idempotent
+manifest-id-and-schema-version-present
+scene-ids-unique
+hotspot-ids-unique-within-scene
+canonical-scene-index-stable
+canonical-hotspot-index-stable
+canonical-clue-index-stable
+every-hotspot-grant-resolves
+every-completion-requirement-resolves
+clue-ownership-unambiguous
+manifest-fingerprint-stable
+admitted-definition-deeply-immutable
 ```
 
-## Required frame and callback rows
+## Required command-admission rows
 
 ```txt
-single-active-frame-loop
-pending-raf-retained
-stop-cancels-pending-raf
-stale-raf-does-not-render
-stale-raf-does-not-recurse
-resize-listener-removed
-mousemove-listener-removed
-canvas-click-listener-removed
-keydown-listener-removed
-continue-listener-disabled-during-stop
-pending-interlude-timeout-cancelled
-stale-interlude-callback-no-op
-old-hotspot-button-closure-no-op
+command-id-present
+input-sequence-present
+source-enum-valid
+scene-id-present
+hotspot-id-present
+expected-story-revision-present
+expected-stage-epoch-present
+side-panel-ingress-id-only
+raycast-observation-id-only
+canonical-hotspot-resolved-after-admission
+unknown-hotspot-rejected
+cross-scene-hotspot-rejected
+stale-scene-rejected
+stale-story-revision-rejected
+stale-stage-epoch-rejected
+duplicate-sequence-rejected
 ```
 
-## Required stage-resource rows
+## Required inspection-result rows
 
 ```txt
-scene-resource-counts-inventoried-by-stage-epoch
-initial-scene-counts-stable
-successor-stage-commits-before-predecessor-retirement
-failed-successor-keeps-current-stage-live
-all-layer-geometries-disposed
-all-prop-geometries-disposed
-all-hotspot-geometries-disposed
-all-scene-shader-materials-disposed
-all-hotspot-materials-disposed
-retirement-receipt-counts-match
-zero-retired-scene-resources-remain-live
+first-inspection-status-applied
+inspection-result-command-correlated
+inspection-result-story-revision-correlated
+inspection-result-stage-epoch-correlated
+inspection-receipt-created-once
+receipt-detached-and-json-safe
+exact-duplicate-status-duplicate
+exact-duplicate-story-fingerprint-unchanged
+re-read-does-not-regrant-clues
+re-read-presentation-result-explicit
+unknown-or-stale-command-does-not-mutate
+inspection-journal-bounded
 ```
 
-## Required renderer-disposal rows
+## Required clue-provenance rows
 
 ```txt
-render-target-disposed
-post-plane-geometry-disposed
-post-material-disposed
-renderer-disposed-once
-canvas-removed-once
-context-retirement-result-explicit
-owned-references-cleared
-zero-live-resources-after-full-dispose
-partial-disposal-failures-listed
+canonical-hotspot-grants-only-owned-clues
+clue-granted-once
+clue-provenance-includes-scene
+clue-provenance-includes-hotspot
+clue-provenance-includes-inspection-receipt
+clue-provenance-includes-story-revision
+forged-descriptor-grants-ignored
+cross-scene-grants-rejected
+forged-global-clue-does-not-satisfy-proof
+migrated-clues-reconciled-to-canonical-receipts
 ```
 
-## Required reset rows
+## Required completion-proof rows
 
 ```txt
-reset-admitted-against-current-generation
-old-session-stopped-before-new-generation
-old-session-disposed-before-new-generation
-persistence-clear-result-typed
-initial-stage-epoch-committed
-first-post-reset-frame-acknowledged
-old-generation-raf-no-op
-old-generation-timeout-no-op
-old-generation-listener-no-op
+completion-requires-current-scene-receipts
+completion-requires-all-canonical-required-hotspots
+completion-proof-created-once
+completion-proof-id-stable
+completion-proof-fingerprint-stable
+completion-proof-includes-receipt-set
+completion-proof-includes-story-revision
+completion-proof-unconsumed-on-creation
+duplicate-inspection-does-not-create-second-proof
+one-interlude-lease-per-completion-proof
+continue-admits-specific-unconsumed-proof
+proof-consumption-idempotent
+```
+
+## Required persistence rows
+
+```txt
+inspection-builds-candidate-story-snapshot
+candidate-save-result-typed
+save-success-precedes-live-commit
+save-failure-keeps-live-story-unchanged
+save-failure-keeps-dom-unchanged
+save-failure-creates-failed-result
+story-revision-advances-once
+save-revision-advances-once
+before-after-fingerprints-present
+persisted-snapshot-matches-result
+```
+
+## Required dual-ingress parity rows
+
+```txt
+same-hotspot-button-and-raycast-command-equal
+same-hotspot-button-and-raycast-status-equal
+same-hotspot-button-and-raycast-receipt-shape-equal
+same-hotspot-button-and-raycast-clue-grants-equal
+same-hotspot-button-and-raycast-completion-proof-equal
+same-hotspot-button-and-raycast-persisted-snapshot-equal
+mixed-ingress-repeat-remains-idempotent
+stale-button-closure-rejected-after-transition
+retired-raycast-observation-rejected-after-transition
 ```
 
 ## Browser smoke after fixtures
 
 ```txt
-boot initial scene
-record initial lifecycle and resource diagnostics
+boot initial scene and record manifest/story/stage identities
+inspect hotspot one through side-panel
+inspect hotspot two through raycast
+repeat hotspot one through raycast and verify duplicate result
+inspect final hotspot through side-panel
+verify one completion proof and one interlude lease
+attempt forged descriptor and verify rejection
 advance to scene two
-verify predecessor retirement and bounded live counts
-advance to scene three
-verify resource counts remain bounded
-schedule interlude and reset before timeout fires
-verify stale timeout does not reopen the interlude
-stop runtime and verify frame count stops
-fire resize, pointer, click, key, and Continue events after stop
-verify no story, DOM, persistence, or render mutation
-fully dispose runtime
-verify canvas removal and zero live resource counts
-start a new generation
-verify old-generation callbacks cannot affect it
+invoke retained scene-one button callback and verify stale-scene rejection
+submit retired stage-one pick observation and verify stale-stage rejection
+reload admitted save and verify receipt/clue/proof identity
+verify visible scene, debug projection, and persisted revision agree
 ```
 
-## Existing prerequisite fixture families
+## Existing follow-on fixture families
 
-The lifecycle gate does not replace the still-required:
+The inspection gate does not replace the still-required:
 
 ```txt
-StoryManifest and StorySnapshot fixtures
-save admission, migration, reconciliation, and write-result fixtures
-inspection-command and completion-proof fixtures
 atomic Continue, rollback, resource-retirement, and first-frame fixtures
+runtime session and generation fixtures
+frame-loop, listener, and timeout lease fixtures
+renderer/canvas/context teardown fixtures
+reset-generation and stale-callback fixtures
 ```
 
 ## Validation claim
 
-This pass documents the required proof surface. It does not claim that runtime lifecycle, resource disposal, or browser teardown is implemented.
+This pass documents the proof surface required for canonical inspection and completion. It does not claim that StoryManifest admission, StorySnapshot migration, inspection authority, completion proof, persistence rollback, or dual-ingress parity is implemented.
