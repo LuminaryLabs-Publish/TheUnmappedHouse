@@ -41,8 +41,8 @@ previous central timestamp: 2026-07-10T20-38-24-04-00
 - [x] Add architecture, render, gameplay, interaction, persistence, story-authority and deploy audits.
 - [x] Refresh `START_HERE.md`, `current-audit.md`, `next-steps.md`, `known-gaps.md`, `validation.md` and `kit-registry.json`.
 - [x] Push only to `main`.
-- [ ] Synchronize the central repo ledger.
-- [ ] Add the central internal change-log entry.
+- [x] Synchronize the central repo ledger.
+- [x] Add the central internal change-log entry.
 
 ## Main finding
 
