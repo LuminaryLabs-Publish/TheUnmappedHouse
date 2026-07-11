@@ -1,40 +1,54 @@
 # Known gaps: The Unmapped House
 
-Timestamp: `2026-07-11T01-38-28-04-00`
+Timestamp: `2026-07-11T04-00-07-04-00`
 
 ## Story-phase gaps
 
 - No explicit story phase is persisted.
-- Completion, interlude pending, interlude open, transitioning and terminal states are split across derived clues, a browser timer, mutable variables and DOM classes.
+- Completion, interlude pending, interlude open, transitioning and terminal states are split across clues, a timer, mutable variables and DOM classes.
 - A completed scene can reload with every hotspot inspected but no visible or scheduled interlude.
-- Boot does not reconcile a completed snapshot into an interlude-ready phase.
 - The final scene has no persisted terminal state.
-
-## Interlude timer gaps
-
-- The 450 ms timer id is not retained.
-- The callback carries no target scene id, command id, save revision, deadline or runtime epoch.
-- The callback closes over mutable `currentScene`.
-- Timers are not cancelled during transition, reset, reload preparation or disposal.
-- No stale-callback rejection exists.
-- No deterministic remaining-delay recovery exists after reload.
 
 ## Continue-command gaps
 
 - Continue is a direct button callback, not a canonical command.
-- `nextScene()` does not require scene completion or `interlude_open` phase.
-- Hidden, stale, duplicated or programmatic activations have no admission boundary.
-- There is no request id, expected scene, expected phase or expected save revision.
-- Accepted, rejected, duplicate and no-op outcomes are not represented.
-- Repeated final Continue activations have no terminal idempotency contract.
+- `nextScene()` does not require completion, `interlude_open`, expected story revision or expected stage epoch.
+- Hidden, repeated or stale activations have no typed admission result.
+- No request id or transition id exists.
 
-## Completion-proof gaps
+## Transition-atomicity gaps
 
-- Completion trusts a global clue-string array.
-- Completion evidence is not scene-scoped, source-versioned or revision-bound.
-- No immutable proof lists the exact required and satisfied clue ids.
-- Persisted clues from incompatible source data are not reconciled.
-- Already-inspected hotspot handling bypasses completion evaluation.
+- `currentScene`, `state.sceneId`, route and log mutate before stage preparation or durable save succeeds.
+- The interlude closes before the next stage is known to be buildable.
+- DOM, persistence and stage replacement are separate direct effects rather than one commit protocol.
+- A stage failure can leave in-memory story state ahead of the durable save.
+- A storage failure can leave the visible stage ahead of the reload state.
+- No rollback snapshot or deterministic recovery result exists.
+
+## Stage-preparation gaps
+
+- `StageKit.loadScene()` clears the live committed group before validating or preparing the replacement.
+- Geometry, materials and hotspot meshes are allocated directly into live stage state.
+- No detached build group, build plan, preparation result or discard operation exists.
+- Scene descriptor errors can leave a blank or partially built stage.
+- Camera, fog and post-process state mutate as part of the same unguarded operation.
+
+## Commit and first-frame gaps
+
+- No stage commit id or stage epoch exists.
+- No result correlates story revision, save revision, stage identity, DOM projection and rendered frame.
+- A successful `loadScene()` does not prove the next frame rendered the new stage.
+- Prior resources cannot be safely retired based on first-frame acknowledgement.
+- No timeout or failure policy exists for an unacknowledged commit.
+
+## Resource-lifecycle gaps
+
+- `stageGroup.clear()` detaches prior objects without disposing geometry or materials.
+- Resetting `materials` and `hotspots` drops useful release references.
+- Hotspot box geometries and invisible materials are not explicitly disposed.
+- RAF ids are not retained or cancellable.
+- Resize, pointer, click and keyboard listeners lack centralized teardown.
+- No idempotent `StageKit.dispose()` or runtime disposal exists.
 
 ## Persistence gaps
 
@@ -42,36 +56,23 @@ Timestamp: `2026-07-11T01-38-28-04-00`
 - Parsed data is shallow-merged without field validation.
 - Save revisions, state fingerprints and expected-revision checks are absent.
 - Read denial, invalid JSON, write denial, quota failure and clear failure are not distinguished.
-- Story mutation, timer scheduling, DOM projection and stage replacement occur before durable success is known.
-- No pending transition envelope or deterministic recovery protocol exists.
+- No pending transition envelope or recovery protocol exists.
 
-## Projection and render gaps
+## Projection gaps
 
-- Interlude visibility is DOM-only and cannot be reconstructed from authoritative state.
-- Debug JSON exposes aggregate mutable story state but not phase, deadline, command result, save revision or stage identity.
-- No phase revision correlates story projection, StageKit scene, rendered frame or save envelope.
-- A visible stage can be ahead of the durable story revision.
-- Scene opening copy can remain stale because `renderUi()` only installs opening text when the current text is empty or equals `Loading`.
-
-## Stage and lifecycle gaps
-
-- `StageKit.loadScene()` clears the committed group before replacement preparation succeeds.
-- Retired geometries, materials and hotspot resources are not disposed.
-- RAF ids are not retained or cancellable.
-- Resize, pointer, click and keyboard listeners lack centralized teardown.
-- No idempotent `dispose()` contract exists.
-- No stage epoch or stage commit result exists.
+- Interlude visibility and terminal state remain DOM-only.
+- Scene opening copy can remain stale because `renderUi()` only installs opening text when text is empty or equals `Loading`.
+- Debug JSON has no phase, command, transition, save, stage or frame correlation rows.
 
 ## Validation gaps
 
 - `npm run check` performs syntax checks only.
-- No story-phase reducer fixture exists.
-- No reload-during-pending or reload-during-open interlude fixture exists.
-- No stale timer, duplicate timer or timer cancellation fixture exists.
-- No Continue admission or idempotency fixture exists.
-- No terminal reload fixture exists.
-- No phase/save/stage/render correlation fixture exists.
-- No browser smoke exercises completed-scene reload recovery.
+- No stage preparation or descriptor-failure fixture exists.
+- No persistence-failure discard fixture exists.
+- No atomic transition rollback fixture exists.
+- No first-frame acknowledgement fixture exists.
+- No prior-stage resource-retirement fixture exists.
+- No browser fault-injection smoke exists.
 
 ## Deferred work
 
