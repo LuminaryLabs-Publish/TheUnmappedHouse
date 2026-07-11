@@ -1,6 +1,6 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-10T19-00-19-04-00`
+Timestamp: `2026-07-10T20-38-24-04-00`
 
 ## This pass
 
@@ -14,13 +14,13 @@ branch created: no
 pull request created: no
 npm run check: not run in connector-only environment
 browser smoke: not run
-story manifest fixture: unavailable
-save reconciliation fixture: unavailable
-story command fixture: unavailable
-completion proof fixture: unavailable
-source/save/render identity fixture: unavailable
+stage build-plan fixture: unavailable
+atomic stage-commit fixture: unavailable
+resource-ledger fixture: unavailable
+stage-epoch interaction fixture: unavailable
+host-disposal fixture: unavailable
 repo-local docs pushed to main: yes
-central ledger sync: prepared and completed in the same run
+central ledger sync: pending until repo-local documentation is complete
 ```
 
 ## Available validation
@@ -44,105 +44,123 @@ src/story-data.js
 ## Required next validation gate
 
 ```txt
-node scripts/validate-story-manifest.mjs
-node scripts/validate-save-reconciliation.mjs
-node scripts/validate-story-command-authority.mjs
-node scripts/validate-completion-proof.mjs
-node scripts/validate-source-save-render-identity.mjs
+node scripts/validate-stage-build-plan.mjs
+node scripts/validate-atomic-stage-commit.mjs
+node scripts/validate-resource-ledger.mjs
+node scripts/validate-hotspot-stage-epoch.mjs
+node scripts/validate-stage-host-disposal.mjs
 npm run check
 ```
 
-## Required story manifest rows
+## Required stage-build rows
 
 ```txt
-manifest-schema-version-present
-manifest-id-stable
-source-fingerprint-stable
-three-scenes-indexed
-nine-hotspots-indexed
-nine-required-clues-indexed
-scene-ids-unique
-hotspot-ids-unique-per-scene
-all-grants-known
-all-requirements-known
-route-order-valid
-normalized-source-json-safe
+scene-one-plan-has-10-meshes
+scene-two-plan-has-9-meshes
+scene-three-plan-has-9-meshes
+all-layer-rows-validated
+all-prop-rows-validated
+all-hotspot-rows-validated
+camera-row-validated
+fog-row-validated
+post-row-validated
+invalid-size-rejected
+unknown-prop-kind-rejected-or-normalized
+plan-json-safe
+live-host-untouched-during-plan
 ```
 
-## Required save reconciliation rows
+## Required atomic-commit rows
 
 ```txt
-empty-save-initializes
-current-save-accepted
-malformed-json-reset
-wrong-clues-type-repaired
-wrong-inspected-type-repaired
-wrong-route-type-repaired
-unknown-scene-id-repaired-and-persisted
-unknown-hotspot-ids-removed
-unknown-clue-ids-removed
-route-rebuilt-as-valid-prefix
-clues-derived-from-inspections
-stale-source-migrated-or-reset
-future-schema-rejected
-repair-rows-json-safe
-canonical-state-fingerprint-stable
+old-stage-visible-during-prepare
+build-failure-retains-old-stage
+failed-build-does-not-increment-epoch
+successful-build-commits-once
+successful-build-increments-epoch-once
+committed-scene-id-matches-request
+camera-fog-post-commit-together
+previous-stage-disposed-after-commit
+commit-result-json-safe
+no-partial-group-visible
 ```
 
-## Required command rows
+## Required resource-ledger rows
 
 ```txt
-side-panel-command-accepted
-raycast-command-accepted
-input-origin-retained
-repeated-inspection-result
-unknown-scene-rejected
-wrong-active-scene-rejected
-unknown-hotspot-rejected
-stale-source-command-rejected
-descriptor-object-not-required
-before-after-fingerprints-recorded
-command-result-json-safe
+all-scene-geometries-owned
+all-scene-materials-owned
+hotspot-materials-owned
+persistent-resources-separated
+scene-one-disposal-counts-exact
+scene-two-disposal-counts-exact
+scene-three-disposal-counts-exact
+shared-resource-disposed-once
+second-ledger-dispose-is-no-op
+one-live-scene-ledger-after-each-commit
+zero-live-scene-ledgers-after-host-dispose
+cumulative-counts-json-safe
 ```
 
-## Required completion rows
+## Required interaction rows
 
 ```txt
-incomplete-before-required-inspections
-complete-after-canonical-inspections
-injected-clue-does-not-complete
-unknown-inspection-does-not-complete
-one-completion-proof-per-scene
-completion-proof-source-correlated
-interlude-effect-command-correlated
-stale-interlude-effect-rejected
-terminal-state-round-trips
+hotspot-ref-has-scene-id
+hotspot-ref-has-hotspot-id
+hotspot-ref-has-stage-epoch
+hotspot-ref-has-source-revision
+current-epoch-pick-accepted
+stale-epoch-pick-rejected
+hover-cleared-on-commit
+hover-label-hidden-on-commit
+side-panel-and-raycast-can-share-command-path
 ```
 
-## Required render identity rows
+## Required host-lifecycle rows
 
 ```txt
-persisted-scene-id-canonical
-resolved-scene-id-canonical
-stage-load-source-fingerprint-present
-hotspot-mesh-stores-canonical-ref
-pick-result-source-correlated
-rendered-scene-matches-save-scene
-fallback-repair-visible-in-diagnostics
-atomic-stage-commit-plan-preserved
+constructor-does-not-create-duplicate-loop
+start-is-idempotent
+pause-stops-frame-submission
+resume-restores-one-loop
+raf-id-retained
+raf-cancelled-on-dispose
+resize-listener-removed
+pointer-listener-removed
+click-listener-removed
+render-target-disposed-once
+post-geometry-disposed-once
+post-material-disposed-once
+renderer-disposed-once
+second-host-dispose-is-no-op
+post-dispose-methods-return-stable-results
 ```
 
 ## Browser smoke after fixtures
 
 ```txt
-load a clean save
-load and repair a corrupted save
-inspect with both input origins
-complete each scene through canonical commands
-open exactly one interlude per scene
-advance through all three scenes
-reload and preserve canonical state
-finish and reload terminal state
-reset to the clean source-derived initial state
-confirm current visuals, copy, route and pacing remain unchanged
+load scene one
+inspect by button and raycast
+advance to scene two
+confirm scene-one GPU resources retire
+advance to scene three
+confirm scene-two GPU resources retire
+confirm one committed stage group remains
+force a replacement preparation failure
+confirm scene three remains visible and interactive
+reset hover state during a successful commit
+dispose StageKit
+confirm RAF and listeners stop
+confirm no WebGL errors during the route
+confirm visuals, copy, framing and pacing remain unchanged
+```
+
+## Existing upstream fixture requirements retained
+
+```txt
+story manifest validation
+save reconciliation
+canonical hotspot command results
+completion proof
+source/save/render identity
 ```
