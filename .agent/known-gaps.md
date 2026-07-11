@@ -1,98 +1,77 @@
 # Known gaps: The Unmapped House
 
-Timestamp: `2026-07-11T00-00-26-04-00`
+Timestamp: `2026-07-11T01-38-28-04-00`
 
-## Persistence capability gaps
+## Story-phase gaps
 
-- Storage availability is not admitted before runtime construction.
-- `loadState()` collapses invalid JSON, read denial and other access errors into one silent fresh-state fallback.
-- `saveState()` calls `localStorage.setItem()` without catch, result or reason.
-- Reset calls `localStorage.removeItem()` without catch, result or reason.
-- There is no explicit ephemeral-versus-fatal policy when persistence is unavailable.
+- No explicit story phase is persisted.
+- Completion, interlude pending, interlude open, transitioning and terminal states are split across derived clues, a browser timer, mutable variables and DOM classes.
+- A completed scene can reload with every hotspot inspected but no visible or scheduled interlude.
+- Boot does not reconcile a completed snapshot into an interlude-ready phase.
+- The final scene has no persisted terminal state.
 
-## Durable commit gaps
+## Interlude timer gaps
 
-- The save has no revision or state fingerprint.
-- Callers cannot know which story snapshot was durably committed.
-- Story mutation, timer scheduling and DOM projection occur before inspection writes.
-- Story mutation, StageKit replacement and DOM projection occur before Continue writes.
-- A failed write can leave the visible story ahead of the durable save.
-- A failed final inspection write can still open the delayed interlude.
-- A failed Continue write can show the next scene until reload returns to the previous scene.
-- No pending transition envelope supports interrupted scene-change recovery.
-- No compare-and-set or expected-revision rule rejects stale writes.
+- The 450 ms timer id is not retained.
+- The callback carries no target scene id, command id, save revision, deadline or runtime epoch.
+- The callback closes over mutable `currentScene`.
+- Timers are not cancelled during transition, reset, reload preparation or disposal.
+- No stale-callback rejection exists.
+- No deterministic remaining-delay recovery exists after reload.
 
-## Save-envelope gaps
+## Continue-command gaps
+
+- Continue is a direct button callback, not a canonical command.
+- `nextScene()` does not require scene completion or `interlude_open` phase.
+- Hidden, stale, duplicated or programmatic activations have no admission boundary.
+- There is no request id, expected scene, expected phase or expected save revision.
+- Accepted, rejected, duplicate and no-op outcomes are not represented.
+- Repeated final Continue activations have no terminal idempotency contract.
+
+## Completion-proof gaps
+
+- Completion trusts a global clue-string array.
+- Completion evidence is not scene-scoped, source-versioned or revision-bound.
+- No immutable proof lists the exact required and satisfied clue ids.
+- Persisted clues from incompatible source data are not reconciled.
+- Already-inspected hotspot handling bypasses completion evaluation.
+
+## Persistence gaps
 
 - The save has no schema version, story manifest id or source fingerprint.
-- Parsed JSON is shallow-merged over the initial object.
-- Field types, scene ids, hotspot ids, clue ids, route rows and log rows are not validated.
-- Unknown or stale source identities are not reconciled.
-- Corrupt arrays can make normal runtime operations throw.
-- `flags` is persisted but has no current owner or contract.
-- No saved-at metadata, command id, transaction id or persistence attempt id exists.
+- Parsed data is shallow-merged without field validation.
+- Save revisions, state fingerprints and expected-revision checks are absent.
+- Read denial, invalid JSON, write denial, quota failure and clear failure are not distinguished.
+- Story mutation, timer scheduling, DOM projection and stage replacement occur before durable success is known.
+- No pending transition envelope or deterministic recovery protocol exists.
 
-## Story-phase and resume gaps
+## Projection and render gaps
 
-- No explicit story phase exists.
-- Completion is saved separately from delayed interlude projection.
-- Interlude pending/open state is DOM-only and is lost on reload.
-- The 450 ms timer id, target scene, command id and readiness deadline are not retained.
-- Reloading a completed scene can hide progression permanently.
-- The terminal route is DOM-only and is not persisted.
+- Interlude visibility is DOM-only and cannot be reconstructed from authoritative state.
+- Debug JSON exposes aggregate mutable story state but not phase, deadline, command result, save revision or stage identity.
+- No phase revision correlates story projection, StageKit scene, rendered frame or save envelope.
+- A visible stage can be ahead of the durable story revision.
+- Scene opening copy can remain stale because `renderUi()` only installs opening text when the current text is empty or equals `Loading`.
 
-## Completion-authority gaps
+## Stage and lifecycle gaps
 
-- Completion trusts one global clue-string array.
-- Persisted clues from another scene can satisfy current-scene requirements.
-- There is no scene-scoped completion proof.
-- Evidence has no source identity or save revision.
-
-## Interaction-command gaps
-
-- Side-panel and raycast paths pass live descriptor objects directly to mutation logic.
-- No canonical Inspect, Continue or Reset command exists.
-- Input origin, request id, expected phase, expected scene and expected save revision are absent.
-- Unknown, stale, duplicate and wrong-phase requests have no typed rejection contract.
-- Accepted results do not prove persistence success.
-
-## Story-stage transaction gaps
-
-- `nextScene()` mutates story state before stage loading and persistence succeed.
-- Interlude visibility is cleared before commit success is known.
-- No detached next-story snapshot exists.
-- No StageKit prepare/commit/discard boundary exists.
-- No transaction correlates story scene, save revision, stage commit and stage epoch.
-- A stage or final-save failure can leave story, storage and rendering divergent.
-
-## Boot and lifecycle gaps
-
-- StageKit starts RAF in its constructor.
+- `StageKit.loadScene()` clears the committed group before replacement preparation succeeds.
+- Retired geometries, materials and hotspot resources are not disposed.
 - RAF ids are not retained or cancellable.
-- Window, canvas and keyboard listeners have no centralized teardown.
-- The initial save occurs after WebGL resources, listeners and RAF are acquired.
-- A boot write failure has no reverse-order cleanup stack.
-- StageKit has no idempotent `dispose()` method.
-- Retired scene geometries, materials and hotspot resources are not disposed.
-
-## Diagnostics gaps
-
-- Debug JSON exposes aggregate mutable story state only.
-- Persistence capability, mode, attempt, result and save revision are unavailable.
-- Pending transaction and recovery state are unavailable.
-- No command-to-persistence-to-stage correlation exists.
-- No bounded JSON-safe effect journal exists.
+- Resize, pointer, click and keyboard listeners lack centralized teardown.
+- No idempotent `dispose()` contract exists.
+- No stage epoch or stage commit result exists.
 
 ## Validation gaps
 
 - `npm run check` performs syntax checks only.
-- No injected storage adapter exists.
-- No read-denial, write-denial, quota, stale-revision or clear-failure fixture exists.
-- No inspection write-failure fixture exists.
-- No pending/final transition recovery fixture exists.
-- No boot rollback or remount fixture exists.
-- No browser smoke exercises storage denial or interrupted persistence.
-- Existing story source, phase, stage commit, resource and disposal fixtures remain absent.
+- No story-phase reducer fixture exists.
+- No reload-during-pending or reload-during-open interlude fixture exists.
+- No stale timer, duplicate timer or timer cancellation fixture exists.
+- No Continue admission or idempotency fixture exists.
+- No terminal reload fixture exists.
+- No phase/save/stage/render correlation fixture exists.
+- No browser smoke exercises completed-scene reload recovery.
 
 ## Deferred work
 
