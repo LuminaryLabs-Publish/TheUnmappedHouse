@@ -1,81 +1,89 @@
 # START HERE: The Unmapped House
 
-Last updated: `2026-07-10T19-00-19-04-00`
+Last updated: `2026-07-10T20-38-24-04-00`
 
-## Current state
+## Summary
 
-`TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three authored scenes, nine hotspots, nine required clues, delayed interludes, browser persistence, and descriptor-driven Three.js rendering.
+`TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three authored scenes, nine hotspots, nine required clues, browser persistence, a descriptor-driven Three.js stage, and a post-processing pass.
 
-This pass does not change runtime behavior. It identifies the next authority boundary: the authored story source, persisted save, accepted hotspot command, completion proof, and rendered scene need one canonical source identity.
+This documentation pass changes no runtime source. It promotes the next render-host boundary: scene loading must become an atomic prepare/commit/dispose transaction with explicit stage epochs, resource accounting, and a stoppable host lifecycle.
+
+## Selection
+
+The accessible `LuminaryLabs-Publish` inventory contains ten repositories. `TheCavalryOfRome` remains excluded. All nine eligible repositories are centrally tracked and have root `.agent` state.
+
+`ZombieOrchard` had a newer repo-local documentation sequence actively landing while its central ledger still showed the older timestamp. To avoid colliding with an in-progress audit, `TheUnmappedHouse` was selected as the oldest stable eligible ledger entry.
 
 ## Runtime path
 
 ```txt
 index.html
   -> src/game.js
-       -> parse localStorage save
-       -> shallow-merge state
+       -> load mutable story state
        -> resolve current scene
        -> src/story-data.js descriptors
-       -> src/stage-kit.js
-            -> src/aspect-frame.js
-            -> Three.js 0.160.0 CDN
-       -> DOM, timers, localStorage, reload effects
-```
-
-## Authority today
-
-```txt
-src/story-data.js   = authored scene, hotspot, clue, render and interlude descriptors
-src/game.js         = save parsing, mutable story state, inspect/continue/reset, UI and effects
-src/stage-kit.js    = live descriptor consumption, rendering, picking and frame loop
-src/aspect-frame.js = fixed-aspect viewport policy
-```
-
-## Read this pass first
-
-```txt
-.agent/trackers/2026-07-10T19-00-19-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-10T19-00-19-04-00.md
-.agent/architecture-audit/2026-07-10T19-00-19-04-00-story-source-save-authority-dsk-map.md
-.agent/render-audit/2026-07-10T19-00-19-04-00-source-save-render-identity-gap.md
-.agent/gameplay-audit/2026-07-10T19-00-19-04-00-clue-completion-authority-loop.md
-.agent/interaction-audit/2026-07-10T19-00-19-04-00-canonical-hotspot-command-map.md
-.agent/persistence-audit/2026-07-10T19-00-19-04-00-save-envelope-reconciliation-contract.md
-.agent/story-source-audit/2026-07-10T19-00-19-04-00-story-manifest-graph-contract.md
-.agent/deploy-audit/2026-07-10T19-00-19-04-00-story-source-save-fixture-gate.md
+       -> StageKit.loadScene(scene)
+            -> clear current group immediately
+            -> create layer, prop, hotspot geometry/materials
+            -> update camera, fog and post uniforms
+       -> side-panel and raycast inspection
+       -> clue/completion/interlude/continue loop
+       -> localStorage and DOM projection
 ```
 
 ## Interaction loop
 
 ```txt
-parse save
-  -> shallow-merge arbitrary persisted fields
-  -> resolve a scene, with fallback that does not repair state.sceneId
-  -> load StageKit and project UI
-  -> button or raycast passes a live hotspot descriptor object
-  -> mutate inspected, clues and log
-  -> evaluate completion from global clue strings
-  -> schedule delayed interlude
-  -> continue mutates route and scene
-  -> load next StageKit scene and save
-  -> final continue projects terminal copy only
-  -> KeyR clears storage and reloads
+load save
+  -> resolve current scene
+  -> construct StageKit
+  -> load scene descriptors
+  -> RAF renders stage to WebGLRenderTarget
+  -> post pass renders to canvas
+  -> pointer hover raycasts hotspot volumes
+  -> click or side-panel button inspects hotspot
+  -> grant clues and evaluate scene completion
+  -> delayed interlude opens
+  -> continue loads the next scene
+  -> final continue projects terminal copy
+  -> KeyR clears save and reloads
+```
+
+## Current authority
+
+```txt
+src/story-data.js   = authored story and render descriptors
+src/game.js         = story mutation, persistence, DOM and transition effects
+src/stage-kit.js    = Three.js resource creation, picking, frame loop and scene replacement
+src/aspect-frame.js = fixed 16:9 layout policy
 ```
 
 ## Main finding
 
-The runtime has no versioned story manifest or validated save envelope. Parsed storage is shallow-merged directly into live state, a bad `sceneId` falls back visually without repairing the persisted id, and clue/inspection/route data are not reconciled against the current authored source.
+`StageKit.loadScene()` clears the live `stageGroup` before the replacement scene is fully prepared. A build failure can therefore leave a partial or blank stage. The method returns no typed result, stage epoch, committed scene identity, or resource ledger.
 
-Both input paths pass live hotspot objects into mutation. There is no canonical `{sceneId, hotspotId, inputOrigin}` command, membership check, typed result, source fingerprint, or proof that completion was derived from canonical inspected hotspots rather than stale or injected clue strings.
+`Group.clear()` only detaches children. The old geometries and materials are not disposed, `this.materials` is reset before disposal, hotspot materials are never tracked, and repeated scene loads accumulate GPU resources. The constructor also installs anonymous resize/pointer listeners and starts an untracked recursive RAF, so the host has no idempotent `dispose()` boundary.
+
+## Read this pass first
+
+```txt
+.agent/trackers/2026-07-10T20-38-24-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-10T20-38-24-04-00.md
+.agent/architecture-audit/2026-07-10T20-38-24-04-00-stage-resource-lifecycle-authority-dsk-map.md
+.agent/render-audit/2026-07-10T20-38-24-04-00-atomic-scene-commit-resource-lifecycle-gap.md
+.agent/gameplay-audit/2026-07-10T20-38-24-04-00-scene-transition-render-commit-loop.md
+.agent/interaction-audit/2026-07-10T20-38-24-04-00-hotspot-stage-epoch-admission-map.md
+.agent/resource-lifecycle-audit/2026-07-10T20-38-24-04-00-three-resource-disposal-contract.md
+.agent/deploy-audit/2026-07-10T20-38-24-04-00-stage-lifecycle-fixture-gate.md
+```
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Source Manifest + Save Reconciliation Fixture Gate
+TheUnmappedHouse Atomic Stage Commit + Resource Lifecycle Fixture Gate
 ```
 
-The existing atomic StageKit scene-commit work remains the next render-host boundary after source/save authority is explicit.
+The earlier story-source manifest and save-reconciliation plan remains an upstream gameplay-authority requirement. This pass isolates the render-host contract that can be implemented without changing story content, pacing, camera framing, or visual output.
 
 ## Do not do first
 
@@ -83,7 +91,7 @@ The existing atomic StageKit scene-commit work remains the next render-host boun
 new rooms or branches
 inventory or audio
 renderer replacement
-new shaders
+shader redesign
 camera retuning
 visual polish
 ```
