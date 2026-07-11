@@ -1,6 +1,6 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-10T20-38-24-04-00`
+Timestamp: `2026-07-10T22-21-17-04-00`
 
 ## This pass
 
@@ -9,18 +9,19 @@ runtime source changed: no
 package scripts changed: no
 dependencies changed: no
 routes changed: no
+rendering changed: no
 deployment changed: no
 branch created: no
 pull request created: no
 npm run check: not run in connector-only environment
 browser smoke: not run
-stage build-plan fixture: unavailable
-atomic stage-commit fixture: unavailable
-resource-ledger fixture: unavailable
-stage-epoch interaction fixture: unavailable
-host-disposal fixture: unavailable
+story source fixture: unavailable
+save reconciliation fixture: unavailable
+story phase resume fixture: unavailable
+story command result fixture: unavailable
+story-stage transition fixture: unavailable
 repo-local docs pushed to main: yes
-central ledger sync: complete
+central ledger sync: pending until repo-local documentation is complete
 ```
 
 ## Available validation
@@ -44,123 +45,115 @@ src/story-data.js
 ## Required next validation gate
 
 ```txt
-node scripts/validate-stage-build-plan.mjs
-node scripts/validate-atomic-stage-commit.mjs
-node scripts/validate-resource-ledger.mjs
-node scripts/validate-hotspot-stage-epoch.mjs
-node scripts/validate-stage-host-disposal.mjs
+node scripts/validate-story-source.mjs
+node scripts/validate-save-reconciliation.mjs
+node scripts/validate-story-phase-resume.mjs
+node scripts/validate-story-command-results.mjs
+node scripts/validate-story-stage-transition.mjs
 npm run check
 ```
 
-## Required stage-build rows
+## Required source rows
 
 ```txt
-scene-one-plan-has-10-meshes
-scene-two-plan-has-9-meshes
-scene-three-plan-has-9-meshes
-all-layer-rows-validated
-all-prop-rows-validated
-all-hotspot-rows-validated
-camera-row-validated
-fog-row-validated
-post-row-validated
-invalid-size-rejected
-unknown-prop-kind-rejected-or-normalized
-plan-json-safe
-live-host-untouched-during-plan
+story-schema-version-present
+story-manifest-id-stable
+story-source-fingerprint-stable
+scene-ids-unique
+hotspot-ids-unique-within-scene
+clue-ownership-valid
+completion-requirements-resolve
+route-order-valid
+source-snapshot-json-safe
 ```
 
-## Required atomic-commit rows
+## Required save rows
 
 ```txt
-old-stage-visible-during-prepare
-build-failure-retains-old-stage
-failed-build-does-not-increment-epoch
-successful-build-commits-once
-successful-build-increments-epoch-once
-committed-scene-id-matches-request
-camera-fog-post-commit-together
-previous-stage-disposed-after-commit
-commit-result-json-safe
-no-partial-group-visible
+fresh-save-accepted
+legacy-v1-save-migrated
+invalid-json-resets-with-result
+invalid-field-types-repaired
+unknown-scene-id-reconciled
+unknown-hotspot-rows-removed
+unknown-clues-removed
+route-normalized-to-source-order
+log-normalized-and-bounded
+source-mismatch-reconciled
+load-result-json-safe
 ```
 
-## Required resource-ledger rows
+## Required story-phase rows
 
 ```txt
-all-scene-geometries-owned
-all-scene-materials-owned
-hotspot-materials-owned
-persistent-resources-separated
-scene-one-disposal-counts-exact
-scene-two-disposal-counts-exact
-scene-three-disposal-counts-exact
-shared-resource-disposed-once
-second-ledger-dispose-is-no-op
-one-live-scene-ledger-after-each-commit
-zero-live-scene-ledgers-after-host-dispose
-cumulative-counts-json-safe
+fresh-state-is-exploring
+final-inspection-commits-completion-proof
+completion-enters-interlude-pending
+readiness-enters-interlude-open
+reload-during-pending-resumes
+reload-during-open-resumes
+reinspect-complete-scene-is-idempotent
+future-scene-clue-does-not-complete-current-scene
+continue-before-ready-rejected
+continue-from-open-accepted-once
+final-continue-enters-terminal
+reload-terminal-restores-terminal-copy
 ```
 
-## Required interaction rows
+## Required command-result rows
 
 ```txt
-hotspot-ref-has-scene-id
-hotspot-ref-has-hotspot-id
-hotspot-ref-has-stage-epoch
-hotspot-ref-has-source-revision
-current-epoch-pick-accepted
-stale-epoch-pick-rejected
-hover-cleared-on-commit
-hover-label-hidden-on-commit
-side-panel-and-raycast-can-share-command-path
+inspect-command-has-request-scene-hotspot-source-identity
+side-panel-and-raycast-normalize-to-same-command
+unknown-hotspot-rejected
+stale-scene-command-rejected
+already-inspected-command-no-op
+duplicate-request-id-no-op
+continue-wrong-phase-rejected
+accepted-result-has-before-after-fingerprints
+completion-result-has-proof
+journal-json-safe-and-bounded
 ```
 
-## Required host-lifecycle rows
+## Required story-stage transaction rows
 
 ```txt
-constructor-does-not-create-duplicate-loop
-start-is-idempotent
-pause-stops-frame-submission
-resume-restores-one-loop
-raf-id-retained
-raf-cancelled-on-dispose
-resize-listener-removed
-pointer-listener-removed
-click-listener-removed
-render-target-disposed-once
-post-geometry-disposed-once
-post-material-disposed-once
-renderer-disposed-once
-second-host-dispose-is-no-op
-post-dispose-methods-return-stable-results
+next-story-snapshot-prepared-without-live-mutation
+stage-failure-retains-previous-story-state
+stage-failure-retains-previous-save
+stage-success-commits-story-and-stage-once
+story-scene-id-matches-stage-scene-id
+transition-id-correlates-stage-commit-id
+stage-epoch-recorded
+save-written-after-commit
+repeated-continue-is-no-op
+transaction-result-json-safe
 ```
 
 ## Browser smoke after fixtures
 
 ```txt
-load scene one
-inspect by button and raycast
-advance to scene two
-confirm scene-one GPU resources retire
-advance to scene three
-confirm scene-two GPU resources retire
-confirm one committed stage group remains
-force a replacement preparation failure
-confirm scene three remains visible and interactive
-reset hover state during a successful commit
-dispose StageKit
-confirm RAF and listeners stop
-confirm no WebGL errors during the route
+load scene one from a fresh save
+inspect final required hotspot
+reload before 450 ms and confirm progression remains available
+open interlude and reload again
+continue once and confirm scene two and stage identity agree
+attempt duplicate Continue and confirm no second transition
+repeat through scene three
+continue to terminal state
+reload and confirm terminal copy persists
+inject a stage transition failure and confirm the prior story/stage remain committed
+reset with KeyR and confirm a fresh source-compatible save
 confirm visuals, copy, framing and pacing remain unchanged
 ```
 
-## Existing upstream fixture requirements retained
+## Retained stage lifecycle validation
 
 ```txt
-story manifest validation
-save reconciliation
-canonical hotspot command results
-completion proof
-source/save/render identity
+stage build-plan fixture
+atomic stage-commit fixture
+resource-ledger fixture
+stage-epoch interaction fixture
+host-disposal fixture
+repeated three-scene browser lifecycle smoke
 ```
