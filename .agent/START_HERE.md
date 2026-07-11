@@ -1,25 +1,25 @@
 # START HERE: The Unmapped House
 
-Last updated: `2026-07-11T04-00-07-04-00`
+Last updated: `2026-07-11T06-21-57-04-00`
 
 ## Summary
 
-`TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three authored scenes, nine hotspots, nine required clues, browser persistence, a descriptor-driven Three.js stage and post processing.
+`TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three scenes, nine hotspots, nine required clues, browser persistence and a descriptor-driven Three.js stage.
 
-This documentation pass changes no runtime source. It drills into the next transition boundary: Continue mutates story identity before durable save or StageKit replacement is proven, while `StageKit.loadScene()` clears the committed stage before the replacement is fully prepared.
+This documentation pass changes no runtime source. It identifies the next authority gap: side-panel buttons and raycast meshes pass full hotspot descriptors directly into story mutation without proving scene membership, story revision, phase, stage epoch, command identity or clue provenance.
 
 ## Plan ledger
 
-**Goal:** keep story state, browser persistence, DOM projection and the committed rendered scene on one atomic transition revision.
+**Goal:** make every inspection a scene-scoped, deterministic command whose canonical hotspot, clue grants, completion proof, persistence result and rendered feedback can be correlated.
 
 - [x] Compare all ten accessible Publish repositories.
 - [x] Exclude `TheCavalryOfRome`.
 - [x] Confirm all eligible repositories are tracked and have root `.agent` state.
-- [x] Select `TheUnmappedHouse` as the oldest eligible documented repository.
+- [x] Select only `TheUnmappedHouse` as the oldest eligible documented repository.
 - [x] Identify the interaction loop, domains, kits and services.
-- [x] Trace Continue through mutation, stage replacement, projection, save and first frame.
-- [x] Document prepare, commit, rollback, resource retirement and validation gaps.
-- [x] Add a new timestamped tracker and audit set.
+- [x] Trace side-panel and raycast inspection ingress.
+- [x] Document stale-scene, forged-payload, duplicate and render-correlation gaps.
+- [x] Add a timestamped tracker, turn ledger and system audits.
 - [x] Push only to `main`; create no branch or pull request.
 
 ## Selection
@@ -37,84 +37,90 @@ TheUnmappedHouse      selected
 ZombieOrchard
 ```
 
-No eligible repository was new, missing from the central ledger or missing root `.agent` state. `TheUnmappedHouse` had the oldest prior central update, `2026-07-11T01-38-28-04-00`.
+No eligible repository was new, absent from the central ledger or missing root `.agent` state. `TheUnmappedHouse` retained the oldest eligible central timestamp, `2026-07-11T04-00-07-04-00`.
 
-## Runtime path
+## Interaction loop
 
 ```txt
-index.html
-  -> src/game.js
-  -> load and shallow-merge localStorage
-  -> construct StageKit and start recursive RAF
-  -> load current scene descriptors
-  -> inspect hotspot through DOM or raycast
-  -> mutate inspections, clues and notebook log
-  -> derive completion and schedule delayed interlude
-  -> Continue mutates story scene, route and log
-  -> hide interlude
-  -> StageKit clears the live committed group
-  -> allocate the next scene directly into live renderer state
-  -> project DOM
-  -> save state
-  -> eventually render the next frame
+load shallow-merged localStorage state
+  -> resolve currentScene
+  -> construct StageKit and recursive RAF
+  -> load scene descriptors
+  -> render side-panel hotspot buttons
+  -> create invisible Three.js hotspot meshes
+  -> side-panel closure or raycast supplies full descriptor
+  -> inspectHotspot(descriptor)
+  -> record descriptor.id under currentScene.id
+  -> grant descriptor.grants into global clues
+  -> derive completion
+  -> optionally schedule delayed interlude
+  -> project DOM and save
+  -> Continue mutates story and replaces live stage
 ```
 
 ## Main finding
 
-The transition is not atomic.
+`inspectHotspot()` trusts an authority-bearing descriptor object from either input surface. It never verifies that the hotspot belongs to the committed scene or stage. The caller controls the id, clue grants, label, text and log copy used by the mutation.
 
 ```txt
-story mutation       happens before stage preparation
-interlude close       happens before stage preparation
-live stage clear      happens before replacement success
-DOM projection        happens before durable save result
-resource retirement   has no disposal proof
-first rendered frame  has no acknowledgement
+scene id in command: absent
+hotspot membership check: absent
+story revision: absent
+story phase: absent
+stage epoch: absent
+command id: absent
+input sequence: absent
+canonical clue provenance: absent
+typed result: absent
+committed feedback frame: absent
 ```
 
-A stage-construction failure can leave in-memory story state on the next scene, the durable save on the prior scene, the interlude hidden and the stage blank or partial. A save failure after successful stage construction can leave the visible scene ahead of the reload state.
+A stale old-scene descriptor can be recorded beneath the new `currentScene.id`; duplicate side-panel/raycast admissions can create repeated log and save effects; and current global clue strings do not prove which accepted inspection produced completion.
 
-## Current authority
+## Current kit families
 
 ```txt
-src/story-data.js   = story and visual descriptors
-src/game.js         = mutable story, phase, Continue, DOM and persistence orchestration
-src/stage-kit.js    = live Three.js resources, picking, scene replacement and rendering
-src/aspect-frame.js = fixed 16:9 layout policy
+story and scene descriptors
+mutable story, route, inspection, clue and notebook state
+side-panel, raycast and keyboard input
+localStorage effects
+interlude and terminal projection
+Three.js stage, shaders, post processing and picking
+fixed-aspect layout
+syntax validation and Pages deployment
+repo-local and central audit ledgers
 ```
+
+The complete kit/service map is in `.agent/current-audit.md` and `.agent/kit-registry.json`.
 
 ## Read this pass first
 
 ```txt
-.agent/trackers/2026-07-11T04-00-07-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-11T04-00-07-04-00.md
-.agent/architecture-audit/2026-07-11T04-00-07-04-00-story-stage-transition-dsk-map.md
-.agent/render-audit/2026-07-11T04-00-07-04-00-live-stage-replacement-commit-gap.md
-.agent/gameplay-audit/2026-07-11T04-00-07-04-00-continue-transition-failure-loop.md
-.agent/interaction-audit/2026-07-11T04-00-07-04-00-continue-to-first-frame-result-map.md
-.agent/lifecycle-audit/2026-07-11T04-00-07-04-00-stage-resource-retirement-contract.md
-.agent/deploy-audit/2026-07-11T04-00-07-04-00-story-stage-transition-fixture-gate.md
+.agent/trackers/2026-07-11T06-21-57-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-11T06-21-57-04-00.md
+.agent/architecture-audit/2026-07-11T06-21-57-04-00-inspection-command-authority-dsk-map.md
+.agent/render-audit/2026-07-11T06-21-57-04-00-hotspot-stage-epoch-consumption-gap.md
+.agent/gameplay-audit/2026-07-11T06-21-57-04-00-inspection-clue-completion-loop.md
+.agent/interaction-audit/2026-07-11T06-21-57-04-00-dual-ingress-command-admission-map.md
+.agent/hotspot-authority-audit/2026-07-11T06-21-57-04-00-scene-hotspot-clue-contract.md
+.agent/deploy-audit/2026-07-11T06-21-57-04-00-inspection-authority-fixture-gate.md
+```
+
+## Ordered implementation queue
+
+```txt
+1. Versioned Story Manifest and StorySnapshot
+2. Inspection Command Authority + Scene/Hotspot/Clue Fixture Gate
+3. Atomic Story/Stage Continue Transition + First-Frame Fixture Gate
+4. Runtime Session Lifecycle and Resource Retirement
+5. Bounded committed-frame diagnostics
 ```
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Atomic Story/Stage Transition Authority
-+ Prepare/Commit/Discard and First-Frame Fixture Gate
-```
-
-Implementation order:
-
-```txt
-versioned durable StorySnapshot and typed persistence results
-  -> explicit story phase and Continue admission
-  -> transition command and candidate snapshot
-  -> detached StageKit preparation
-  -> durable story commit
-  -> atomic stage and DOM commit
-  -> first-frame acknowledgement
-  -> prior-stage retirement and disposal
-  -> rollback and deterministic fixtures
+TheUnmappedHouse Inspection Command Authority
++ Scene/Hotspot/Clue and Dual-Ingress Fixture Gate
 ```
 
 ## Do not do first
