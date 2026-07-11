@@ -1,16 +1,16 @@
 # START HERE: The Unmapped House
 
-Last updated: `2026-07-11T00-00-26-04-00`
+Last updated: `2026-07-11T01-38-28-04-00`
 
 ## Summary
 
 `TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three authored scenes, nine hotspots, nine required clues, browser persistence, a descriptor-driven Three.js stage and a post-processing pass.
 
-This documentation pass changes no runtime source. It identifies the next authority boundary: story state, timers, DOM and StageKit can advance before localStorage confirms a durable save. A write failure can therefore display an inspection, interlude or next scene that disappears or rewinds on reload, while a boot write failure can occur after WebGL resources, listeners and RAF are already active.
+This documentation pass changes no runtime source. It isolates a story-phase recovery defect: scene completion is stored only as clues, while interlude pending/open state lives in an unretained timer and DOM classes. Reloading a completed scene can therefore strand the player with every hotspot already inspected, no interlude, and no admitted Continue path.
 
 ## Selection
 
-The complete accessible `LuminaryLabs-Publish` inventory contains ten repositories:
+The accessible `LuminaryLabs-Publish` inventory contains ten repositories:
 
 ```txt
 AetherVale
@@ -25,113 +25,86 @@ TheUnmappedHouse
 ZombieOrchard
 ```
 
-`TheCavalryOfRome` remains excluded. All nine eligible repositories are centrally tracked and have root `.agent` state. `TheUnmappedHouse` was the oldest eligible direct review after `ZombieOrchard` advanced.
+`TheCavalryOfRome` remains excluded. All nine eligible repositories are centrally tracked and have root `.agent` state. `ZombieOrchard` was receiving active same-minute documentation writes, so `TheUnmappedHouse` was selected as the oldest stable eligible fallback. Only this product repository was changed.
 
 ## Runtime path
 
 ```txt
 index.html
   -> src/game.js
-       -> read and shallow-merge localStorage state
-       -> resolve currentScene
-       -> construct StageKit
-            -> WebGL renderer and target
-            -> browser listeners
-            -> recursive RAF
-       -> load current scene
-       -> render story UI
-       -> write current state to localStorage
-       -> inspect by side-panel or raycast
-            -> mutate state
-            -> schedule interlude when complete
-            -> project UI
-            -> write localStorage
-       -> Continue
-            -> mutate route and scene
-            -> replace StageKit scene
-            -> project UI
-            -> write localStorage
-       -> KeyR clears storage and reloads
-```
-
-## Interaction loop
-
-```txt
-load save
-  -> inspect hotspots
-  -> grant clues
-  -> complete scene
-  -> persist and open interlude
-  -> Continue
-  -> persist and display next scene
-  -> final Continue
-  -> persist terminal state
-```
-
-The intended loop assumes persistence succeeds. The current code does not return or verify persistence outcomes.
-
-## Current authority
-
-```txt
-src/story-data.js   = authored story and render descriptors
-src/game.js         = mutable story state, persistence, timer, DOM and transition orchestration
-src/stage-kit.js    = Three.js resource creation, picking, rendering and scene replacement
-src/aspect-frame.js = fixed 16:9 layout policy
+  -> shallow-merge localStorage state
+  -> resolve currentScene
+  -> construct StageKit, listeners, render target and recursive RAF
+  -> load scene descriptors and project UI
+  -> inspect by side-panel or raycast
+     -> mutate inspected/clues/log
+     -> derive sceneComplete
+     -> schedule unretained 450 ms callback
+     -> project UI
+     -> write localStorage
+  -> timer callback opens interlude in the DOM
+  -> Continue mutates route, replaces stage, projects UI and writes localStorage
+  -> KeyR clears storage and reloads
 ```
 
 ## Main finding
 
-`saveState()` directly calls `localStorage.setItem()` and returns no status.
+The runtime has no explicit persisted story phase.
 
 ```txt
-inspection:
-  mutate -> schedule timer -> render -> save
-
-Continue:
-  mutate -> replace stage -> render -> save
-
-boot:
-  acquire renderer/listeners/RAF -> load/render -> save
+completion evidence = clues[]
+interlude pending    = unretained setTimeout
+interlude open       = DOM class and aria-hidden
+continue admission   = button event only
+terminal state       = DOM copy only
 ```
 
-If inspection persistence fails, the delayed interlude remains scheduled and can open from an uncommitted completion. If Continue persistence fails, the next stage can remain visible until reload restores the previous durable scene. If the boot write fails, module evaluation can abort after StageKit resources and listeners are active, with no cleanup stack or disposal boundary.
+A reload after the final required clue preserves `sceneComplete(currentScene) === true`, but boot does not restore or reschedule the interlude. Every hotspot is already marked inspected, and the re-read branch does not evaluate completion. The player can remain permanently stuck in a completed scene.
 
-The earlier resume-safe phase, source reconciliation and atomic StageKit findings remain valid. This pass adds the durable persistence result and recovery layer required to make those transactions truthful.
+The timer has no id, target scene id, save revision, deadline or epoch. Its callback closes over mutable `currentScene`. `nextScene()` has no phase/completion guard, so a hidden or repeated Continue activation can advance without authoritative admission. The final scene has no persisted terminal state.
+
+## Current authority
+
+```txt
+src/story-data.js   = story, completion requirements and visual descriptors
+src/game.js         = mutable story state, implicit phase, timer, persistence and DOM orchestration
+src/stage-kit.js    = Three.js resource creation, picking, rendering and scene replacement
+src/aspect-frame.js = fixed 16:9 layout policy
+```
 
 ## Read this pass first
 
 ```txt
-.agent/trackers/2026-07-11T00-00-26-04-00/project-breakdown.md
-.agent/turn-ledger/2026-07-11T00-00-26-04-00.md
-.agent/architecture-audit/2026-07-11T00-00-26-04-00-story-persistence-commit-dsk-map.md
-.agent/render-audit/2026-07-11T00-00-26-04-00-render-before-durable-commit-gap.md
-.agent/gameplay-audit/2026-07-11T00-00-26-04-00-inspection-transition-save-failure-loop.md
-.agent/interaction-audit/2026-07-11T00-00-26-04-00-command-to-persistence-result-map.md
-.agent/persistence-audit/2026-07-11T00-00-26-04-00-localstorage-commit-recovery-contract.md
-.agent/lifecycle-audit/2026-07-11T00-00-26-04-00-boot-save-failure-rollback-contract.md
-.agent/deploy-audit/2026-07-11T00-00-26-04-00-persistence-failure-recovery-fixture-gate.md
+.agent/trackers/2026-07-11T01-38-28-04-00/project-breakdown.md
+.agent/turn-ledger/2026-07-11T01-38-28-04-00.md
+.agent/architecture-audit/2026-07-11T01-38-28-04-00-story-phase-recovery-dsk-map.md
+.agent/render-audit/2026-07-11T01-38-28-04-00-phase-projection-render-correlation-gap.md
+.agent/gameplay-audit/2026-07-11T01-38-28-04-00-completion-reload-continue-loop.md
+.agent/interaction-audit/2026-07-11T01-38-28-04-00-continue-admission-and-stale-timer-map.md
+.agent/story-phase-audit/2026-07-11T01-38-28-04-00-interlude-resume-terminal-contract.md
+.agent/deploy-audit/2026-07-11T01-38-28-04-00-story-phase-resume-fixture-gate.md
 ```
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Durable Story Commit Authority
-+ Persistence Failure and Recovery Fixture Gate
+TheUnmappedHouse Story Phase Recovery Authority
++ Interlude/Continue Admission Fixture Gate
 ```
 
 Implementation order:
 
 ```txt
-versioned StorySnapshot and source identity
-  -> injected persistence adapter
-  -> typed load/write/clear results
-  -> save revision and state fingerprint
-  -> story phase and command reducer
-  -> inspection commit before projection/timer
-  -> StageKit prepare/commit/discard
-  -> recoverable scene-transition protocol
-  -> startup cleanup stack and disposal
-  -> deterministic failure/recovery fixtures
+versioned durable StorySnapshot
+  -> explicit exploring/interlude_pending/interlude_open/transitioning/terminal phases
+  -> scene-scoped completion proof
+  -> persisted interlude deadline and target scene
+  -> boot phase reconciliation
+  -> typed Continue admission and idempotent result
+  -> retained/cancellable timer adapter
+  -> persisted terminal state
+  -> phase/projection/stage correlation rows
+  -> Node fixtures and browser reload smoke
 ```
 
 ## Do not do first
