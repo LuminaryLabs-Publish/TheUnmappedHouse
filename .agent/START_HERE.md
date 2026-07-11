@@ -1,181 +1,117 @@
 # START HERE: The Unmapped House
 
-Last updated: `2026-07-11T10-18-05-04-00`
+Last updated: `2026-07-11T12-08-47-04-00`
 
 ## Summary
 
 `TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three authored scenes, nine hotspots, nine required clues, browser persistence, and a descriptor-driven Three.js stage.
 
-The current documentation queue now has four concrete authority gates: canonical story/save admission, canonical inspection/completion proof, atomic Continue transition, and runtime-session lifecycle. This pass maps the fourth gate: the runtime owns callbacks and GPU resources only implicitly and cannot prove clean stop, reset, scene retirement, or full disposal.
+The current audit isolates the inspection and completion boundary. Both the side-panel and raycast paths pass full hotspot descriptor objects into `inspectHotspot()`. The runtime trusts caller-supplied ids, clue grants, labels, and copy; applies them under whichever scene is current when the callback executes; derives completion from global clue strings; and returns no typed receipt. A stale scene-one descriptor can therefore be recorded under scene two, and forged or migrated clue strings can satisfy completion without canonical inspection proof.
 
 ## Plan ledger
 
-**Goal:** preserve the existing story, 450 ms pacing, fixed 16:9 composition, shaders, and interaction while making each runtime session the sole owner of frame callbacks, listeners, timeouts, stage epochs, Three.js resources, and teardown results.
+**Goal:** make every inspection a scene-scoped, revision-fenced command resolved from a canonical hotspot index, with exactly-once clue grants, explicit completion proof, typed results, and shared behavior across side-panel, raycast, replay, and future automation ingress.
 
-- [x] Compare all ten accessible Publish repositories with the central ledger.
+- [x] Compare all ten accessible `LuminaryLabs-Publish` repositories with the central ledger.
 - [x] Exclude `TheCavalryOfRome`.
 - [x] Confirm all nine eligible repositories have central ledger and root `.agent` state.
-- [x] Detect the newer repo-local `10-12-03` transition audit that was not yet reflected centrally.
-- [x] Select only `TheUnmappedHouse`.
-- [x] Trace the full interaction, frame, listener, timeout, scene-resource, renderer-resource, reset, and disposal paths.
-- [x] Identify all current and missing domains.
-- [x] Catalog all implemented kits and services.
-- [x] Define runtime-session lifecycle and resource-retirement kit boundaries.
-- [x] Add timestamped architecture, render, gameplay, interaction, lifecycle, and deployment audits.
-- [x] Push only to `main`; create no branch or pull request.
-- [x] Synchronize the central ledger and internal change log.
-- [ ] Runtime implementation and executable fixtures remain future work.
+- [x] Select only `TheUnmappedHouse` under the oldest current repo-local audit rule.
+- [x] Trace side-panel and raycast ingress through story mutation, completion, timeout, DOM projection, and persistence.
+- [x] Identify the interaction loop, current domains, missing authority domains, kits, and services.
+- [x] Define the inspection-command and completion-proof DSK boundary.
+- [x] Add timestamped architecture, render, gameplay, interaction, inspection-authority, deploy, tracker, and turn-ledger records.
+- [x] Refresh all required root `.agent` state.
+- [x] Change no runtime source.
+- [x] Push only to `main` and create no branch or pull request.
+- [ ] Implement StoryManifest admission, inspection authority, and executable fixtures.
 
-## Selection
+## Read this first
 
 ```txt
-AetherVale           2026-07-11T08-18-31-04-00
-HorrorCorridor       2026-07-11T09-29-07-04-00
-IntoTheMeadow        2026-07-11T08-31-33-04-00
-MyCozyIsland         2026-07-11T09-08-59-04-00
-PhantomCommand       2026-07-11T09-40-19-04-00
-PrehistoricRush      2026-07-11T08-48-04-04-00
-TheCavalryOfRome     excluded
-TheOpenAbove         2026-07-11T09-21-50-04-00
-TheUnmappedHouse     central 08-11-14; repo-local 10-12-03; selected
-ZombieOrchard        2026-07-11T10-00-12-04-00
+.agent/trackers/2026-07-11T12-08-47-04-00/project-breakdown.md
+.agent/current-audit.md
+.agent/next-steps.md
+.agent/known-gaps.md
+.agent/validation.md
+.agent/kit-registry.json
 ```
 
-## Interaction loop
+## Current audit set
 
 ```txt
-load `.v1` localStorage object
-  -> shallow-merge into initial state
-  -> resolve current scene
-  -> construct StageKit
-  -> create renderer, target, post resources, listeners, and recursive RAF
-  -> load current scene into live Three.js objects
-  -> inspect through side-panel or raycast descriptor
-  -> mutate inspection, clues, log, DOM, and persistence
-  -> completion schedules an unowned 450 ms timeout
-  -> Continue mutates story and destructively replaces live stage resources
-  -> RAF updates camera/material time and submits stage plus post passes
-  -> R clears storage and reloads the page
+.agent/architecture-audit/2026-07-11T12-08-47-04-00-inspection-completion-authority-dsk-map.md
+.agent/render-audit/2026-07-11T12-08-47-04-00-hotspot-hit-story-revision-provenance-gap.md
+.agent/gameplay-audit/2026-07-11T12-08-47-04-00-inspect-grant-complete-interlude-loop.md
+.agent/interaction-audit/2026-07-11T12-08-47-04-00-side-panel-raycast-command-admission-map.md
+.agent/inspection-authority-audit/2026-07-11T12-08-47-04-00-canonical-hotspot-completion-proof-contract.md
+.agent/deploy-audit/2026-07-11T12-08-47-04-00-inspection-completion-fixture-gate.md
 ```
 
 ## Main finding
 
-No object owns the complete runtime session.
-
 ```txt
-RAF handle                         not retained or cancelled
-resize/mousemove/click listeners   anonymous and not removable
-keyboard listener                  anonymous and not removable
-interlude timeout                  not retained or cancelled
-scene geometry/materials           detached but not disposed
-hotspot materials                  never tracked for disposal
-render target/post resources       never disposed
-renderer/canvas/WebGL context       never explicitly retired
-session generation                 absent
-stop/dispose result                absent
+side-panel button or raycast hit
+  -> full mutable hotspot descriptor
+  -> inspectHotspot(hotspot)
+  -> use currentScene at callback time
+  -> trust hotspot.id, grants, label, text, and changesText
+  -> mutate scene-keyed inspection and global clues
+  -> derive completion from global clue strings
+  -> schedule an uncorrelated 450 ms interlude callback
+  -> mutate DOM and save raw state
+  -> return no command or result receipt
 ```
 
-`StageKit.loadScene()` calls `stageGroup.clear()` and then resets `this.materials` before replacement construction. The prior GPU resources are detached without disposal and their tracked material references are lost. The recursive RAF and listeners also survive until browser page destruction because `StageKit` has no `stop()` or `dispose()` method.
+The authority gap is not that the two visible inputs differ today. The gap is that neither input produces a canonical command, neither is admitted against scene/story/stage identity, and both can mutate through a descriptor that is stale, forged, or no longer owned by the current stage.
 
-## Domains in use
+## Required next parent domain
 
 ```txt
-browser shell and fixed-aspect layout
-story, scene, hotspot, clue, camera, stage, material, and post descriptors
-mutable story, route, inspection, clue, notebook, completion, interlude, and terminal state
-side-panel, raycast, Continue, and reset input
-localStorage load, write, and clear effects
-story, hover, interlude, and debug projection
-Three.js CDN runtime
-stage renderer, render target, post pass, shaders, picking, and parallax
-live scene replacement
-frame-loop, listener, timeout, scene-resource, renderer-resource, and page lifecycle
-syntax validation, static deployment, and audit ledgers
+the-unmapped-house-inspection-completion-authority-domain
 ```
 
-Missing authority domains:
+Required composition:
 
 ```txt
-versioned StoryManifest and StorySnapshot
-save admission, migration, and reconciliation
-inspection command and completion proof
-atomic story/stage transition
-runtime session and generation
-frame, listener, and timeout leases
-stage resource inventory and retirement
-renderer and WebGL context disposal
-lifecycle results, journals, and fixtures
+hotspot-manifest-index-kit
+inspection-command-envelope-kit
+inspection-command-admission-kit
+hotspot-pick-observation-kit
+canonical-hotspot-resolution-kit
+inspection-result-kit
+scene-scoped-inspection-ledger-kit
+scene-scoped-clue-grant-kit
+scene-completion-proof-kit
+inspection-transaction-kit
+inspection-journal-kit
+inspection-authority-fixture-kit
+browser-dual-ingress-parity-smoke-kit
 ```
 
-## Implemented kit surfaces
+## Dependency order
 
 ```txt
-static-page-shell-kit
-aspect-frame-kit
-story-data-kit
-browser-story-runtime-kit
-scene-route-kit
-inspection-ledger-kit
-clue-ledger-kit
-notebook-log-kit
-interlude-timer-kit
-terminal-route-kit
-localstorage-save-kit
-stage-render-kit
-scene-descriptor-consumer-kit
-anime-material-kit
-post-process-kit
-hotspot-volume-kit
-hotspot-picking-kit
-camera-parallax-kit
-render-target-composition-kit
-debug-json-projection-kit
-package-syntax-check-kit
-static-pages-deploy-kit
-repo-local-agent-ledger-kit
-central-ledger-sync-kit
-```
-
-## Required lifecycle parent domain
-
-```txt
-the-unmapped-house-runtime-session-lifecycle-domain
-```
-
-Candidate kits:
-
-```txt
-runtime-session-authority-kit
-runtime-session-generation-kit
-frame-loop-lease-kit
-listener-lease-kit
-interlude-timeout-lease-kit
-stage-resource-inventory-kit
-scene-resource-retirement-kit
-three-resource-disposal-kit
-renderer-disposal-kit
-webgl-context-retirement-kit
-idempotent-session-stop-kit
-session-disposal-result-kit
-lifecycle-journal-kit
-lifecycle-fixture-kit
-browser-teardown-smoke-kit
-```
-
-## Ordered implementation queue
-
-```txt
-1. Versioned StoryManifest and StorySnapshot
-2. Save admission, migration, and reconciliation
-3. Inspection Command Authority and completion proof
-4. Atomic Story/Stage Continue Transition
-5. Runtime Session Lifecycle and Resource Retirement
+1. Versioned StoryManifest and canonical hotspot/clue indexes
+2. StorySnapshot and save admission/migration/reconciliation
+3. Inspection Command Authority and scene completion proof
+4. Atomic Continue transition and first-frame acknowledgement
+5. Runtime session lifecycle and resource retirement
 6. Committed-frame diagnostics
 ```
 
-## Next safe ledge
+## Validation status
 
 ```txt
-TheUnmappedHouse Runtime Session Lifecycle Authority
-+ Scene Resource Retirement and Browser Teardown Fixture Gate
+runtime source changed: no
+rendering changed: no
+package scripts changed: no
+dependencies changed: no
+deployment changed: no
+branch created: no
+pull request created: no
+npm run check: not run; GitHub was unavailable from the local execution container
+browser smoke: not run
+inspection fixture: unavailable
+completion-proof fixture: unavailable
+dual-ingress parity smoke: unavailable
 ```
