@@ -23,7 +23,7 @@ story commit protocol fixture: unavailable
 boot rollback fixture: unavailable
 browser storage-failure smoke: unavailable
 repo-local docs pushed to main: yes
-central ledger sync: pending
+central ledger sync: complete
 ```
 
 ## Available validation
