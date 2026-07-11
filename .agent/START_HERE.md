@@ -1,34 +1,34 @@
 # START HERE: The Unmapped House
 
-Last updated: `2026-07-11T12-08-47-04-00`
+Last updated: `2026-07-11T13-49-30-04-00`
 
 ## Summary
 
-`TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three authored scenes, nine hotspots, nine required clues, browser persistence, and a descriptor-driven Three.js stage.
+`TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three authored scenes, nine hotspots, browser persistence, a fixed 16:9 shell, and a descriptor-driven Three.js stage.
 
-The current audit isolates the inspection and completion boundary. Both the side-panel and raycast paths pass full hotspot descriptor objects into `inspectHotspot()`. The runtime trusts caller-supplied ids, clue grants, labels, and copy; applies them under whichever scene is current when the callback executes; derives completion from global clue strings; and returns no typed receipt. A stale scene-one descriptor can therefore be recorded under scene two, and forged or migrated clue strings can satisfy completion without canonical inspection proof.
+The current audit isolates the Continue transition boundary. `nextScene()` mutates live story identity before successor stage preparation and persistence complete. `StageKit.loadScene()` clears the live group and incrementally constructs the replacement without a detached prepare phase, typed result, rollback, stage epoch, or first-frame acknowledgement. Duplicate Continue commands can skip scenes, a failed stage load can leave story and render state split, and a failed save can leave the visible successor unpersisted.
 
 ## Plan ledger
 
-**Goal:** make every inspection a scene-scoped, revision-fenced command resolved from a canonical hotspot index, with exactly-once clue grants, explicit completion proof, typed results, and shared behavior across side-panel, raycast, replay, and future automation ingress.
+**Goal:** make Continue consume one canonical scene-completion proof and commit story, stage, persistence, projection, resource retirement, and the first visible successor frame through one revision-fenced transaction.
 
 - [x] Compare all ten accessible `LuminaryLabs-Publish` repositories with the central ledger.
 - [x] Exclude `TheCavalryOfRome`.
 - [x] Confirm all nine eligible repositories have central ledger and root `.agent` state.
-- [x] Select only `TheUnmappedHouse` under the oldest current repo-local audit rule.
-- [x] Trace side-panel and raycast ingress through story mutation, completion, timeout, DOM projection, and persistence.
-- [x] Identify the interaction loop, current domains, missing authority domains, kits, and services.
-- [x] Define the inspection-command and completion-proof DSK boundary.
-- [x] Add timestamped architecture, render, gameplay, interaction, inspection-authority, deploy, tracker, and turn-ledger records.
+- [x] Select only `TheUnmappedHouse` under the oldest eligible fallback rule.
+- [x] Trace completion timeout, Continue admission, story mutation, stage replacement, DOM projection, persistence, terminal handling, and frame submission.
+- [x] Identify the interaction loop, domains, kits, and services.
+- [x] Define the atomic Continue transition DSK boundary and fixture gate.
+- [x] Add timestamped architecture, render, gameplay, interaction, transition-authority, deploy, tracker, and turn-ledger records.
 - [x] Refresh all required root `.agent` state.
 - [x] Change no runtime source.
 - [x] Push only to `main` and create no branch or pull request.
-- [ ] Implement StoryManifest admission, inspection authority, and executable fixtures.
+- [ ] Implement the prerequisite StoryManifest, StorySnapshot, inspection proof, and transition authority.
 
 ## Read this first
 
 ```txt
-.agent/trackers/2026-07-11T12-08-47-04-00/project-breakdown.md
+.agent/trackers/2026-07-11T13-49-30-04-00/project-breakdown.md
 .agent/current-audit.md
 .agent/next-steps.md
 .agent/known-gaps.md
@@ -39,61 +39,68 @@ The current audit isolates the inspection and completion boundary. Both the side
 ## Current audit set
 
 ```txt
-.agent/architecture-audit/2026-07-11T12-08-47-04-00-inspection-completion-authority-dsk-map.md
-.agent/render-audit/2026-07-11T12-08-47-04-00-hotspot-hit-story-revision-provenance-gap.md
-.agent/gameplay-audit/2026-07-11T12-08-47-04-00-inspect-grant-complete-interlude-loop.md
-.agent/interaction-audit/2026-07-11T12-08-47-04-00-side-panel-raycast-command-admission-map.md
-.agent/inspection-authority-audit/2026-07-11T12-08-47-04-00-canonical-hotspot-completion-proof-contract.md
-.agent/deploy-audit/2026-07-11T12-08-47-04-00-inspection-completion-fixture-gate.md
+.agent/architecture-audit/2026-07-11T13-49-30-04-00-atomic-continue-transition-dsk-map.md
+.agent/render-audit/2026-07-11T13-49-30-04-00-successor-stage-first-frame-provenance-gap.md
+.agent/gameplay-audit/2026-07-11T13-49-30-04-00-complete-interlude-continue-scene-loop.md
+.agent/interaction-audit/2026-07-11T13-49-30-04-00-continue-proof-admission-result-map.md
+.agent/scene-transition-audit/2026-07-11T13-49-30-04-00-story-stage-persistence-atomicity-contract.md
+.agent/deploy-audit/2026-07-11T13-49-30-04-00-continue-rollback-first-frame-fixture-gate.md
 ```
 
 ## Main finding
 
 ```txt
-side-panel button or raycast hit
-  -> full mutable hotspot descriptor
-  -> inspectHotspot(hotspot)
-  -> use currentScene at callback time
-  -> trust hotspot.id, grants, label, text, and changesText
-  -> mutate scene-keyed inspection and global clues
-  -> derive completion from global clue strings
-  -> schedule an uncorrelated 450 ms interlude callback
-  -> mutate DOM and save raw state
-  -> return no command or result receipt
+completion
+  -> anonymous 450 ms timeout reads mutable currentScene later
+  -> interlude opens without proof identity
+
+Continue
+  -> no completion-proof admission
+  -> currentScene and StorySnapshot mutate first
+  -> live stage group is cleared
+  -> successor resources are built incrementally
+  -> UI is projected
+  -> raw localStorage write happens last
+  -> no rollback or first-frame receipt
 ```
 
-The authority gap is not that the two visible inputs differ today. The gap is that neither input produces a canonical command, neither is admitted against scene/story/stage identity, and both can mutate through a descriptor that is stale, forged, or no longer owned by the current stage.
+The transition lacks a transition id, proof-consumption guard, candidate snapshot, detached successor stage, typed persistence result, atomic commit, rollback, stage epoch, predecessor retirement receipt, and visible-frame acknowledgement.
 
 ## Required next parent domain
 
 ```txt
-the-unmapped-house-inspection-completion-authority-domain
+the-unmapped-house-atomic-continue-transition-authority-domain
 ```
 
 Required composition:
 
 ```txt
-hotspot-manifest-index-kit
-inspection-command-envelope-kit
-inspection-command-admission-kit
-hotspot-pick-observation-kit
-canonical-hotspot-resolution-kit
-inspection-result-kit
-scene-scoped-inspection-ledger-kit
-scene-scoped-clue-grant-kit
-scene-completion-proof-kit
-inspection-transaction-kit
-inspection-journal-kit
-inspection-authority-fixture-kit
-browser-dual-ingress-parity-smoke-kit
+continue-command-envelope-kit
+continue-admission-kit
+completion-proof-consumption-kit
+scene-transition-id-kit
+scene-transition-plan-kit
+successor-story-candidate-kit
+detached-stage-preparation-kit
+stage-preparation-result-kit
+transition-persistence-kit
+atomic-story-stage-commit-kit
+transition-rollback-kit
+stage-epoch-kit
+predecessor-resource-retirement-kit
+first-successor-frame-ack-kit
+transition-result-kit
+transition-journal-kit
+continue-transition-fixture-kit
+browser-transition-failure-smoke-kit
 ```
 
 ## Dependency order
 
 ```txt
-1. Versioned StoryManifest and canonical hotspot/clue indexes
-2. StorySnapshot and save admission/migration/reconciliation
-3. Inspection Command Authority and scene completion proof
+1. Versioned StoryManifest and canonical indexes
+2. StorySnapshot admission, migration, reconciliation, and typed persistence
+3. Inspection Command Authority and scene-completion proof
 4. Atomic Continue transition and first-frame acknowledgement
 5. Runtime session lifecycle and resource retirement
 6. Committed-frame diagnostics
@@ -109,9 +116,9 @@ dependencies changed: no
 deployment changed: no
 branch created: no
 pull request created: no
-npm run check: not run; GitHub was unavailable from the local execution container
+npm run check: not run
 browser smoke: not run
-inspection fixture: unavailable
-completion-proof fixture: unavailable
-dual-ingress parity smoke: unavailable
+Continue transition fixtures: unavailable
+rollback fixtures: unavailable
+first-successor-frame fixture: unavailable
 ```
