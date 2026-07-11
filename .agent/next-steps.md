@@ -1,55 +1,67 @@
 # Next steps: The Unmapped House
 
-Timestamp: `2026-07-11T04-00-07-04-00`
+Timestamp: `2026-07-11T06-21-57-04-00`
 
 ## Goal
 
-Preserve the current three-scene story, copy, pacing and visual output while making Continue a typed transaction that commits durable story state, StageKit resources, DOM projection and the first rendered frame as one recoverable operation.
+Preserve the current three-scene story, copy, pacing and visual output while making every hotspot inspection a canonical, scene-scoped, idempotent transaction with clue provenance, completion proof, persistence results and frame correlation.
 
 ## Plan ledger
 
-### Prerequisites
+### Manifest and state prerequisites
 
-- [ ] Add a versioned `StorySnapshot` with manifest identity, save revision and state fingerprint.
-- [ ] Put localStorage behind an injected adapter with typed load, write and clear results.
-- [ ] Add explicit `exploring`, `interlude_pending`, `interlude_open`, `transitioning`, `recovering` and `terminal` phases.
-- [ ] Normalize Continue into a command with request id, expected scene, phase, story revision and stage epoch.
+- [ ] Add a versioned story manifest id and fingerprint.
+- [ ] Add explicit scene/hotspot/clue ownership indexes.
+- [ ] Add a versioned `StorySnapshot` with story revision, save revision and phase.
+- [ ] Reconcile persisted inspections and clues against the canonical manifest.
+- [ ] Drop unknown, orphaned and cross-scene authority data during reconciliation.
 
-### Transition admission
+### Command normalization
 
-- [ ] Accept Continue only from committed `interlude_open` state with scene-scoped completion proof.
-- [ ] Reject scene, phase, story-revision and stage-epoch mismatches.
-- [ ] Make duplicate Continue requests idempotent.
-- [ ] Create a stable `transitionId` before any mutation or side effect.
+- [ ] Replace descriptor-object input with `sceneId` and `hotspotId` identities.
+- [ ] Add `commandId`, `source`, `inputSequence`, expected story revision and expected stage epoch.
+- [ ] Normalize side-panel and raycast input through one command queue.
+- [ ] Convert raycast hits into typed pick observations with frame and stage provenance.
 
-### Candidate story state
+### Admission
 
-- [ ] Derive the next story snapshot without mutating the committed snapshot.
-- [ ] Validate target scene, route, log and terminal transition.
-- [ ] Keep the current interlude and scene committed until the transaction succeeds.
+- [ ] Accept inspections only during an inspectable committed story phase.
+- [ ] Require command scene id to equal the committed active scene.
+- [ ] Require hotspot membership in the canonical scene index.
+- [ ] Reject stale story revisions and stale stage epochs.
+- [ ] Make command replay and same-hotspot dual ingress idempotent.
+- [ ] Return explicit rejection and duplicate reasons.
 
-### Detached stage preparation
+### Scene-scoped mutation
 
-- [ ] Split `StageKit.loadScene()` into `prepareScene`, `commitPreparedScene` and `discardPreparedScene`.
-- [ ] Validate descriptors before clearing or replacing live resources.
-- [ ] Build the replacement in a detached group with an acquisition ledger.
-- [ ] Return typed preparation success or failure with resource counts.
+- [ ] Derive label, text, log copy and clue grants from canonical manifest data only.
+- [ ] Record one immutable inspection receipt per accepted first inspection.
+- [ ] Record clue-grant receipts with owner scene, source hotspot and command id.
+- [ ] Treat supported re-read as an explicit no-op/read result.
+- [ ] Build a candidate story snapshot before persistence or projection.
 
-### Atomic commit
+### Completion and interlude
 
-- [ ] Persist the candidate story snapshot with expected-revision checking.
-- [ ] Atomically swap the prepared stage only after durable success.
-- [ ] Project DOM only from the committed story snapshot.
-- [ ] Correlate story revision, transition id, stage epoch and stage commit id.
-- [ ] Acknowledge the first frame that rendered the committed stage.
+- [ ] Evaluate completion from scene-owned clue grant receipts.
+- [ ] Emit one immutable `SceneCompletionProof` per scene revision.
+- [ ] Schedule the interlude exactly once from the committed completion result.
+- [ ] Persist pending/open interlude phase.
+- [ ] Require the completion proof for Continue admission.
 
-### Rollback and retirement
+### Persistence and projection
 
-- [ ] Discard prepared resources when persistence fails.
-- [ ] Restore prior story, interlude and stage if stage commit fails.
-- [ ] Keep prior stage resources alive until the replacement first frame is acknowledged.
-- [ ] Dispose retired geometry, materials and hotspot resources exactly once.
-- [ ] Return `accepted`, `rejected`, `duplicate`, `failed` or `rolled_back` results.
+- [ ] Put localStorage behind typed load, write and clear results.
+- [ ] Commit inspection, clues, log, phase and save revision as one transaction.
+- [ ] Project story text, checkmarks, notebook and debug state from the committed result.
+- [ ] Retain a bounded JSON-safe command/result journal.
+- [ ] Correlate the committed result to the matching stage epoch and feedback frame.
+
+### Transition companion
+
+- [ ] Keep the existing atomic Continue transition plan after inspection authority.
+- [ ] Split `StageKit.loadScene()` into prepare, commit and discard operations.
+- [ ] Commit story, save, stage, DOM and first frame under one transition id.
+- [ ] Dispose retired stage resources after first-frame acknowledgement.
 
 ### Lifecycle
 
@@ -60,52 +72,53 @@ Preserve the current three-scene story, copy, pacing and visual output while mak
 
 ### Validation
 
-- [ ] Add `scripts/validate-stage-preparation.mjs`.
-- [ ] Add `scripts/validate-story-stage-transition.mjs`.
-- [ ] Add `scripts/validate-transition-rollback.mjs`.
-- [ ] Add `scripts/validate-stage-resource-retirement.mjs`.
-- [ ] Add `scripts/validate-first-frame-ack.mjs`.
+- [ ] Add story-manifest and hotspot-index fixtures.
+- [ ] Add inspection admission and clue-provenance fixtures.
+- [ ] Add dual-ingress idempotency and stage-epoch fixtures.
+- [ ] Add scene-completion-proof and reload fixtures.
+- [ ] Retain the planned transition, rollback, first-frame and retirement fixtures.
 - [ ] Wire behavioral fixtures into `npm run check` after syntax checks.
-- [ ] Add browser fault-injection smoke for stage and storage failure.
 
-## Required fixture rows
+## Required inspection fixture rows
 
 ```txt
-invalid-descriptor-rejected-before-live-clear
-stage-prepare-failure-keeps-prior-story-and-stage
-save-failure-discards-prepared-stage
-stage-commit-failure-restores-prior-stage
-projection-failure-remains-recoverable
-first-frame-timeout-is-observable
-accepted-transition-correlates-story-save-stage-frame
-prior-stage-disposed-after-first-frame-only
-repeated-continue-does-not-skip-scene
-final-continue-commits-terminal-once
-reload-after-accepted-transition-restores-next-scene
-reload-after-failed-transition-restores-prior-scene
-transition-journal-json-safe-and-bounded
+manifest-has-three-scenes-nine-hotspots-nine-owned-clues
+unknown-scene-rejected
+unknown-hotspot-rejected
+cross-scene-hotspot-rejected
+caller-supplied-grants-ignored
+stale-story-revision-rejected
+stale-stage-epoch-rejected
+same-command-idempotent
+side-panel-raycast-same-hotspot-idempotent
+repeat-inspection-explicit-no-op
+final-clue-creates-one-completion-proof
+interlude-scheduled-once
+accepted-result-correlates-to-feedback-frame
+reload-preserves-authoritative-provenance
+journal-json-safe-and-bounded
 ```
 
 ## Implementation order
 
 ```txt
-1. versioned durable StorySnapshot and typed persistence results
-2. explicit phase reducer and Continue admission
-3. pure transition candidate
-4. detached StageKit preparation
-5. durable story write with expected revision
-6. atomic stage and DOM commit
-7. first-frame acknowledgement
-8. prior-stage retirement and disposal
-9. rollback, lifecycle and bounded diagnostics
-10. Node fixtures and browser fault smoke
+1. versioned story manifest and StorySnapshot
+2. canonical hotspot index and persisted-state reconciliation
+3. typed inspection command and pick observation
+4. admission, duplicate and stale policies
+5. scene-scoped inspection and clue receipts
+6. completion proof and one-shot interlude result
+7. typed persistence and feedback projection
+8. frame correlation and bounded journal
+9. inspection authority fixtures
+10. atomic Continue transition and lifecycle fixtures
 ```
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Atomic Story/Stage Transition Authority
-+ Prepare/Commit/Discard and First-Frame Fixture Gate
+TheUnmappedHouse Inspection Command Authority
++ Scene/Hotspot/Clue and Dual-Ingress Fixture Gate
 ```
 
 ## Do not do first
