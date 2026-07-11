@@ -1,111 +1,131 @@
 # Next steps: The Unmapped House
 
-Timestamp: `2026-07-10T19-00-19-04-00`
+Timestamp: `2026-07-10T20-38-24-04-00`
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Source Manifest + Save Reconciliation Fixture Gate
+TheUnmappedHouse Atomic Stage Commit + Resource Lifecycle Fixture Gate
 ```
 
 ## Goal
 
-Make authored story content, persisted state, accepted hotspot commands, completion decisions and rendered scene identity derive from one validated source manifest. Preserve the current three-scene route, copy, pacing and visuals.
+Preserve the current three-scene route and visual output while making every stage replacement transactional, source-identifiable, observable, and leak-free. The old committed scene must remain visible until a complete replacement is ready, every created Three.js resource must have one owner, and the host must support idempotent teardown.
 
 ## Plan ledger
 
-### Story source contract
+### Stage build plan
 
-- [ ] Add a stable story schema version and manifest id.
-- [ ] Build canonical indexes for scenes, hotspots and clues.
-- [ ] Generate a deterministic source fingerprint from normalized authored data.
-- [ ] Validate unique scene ids and scene-local hotspot ids.
-- [ ] Validate hotspot grants and scene requirements against known clue ids.
-- [ ] Validate route order, camera, stage and interlude descriptor presence.
-- [ ] Freeze the normalized source snapshot used by runtime authority.
+- [ ] Convert a scene descriptor into a pure JSON-safe `StageBuildPlan` before touching live Three.js state.
+- [ ] Validate camera, fog, post, layer, prop and hotspot rows.
+- [ ] Count expected meshes, geometries, materials, hotspot volumes and lights.
+- [ ] Include requested scene id, source revision and request id.
+- [ ] Reject invalid descriptors before clearing or mutating the committed stage.
 
-### Versioned save envelope
+### Resource ownership
 
-- [ ] Replace the raw state payload with a versioned save envelope.
-- [ ] Store source fingerprint, save schema version and migration metadata.
-- [ ] Validate every field before it reaches live state.
-- [ ] Distinguish parse failure, shape failure, stale source, future version and repairable drift.
-- [ ] Preserve the current save key through a compatibility adapter or explicit migration.
-- [ ] Return a JSON-safe load result with stable reason codes.
+- [ ] Create one scene-local resource ledger for geometries, materials, textures and object roots.
+- [ ] Track hotspot materials as well as anime materials.
+- [ ] Track persistent host resources separately from scene-local resources.
+- [ ] Define one owner for renderer, render target, post geometry, post material and post mesh.
+- [ ] Make ledger disposal idempotent and return structured counts.
+- [ ] Prevent duplicate disposal across shared resources.
 
-### Save reconciliation
+### Atomic scene transaction
 
-- [ ] Repair an unknown `sceneId` and persist the repaired canonical id.
-- [ ] Remove unknown scene, hotspot and clue ids with explicit repair rows.
-- [ ] Rebuild route as a valid prefix of the authored scene order.
-- [ ] Normalize `inspected` into canonical scene/hotspot maps.
-- [ ] Derive clues from canonical inspected hotspots rather than trusting a separate array.
-- [ ] Reconcile log and flags to bounded, supported values.
-- [ ] Define reset behavior for unrecoverable or future-version saves.
+- [ ] Build the replacement scene under a detached group.
+- [ ] Keep the previous committed group alive if preparation fails.
+- [ ] Commit group, camera, fog and post settings in one transaction.
+- [ ] Increment `stageEpoch` only after successful commit.
+- [ ] Record requested scene id, committed scene id and resource counts.
+- [ ] Dispose the previous scene ledger only after the replacement commits.
+- [ ] Return typed `committed`, `rejected`, `failed` or `no_op` results.
 
-### Canonical story commands
+### Hotspot and interaction admission
 
-- [ ] Replace descriptor-object mutation with `{sceneId, hotspotId, inputOrigin, commandId}` requests.
-- [ ] Resolve descriptors through the validated source manifest.
-- [ ] Reject unknown, stale-source and wrong-scene hotspot ids.
-- [ ] Preserve side-panel and raycast behavior through one command path.
-- [ ] Return typed `accepted`, `repeated`, `rejected`, `repaired` and `no_op` results.
-- [ ] Record source fingerprint and before/after state fingerprints.
+- [ ] Store canonical `{sceneId, hotspotId, stageEpoch, sourceRevision}` refs on hotspot meshes.
+- [ ] Clear hover state and hide the hover label on each successful stage commit.
+- [ ] Reject picks from stale epochs.
+- [ ] Correlate click results with the committed stage result.
+- [ ] Preserve side-panel and raycast behavior through the same story-command path.
 
-### Completion proof
+### Host lifecycle
 
-- [ ] Derive scene completion from canonical inspected hotspots and their grants.
-- [ ] Emit one completion proof per scene/source revision.
-- [ ] Correlate the interlude timer with scene id, command id and source fingerprint.
-- [ ] Reject stale completion effects after scene/source changes.
-- [ ] Persist explicit interlude and terminal lifecycle state.
+- [ ] Replace anonymous listeners with retained handler references.
+- [ ] Retain the RAF id and running/disposed state.
+- [ ] Add explicit `start()`, `pause()`, `resume()` and `dispose()` semantics.
+- [ ] Cancel RAF during disposal.
+- [ ] Remove resize, mousemove and click listeners during disposal.
+- [ ] Dispose scene-local and persistent resources exactly once.
+- [ ] Make repeated `dispose()` calls safe and observable.
 
-### Render and diagnostics correlation
+### Diagnostics
 
-- [ ] Pass manifest id, source fingerprint and canonical scene id into StageKit load requests.
-- [ ] Store canonical source refs on hotspot meshes instead of full descriptor objects.
-- [ ] Expose save validation, repair, command and completion rows in diagnostics.
-- [ ] Prove persisted scene id, resolved descriptor scene id and rendered scene id agree.
-- [ ] Keep the existing atomic StageKit scene-commit plan as the next render-host slice.
+- [ ] Expose a bounded JSON-safe stage journal.
+- [ ] Record build request, validation, preparation, commit, disposal and failure rows.
+- [ ] Expose current stage epoch and committed scene identity.
+- [ ] Expose live resource counts and cumulative disposed counts.
+- [ ] Keep raw Three.js objects out of diagnostics.
 
 ### Validation
 
-- [ ] Add `scripts/validate-story-manifest.mjs`.
-- [ ] Add `scripts/validate-save-reconciliation.mjs`.
-- [ ] Add `scripts/validate-story-command-authority.mjs`.
-- [ ] Add `scripts/validate-completion-proof.mjs`.
-- [ ] Add `scripts/validate-source-save-render-identity.mjs`.
-- [ ] Wire all fixtures into `npm run check` after syntax checks.
-- [ ] Test valid current saves, empty saves, malformed JSON, wrong field types, unknown ids, stale source, future schema and content drift.
+- [ ] Add `scripts/validate-stage-build-plan.mjs`.
+- [ ] Add `scripts/validate-atomic-stage-commit.mjs`.
+- [ ] Add `scripts/validate-resource-ledger.mjs`.
+- [ ] Add `scripts/validate-hotspot-stage-epoch.mjs`.
+- [ ] Add `scripts/validate-stage-host-disposal.mjs`.
+- [ ] Wire fixtures into `npm run check` after existing syntax checks.
+- [ ] Add a browser lifecycle smoke for repeated scene loads and final teardown.
+
+## Required fixture rows
+
+```txt
+valid-scene-plan-counts
+invalid-descriptor-rejected-before-live-mutation
+old-scene-retained-on-build-failure
+commit-increments-stage-epoch-once
+committed-scene-identity-matches-request
+previous-ledger-disposed-after-commit
+hotspot-ref-includes-stage-epoch
+stale-pick-rejected
+hover-cleared-on-commit
+three-scene-route-has-one-live-stage-ledger
+all-retired-geometries-disposed
+all-retired-materials-disposed
+raf-cancelled-on-dispose
+listeners-removed-on-dispose
+render-target-disposed-once
+renderer-disposed-once
+second-dispose-is-no-op
+stage-journal-json-safe
+```
 
 ## First implementation slice
 
 ```txt
-normalized story source
-  -> schema and graph validation
-  -> canonical indexes
-  -> source fingerprint
-  -> JSON-safe manifest diagnostics
+pure StageBuildPlan
+  -> descriptor validation
+  -> expected resource counts
+  -> headless fixture
 ```
 
 ## Second implementation slice
 
 ```txt
-versioned save envelope
-  -> shape validation
-  -> source compatibility decision
-  -> reconciliation and repair rows
-  -> canonical story state
+detached scene preparation
+  -> resource ledger
+  -> atomic commit
+  -> previous-ledger disposal
+  -> typed StageCommitResult
 ```
 
 ## Third implementation slice
 
 ```txt
-canonical hotspot command
-  -> typed result
-  -> clue derivation
-  -> completion proof
-  -> source/save/render identity fixture
+stage epoch and canonical hotspot refs
+  -> stale-pick rejection
+  -> host start/pause/resume/dispose
+  -> browser lifecycle smoke
 ```
 
 ## Validation target
@@ -114,14 +134,18 @@ canonical hotspot command
 npm run check
 ```
 
+## Dependency note
+
+The existing story-source manifest and save-reconciliation plan remains required for canonical gameplay authority. The stage transaction should accept source identity fields additively so the two boundaries compose without coupling render resource ownership to save mutation.
+
 ## Do not do first
 
 ```txt
-new rooms or branches
+new story rooms or branches
 inventory
-audio
+sound or voice work
 renderer replacement
-new shaders
+shader redesign
 camera retuning
 visual polish
 ```
