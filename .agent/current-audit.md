@@ -1,6 +1,6 @@
 # Current audit: The Unmapped House
 
-Timestamp: `2026-07-11T13-49-30-04-00`
+Timestamp: `2026-07-11T15-30-50-04-00`
 
 ## Product read
 
@@ -8,43 +8,49 @@ A fixed-camera anime-horror point-and-click prototype with three authored scenes
 
 ## Plan ledger
 
-**Goal:** identify the authority and fixture boundary required to make Continue an atomic transaction across completion proof, story state, stage resources, persistence, projection, and first visible frame.
+**Goal:** identify the authority and fixture boundary required to turn raw browser storage into one admitted StorySnapshot before stage, UI, persistence, and first-frame state become live.
 
-- [x] Trace scene completion and interlude scheduling.
-- [x] Trace Continue through scene selection, route mutation, stage replacement, DOM projection, and save.
-- [x] Trace terminal behavior when no successor scene exists.
-- [x] Trace stage clearing, material/geometry ownership, and first-frame submission.
-- [x] Inventory all domains, kits, and services.
-- [x] Define Continue admission, detached preparation, atomic commit, rollback, retirement, result, journal, and fixture kits.
-- [ ] Implement prerequisite manifest, persistence, and completion-proof authority.
-- [ ] Implement and run transition failure, rollback, duplicate, and first-frame fixtures.
+- [x] Trace localStorage read, parse, shallow merge, and fallback.
+- [x] Trace scene resolution and unknown-scene behavior.
+- [x] Trace StageKit allocation, listener installation, RAF start, live stage construction, UI projection, and startup write.
+- [x] Trace KeyR clear and reload.
+- [x] Inventory all active domains, implemented kits, and offered services.
+- [x] Define manifest, version, migration, semantic validation, reconciliation, quarantine, bootstrap, rollback, first-frame, result, journal, and fixture kits.
+- [ ] Implement StoryManifest and StorySnapshot authority.
+- [ ] Run pure admission, storage failure, browser rollback, and first-frame fixtures.
 
 ## Interaction loop
 
 ```txt
 boot
-  -> shallow-load raw state
-  -> select current scene
+  -> read raw `.v1` localStorage value
+  -> parse inside a broad catch
+  -> shallow-merge candidate fields over defaults
+  -> resolve currentScene separately from state.sceneId
   -> construct StageKit
-  -> load current scene directly into live stage
-  -> project UI and write state
+       -> create renderer, target, post resources and canvas
+       -> install resize, pointer and click listeners
+       -> start recursive RAF
+  -> build current scene directly in live stage ownership
+  -> project UI using assumed field shapes
+  -> write the mutable state back unconditionally
 
-completion
-  -> derive from global clue strings
+inspection
+  -> side-panel button or raycast submits full hotspot descriptor
+  -> mutate scene inspection, global clues, text and log
+  -> derive completion from clue strings
   -> schedule anonymous 450 ms timeout
-  -> timeout reads mutable currentScene when it fires
-  -> open interlude without proof identity
+  -> project UI and write full state
 
-Continue click
-  -> call nextScene directly
-  -> find successor from mutable currentScene
-  -> mutate currentScene and state.sceneId
-  -> append route and log
-  -> hide interlude
-  -> StageKit.loadScene(successor)
-  -> render UI
-  -> write raw localStorage state
-  -> next RAF eventually renders successor
+Continue
+  -> mutate scene identity, route and log
+  -> replace live stage
+  -> project UI
+  -> write full state
+
+reset
+  -> remove save key
+  -> reload document
 ```
 
 ## Source ownership
@@ -53,8 +59,8 @@ Continue click
 |---|---|
 | `index.html` | Fixed shell, stage mount, side-panel, hover label, debug panel, interlude, and Continue button. |
 | `src/story-data.js` | Scene order, hotspots, clue requirements, stage descriptors, camera, materials, post settings, and interlude copy. |
-| `src/game.js` | Mutable story state, completion, timeout scheduling, Continue, terminal copy, UI projection, and persistence. |
-| `src/stage-kit.js` | Live stage replacement, Three.js resource construction, hotspot meshes, input, camera parallax, and recursive RAF. |
+| `src/game.js` | Raw load, mutable story state, inspection, completion, timeout scheduling, Continue, reset, projection, and persistence. |
+| `src/stage-kit.js` | Renderer allocation, live stage replacement, Three.js resources, hotspot meshes, input, camera parallax, and recursive RAF. |
 | `src/aspect-frame.js` | Fixed 1920×1080 composition and browser fitting. |
 | `package.json` | Syntax-only source checks and local static serving. |
 
@@ -62,42 +68,44 @@ Continue click
 
 ```txt
 browser shell and fixed-aspect layout
-story and scene descriptors
-mutable story state and scene route
+story, scene, hotspot, clue, camera, stage, material, post and copy descriptors
+raw browser storage read, parse, write and clear effects
+mutable story state and route
 scene-keyed inspection and global clue state
-completion and interlude timing
+flags and notebook log
+scene completion and interlude timing
 Continue and terminal routing
-localStorage effects
-DOM and debug projection
-Three.js runtime and renderer
+DOM, hover, interlude and debug projection
+Three.js CDN runtime
+renderer, scene, camera, lights, render target, post scene and canvas
 live stage-group replacement
-scene geometry, material, hotspot, camera, fog, and post resources
-raycast input and pointer parallax
-render-target composition and recursive RAF
-syntax validation and Pages deployment
+procedural anime material construction
+hotspot volume creation and raycast picking
+pointer camera parallax
+recursive RAF and render-target composition
+runtime listener, timeout, frame and WebGL resource lifecycle
+syntax validation and static Pages deployment
 repo-local and central audit tracking
 ```
 
 Missing authority domains:
 
 ```txt
-versioned StoryManifest and canonical indexes
-versioned StorySnapshot and typed persistence
-scene-completion proof and proof consumption
-Continue command identity and sequence
-transition admission and duplicate guard
-transition id and revision fences
-successor story candidate
-successor stage detached preparation
-stage preparation result
-atomic story/stage/persistence commit
-transition rollback and recovery
-stage epoch and resource inventory
-predecessor resource retirement
-first-successor-frame acknowledgement
-transition result and bounded journal
-terminal phase persistence
-runtime session lifecycle
+canonical StoryManifest schema, indexes, deep freeze and fingerprint
+versioned save envelope
+raw read, parse and quarantine results
+pure save migration
+StorySnapshot structural and semantic admission
+manifest-aware reconciliation
+story phase, story revision and save revision
+inspection and clue provenance validation
+canonical snapshot fingerprint
+typed load, save and clear results
+bootstrap candidate and detached stage/UI preparation
+atomic bootstrap commit and rollback
+first-bootstrap-frame acknowledgement
+bounded persistence journal
+runtime session lifecycle and resource retirement
 ```
 
 ## Implemented kits and services
@@ -129,122 +137,135 @@ runtime session lifecycle
 | `repo-local-agent-ledger-kit` | Maintain current pointers and timestamped audits. |
 | `central-ledger-sync-kit` | Maintain central selection and findings history. |
 
-## Main finding: Continue is a partial mutation sequence
+## Main finding: startup accepts untrusted state before resources are safe
 
-### No admission or proof consumption
+### Broad catch destroys malformed input
 
-`continueButton` always calls `nextScene()`. The function does not require a completion proof, expected story revision, stage epoch, command id, sequence, or transition lock. A duplicate or programmatic Continue can advance more than once.
+`loadState()` wraps storage read and JSON parse in one broad catch and returns defaults on any failure. The module later calls `saveState()` unconditionally, so malformed input or a read failure can be replaced by a new default save without a typed rejection, retained raw payload, quarantine record, or user recovery decision.
 
-### Story mutates before stage preparation
+### Shallow merge admits invalid field shapes
 
-`nextScene()` replaces `currentScene`, writes `state.sceneId`, appends route/log state, and hides the interlude before `stage.loadScene()` returns. There is no candidate state or rollback snapshot.
+The loader does not verify arrays, objects, strings, ids, bounds, revisions, or semantic relationships. A valid JSON object can cause later failures or impossible state:
 
-### Stage replacement is destructive and incremental
+```txt
+clues: null/object        -> `.includes` failure
+inspected: null           -> property access failure
+route: string/object      -> `.push` failure during Continue
+log: null/object          -> `.unshift` or `.slice` failure
+unknown sceneId           -> visible fallback scene, unrepaired persisted id
+later sceneId             -> direct progression skip
+forged required clues     -> completion without inspection evidence
+unknown inspections       -> noncanonical UI state
+```
 
-`StageKit.loadScene()` assigns the successor descriptor, clears the live group, resets hotspot/material arrays, then creates layers, props, and hotspots directly in the active group. A construction failure can leave a partial successor while story state already names that successor.
+### Manifest and snapshot are not bound
 
-### Persistence happens last
+No manifest id or fingerprint proves the save belongs to the current authored scene graph. No canonical indexes validate scene, hotspot, clue, successor, or requirement identities.
 
-The raw `localStorage.setItem()` occurs after story mutation, stage replacement, and DOM projection. A storage exception can leave the visible successor live while the persisted snapshot remains on the predecessor.
+### Progression fields can disagree
 
-### No visible-frame proof
+`sceneId`, `route`, `inspected`, and `clues` are independently trusted. The route need not be a canonical prefix, inspections need not grant clues, clues need not have inspection provenance, and the current scene need not match route or predecessor completion.
 
-`loadScene()` returns no stage epoch or preparation/commit receipt. The recursive RAF is independent of transition identity. Continue cannot prove which story revision, stage resource set, camera, hotspots, or post settings produced the first visible successor frame.
+### Renderer work starts before admission completes
 
-### Terminal state is projection-only
+`StageKit` starts its RAF in the constructor. A later `renderUi()` or `saveState()` exception can leave renderer, target, canvas, listeners, live resources, and recursive frame work active after story bootstrap failed.
 
-When no successor exists, `nextScene()` changes only interlude copy. It does not persist an explicit terminal phase, proof consumption, or terminal transition result.
+### Storage write failure has no rollback
+
+The startup write is untyped and uncaught. A quota or security error can occur after stage and UI state are visible, with no bootstrap commit result, rollback, disposal, or explicit offline mode.
+
+### First frame has no snapshot provenance
+
+No bootstrap generation, load result id, manifest fingerprint, snapshot fingerprint, stage epoch, or first-frame acknowledgement correlates the visible stage with the admitted story state.
 
 ## Required parent domain
 
 ```txt
-the-unmapped-house-atomic-continue-transition-authority-domain
+the-unmapped-house-story-snapshot-startup-authority-domain
 ```
 
 Candidate kits:
 
 ```txt
-continue-command-envelope-kit
-continue-admission-kit
-completion-proof-consumption-kit
-scene-transition-id-kit
-scene-transition-plan-kit
-successor-story-candidate-kit
-detached-stage-preparation-kit
-stage-preparation-result-kit
-transition-persistence-kit
-atomic-story-stage-commit-kit
-transition-rollback-kit
-stage-epoch-kit
-predecessor-resource-retirement-kit
-first-successor-frame-ack-kit
-transition-result-kit
-transition-journal-kit
-continue-transition-fixture-kit
-browser-transition-failure-smoke-kit
+story-manifest-schema-kit
+story-manifest-index-kit
+story-manifest-fingerprint-kit
+story-save-envelope-kit
+story-save-raw-read-kit
+story-save-parse-kit
+story-save-migration-kit
+story-snapshot-schema-kit
+story-snapshot-semantic-admission-kit
+story-snapshot-reconciliation-kit
+story-snapshot-fingerprint-kit
+story-load-result-kit
+story-save-result-kit
+corrupt-save-quarantine-kit
+bootstrap-candidate-kit
+bootstrap-stage-preparation-kit
+bootstrap-commit-kit
+bootstrap-rollback-kit
+first-bootstrap-frame-ack-kit
+story-persistence-journal-kit
+story-snapshot-fixture-kit
+browser-bootstrap-failure-smoke-kit
 ```
 
-## Required command and result contract
+## Required load contract
 
 ```txt
-ContinueCommand
+StoryLoadResult
+  status: absent_defaulted | loaded | migrated | reconciled |
+          rejected_malformed | rejected_schema | rejected_manifest |
+          rejected_semantic | storage_unavailable | prepare_failed |
+          persistence_failed | commit_failed | rolled_back | committed
+  resultId
   commandId
-  inputSequence
-  source
-  sceneId
-  completionProofId
-  expectedStoryRevision
-  expectedStageEpoch
-
-ContinueResult
-  status: committed | duplicate | incomplete | stale_scene |
-          stale_story_revision | stale_stage_epoch | proof_consumed |
-          prepare_failed | persistence_failed | commit_failed | rolled_back |
-          terminal_committed
-  commandId
-  transitionId
-  predecessorSceneId
-  successorSceneId?
-  storyRevisionBefore
-  storyRevisionAfter?
-  predecessorStageEpoch
-  successorStageEpoch?
-  completionProofId
+  rawReadId
+  manifestId
+  manifestFingerprint
+  sourceSchemaVersion?
+  committedSchemaVersion?
+  migrationReceipts[]
+  reconciliationReceipts[]
+  rejectionReason?
+  snapshotFingerprint?
+  bootstrapGeneration?
+  stageEpoch?
   firstVisibleFrameId?
-  retiredResourceReceiptId?
   rollbackResult?
 ```
 
 ## Required authority flow
 
 ```txt
-Continue observation
-  -> construct ContinueCommand
-  -> admit session, scene, proof, story revision, stage epoch, and sequence
-  -> reserve proof and transition id
-  -> build successor StorySnapshot candidate
-  -> prepare successor stage in detached ownership
-  -> validate stage preparation result
-  -> persist candidate snapshot with typed result
-  -> atomically publish story and stage commit
-  -> advance stage epoch and story revision
-  -> acknowledge first visible successor frame
-  -> retire predecessor resources
-  -> consume proof and publish immutable result/journal row
+admit canonical StoryManifest
+  -> read and retain exact raw save
+  -> parse detached envelope
+  -> validate version and manifest identity
+  -> migrate known version
+  -> structurally validate fields
+  -> semantically validate progression
+  -> reconcile only through explicit deterministic policy
+  -> canonicalize and fingerprint snapshot
+  -> prepare stage and UI off-line
+  -> commit one bootstrap generation
+  -> acknowledge first visible frame
+  -> publish immutable load result and bounded journal row
 
-any failure before commit
-  -> keep predecessor story, stage, DOM, and persistence authoritative
-  -> dispose detached successor resources
-  -> release proof reservation
-  -> publish typed failed or rolled-back result
+failure before commit
+  -> preserve raw save
+  -> keep committed state unchanged
+  -> dispose candidate stage, renderer, listeners and RAF work
+  -> publish typed rejection or rollback
 ```
 
 ## Ordered implementation queue
 
 ```txt
-1. StoryManifest schema, indexes, validation, and fingerprint
-2. StorySnapshot schema, migration, reconciliation, and persistence results
-3. InspectionCommand, receipts, clue provenance, and completion proof
+1. StoryManifest schema, canonical indexes, validation, deep freeze and fingerprint
+2. StorySnapshot startup admission, migration, reconciliation and typed persistence
+3. InspectionCommand, receipts, clue provenance and scene-completion proof
 4. Atomic Continue transition and first-visible-frame acknowledgement
 5. Runtime session lifecycle and resource retirement
 6. Committed-frame diagnostics
@@ -253,6 +274,10 @@ any failure before commit
 ## Current audit ledge
 
 ```txt
-TheUnmappedHouse Atomic Continue Transition Authority
-+ Rollback, Resource Retirement, and First-Successor-Frame Fixture Gate
+TheUnmappedHouse StorySnapshot Startup Admission Authority
++ Migration, Reconciliation, Bootstrap Rollback, and First-Frame Fixture Gate
 ```
+
+## Validation status
+
+The authority is not implemented. No current test proves malformed-save retention, semantic rejection, migration, reconciliation, storage failure rollback, resource disposal, retry, or first-bootstrap-frame correlation.
