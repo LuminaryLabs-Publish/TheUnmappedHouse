@@ -1,6 +1,6 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-11T12-08-47-04-00`
+Timestamp: `2026-07-11T13-49-30-04-00`
 
 ## This pass
 
@@ -14,30 +14,19 @@ rendering changed: no
 deployment changed: no
 branch created: no
 pull request created: no
-npm run check: not run; GitHub was unavailable from the local execution container
+npm run check: not run
 browser smoke: not run
-story manifest fixture: unavailable
-story snapshot fixture: unavailable
-inspection command fixture: unavailable
-stale inspection fixture: unavailable
-clue provenance fixture: unavailable
-completion proof fixture: unavailable
+Continue admission fixture: unavailable
+stage preparation fixture: unavailable
 persistence rollback fixture: unavailable
-dual-ingress parity fixture: unavailable
-browser dual-ingress smoke: unavailable
+resource retirement fixture: unavailable
+first-successor-frame fixture: unavailable
 repo-local docs pushed to main: yes
-central ledger sync: complete
-central internal change log: complete
+central ledger sync: pending
+central internal change log: pending
 ```
 
 ## Available validation
-
-`package.json` exposes:
-
-```txt
-npm run serve
-npm run check
-```
 
 `npm run check` syntax-checks:
 
@@ -48,166 +37,101 @@ src/stage-kit.js
 src/story-data.js
 ```
 
-It does not execute story admission, inspection, completion, persistence, transition, rendering, or lifecycle behavior.
+It does not execute manifest admission, persistence, inspection, completion, Continue, stage preparation, rollback, rendering, resource retirement, or lifecycle behavior.
 
-## Required inspection validation gate
+## Required transition validation gate
 
 ```txt
 node scripts/validate-story-manifest.mjs
 node scripts/validate-story-snapshot-admission.mjs
-node scripts/validate-inspection-command.mjs
-node scripts/validate-stale-inspection.mjs
-node scripts/validate-clue-provenance.mjs
 node scripts/validate-scene-completion-proof.mjs
-node scripts/validate-inspection-persistence-rollback.mjs
-node scripts/validate-dual-ingress-parity.mjs
+node scripts/validate-continue-admission.mjs
+node scripts/validate-successor-stage-preparation.mjs
+node scripts/validate-continue-rollback.mjs
+node scripts/validate-transition-resource-retirement.mjs
+node scripts/validate-first-successor-frame.mjs
 npm run check
 ```
 
-## Required manifest rows
-
-```txt
-manifest-id-and-schema-version-present
-scene-ids-unique
-hotspot-ids-unique-within-scene
-canonical-scene-index-stable
-canonical-hotspot-index-stable
-canonical-clue-index-stable
-every-hotspot-grant-resolves
-every-completion-requirement-resolves
-clue-ownership-unambiguous
-manifest-fingerprint-stable
-admitted-definition-deeply-immutable
-```
-
-## Required command-admission rows
+## Required Continue admission rows
 
 ```txt
 command-id-present
 input-sequence-present
-source-enum-valid
+source-valid
 scene-id-present
-hotspot-id-present
+completion-proof-id-present
 expected-story-revision-present
 expected-stage-epoch-present
-side-panel-ingress-id-only
-raycast-observation-id-only
-canonical-hotspot-resolved-after-admission
-unknown-hotspot-rejected
-cross-scene-hotspot-rejected
+incomplete-scene-rejected
+unknown-proof-rejected
+consumed-proof-rejected
 stale-scene-rejected
 stale-story-revision-rejected
 stale-stage-epoch-rejected
 duplicate-sequence-rejected
+one-transition-id-reserved
 ```
 
-## Required inspection-result rows
+## Required preparation rows
 
 ```txt
-first-inspection-status-applied
-inspection-result-command-correlated
-inspection-result-story-revision-correlated
-inspection-result-stage-epoch-correlated
-inspection-receipt-created-once
-receipt-detached-and-json-safe
-exact-duplicate-status-duplicate
-exact-duplicate-story-fingerprint-unchanged
-re-read-does-not-regrant-clues
-re-read-presentation-result-explicit
-unknown-or-stale-command-does-not-mutate
-inspection-journal-bounded
+successor-scene-resolves-from-canonical-manifest
+successor-story-candidate-built-without-live-mutation
+successor-stage-group-detached
+successor-camera-fog-post-hotspots-prepared-off-line
+stage-preparation-result-typed
+candidate-stage-epoch-present
+resource-inventory-complete
+prepare-failure-keeps-predecessor-story-live
+prepare-failure-keeps-predecessor-stage-live
+partial-successor-resources-disposed
 ```
 
-## Required clue-provenance rows
+## Required commit and rollback rows
 
 ```txt
-canonical-hotspot-grants-only-owned-clues
-clue-granted-once
-clue-provenance-includes-scene
-clue-provenance-includes-hotspot
-clue-provenance-includes-inspection-receipt
-clue-provenance-includes-story-revision
-forged-descriptor-grants-ignored
-cross-scene-grants-rejected
-forged-global-clue-does-not-satisfy-proof
-migrated-clues-reconciled-to-canonical-receipts
+candidate-snapshot-persisted-before-live-commit
+persistence-failure-keeps-predecessor-story-stage-dom
+atomic-commit-advances-story-revision-once
+atomic-commit-advances-stage-epoch-once
+completion-proof-consumed-after-commit
+commit-failure-restores-predecessor-authority
+rollback-result-typed
+retry-after-failure-commits-once
+double-continue-cannot-skip-scene
+terminal-transition-persists-terminal-phase
 ```
 
-## Required completion-proof rows
+## Required frame and retirement rows
 
 ```txt
-completion-requires-current-scene-receipts
-completion-requires-all-canonical-required-hotspots
-completion-proof-created-once
-completion-proof-id-stable
-completion-proof-fingerprint-stable
-completion-proof-includes-receipt-set
-completion-proof-includes-story-revision
-completion-proof-unconsumed-on-creation
-duplicate-inspection-does-not-create-second-proof
-one-interlude-lease-per-completion-proof
-continue-admits-specific-unconsumed-proof
-proof-consumption-idempotent
+first-successor-frame-has-transition-id
+first-successor-frame-has-story-revision
+first-successor-frame-has-stage-epoch
+first-successor-frame-has-camera-and-hotspot-set
+predecessor-resources-retained-before-frame-ack
+predecessor-resources-retired-after-frame-ack
+retirement-receipt-inventory-complete
+successor-frame-result-detached-json-safe
+transition-journal-bounded
 ```
 
-## Required persistence rows
+## Browser failure smoke
 
 ```txt
-inspection-builds-candidate-story-snapshot
-candidate-save-result-typed
-save-success-precedes-live-commit
-save-failure-keeps-live-story-unchanged
-save-failure-keeps-dom-unchanged
-save-failure-creates-failed-result
-story-revision-advances-once
-save-revision-advances-once
-before-after-fingerprints-present
-persisted-snapshot-matches-result
-```
-
-## Required dual-ingress parity rows
-
-```txt
-same-hotspot-button-and-raycast-command-equal
-same-hotspot-button-and-raycast-status-equal
-same-hotspot-button-and-raycast-receipt-shape-equal
-same-hotspot-button-and-raycast-clue-grants-equal
-same-hotspot-button-and-raycast-completion-proof-equal
-same-hotspot-button-and-raycast-persisted-snapshot-equal
-mixed-ingress-repeat-remains-idempotent
-stale-button-closure-rejected-after-transition
-retired-raycast-observation-rejected-after-transition
-```
-
-## Browser smoke after fixtures
-
-```txt
-boot initial scene and record manifest/story/stage identities
-inspect hotspot one through side-panel
-inspect hotspot two through raycast
-repeat hotspot one through raycast and verify duplicate result
-inspect final hotspot through side-panel
-verify one completion proof and one interlude lease
-attempt forged descriptor and verify rejection
-advance to scene two
-invoke retained scene-one button callback and verify stale-scene rejection
-submit retired stage-one pick observation and verify stale-stage rejection
-reload admitted save and verify receipt/clue/proof identity
-verify visible scene, debug projection, and persisted revision agree
-```
-
-## Existing follow-on fixture families
-
-The inspection gate does not replace the still-required:
-
-```txt
-atomic Continue, rollback, resource-retirement, and first-frame fixtures
-runtime session and generation fixtures
-frame-loop, listener, and timeout lease fixtures
-renderer/canvas/context teardown fixtures
-reset-generation and stale-callback fixtures
+boot scene one and capture story/stage/resource identities
+complete scene one and capture completion-proof identity
+inject successor geometry construction failure
+click Continue and verify scene one remains visible and persisted
+verify detached partial resources are disposed
+retry and verify exactly one scene-two transition
+verify first visible frame matches transition, story revision, and stage epoch
+verify predecessor retirement follows frame acknowledgement
+double-click Continue and verify scene three is not skipped
+complete final scene and verify durable terminal phase after reload
 ```
 
 ## Validation claim
 
-This pass documents the proof surface required for canonical inspection and completion. It does not claim that StoryManifest admission, StorySnapshot migration, inspection authority, completion proof, persistence rollback, or dual-ingress parity is implemented.
+This pass documents the proof surface for atomic Continue admission, successor preparation, durable commit, rollback, resource retirement, and first visible frame. It does not claim that those runtime authorities or fixtures are implemented.
