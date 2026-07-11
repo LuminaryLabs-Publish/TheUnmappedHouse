@@ -1,6 +1,6 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-11T01-38-28-04-00`
+Timestamp: `2026-07-11T04-00-07-04-00`
 
 ## This pass
 
@@ -16,12 +16,14 @@ pull request created: no
 npm run check: not run in connector-only environment
 browser smoke: not run
 story phase recovery fixture: unavailable
-interlude timer fixture: unavailable
 Continue admission fixture: unavailable
-terminal reload fixture: unavailable
-phase/stage correlation fixture: unavailable
+stage preparation fixture: unavailable
+atomic transition fixture: unavailable
+rollback fixture: unavailable
+first-frame acknowledgement fixture: unavailable
+resource retirement fixture: unavailable
 repo-local docs pushed to main: yes
-central ledger sync: complete
+central ledger sync: pending until central commit
 ```
 
 ## Available validation
@@ -42,7 +44,7 @@ src/stage-kit.js
 src/story-data.js
 ```
 
-It does not execute story rules, persistence effects, timer behavior, StageKit lifecycle or browser reload behavior.
+It does not execute story rules, persistence effects, stage preparation, transition rollback, first-frame proof, resource retirement or browser reload behavior.
 
 ## Required next validation gate
 
@@ -50,95 +52,79 @@ It does not execute story rules, persistence effects, timer behavior, StageKit l
 node scripts/validate-story-source.mjs
 node scripts/validate-save-reconciliation.mjs
 node scripts/validate-story-phase-recovery.mjs
-node scripts/validate-interlude-timer.mjs
 node scripts/validate-continue-admission.mjs
-node scripts/validate-terminal-reload.mjs
-node scripts/validate-phase-stage-correlation.mjs
+node scripts/validate-stage-preparation.mjs
+node scripts/validate-story-stage-transition.mjs
+node scripts/validate-transition-rollback.mjs
+node scripts/validate-stage-resource-retirement.mjs
+node scripts/validate-first-frame-ack.mjs
 npm run check
 ```
 
-## Required phase rows
+## Required transition rows
 
 ```txt
-fresh-scene-starts-exploring
-completion-proof-scene-scoped
-final-inspection-produces-interlude-pending
-pending-phase-persists-target-scene-and-deadline
-open-phase-persists-after-deadline
-impossible-phase-snapshot-rejected-or-repaired
+continue-command-carries-scene-phase-story-revision-stage-epoch
+invalid-descriptor-rejected-before-live-clear
+prepare-success-does-not-change-live-stage
+prepare-failure-keeps-prior-story-stage-and-interlude
+save-failure-discards-prepared-stage
+stage-commit-failure-restores-prior-story-and-stage
+accepted-transition-commits-story-stage-and-projection-once
+repeated-continue-does-not-skip-scene
+final-continue-commits-terminal-once
 ```
 
-## Required reload rows
+## Required correlation rows
 
 ```txt
-reload-before-deadline-schedules-remaining-delay
-reload-at-deadline-opens-interlude
-reload-after-deadline-opens-interlude-immediately
-completed-scene-never-reloads-with-hidden-progress
-interlude-open-reloads-open
-terminal-state-reloads-terminal
+request-id-present
+transition-id-present
+story-revision-present
+save-revision-present
+stage-epoch-present
+stage-commit-id-present
+first-frame-id-present
+scene-id-agrees-across-story-save-stage-and-frame
 ```
 
-## Required timer rows
+## Required lifecycle rows
 
 ```txt
-one-final-inspection-produces-one-timer
-timer-id-retained
-timer-cancelled-on-transition
-timer-cancelled-on-reset
-timer-cancelled-on-dispose
-stale-scene-timer-rejected
-stale-save-revision-timer-rejected
-stale-runtime-epoch-timer-rejected
-timer-result-json-safe
-```
-
-## Required Continue rows
-
-```txt
-continue-before-completion-rejected
-continue-during-interlude-pending-rejected
-continue-from-interlude-open-accepted
-continue-wrong-scene-rejected
-continue-stale-revision-rejected
-duplicate-continue-idempotent
-accepted-continue-correlates-next-save-and-stage
-final-continue-commits-terminal-state
+candidate-resources-disposed-on-discard
+prior-stage-remains-live-until-first-frame
+prior-stage-disposed-once-after-first-frame
+failed-commit-does-not-dispose-prior-stage
+duplicate-dispose-is-safe
+remount-has-one-canvas-one-raf-one-listener-set
+resource-journal-json-safe-and-bounded
 ```
 
 ## Required failure rows
 
 ```txt
-inspection-write-failure-schedules-no-interlude
-phase-write-failure-projects-no-success-state
-transition-persistence-failure-keeps-prior-stage
-stage-preparation-failure-keeps-prior-phase
-finalization-failure-enters-recovering
-reload-recovering-resolves-exactly-once
-```
-
-## Required diagnostics rows
-
-```txt
-phase-row-json-safe
-completion-proof-json-safe
-timer-row-json-safe
-continue-result-json-safe
-phase-save-stage-correlation-complete
-journals-bounded
-no-dom-node-in-diagnostics
-no-raw-three-object-in-diagnostics
+storage-denied-before-stage-commit
+quota-failure-discards-candidate
+geometry-construction-failure-keeps-prior-stage
+material-construction-failure-keeps-prior-stage
+projection-failure-enters-recoverable-result
+first-frame-timeout-is-observable
+reload-after-failed-transition-restores-prior-scene
+reload-after-accepted-transition-restores-next-scene
 ```
 
 ## Browser smoke after fixtures
 
 ```txt
-complete scene one and reload before 450 ms
-reload after the interlude should already be ready
-continue once and confirm scene two plus save revision plus stage epoch
-attempt hidden Continue before completion and confirm rejection
-reset while an interlude is pending and confirm no stale overlay
-complete final scene, Continue, reload and confirm terminal projection
-repeat mount/dispose and confirm one RAF, one timer set and one listener set
+complete scene one
+inject stage-preparation failure and press Continue
+verify scene one and its interlude remain visible
+remove fault and Continue once
+verify scene two, one transition id and one stage epoch increment
+reload and verify scene two
+repeat with storage write failure and verify scene one remains committed
+complete final scene and verify terminal reload
+inspect resource counts across all transitions
+dispose and remount with one canvas, RAF and listener set
 confirm story copy, framing, shaders and pacing remain unchanged
 ```
