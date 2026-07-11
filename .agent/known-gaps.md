@@ -1,68 +1,81 @@
 # Known gaps: The Unmapped House
 
-Timestamp: `2026-07-10T20-38-24-04-00`
+Timestamp: `2026-07-10T22-21-17-04-00`
 
-## Atomic scene replacement gaps
+## Save-envelope gaps
 
-- `StageKit.loadScene()` clears the committed group before the replacement is validated or fully built.
-- Scene creation mutates live camera, fog, post uniforms and group membership incrementally.
-- A descriptor or resource-construction failure can leave a partial or blank stage.
-- No prepare/commit split exists.
-- No typed stage-load result records request, validation, preparation, commit or failure.
-- No committed scene identity or monotonically increasing `stageEpoch` exists.
+- The save has no schema version, story manifest id or source fingerprint.
+- `loadState()` shallow-merges arbitrary parsed JSON over the initial object.
+- Field types, scene ids, hotspot ids, clue ids, route rows and log rows are not validated.
+- Unknown or stale source identities are not reconciled.
+- Corrupt `clues`, `route` or `log` values can make normal array operations throw.
+- `flags` is persisted but has no current owner or contract.
 
-## Three.js resource gaps
+## Story-phase and resume gaps
 
-- `Group.clear()` detaches prior meshes but does not dispose their geometries or materials.
-- `this.materials = []` drops prior anime-material references before cleanup.
-- Hotspot `MeshBasicMaterial` resources are never included in the material list.
-- No scene-local ledger owns geometries, materials, textures or object roots.
-- Persistent post geometry, post material, render target and renderer have no teardown owner.
-- No duplicate-disposal guard or disposed-resource accounting exists.
-- Traversing the current route creates 28 stage meshes while only the newest scene remains attached.
+- No explicit story phase exists.
+- Completion is saved before the delayed interlude is projected.
+- Interlude pending/open state is DOM-only and is lost on reload.
+- The 450 ms timer id, target scene, command id and readiness deadline are not retained.
+- Reloading a completed scene hides the interlude permanently.
+- Re-inspecting an already-seen final hotspot does not reschedule the interlude.
+- The terminal route is DOM-only and is not persisted.
 
-## Frame-loop and listener gaps
+## Completion-authority gaps
 
-- Recursive RAF starts in the constructor and its id is not retained.
-- The frame loop has no explicit running, paused or disposed state.
-- Resize, pointer-move and click handlers are anonymous closures and cannot be deterministically removed.
-- No visibility or host-detachment policy exists.
-- Repeated construction can create additional frame loops and listener sets.
-- `dispose()` is absent and idempotent teardown is unproven.
+- Completion trusts one global clue-string array.
+- Persisted clues from another scene can satisfy the current scene requirements.
+- There is no scene-scoped completion proof.
+- There is no source identity attached to clue or inspection evidence.
+- Completion has no command, result, event or state-fingerprint record.
 
-## Hotspot and interaction gaps
+## Interaction-command gaps
 
-- Hotspot meshes retain full live descriptor objects rather than canonical source refs.
-- Pick results contain no scene id, source revision, stage epoch or commit id.
-- Stale picks cannot be rejected by contract.
-- `hovered` and hover-label visibility are not explicitly reset during scene replacement.
-- Side-panel and raycast paths still lack one typed canonical story-command result.
+- Side-panel and raycast inspection paths pass descriptor objects directly to mutation logic.
+- No canonical `InspectHotspot` command exists.
+- Continue has no phase, scene, request, source or expected-state identity.
+- Continue returns no accepted, rejected, failed or no-op result.
+- Wrong-phase, stale and duplicate Continue requests are not rejected by contract.
+- No command/result/event journal exists.
+
+## Story-transition gaps
+
+- `nextScene()` mutates current story state before stage loading succeeds.
+- Interlude visibility is cleared before stage success is known.
+- Story save occurs only after direct StageKit mutation.
+- No previous/next state fingerprints exist.
+- No transaction correlates story scene id, stage scene id, stage epoch and save revision.
+- A stage failure can leave in-memory story state and rendered stage identity divergent.
+- Repeated final Continue clicks have no terminal result identity.
+
+## Render-host companion gaps
+
+- `StageKit.loadScene()` clears the committed group before replacement preparation.
+- Old scene geometries and materials are detached but not disposed.
+- Hotspot materials are not tracked in the material list.
+- No scene-local resource ledger exists.
+- No stage epoch or typed stage-commit result exists.
+- RAF and event listeners have no idempotent host teardown boundary.
 
 ## Diagnostics gaps
 
-- Debug JSON exposes story state but not renderer lifecycle state.
-- No stage build, commit, failure or disposal journal exists.
-- Current live resource counts and cumulative disposed counts are unavailable.
-- No JSON-safe record proves which scene is actually committed for rendering.
-- Raw Three.js objects remain the only detailed runtime evidence.
+- Debug JSON exposes aggregate mutable story state only.
+- No story phase, source fingerprint or state fingerprint is exposed.
+- Pending interlude readiness and terminal state are unavailable.
+- No story transition to stage commit correlation exists.
+- No bounded JSON-safe command/result/event journal exists.
 
 ## Validation gaps
 
 - `npm run check` performs syntax checks only.
-- No pure stage-build-plan fixture exists.
-- No failure-injection test proves the old scene survives replacement failure.
-- No resource-ledger test proves exact disposal counts.
-- No stale-stage-epoch pick fixture exists.
-- No listener/RAF teardown fixture exists.
-- No browser smoke repeatedly loads all scenes and disposes the host.
-
-## Upstream story-authority gaps retained
-
-- `story-data.js` still has no schema version, manifest id or source fingerprint.
-- Saves are shallow-merged without schema validation or source reconciliation.
-- Descriptor objects still cross the input-to-mutation boundary.
-- Completion still trusts persisted global clue strings.
-- Interlude timers still lack command, scene and source correlation.
+- No story-source schema fixture exists.
+- No save validation or reconciliation fixture exists.
+- No reload-during-interlude fixture exists.
+- No duplicate/wrong-phase Continue fixture exists.
+- No terminal-state reload fixture exists.
+- No story-stage transaction failure fixture exists.
+- No browser smoke reloads each story phase.
+- Existing stage build, resource, epoch and host-disposal fixtures remain absent.
 
 ## Deferred work
 
