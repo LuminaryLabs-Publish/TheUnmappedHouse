@@ -1,10 +1,10 @@
 # Next steps: The Unmapped House
 
-Timestamp: `2026-07-11T17-10-50-04-00`
+Timestamp: `2026-07-11T18-38-45-04-00`
 
 ## Goal
 
-Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, and visible rendering while making story admission, transitions, lifecycle, internal resolution, and committed-frame proof deterministic.
+Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, and visible rendering while making story admission, transitions, lifecycle, internal resolution, WebGL context recovery, and committed-frame proof deterministic.
 
 ## Plan ledger
 
@@ -45,12 +45,13 @@ Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, a
 - [ ] Roll back to predecessor authority on failure.
 - [ ] Persist an explicit terminal phase when no successor exists.
 
-### 5. Runtime lifecycle
+### 5. Runtime lifecycle and scene-resource retirement
 
 - [ ] Add stable `sessionId` and monotonic `sessionGeneration`.
-- [ ] Fence boot, interaction, timeout, reset, retry, resize, and frame work.
+- [ ] Fence boot, interaction, timeout, reset, retry, resize, context, and frame work.
 - [ ] Retain RAF, listener, timeout, stage, renderer, canvas, target, and context leases.
-- [ ] Add ordered idempotent stop, reset, and dispose results.
+- [ ] Inventory and dispose stage geometries, materials, hotspot resources, post resources, target, renderer, canvas, and context state.
+- [ ] Add ordered idempotent stop, reset, restart, and dispose results.
 
 ### 6. Render Surface Resolution Authority
 
@@ -69,50 +70,69 @@ Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, a
 - [ ] Retire superseded allocations only after frame acknowledgement.
 - [ ] Publish detached observations and a bounded render-surface journal.
 
-### 7. Committed-frame diagnostics
+### 7. WebGL Context Recovery Authority
 
-- [ ] Correlate frame id, story snapshot, stage epoch, surface revision, camera, hotspot set, and post settings.
+- [ ] Add canonical context states: `UNINITIALIZED`, `INITIALIZING`, `READY`, `LOST`, `RESTORING`, `FAILED`, and `DISPOSED`.
+- [ ] Add monotonic `contextGeneration` and `resourceGeneration` identities.
+- [ ] Install revocable `webglcontextlost` and `webglcontextrestored` adapters through runtime lifecycle ownership.
+- [ ] Suspend ready-frame commits immediately after accepted context loss.
+- [ ] Fence raycast-dependent and story-mutating input under an explicit context policy.
+- [ ] Preserve canonical story, stage, surface, camera, post, and hotspot descriptors through loss.
+- [ ] Build a complete context-bound resource registry.
+- [ ] Prepare renderer state, target storage, post binding, materials, geometries, and hotspots under candidate ownership.
+- [ ] Reject stale session, stage, surface, context, and resource generations.
+- [ ] Roll back and dispose every partial candidate resource on failure.
+- [ ] Commit one complete resource generation atomically.
+- [ ] Render and acknowledge one recovered visible frame before returning to `READY`.
+- [ ] Prove repeated loss/restore cycles keep resource and listener counts bounded.
+- [ ] Reject late context events after disposal.
+
+### 8. Committed-frame diagnostics
+
+- [ ] Correlate frame id, story snapshot, stage epoch, surface revision, context generation, resource generation, camera, hotspot set, and post settings.
 - [ ] Expose detached clone-safe observations.
-- [ ] Record bootstrap, successor-frame, resize-frame, rollback, and resource-retirement acknowledgements.
+- [ ] Record bootstrap, successor-frame, resize-frame, context-loss, recovered-frame, rollback, and resource-retirement acknowledgements.
 
-## Required render-surface fixture rows
+## Required WebGL context fixture rows
 
 ```txt
-aspect-frame-wide-window
-aspect-frame-tall-window
-fractional-frame-canonicalization
-dpr-admission-policy-bounded
-pixel-budget-selects-highest-valid-tier
-oversized-plan-falls-back
-resize-generation-monotonic
-duplicate-resize-idempotent
-rapid-resize-coalesced
-stale-preparation-cannot-commit
-renderer-and-target-match-plan
-post-texture-binds-current-target
-allocation-failure-preserves-predecessor
-partial-candidate-resources-disposed
-fallback-result-reports-actual-dimensions
-hotspot-picking-matches-committed-frame
-first-visible-frame-has-surface-revision
-superseded-surface-retires-after-ack
-surface-observation-detached-json-safe
-surface-journal-bounded
+context-state-transition-table
+loss-command-idempotent
+context-generation-monotonic
+resource-generation-bound-to-context
+loss-suspends-ready-frame-commit
+raycast-input-rejected-while-lost
+story-state-preserved-through-loss
+restore-rebuilds-complete-resource-registry
+same-surface-revision-cannot-skip-resource-rebuild
+stale-restore-result-cannot-commit
+partial-rebuild-rolls-back-and-disposes
+first-recovered-frame-cites-active-generations
+post-material-samples-rebuilt-target
+hotspot-picking-resumes-on-recovered-frame
+repeated-loss-restore-resource-count-stable
+late-context-event-after-dispose-rejected
+context-observation-detached-json-safe
+context-journal-bounded
 ```
 
-## Browser render-surface smoke
+## Browser WebGL recovery smoke
 
 ```txt
-boot at 1280x720 DPR 1
-boot at 1920x1080 DPR 2
-boot at 3840x2160 DPR 2 and verify budgeted internal resolution
-resize through wide, tall, portrait, and fractional layouts
-simulate rapid resize storm and verify only latest generation commits
-simulate DPR change and verify one new surface revision
-inject target allocation failure and verify explicit fallback
-exhaust fallback tiers and verify predecessor remains visible
-click a hotspot after resize and verify committed geometry parity
-verify first visible frame reports actual renderer and target dimensions
+boot and capture baseline story, stage, surface, context, resource and frame identities
+force WebGL context loss
+verify state becomes LOST and no ready frame commits
+verify render-dependent input is fenced
+verify story state remains stable
+restore context under declared policy
+verify context and resource generations advance once
+verify target, post binding, scene resources and hotspots rebuild
+verify first recovered frame cites all active identities
+repeat loss/restore three times and compare live resource counts
+lose context during resize
+lose context during interlude
+lose context during transition preparation
+verify late events after disposal are rejected
 ```
 
 ## Implementation order
@@ -122,16 +142,17 @@ verify first visible frame reports actual renderer and target dimensions
 2. StorySnapshot startup admission and typed persistence authority
 3. Inspection and scene-completion proof authority
 4. Atomic Continue transition authority
-5. Runtime session lifecycle
+5. Runtime session lifecycle and scene-resource retirement
 6. Render Surface Resolution Authority
-7. Committed-frame diagnostics
+7. WebGL Context Recovery Authority
+8. Committed-frame diagnostics
 ```
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Render Surface Resolution Authority
-+ Pixel Budget / Resize Generation / Fallback / Rollback / Visible-Frame Fixture Gate
+TheUnmappedHouse WebGL Context Recovery Authority
++ Context Generation / Resource Rebuild / Input Suspension / Recovered-Frame Fixture Gate
 ```
 
 ## Do not do first
