@@ -23,7 +23,7 @@ stage-epoch fixture: unavailable
 scene completion proof fixture: unavailable
 transition fixtures: unavailable
 repo-local docs pushed to main: yes
-central ledger sync: pending until central commit
+central ledger sync: complete
 ```
 
 ## Available validation
