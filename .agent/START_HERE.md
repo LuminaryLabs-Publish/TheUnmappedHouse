@@ -1,36 +1,34 @@
 # START HERE: The Unmapped House
 
-Last updated: `2026-07-11T17-10-50-04-00`
+Last updated: `2026-07-11T18-38-45-04-00`
 
 ## Summary
 
 `TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three authored scenes, nine hotspots, browser persistence, a fixed 16:9 shell, and a descriptor-driven Three.js stage.
 
-The current audit isolates render-surface resolution authority. The CSS aspect frame is deterministic, but `StageKit` directly multiplies the live viewport by device pixel ratio for both the renderer drawing buffer and a two-sample post target. Boot performs an initial design-sized allocation and then immediately resizes it. Later resize events synchronously reallocate surfaces with no pixel budget, quality fallback, resize generation, rollback, or visible-frame acknowledgement.
-
-A `3840 x 2160` viewport at DPR `2` requests a `7680 x 4320` post target, more than 33 million pixels before multisample and depth overhead.
+The current audit isolates WebGL context recovery authority. `StageKit` owns a persistent renderer, multisampled target, post pass, scene geometries, shader materials, hotspot resources, resize/input listeners, and a recursive RAF, but the application has no context state, context generation, loss/restore event authority, render suspension, resource rebuild transaction, stale-generation fence, or first recovered frame acknowledgement.
 
 ## Plan ledger
 
-**Goal:** preserve the authored 16:9 composition while making internal renderer and post-target resolution bounded, revisioned, recoverable, observable, and frame-proven.
+**Goal:** preserve story and stage authority through WebGL context loss while rebuilding every required context-bound resource under one new generation and proving one recovered visible frame before input and rendering resume.
 
-- [x] Compare all ten accessible `LuminaryLabs-Publish` repositories with the central ledger.
+- [x] Compare all ten accessible `LuminaryLabs-Publish` repositories with central tracking.
 - [x] Exclude `TheCavalryOfRome`.
 - [x] Confirm all nine eligible repositories have central ledger and root `.agent` state.
 - [x] Select only `TheUnmappedHouse` under the oldest eligible fallback rule.
-- [x] Trace aspect framing, DPR sampling, renderer sizing, target sizing, resize admission, post composition, and RAF submission.
-- [x] Identify all active domains, 24 implemented kits, and offered services.
-- [x] Define pixel budget, resolution policy, resize generation, preparation, commit, fallback, rollback, retirement, observation, and fixture boundaries.
-- [x] Add timestamped architecture, render, gameplay, interaction, render-surface, deploy, tracker, and turn-ledger records.
-- [x] Refresh all required root `.agent` state.
+- [x] Trace renderer, target, post binding, materials, geometries, hotspots, listeners, input, resize, scene loading, persistence, and RAF ownership.
+- [x] Identify all active domains, all 24 implemented kits, and their services.
+- [x] Define context state, generation, suspension, rebuild, rollback, stale-result, recovered-frame, observation, and fixture boundaries.
+- [x] Add timestamped architecture, render, gameplay, interaction, WebGL-context, deploy, tracker, and turn-ledger records.
+- [x] Refresh required root `.agent` state.
 - [x] Change no runtime source.
-- [x] Push only to `main` and create no branch or pull request.
-- [ ] Implement the prerequisite story authorities, runtime lifecycle, and render-surface transaction.
+- [x] Push only to `main`; create no branch or pull request.
+- [ ] Implement and execute the documented authority and fixture gate.
 
 ## Read this first
 
 ```txt
-.agent/trackers/2026-07-11T17-10-50-04-00/project-breakdown.md
+.agent/trackers/2026-07-11T18-38-45-04-00/project-breakdown.md
 .agent/current-audit.md
 .agent/next-steps.md
 .agent/known-gaps.md
@@ -41,85 +39,69 @@ A `3840 x 2160` viewport at DPR `2` requests a `7680 x 4320` post target, more t
 ## Current audit set
 
 ```txt
-.agent/architecture-audit/2026-07-11T17-10-50-04-00-render-surface-resolution-dsk-map.md
-.agent/render-audit/2026-07-11T17-10-50-04-00-dpr-multisample-target-budget-gap.md
-.agent/gameplay-audit/2026-07-11T17-10-50-04-00-resize-reallocation-visible-story-loop.md
-.agent/interaction-audit/2026-07-11T17-10-50-04-00-resize-command-surface-result-map.md
-.agent/render-surface-audit/2026-07-11T17-10-50-04-00-resolution-budget-recovery-contract.md
-.agent/deploy-audit/2026-07-11T17-10-50-04-00-render-resolution-fixture-gate.md
+.agent/architecture-audit/2026-07-11T18-38-45-04-00-webgl-context-recovery-dsk-map.md
+.agent/render-audit/2026-07-11T18-38-45-04-00-context-generation-recovered-frame-gap.md
+.agent/gameplay-audit/2026-07-11T18-38-45-04-00-context-loss-story-input-divergence-loop.md
+.agent/interaction-audit/2026-07-11T18-38-45-04-00-context-state-input-admission-map.md
+.agent/webgl-context-audit/2026-07-11T18-38-45-04-00-loss-restore-resource-generation-contract.md
+.agent/deploy-audit/2026-07-11T18-38-45-04-00-webgl-context-recovery-fixture-gate.md
 ```
 
 ## Main finding
 
 ```txt
-browser dimensions and DPR
-  -> compute CSS 16:9 frame
-  -> set renderer pixel ratio
-  -> resize renderer drawing buffer
-  -> resize multisampled post target
-  -> continue RAF
+WebGL renderer graph exists
+  -> renderer, target, post binding, materials, geometries and hotspots are context-bound
+  -> no application `webglcontextlost` admission
+  -> no application `webglcontextrestored` transaction
+  -> no context/resource generation
+  -> no render or input suspension result
+  -> no complete resource-registry rebuild
+  -> no first recovered visible-frame acknowledgement
 ```
 
-Missing evidence:
+Story inspection, clue grants, completion timers, Continue, reset, persistence, resize, pointer input, and RAF remain independent from context readiness. The application cannot prove that current story state, current scene resources, current surface revision, current context generation, and the visible canvas agree.
+
+## Required parent domain
 
 ```txt
-immutable resolution policy
-pixel and capability budget
-resize command and generation
-surface revision
-candidate preparation result
-allocation failure classification
-quality fallback receipt
-atomic surface commit
-rollback result
-stale resize rejection
-resource retirement receipt
-actual renderer and target dimensions
-first visible frame surface acknowledgement
-bounded render-surface journal
-```
-
-## Required next parent domain
-
-```txt
-the-unmapped-house-render-surface-resolution-authority-domain
+the-unmapped-house-webgl-context-recovery-authority-domain
 ```
 
 Required composition:
 
 ```txt
-display-frame-observation-kit
-device-pixel-ratio-admission-kit
-render-resolution-policy-kit
-render-pixel-budget-kit
-resize-command-kit
-resize-coalescing-kit
-resize-generation-kit
-render-surface-revision-kit
-render-surface-plan-kit
-renderer-buffer-preparation-kit
-post-target-preparation-kit
-allocation-failure-classification-kit
-render-quality-fallback-kit
-render-surface-commit-kit
-render-surface-rollback-kit
-stale-resize-result-rejection-kit
-render-surface-resource-retirement-kit
-visible-frame-surface-ack-kit
-render-surface-observation-kit
-render-surface-journal-kit
-render-resolution-fixture-kit
-browser-resize-dpr-smoke-kit
+webgl-context-state-kit
+webgl-context-generation-kit
+webgl-context-event-adapter-kit
+context-loss-admission-kit
+render-suspension-kit
+render-dependent-input-fence-kit
+context-loss-result-kit
+context-resource-registry-kit
+context-resource-generation-kit
+context-resource-rebuild-plan-kit
+renderer-state-reinitialization-kit
+render-target-rebuild-kit
+material-program-rebind-kit
+scene-resource-reupload-kit
+context-restore-transaction-kit
+context-restore-rollback-kit
+stale-context-result-rejection-kit
+recovered-frame-ack-kit
+context-observation-kit
+context-recovery-journal-kit
+webgl-context-recovery-fixture-kit
+browser-context-loss-restore-smoke-kit
 ```
 
 ## Required invariant
 
 ```txt
-No surface revision may become authoritative unless CSS frame, camera aspect,
-renderer drawing buffer, post target, post texture binding, budget decision,
-and first visible frame all reference the same admitted plan.
-
-Failed or superseded preparation must leave the predecessor surface visible.
+No frame is ready while context state is LOST, RESTORING, FAILED or DISPOSED.
+No render-dependent command commits without the active context generation and a matching frame.
+No restored generation becomes authoritative until renderer, target, post binding,
+scene resources, hotspot resources and one visible frame cite the same generation.
 ```
 
 ## Dependency order
@@ -128,9 +110,10 @@ Failed or superseded preparation must leave the predecessor surface visible.
 1. Versioned StoryManifest and StorySnapshot startup authority
 2. Inspection Command Authority and scene-completion proof
 3. Atomic Continue transition and first-frame acknowledgement
-4. Runtime session lifecycle and resource retirement
+4. Runtime session lifecycle and scene-resource retirement
 5. Render Surface Resolution Authority
-6. Committed-frame diagnostics
+6. WebGL Context Recovery Authority
+7. Committed-frame diagnostics
 ```
 
 ## Validation status
@@ -145,10 +128,10 @@ branch created: no
 pull request created: no
 npm run check: not run
 browser smoke: not run
-render-resolution fixtures: unavailable
-allocation-failure fixtures: unavailable
-resize-generation fixtures: unavailable
-visible-frame surface fixture: unavailable
+context-state fixtures: unavailable
+resource-generation fixtures: unavailable
+loss/restore browser smoke: unavailable
+recovered-frame fixture: unavailable
 ```
 
-Do not claim bounded high-DPI rendering, resize recovery, allocation fallback, or surface/frame correlation until the documented fixture gate passes.
+Do not claim WebGL context-loss resilience, automatic resource recovery, restored interaction correctness, or recovered-frame parity until the documented gate passes.
