@@ -1,6 +1,6 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-11T13-49-30-04-00`
+Timestamp: `2026-07-11T15-30-50-04-00`
 
 ## This pass
 
@@ -16,11 +16,14 @@ branch created: no
 pull request created: no
 npm run check: not run
 browser smoke: not run
-Continue admission fixture: unavailable
-stage preparation fixture: unavailable
-persistence rollback fixture: unavailable
-resource retirement fixture: unavailable
-first-successor-frame fixture: unavailable
+StoryManifest fixture: unavailable
+StorySnapshot schema fixture: unavailable
+migration fixture: unavailable
+semantic admission fixture: unavailable
+reconciliation fixture: unavailable
+storage failure fixture: unavailable
+bootstrap rollback fixture: unavailable
+first-bootstrap-frame fixture: unavailable
 repo-local docs pushed to main: yes
 central ledger sync: complete
 central internal change log: complete
@@ -37,101 +40,131 @@ src/stage-kit.js
 src/story-data.js
 ```
 
-It does not execute manifest admission, persistence, inspection, completion, Continue, stage preparation, rollback, rendering, resource retirement, or lifecycle behavior.
+It does not execute manifest admission, raw storage read behavior, StorySnapshot parsing, migration, semantic validation, reconciliation, quarantine, bootstrap preparation, rollback, rendering, resource disposal, retry, reset, or first-frame behavior.
 
-## Required transition validation gate
+## Required startup validation gate
 
 ```txt
 node scripts/validate-story-manifest.mjs
-node scripts/validate-story-snapshot-admission.mjs
-node scripts/validate-scene-completion-proof.mjs
-node scripts/validate-continue-admission.mjs
-node scripts/validate-successor-stage-preparation.mjs
-node scripts/validate-continue-rollback.mjs
-node scripts/validate-transition-resource-retirement.mjs
-node scripts/validate-first-successor-frame.mjs
+node scripts/validate-story-snapshot-schema.mjs
+node scripts/validate-story-snapshot-semantics.mjs
+node scripts/validate-story-snapshot-migrations.mjs
+node scripts/validate-story-snapshot-reconciliation.mjs
+node scripts/validate-story-persistence-results.mjs
+node scripts/validate-story-bootstrap-rollback.mjs
+node scripts/validate-first-bootstrap-frame.mjs
 npm run check
 ```
 
-## Required Continue admission rows
+Recommended aggregate:
 
 ```txt
-command-id-present
-input-sequence-present
-source-valid
-scene-id-present
-completion-proof-id-present
-expected-story-revision-present
-expected-stage-epoch-present
-incomplete-scene-rejected
-unknown-proof-rejected
-consumed-proof-rejected
-stale-scene-rejected
-stale-story-revision-rejected
-stale-stage-epoch-rejected
-duplicate-sequence-rejected
-one-transition-id-reserved
+npm run validate:story-startup
 ```
 
-## Required preparation rows
+## Required manifest rows
 
 ```txt
-successor-scene-resolves-from-canonical-manifest
-successor-story-candidate-built-without-live-mutation
-successor-stage-group-detached
-successor-camera-fog-post-hotspots-prepared-off-line
-stage-preparation-result-typed
-candidate-stage-epoch-present
+manifest-id-present
+manifest-schema-version-present
+scene-ids-unique
+hotspot-ids-scene-scoped
+clues-known
+completion-requirements-known
+successors-canonical
+stage-descriptors-valid
+manifest-deep-frozen
+manifest-fingerprint-stable
+```
+
+## Required raw and schema rows
+
+```txt
+absent-save-default-result
+raw-read-result-typed
+malformed-json-rejected-without-overwrite
+wrong-top-level-type-rejected
+unknown-version-rejected
+known-version-migrated-once
+migration-receipt-has-input-output-fingerprints
+manifest-mismatch-rejected
+required-envelope-fields-present
+field-types-admitted
+rejected-raw-payload-retained
+```
+
+## Required semantic rows
+
+```txt
+scene-id-known
+route-is-canonical-prefix
+route-ends-at-current-scene
+route-duplicates-rejected-or-canonicalized
+inspection-scene-ids-known
+inspection-hotspot-ids-belong-to-scene
+clue-receipts-reference-known-clues
+clue-provenance-required
+phase-agrees-with-completion-and-terminal-state
+log-budget-enforced
+flags-known-and-type-correct
+snapshot-fingerprint-stable
+roundtrip-fingerprint-equal
+```
+
+## Required storage and recovery rows
+
+```txt
+getItem-security-error-reported
+setItem-security-error-reported
+setItem-quota-error-reported
+failed-read-does-not-delete-raw-save
+failed-parse-does-not-overwrite-raw-save
+failed-write-does-not-advance-save-revision
+quarantine-preserves-exact-payload
+retry-result-references-predecessor-load-result
+clear-failure-does-not-reload
+clear-success-publishes-result-before-reload
+load-save-clear-results-detached-json-safe
+persistence-journal-bounded
+```
+
+## Required bootstrap rows
+
+```txt
+invalid-state-rejected-before-stage-allocation
+bootstrap-candidate-detached
+stage-resources-prepared-off-line
+ui-projection-prepared-off-line
 resource-inventory-complete
-prepare-failure-keeps-predecessor-story-live
-prepare-failure-keeps-predecessor-stage-live
-partial-successor-resources-disposed
-```
-
-## Required commit and rollback rows
-
-```txt
-candidate-snapshot-persisted-before-live-commit
-persistence-failure-keeps-predecessor-story-stage-dom
-atomic-commit-advances-story-revision-once
-atomic-commit-advances-stage-epoch-once
-completion-proof-consumed-after-commit
-commit-failure-restores-predecessor-authority
-rollback-result-typed
-retry-after-failure-commits-once
-double-continue-cannot-skip-scene
-terminal-transition-persists-terminal-phase
-```
-
-## Required frame and retirement rows
-
-```txt
-first-successor-frame-has-transition-id
-first-successor-frame-has-story-revision
-first-successor-frame-has-stage-epoch
-first-successor-frame-has-camera-and-hotspot-set
-predecessor-resources-retained-before-frame-ack
-predecessor-resources-retired-after-frame-ack
-retirement-receipt-inventory-complete
-successor-frame-result-detached-json-safe
-transition-journal-bounded
+stage-prepare-failure-disposes-all-candidate-resources
+ui-projection-failure-disposes-all-candidate-resources
+storage-write-failure-rolls-back-bootstrap
+failed-bootstrap-publishes-no-ready-state
+retry-creates-one-session-generation
+retry-creates-one-canvas
+retry-creates-one-listener-set
+retry-creates-one-raf-chain
+first-bootstrap-frame-has-load-result-id
+first-bootstrap-frame-has-manifest-fingerprint
+first-bootstrap-frame-has-snapshot-fingerprint
+first-bootstrap-frame-has-stage-epoch
 ```
 
 ## Browser failure smoke
 
 ```txt
-boot scene one and capture story/stage/resource identities
-complete scene one and capture completion-proof identity
-inject successor geometry construction failure
-click Continue and verify scene one remains visible and persisted
-verify detached partial resources are disposed
-retry and verify exactly one scene-two transition
-verify first visible frame matches transition, story revision, and stage epoch
-verify predecessor retirement follows frame acknowledgement
-double-click Continue and verify scene three is not skipped
-complete final scene and verify durable terminal phase after reload
+boot a valid current save and capture manifest, snapshot, stage and frame identities
+seed malformed JSON and verify the raw save remains unchanged
+verify rejected boot leaves no candidate canvas, listener, RAF or WebGL resource
+seed valid JSON with invalid field types and reject before StageKit allocation
+inject stage construction failure and verify complete disposal
+inject UI projection failure and verify complete disposal
+inject localStorage write failure and verify no committed bootstrap or revision advance
+retry and verify exactly one committed generation
+verify first visible frame matches accepted snapshot and stage epoch
+press reset and verify a typed clear result before reload
 ```
 
 ## Validation claim
 
-This pass documents the proof surface for atomic Continue admission, successor preparation, durable commit, rollback, resource retirement, and first visible frame. It does not claim that those runtime authorities or fixtures are implemented.
+This pass documents the proof surface for StoryManifest admission, versioned StorySnapshot loading, migration, semantic reconciliation, non-destructive rejection, bootstrap rollback, first-frame correlation, retry, and reset. It does not claim that those runtime authorities or fixtures are implemented.
