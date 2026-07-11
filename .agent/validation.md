@@ -22,7 +22,7 @@ save migration fixture: unavailable
 save reconciliation fixture: unavailable
 save write-result fixture: unavailable
 repo-local docs pushed to main: yes
-central ledger sync: pending until central commit
+central ledger sync: complete
 ```
 
 ## Available validation
