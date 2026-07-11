@@ -1,6 +1,6 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-11T10-12-03-04-00`
+Timestamp: `2026-07-11T10-18-05-04-00`
 
 ## This pass
 
@@ -9,18 +9,21 @@ runtime source changed: no
 package scripts changed: no
 dependencies changed: no
 routes changed: no
+gameplay changed: no
 rendering changed: no
 deployment changed: no
 branch created: no
 pull request created: no
 npm run check: not run in connector-only environment
 browser smoke: not run
-Continue transition fixture: unavailable
-stage preparation failure fixture: unavailable
-rollback fixture: unavailable
-resource disposal fixture: unavailable
-first-frame acknowledgement fixture: unavailable
-terminal idempotency fixture: unavailable
+runtime-session fixture: unavailable
+frame-loop fixture: unavailable
+listener-retirement fixture: unavailable
+timeout-retirement fixture: unavailable
+stage-resource-retirement fixture: unavailable
+renderer-disposal fixture: unavailable
+reset-generation fixture: unavailable
+browser teardown smoke: unavailable
 repo-local docs pushed to main: yes
 central ledger sync: complete
 ```
@@ -34,7 +37,7 @@ npm run serve
 npm run check
 ```
 
-`npm run check` performs `node --check` on:
+`npm run check` syntax-checks:
 
 ```txt
 src/aspect-frame.js
@@ -43,117 +46,127 @@ src/stage-kit.js
 src/story-data.js
 ```
 
-It does not execute story manifests, persistence, inspection authority, Continue admission, detached stage preparation, rollback, disposal, frame correlation, timeout fencing or terminal behavior.
+It does not execute runtime lifecycle behavior or prove callback and resource retirement.
 
-## Required prerequisite gates
+## Required lifecycle validation gate
 
 ```txt
-node scripts/validate-story-manifest.mjs
-node scripts/validate-story-snapshot.mjs
-node scripts/validate-save-admission.mjs
-node scripts/validate-save-migration.mjs
-node scripts/validate-save-reconciliation.mjs
-node scripts/validate-inspection-authority.mjs
+node scripts/validate-runtime-session.mjs
+node scripts/validate-frame-loop-lease.mjs
+node scripts/validate-listener-retirement.mjs
+node scripts/validate-timeout-retirement.mjs
+node scripts/validate-stage-resource-retirement.mjs
+node scripts/validate-renderer-disposal.mjs
+node scripts/validate-reset-generation.mjs
+npm run check
 ```
 
-## Required Continue-admission rows
+## Required runtime-session rows
 
 ```txt
-continue-command-id-required
-expected-story-revision-required
-expected-stage-epoch-required
-completion-proof-required
-continue-before-completion-blocked
-valid-completion-proof-accepted
-stale-story-revision-rejected
-stale-stage-epoch-rejected
-duplicate-command-no-mutation
-terminal-repeat-explicit-noop
-result-json-safe
+session-id-and-generation-present
+lifecycle-state-machine-valid
+only-current-generation-admitted
+session-snapshot-detached-and-json-safe
+stop-result-typed
+disposal-result-typed
+stop-idempotent
+dispose-idempotent
 ```
 
-## Required transition-plan rows
+## Required frame and callback rows
 
 ```txt
-plan-has-transaction-id
-plan-source-and-target-scene-canonical
-plan-source-and-target-revisions-monotonic
-plan-manifest-and-scene-fingerprints-present
-plan-serialization-deterministic
-candidate-story-snapshot-built-without-live-mutation
-target-scene-derived-from-manifest-order
+single-active-frame-loop
+pending-raf-retained
+stop-cancels-pending-raf
+stale-raf-does-not-render
+stale-raf-does-not-recurse
+resize-listener-removed
+mousemove-listener-removed
+canvas-click-listener-removed
+keydown-listener-removed
+continue-listener-disabled-during-stop
+pending-interlude-timeout-cancelled
+stale-interlude-callback-no-op
+old-hotspot-button-closure-no-op
 ```
 
-## Required detached-preparation rows
+## Required stage-resource rows
 
 ```txt
-live-stage-unchanged-during-preparation
-prepared-group-not-attached-before-commit
-camera-fog-post-settings-prepared
-layer-prop-hotspot-counts-validated
-hotspot-bindings-match-canonical-index
-injected-layer-failure-typed
-injected-prop-failure-typed
-injected-hotspot-failure-typed
-candidate-resources-disposed-on-failure
+scene-resource-counts-inventoried-by-stage-epoch
+initial-scene-counts-stable
+successor-stage-commits-before-predecessor-retirement
+failed-successor-keeps-current-stage-live
+all-layer-geometries-disposed
+all-prop-geometries-disposed
+all-hotspot-geometries-disposed
+all-scene-shader-materials-disposed
+all-hotspot-materials-disposed
+retirement-receipt-counts-match
+zero-retired-scene-resources-remain-live
 ```
 
-## Required commit and rollback rows
+## Required renderer-disposal rows
 
 ```txt
-storage-failure-keeps-old-story-stage-and-dom
-stage-commit-failure-has-defined-compensation
-successful-commit-advances-story-revision-once
-successful-commit-advances-save-revision-once
-successful-commit-advances-stage-epoch-once
-route-and-notebook-advance-once
-interlude-closes-only-after-commit
-rollback-idempotent
-rollback-result-lists-reason-and-revisions
-transition-journal-json-safe-and-bounded
+render-target-disposed
+post-plane-geometry-disposed
+post-material-disposed
+renderer-disposed-once
+canvas-removed-once
+context-retirement-result-explicit
+owned-references-cleared
+zero-live-resources-after-full-dispose
+partial-disposal-failures-listed
 ```
 
-## Required resource-retirement rows
+## Required reset rows
 
 ```txt
-old-layer-geometries-disposed
-old-prop-geometries-disposed
-old-hotspot-geometries-disposed
-old-scene-materials-disposed
-old-hotspot-materials-disposed
-candidate-resources-disposed-after-failed-prepare
-old-bundle-retained-until-new-swap
-retirement-occurs-once-per-stage-epoch
-StageKit-dispose-idempotent
-renderer-target-post-listeners-and-raf-retired
-```
-
-## Required first-frame rows
-
-```txt
-frame-id-monotonic
-render-frame-carries-story-revision
-render-frame-carries-stage-epoch
-first-frame-receipt-issued-once
-receipt-camera-matches-committed-scene
-receipt-hotspot-count-matches-committed-scene
-receipt-post-policy-matches-committed-scene
-receipt-dom-scene-id-matches-committed-scene
-stage-committed-distinct-from-first-frame-visible
+reset-admitted-against-current-generation
+old-session-stopped-before-new-generation
+old-session-disposed-before-new-generation
+persistence-clear-result-typed
+initial-stage-epoch-committed
+first-post-reset-frame-acknowledged
+old-generation-raf-no-op
+old-generation-timeout-no-op
+old-generation-listener-no-op
 ```
 
 ## Browser smoke after fixtures
 
 ```txt
-load with no save
-inspect all three scene-one hotspots
-wait exactly current 450 ms pacing
-Continue to scene two
-verify old scene GPU resources retired
-verify first visible frame identifies scene two
-repeat for scene three
-Continue to terminal
-repeat final Continue and verify typed no-op
-reset and verify timeout, RAF, listeners and resources retire cleanly
-verify visual copy, framing, shaders and parallax remain unchanged
+boot initial scene
+record initial lifecycle and resource diagnostics
+advance to scene two
+verify predecessor retirement and bounded live counts
+advance to scene three
+verify resource counts remain bounded
+schedule interlude and reset before timeout fires
+verify stale timeout does not reopen the interlude
+stop runtime and verify frame count stops
+fire resize, pointer, click, key, and Continue events after stop
+verify no story, DOM, persistence, or render mutation
+fully dispose runtime
+verify canvas removal and zero live resource counts
+start a new generation
+verify old-generation callbacks cannot affect it
 ```
+
+## Existing prerequisite fixture families
+
+The lifecycle gate does not replace the still-required:
+
+```txt
+StoryManifest and StorySnapshot fixtures
+save admission, migration, reconciliation, and write-result fixtures
+inspection-command and completion-proof fixtures
+atomic Continue, rollback, resource-retirement, and first-frame fixtures
+```
+
+## Validation claim
+
+This pass documents the required proof surface. It does not claim that runtime lifecycle, resource disposal, or browser teardown is implemented.
