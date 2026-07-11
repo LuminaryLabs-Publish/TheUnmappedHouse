@@ -1,78 +1,41 @@
 # Current audit: The Unmapped House
 
-Timestamp: `2026-07-11T00-00-26-04-00`
+Timestamp: `2026-07-11T01-38-28-04-00`
 
 ## Product read
 
-A fixed-camera anime-horror point-and-click prototype. Three authored scenes expose three hotspots each. First inspections grant nine required clues, completion opens a delayed interlude, Continue advances the route, and the final Continue projects a prototype-complete message.
+A fixed-camera anime-horror point-and-click prototype with three authored scenes, three hotspots per scene and nine total required clues. Completion opens a delayed interlude; Continue advances to the next scene; the final Continue projects prototype-complete copy.
 
-## Current interaction loop
+## Interaction loop
 
 ```txt
-open index.html
-  -> import src/game.js
-  -> read localStorage and shallow-merge state
-  -> resolve currentScene
-  -> construct StageKit
-     -> allocate renderer, target, listeners and RAF
-  -> load current scene descriptors
-  -> render stage, post pass, story UI and debug JSON
-  -> write the current state to localStorage
-  -> inspect through raycast or side-panel button
-     -> mutate inspected, clues and notebook log
-     -> optionally schedule interlude after 450 ms
-     -> render UI
+load save
+  -> shallow-merge mutable state
+  -> resolve current scene
+  -> construct StageKit and start RAF
+  -> load scene and project UI
+  -> inspect hotspot by DOM button or raycast
+     -> mutate inspection/clue/log state
+     -> derive completion from clues
+     -> optionally schedule 450 ms interlude timer
+     -> project UI
      -> write localStorage
-  -> Continue
-     -> mutate scene and route
-     -> hide interlude
+  -> interlude callback mutates DOM
+  -> Continue mutates route and scene
      -> replace StageKit scene
-     -> render UI
+     -> project UI
      -> write localStorage
-  -> KeyR clears storage and reloads
+  -> final Continue changes DOM copy only
 ```
 
-## Source and runtime ownership
+## Source ownership
 
 | Source | Current responsibilities |
 |---|---|
-| `src/story-data.js` | Three scenes; nine hotspots; clue requirements; camera, fog, stage, material, post and interlude descriptors. |
-| `src/game.js` | Save parse/write/clear, mutable story state, inspection, completion, timer, progression, terminal copy, DOM projection, reset and StageKit calls. |
-| `src/stage-kit.js` | Three.js renderer, scene, camera, lights, render target, post pass, descriptor consumption, picking, resize and recursive RAF. |
-| `src/aspect-frame.js` | Fixed 1920×1080 aspect-frame computation and DOM projection. |
-
-## Current persisted state
-
-```txt
-sceneId
-clues[]
-flags{}
-inspected{sceneId -> hotspotId -> boolean}
-route[]
-log[]
-```
-
-Missing durable authority:
-
-```txt
-schemaVersion
-storyManifestId
-storySourceFingerprint
-storyPhase
-completionProof
-pendingInterlude
-interludeReadyAt
-commandId
-transactionId
-saveRevision
-stateFingerprint
-persistenceAttemptId
-persistenceResult
-pendingTransition
-terminalState
-stageCommitId
-stageEpoch
-```
+| `src/story-data.js` | Three scenes, nine hotspots, clue requirements, interlude copy, camera, fog, stage, material and post descriptors. |
+| `src/game.js` | Save load/write/clear, mutable story state, implicit story phase, inspection, completion, timer, Continue, terminal copy and DOM projection. |
+| `src/stage-kit.js` | Three.js renderer, scene, camera, lights, render target, shaders, descriptor consumption, picking, resize and recursive RAF. |
+| `src/aspect-frame.js` | Canonical fixed 1920×1080 framing and DOM sizing. |
 
 ## Domains in use
 
@@ -80,173 +43,119 @@ stageEpoch
 browser-shell
 fixed-aspect-layout
 story-source-descriptors
-scene-order
-scene-identity
-hotspot-identity
-clue-identity
-story-state
-scene-route-state
-inspection-ledger
-clue-ledger
-notebook-log
-scene-completion-policy
-interlude-timer-policy
-terminal-projection
-side-panel-input
-raycast-input
-keyboard-reset-input
-localstorage-read-effect
-localstorage-write-effect
-localstorage-clear-effect
-story-copy-projection
-interlude-projection
-debug-json-projection
-stage-render-host
-three-cdn-runtime
-scene-descriptor-consumption
-procedural-anime-material
-post-process-pass
-hotspot-volume
-raycast-picking
-camera-parallax
-render-target-composition
-stage-resource-lifecycle
-scene-replacement-policy
-frame-loop-authority
-resize-listener-lifecycle
-pointer-listener-lifecycle
-hover-state-lifecycle
-gpu-resource-disposal
-stage-commit-identity
-package-syntax-validation
-static-pages-deployment
-repo-local-agent-ledger
-central-ledger-sync
+scene-order and scene identity
+hotspot identity and clue identity
+mutable story state
+scene route state
+inspection ledger
+clue ledger
+notebook log
+scene completion policy
+implicit story phase
+interlude timer policy
+interlude DOM projection
+terminal DOM projection
+side-panel input
+raycast input
+keyboard reset input
+localStorage read/write/clear effects
+story copy projection
+debug JSON projection
+Three.js CDN runtime
+stage render host
+scene descriptor consumption
+anime shader material
+post-process pass
+hotspot volume and picking
+camera parallax
+render-target composition
+stage resource lifecycle
+scene replacement policy
+RAF authority
+resize/pointer/click listener lifecycle
+GPU resource disposal
+package syntax validation
+static Pages deployment
+repo-local audit ledger
+central ledger synchronization
 ```
 
-## Current kits and services
+## Implemented kits and services
 
 | Kit | Services |
 |---|---|
-| `static-page-shell-kit` | Mount stage, story panel, hotspot list, hover label, debug panel and interlude. |
-| `aspect-frame-kit` | Compute and apply the canonical fixed-aspect viewport. |
-| `story-data-kit` | Supply scene, hotspot, clue, stage, camera, fog, material, post and interlude descriptors. |
-| `browser-story-runtime-kit` | Coordinate inspect, Continue, reset, projection, persistence and StageKit. |
-| `clue-ledger-kit` | Grant unique global clue strings and evaluate requirement membership. |
+| `static-page-shell-kit` | Stage, story panel, hotspot list, hover label, debug panel and interlude shell. |
+| `aspect-frame-kit` | Compute and apply the fixed 16:9 viewport. |
+| `story-data-kit` | Scene, hotspot, clue, camera, fog, stage, material, post and interlude descriptors. |
+| `browser-story-runtime-kit` | Coordinate inspect, Continue, reset, projection, persistence and StageKit calls. |
+| `clue-ledger-kit` | Grant unique clue strings and evaluate requirements. |
 | `inspection-ledger-kit` | Track scene-keyed hotspot inspection flags. |
-| `notebook-log-kit` | Prepend and cap recent story entries. |
-| `scene-route-kit` | Resolve the active scene and retain visited scene ids. |
-| `interlude-timer-kit` | Schedule delayed interlude projection through an unretained browser timer. |
-| `terminal-route-kit` | Project terminal prototype copy without persisted terminal state. |
+| `notebook-log-kit` | Prepend and cap recent story rows. |
+| `scene-route-kit` | Resolve active scene and retain visited scene ids. |
+| `interlude-timer-kit` | Schedule an unretained delayed DOM transition. |
+| `terminal-route-kit` | Project prototype-complete copy without persisted terminal state. |
 | `localstorage-save-kit` | Parse, shallow-merge, stringify, write and clear browser state without typed results. |
-| `stage-render-kit` | Own renderer, camera, scene, lights, target, post scene and recursive RAF. |
-| `scene-descriptor-consumer-kit` | Convert scene descriptors directly into live Three.js resources. |
+| `stage-render-kit` | Renderer, camera, lights, target, post scene and recursive RAF. |
+| `scene-descriptor-consumer-kit` | Convert descriptors directly into live Three.js resources. |
 | `anime-material-kit` | Build FBM/toon shader materials. |
-| `post-process-kit` | Apply grain, vignette, chromatic offset, distortion, memory warp and scan lines. |
-| `hotspot-volume-kit` | Build invisible hotspot meshes and attach descriptor objects. |
-| `hotspot-picking-kit` | Perform hover/click raycasts and forward selected hotspot objects. |
-| `camera-parallax-kit` | Offset the locked camera from pointer movement. |
-| `render-target-composition-kit` | Render stage to a target and pass it through the post shader. |
-| `debug-json-projection-kit` | Project aggregate mutable story state. |
+| `post-process-kit` | Grain, vignette, chromatic offset, distortion, memory warp and scan lines. |
+| `hotspot-volume-kit` | Build invisible pick meshes with attached descriptor objects. |
+| `hotspot-picking-kit` | Hover and click raycasts. |
+| `camera-parallax-kit` | Pointer-driven locked-camera offsets. |
+| `render-target-composition-kit` | Stage target plus post-process pass. |
+| `debug-json-projection-kit` | Aggregate mutable story-state projection. |
 | `package-syntax-check-kit` | Syntax-check the four JavaScript sources. |
-| `static-pages-deploy-kit` | Publish the static project from `main`. |
-| `repo-local-agent-ledger-kit` | Store current pointers and timestamped audits. |
-| `central-ledger-sync-kit` | Mirror selection, findings and next ledge centrally. |
+| `static-pages-deploy-kit` | Deploy the static route from `main`. |
+| `repo-local-agent-ledger-kit` | Current pointers and timestamped audits. |
+| `central-ledger-sync-kit` | Central selection and findings history. |
 
-## Durable commit finding
+## Main finding: phase is not authoritative
 
-`localStorage` is an untyped terminal side effect even though the player experience treats it as story authority.
+The save contains `sceneId`, `clues`, `flags`, `inspected`, `route` and `log`, but no story phase, completion proof, interlude target, readiness deadline or terminal state.
 
-`inspectHotspot()` mutates state, schedules the completion timer and renders UI before `saveState()` calls `localStorage.setItem()`. If the write throws, the timer remains scheduled and the player can see a clue or interlude that was never durably committed.
+A final inspection schedules `setTimeout(() => showInterlude(currentScene), 450)`. The timer id is not retained. The callback closes over mutable `currentScene` and carries no scene id, command id, save revision or epoch.
 
-`nextScene()` mutates the scene and route, hides the interlude, replaces the StageKit scene and renders UI before saving. A write failure can leave the visible stage and in-memory route ahead of the durable save; reload returns to the previous scene.
+Reloading a completed scene restores all clues and inspection flags, so `sceneComplete(currentScene)` is true. Boot does not call `showInterlude()` or reschedule readiness. Re-inspection enters the already-seen branch, which does not evaluate completion. The player can be permanently stranded with a hidden Continue button.
 
-Boot constructs StageKit, appends the canvas, installs listeners, starts RAF, loads the scene and renders UI before the initial write. A denied write can abort module evaluation after resources are acquired, with no cleanup stack or `dispose()` path.
+`nextScene()` does not verify phase, completion, expected scene or expected save revision. A hidden, duplicated or stale Continue activation can mutate the route. At the final scene, terminal progress is only DOM copy and is not persisted.
 
-`KeyR` clears storage without a result boundary. Clear failure prevents reset but provides no typed outcome.
-
-## Prior findings retained
-
-- The save has no schema, source identity or field validation.
-- Completion is saved without a persisted story phase, so reload can strand a complete scene with no interlude.
-- Continue has no command identity, admission policy or typed result.
-- Story state mutates before StageKit success is known.
-- The final terminal state is DOM-only.
-- StageKit clears committed resources before replacement preparation and does not dispose retired resources.
-
-## Next-cut domains
+## Render and lifecycle consequences
 
 ```txt
-story-source-schema
-story-manifest
-story-source-fingerprint
-versioned-save-envelope
-save-shape-validation
-save-reconciliation
-story-phase-state-machine
-story-command-admission
-story-command-result
-completion-proof
-interlude-readiness
-terminal-state
-persistence-capability-admission
-persistence-load-result
-persistence-write-result
-persistence-clear-result
-save-revision
-committed-story-snapshot
-pending-story-transaction
-story-persistence-commit-protocol
-projection-from-commit
-persistence-recovery
-startup-cleanup-stack
-story-stage-transition-composition
-story-state-fingerprint
-persistence-and-command-journal
-injected-storage-fixture
-browser-storage-failure-smoke
+story phase       = derived or absent
+interlude state   = DOM-only
+stage identity    = live mutable currentScene
+render evidence   = no phase/save/stage correlation
+pending timer     = not cancelled on transition/reset/dispose
+terminal evidence = no persisted terminal snapshot
 ```
 
-## Next-cut kits
+StageKit also retains prior gaps: scene replacement clears committed objects before replacement preparation, retired resources are not disposed, RAF and listeners are not centrally owned, and no stage epoch exists.
+
+## Candidate phase-authority kits
 
 ```txt
-story-source-schema-kit
-story-manifest-kit
-story-source-fingerprint-kit
-versioned-save-envelope-kit
-save-shape-validator-kit
-save-reconciliation-kit
 story-phase-state-machine-kit
-story-command-kit
-story-command-admission-kit
-story-command-result-kit
-completion-proof-kit
-interlude-readiness-kit
-terminal-state-kit
-persistence-capability-admission-kit
-persistence-load-result-kit
-persistence-write-result-kit
-persistence-clear-result-kit
-save-revision-kit
-committed-story-snapshot-kit
-pending-story-transaction-kit
-story-persistence-commit-protocol-kit
-projection-from-commit-kit
-persistence-recovery-kit
-startup-cleanup-stack-kit
-story-transition-transaction-kit
-story-stage-transition-adapter-kit
-story-state-fingerprint-kit
-persistence-journal-kit
-injected-storage-fixture-kit
-browser-storage-failure-smoke-kit
+scene-completion-proof-kit
+interlude-deadline-kit
+interlude-timer-adapter-kit
+interlude-resume-kit
+continue-command-kit
+continue-admission-kit
+continue-result-kit
+terminal-story-state-kit
+phase-reconciliation-kit
+phase-projection-kit
+phase-stage-correlation-kit
+story-phase-journal-kit
+story-phase-fixture-kit
 ```
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Durable Story Commit Authority
-+ Persistence Failure and Recovery Fixture Gate
+TheUnmappedHouse Story Phase Recovery Authority
++ Interlude/Continue Admission Fixture Gate
 ```
 
-The goal is to make every visible story revision attributable to a durable save revision or an explicit recoverable transaction, while preserving the current scenes, copy, pacing and visual output.
+This must use the previously identified versioned durable save envelope and typed persistence results. The immediate goal is to make completion, pending interlude, open interlude, transition and terminal progress reload-safe and command-admitted without changing story content or visuals.
