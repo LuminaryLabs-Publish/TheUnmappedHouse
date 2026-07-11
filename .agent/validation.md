@@ -1,6 +1,6 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-11T06-21-57-04-00`
+Timestamp: `2026-07-11T08-11-14-04-00`
 
 ## This pass
 
@@ -16,14 +16,13 @@ pull request created: no
 npm run check: not run in connector-only environment
 browser smoke: not run
 story manifest fixture: unavailable
-inspection admission fixture: unavailable
-clue provenance fixture: unavailable
-dual-ingress fixture: unavailable
-stage-epoch fixture: unavailable
-scene completion proof fixture: unavailable
-transition fixtures: unavailable
+StorySnapshot fixture: unavailable
+save admission fixture: unavailable
+save migration fixture: unavailable
+save reconciliation fixture: unavailable
+save write-result fixture: unavailable
 repo-local docs pushed to main: yes
-central ledger sync: complete
+central ledger sync: pending until central commit
 ```
 
 ## Available validation
@@ -44,89 +43,116 @@ src/stage-kit.js
 src/story-data.js
 ```
 
-It does not execute story ownership, inspection admission, clue provenance, completion proofs, persistence effects, stage epochs, dual-ingress races, transitions, rollback or resource lifecycle.
+It does not execute manifest validation, persistence admission, migration, reconciliation, storage failures, story fingerprints, inspection authority, transitions, render correlation or lifecycle cleanup.
 
 ## Required next validation gate
 
 ```txt
 node scripts/validate-story-manifest.mjs
-node scripts/validate-hotspot-index.mjs
-node scripts/validate-inspection-admission.mjs
-node scripts/validate-clue-provenance.mjs
-node scripts/validate-scene-completion-proof.mjs
-node scripts/validate-dual-ingress-idempotency.mjs
-node scripts/validate-hotspot-stage-epoch.mjs
-node scripts/validate-inspection-reload.mjs
-node scripts/validate-story-stage-transition.mjs
+node scripts/validate-story-snapshot.mjs
+node scripts/validate-save-admission.mjs
+node scripts/validate-save-migration.mjs
+node scripts/validate-save-reconciliation.mjs
+node scripts/validate-save-write-results.mjs
 npm run check
 ```
 
-## Required authority rows
+## Required manifest rows
 
 ```txt
-story-manifest-id-and-fingerprint-present
-three-scenes-nine-hotspots-nine-owned-clues
-command-carries-source-sequence-scene-hotspot-story-revision-stage-epoch
-canonical-hotspot-resolved-by-scene-and-id
-caller-descriptor-text-and-grants-not-trusted
-inspection-result-status-and-reason-present
-clue-grant-receipt-carries-owner-and-source
-completion-proof-carries-scene-and-grant-receipts
+manifest-id-present
+schema-version-present
+manifest-fingerprint-present
+manifest-serialization-deterministic
+three-scenes-present
+nine-hotspots-present
+nine-owned-clues-present
+scene-ids-unique
+hotspot-ids-unique-per-scene
+all-granted-clues-have-one-owner
+all-required-clues-resolve-to-owner-scene
+camera-stage-material-post-shapes-valid
+manifest-deeply-immutable-or-snapshot-only
 ```
 
-## Required admission rows
+## Required snapshot rows
 
 ```txt
-unknown-scene-rejected
-unknown-hotspot-rejected
-cross-scene-hotspot-rejected
-stale-story-revision-rejected
-stale-stage-epoch-rejected
-inspection-rejected-during-interlude
-inspection-rejected-during-transition
-same-command-idempotent
-same-hotspot-dual-ingress-idempotent
-repeat-inspection-explicit-no-op
+snapshot-schema-version-present
+snapshot-manifest-id-and-fingerprint-match
+story-revision-present
+save-revision-present
+explicit-story-phase-present
+route-canonical-and-bounded
+inspection-receipts-canonical-and-bounded
+clue-receipts-derived-from-inspections
+completion-proofs-derived-from-receipts
+notebook-bounded
+state-fingerprint-stable
 ```
 
-## Required effect rows
+## Required load-admission rows
 
 ```txt
-accepted-first-inspection-commits-once
-canonical-clues-only
-final-clue-creates-one-completion-proof
-completion-schedules-one-interlude
-accepted-result-persists-with-save-revision
-failed-persistence-does-not-project-committed-feedback
-accepted-result-correlates-to-stage-epoch-and-frame
-old-stage-pick-does-not-mutate-new-scene
-hover-state-cleared-on-stage-commit
-journal-json-safe-and-bounded
+missing-save-produces-initial-snapshot
+empty-object-v1-migrates
+malformed-json-rejected-with-reason
+non-object-save-rejected
+clues-non-array-rejected
+route-non-array-rejected
+log-non-array-rejected
+inspected-non-object-rejected
+unknown-schema-version-rejected
+unknown-manifest-id-rejected
+manifest-fingerprint-mismatch-policy-explicit
+load-result-json-safe
 ```
 
-## Required migration and reload rows
+## Required migration and reconciliation rows
 
 ```txt
-unknown-persisted-scene-dropped
-unknown-persisted-hotspot-dropped
+valid-v1-save-migrates-once
+migration-idempotent
+unknown-scene-corrected
+corrected-scene-id-is-repersisted
+unknown-route-id-dropped
+out-of-order-route-normalized
+unknown-hotspot-dropped
+cross-scene-hotspot-dropped
+unknown-clue-dropped
 orphaned-clue-dropped
-cross-scene-clue-dropped
+forged-clue-cannot-complete-scene
 valid-inspections-reconstruct-clue-receipts
-reload-preserves-story-revision-and-provenance
-reload-after-completion-restores-interlude-phase
+completion-and-phase-recomputed
+reconciliation-report-lists-each-drop-and-correction
+```
+
+## Required save-result rows
+
+```txt
+save-revision-monotonic
+same-state-save-explicit-unchanged
+state-fingerprint-correlates-to-write
+serialization-failure-typed
+quota-failure-typed
+security-failure-typed
+revision-conflict-typed
+failed-write-does-not-report-commit
+persistence-journal-json-safe-and-bounded
+reload-preserves-admitted-state-fingerprint
 ```
 
 ## Browser smoke after fixtures
 
 ```txt
-complete scene one with side-panel input
-reset and complete scene one with canvas input
-rapid-double-click final hotspot
-submit side-panel and canvas input for the same hotspot together
-invoke an old-scene button callback after Continue
-attempt an old-stage pick after stage replacement
-reload after each accepted inspection
-verify one receipt, clue grant, checkmark and notebook effect per first inspection
-verify one completion proof and one interlude
-confirm current copy, framing, shaders and 450 ms pacing remain unchanged
+load with no save
+load a valid current v1 save
+load malformed JSON
+load unknown scene id
+load forged clues without inspections
+load unknown hotspot ids
+inspect one hotspot and reload
+complete a scene and reload
+verify active scene identity equals persisted identity
+verify current copy, framing, shaders and 450 ms pacing remain unchanged
 ```
