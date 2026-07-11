@@ -1,6 +1,6 @@
 # Current audit: The Unmapped House
 
-Timestamp: `2026-07-11T01-38-28-04-00`
+Timestamp: `2026-07-11T04-00-07-04-00`
 
 ## Product read
 
@@ -21,10 +21,12 @@ load save
      -> project UI
      -> write localStorage
   -> interlude callback mutates DOM
-  -> Continue mutates route and scene
-     -> replace StageKit scene
+  -> Continue mutates story scene, route and log
+     -> hide interlude
+     -> replace live StageKit scene in place
      -> project UI
      -> write localStorage
+     -> render on a later RAF
   -> final Continue changes DOM copy only
 ```
 
@@ -33,8 +35,8 @@ load save
 | Source | Current responsibilities |
 |---|---|
 | `src/story-data.js` | Three scenes, nine hotspots, clue requirements, interlude copy, camera, fog, stage, material and post descriptors. |
-| `src/game.js` | Save load/write/clear, mutable story state, implicit story phase, inspection, completion, timer, Continue, terminal copy and DOM projection. |
-| `src/stage-kit.js` | Three.js renderer, scene, camera, lights, render target, shaders, descriptor consumption, picking, resize and recursive RAF. |
+| `src/game.js` | Save load/write/clear, mutable story state, implicit phase, inspection, completion, timer, Continue, terminal copy and DOM projection. |
+| `src/stage-kit.js` | Three.js renderer, scene, camera, lights, render target, shaders, descriptor consumption, picking, resize, recursive RAF and in-place scene replacement. |
 | `src/aspect-frame.js` | Canonical fixed 1920×1080 framing and DOM sizing. |
 
 ## Domains in use
@@ -54,6 +56,7 @@ scene completion policy
 implicit story phase
 interlude timer policy
 interlude DOM projection
+Continue input and transition policy
 terminal DOM projection
 side-panel input
 raycast input
@@ -69,8 +72,8 @@ post-process pass
 hotspot volume and picking
 camera parallax
 render-target composition
+live scene replacement
 stage resource lifecycle
-scene replacement policy
 RAF authority
 resize/pointer/click listener lifecycle
 GPU resource disposal
@@ -109,53 +112,63 @@ central ledger synchronization
 | `repo-local-agent-ledger-kit` | Current pointers and timestamped audits. |
 | `central-ledger-sync-kit` | Central selection and findings history. |
 
-## Main finding: phase is not authoritative
+## Main finding: the story-stage transition is not atomic
 
-The save contains `sceneId`, `clues`, `flags`, `inspected`, `route` and `log`, but no story phase, completion proof, interlude target, readiness deadline or terminal state.
+`nextScene()` mutates `currentScene`, `state.sceneId`, route and log, then hides the interlude before `StageKit.loadScene()` succeeds. `loadScene()` clears the committed stage and builds the next scene directly into live renderer state. Only after that does the runtime project the DOM and attempt to save.
 
-A final inspection schedules `setTimeout(() => showInterlude(currentScene), 450)`. The timer id is not retained. The callback closes over mutable `currentScene` and carries no scene id, command id, save revision or epoch.
+A stage-construction failure can leave:
 
-Reloading a completed scene restores all clues and inspection flags, so `sceneComplete(currentScene)` is true. Boot does not call `showInterlude()` or reschedule readiness. Re-inspection enters the already-seen branch, which does not evaluate completion. The player can be permanently stranded with a hidden Continue button.
+```txt
+in-memory story = next scene
+durable save    = prior scene
+interlude       = hidden
+DOM copy        = prior or partial
+stage           = blank or partial
+```
 
-`nextScene()` does not verify phase, completion, expected scene or expected save revision. A hidden, duplicated or stale Continue activation can mutate the route. At the final scene, terminal progress is only DOM copy and is not persisted.
+A save failure after successful stage construction can leave the visible stage and DOM on the next scene while reload returns to the prior scene.
 
 ## Render and lifecycle consequences
 
 ```txt
-story phase       = derived or absent
-interlude state   = DOM-only
-stage identity    = live mutable currentScene
-render evidence   = no phase/save/stage correlation
-pending timer     = not cancelled on transition/reset/dispose
-terminal evidence = no persisted terminal snapshot
+stage preparation   = absent
+atomic stage swap   = absent
+story commit result = absent
+stage commit result = absent
+transition id       = absent
+stage epoch         = absent
+first-frame ack     = absent
+retired disposal    = absent
+rollback result     = absent
 ```
 
-StageKit also retains prior gaps: scene replacement clears committed objects before replacement preparation, retired resources are not disposed, RAF and listeners are not centrally owned, and no stage epoch exists.
+`stageGroup.clear()` detaches prior objects without disposing geometry or materials. Resetting the material and hotspot arrays removes the remaining references. RAF and listener teardown are still not centrally owned.
 
-## Candidate phase-authority kits
+## Candidate transition-authority kits
 
 ```txt
-story-phase-state-machine-kit
-scene-completion-proof-kit
-interlude-deadline-kit
-interlude-timer-adapter-kit
-interlude-resume-kit
-continue-command-kit
-continue-admission-kit
-continue-result-kit
-terminal-story-state-kit
-phase-reconciliation-kit
-phase-projection-kit
-phase-stage-correlation-kit
-story-phase-journal-kit
-story-phase-fixture-kit
+transition-command-kit
+transition-admission-kit
+transition-plan-kit
+story-candidate-snapshot-kit
+stage-build-plan-kit
+stage-preparation-kit
+durable-story-commit-kit
+atomic-stage-commit-kit
+transition-rollback-kit
+retired-resource-ledger-kit
+stage-epoch-kit
+first-frame-acknowledgement-kit
+transition-result-kit
+transition-journal-kit
+transition-fixture-kit
 ```
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Story Phase Recovery Authority
-+ Interlude/Continue Admission Fixture Gate
+TheUnmappedHouse Atomic Story/Stage Transition Authority
++ Prepare/Commit/Discard and First-Frame Fixture Gate
 ```
 
-This must use the previously identified versioned durable save envelope and typed persistence results. The immediate goal is to make completion, pending interlude, open interlude, transition and terminal progress reload-safe and command-admitted without changing story content or visuals.
+This depends on the previously identified versioned save envelope, typed persistence results, explicit story phase and admitted Continue command. The immediate goal is to preserve the previous committed scene until both persistence and detached stage preparation are ready, then publish one correlated story, stage, DOM and first-frame result.
