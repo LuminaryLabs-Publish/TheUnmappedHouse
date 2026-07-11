@@ -1,6 +1,6 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-11T00-00-26-04-00`
+Timestamp: `2026-07-11T01-38-28-04-00`
 
 ## This pass
 
@@ -15,13 +15,11 @@ branch created: no
 pull request created: no
 npm run check: not run in connector-only environment
 browser smoke: not run
-story source fixture: unavailable
-save reconciliation fixture: unavailable
-story phase resume fixture: unavailable
-persistence result fixture: unavailable
-story commit protocol fixture: unavailable
-boot rollback fixture: unavailable
-browser storage-failure smoke: unavailable
+story phase recovery fixture: unavailable
+interlude timer fixture: unavailable
+Continue admission fixture: unavailable
+terminal reload fixture: unavailable
+phase/stage correlation fixture: unavailable
 repo-local docs pushed to main: yes
 central ledger sync: complete
 ```
@@ -44,103 +42,90 @@ src/stage-kit.js
 src/story-data.js
 ```
 
-It does not execute story rules, persistence effects, StageKit lifecycle or browser behavior.
+It does not execute story rules, persistence effects, timer behavior, StageKit lifecycle or browser reload behavior.
 
 ## Required next validation gate
 
 ```txt
 node scripts/validate-story-source.mjs
 node scripts/validate-save-reconciliation.mjs
-node scripts/validate-story-phase-resume.mjs
-node scripts/validate-persistence-results.mjs
-node scripts/validate-story-commit-protocol.mjs
-node scripts/validate-boot-rollback.mjs
+node scripts/validate-story-phase-recovery.mjs
+node scripts/validate-interlude-timer.mjs
+node scripts/validate-continue-admission.mjs
+node scripts/validate-terminal-reload.mjs
+node scripts/validate-phase-stage-correlation.mjs
 npm run check
 ```
 
-## Required persistence capability rows
+## Required phase rows
 
 ```txt
-storage-available-admitted
-storage-read-denied-distinguished
-storage-write-denied-distinguished
-quota-failure-distinguished
-serialization-failure-distinguished
-clear-failure-distinguished
-ephemeral-or-fatal-policy-explicit
+fresh-scene-starts-exploring
+completion-proof-scene-scoped
+final-inspection-produces-interlude-pending
+pending-phase-persists-target-scene-and-deadline
+open-phase-persists-after-deadline
+impossible-phase-snapshot-rejected-or-repaired
 ```
 
-## Required envelope and revision rows
+## Required reload rows
 
 ```txt
-fresh-envelope-commits-revision-one
-legacy-v1-save-migrated
-invalid-json-repaired-with-result
-source-mismatch-reconciled
-successful-write-increments-revision
-stale-expected-revision-rejected
-state-fingerprint-stable
-pending-transaction-json-safe
+reload-before-deadline-schedules-remaining-delay
+reload-at-deadline-opens-interlude
+reload-after-deadline-opens-interlude-immediately
+completed-scene-never-reloads-with-hidden-progress
+interlude-open-reloads-open
+terminal-state-reloads-terminal
 ```
 
-## Required inspection rows
+## Required timer rows
 
 ```txt
-button-and-raycast-normalize-to-same-command
-accepted-inspection-returns-save-revision
-already-inspected-is-idempotent
-failed-inspection-write-keeps-previous-committed-state
-failed-final-inspection-write-schedules-no-interlude
-successful-final-inspection-persists-phase-and-deadline
-reload-during-interlude-pending-resumes
+one-final-inspection-produces-one-timer
+timer-id-retained
+timer-cancelled-on-transition
+timer-cancelled-on-reset
+timer-cancelled-on-dispose
+stale-scene-timer-rejected
+stale-save-revision-timer-rejected
+stale-runtime-epoch-timer-rejected
+timer-result-json-safe
 ```
 
-## Required transition rows
+## Required Continue rows
 
 ```txt
-continue-wrong-phase-rejected
-next-story-snapshot-prepared-without-live-mutation
-stage-prepared-before-committed-replacement
-pending-save-written-before-stage-commit
-persistence-prepare-failure-keeps-previous-stage
-stage-failure-retains-previous-finalized-save
-stage-success-finalizes-next-save-revision
-finalize-write-failure-remains-recoverable
-reload-pending-transition-resolves-exactly-once
-story-scene-save-revision-and-stage-epoch-correlate
-final-continue-persists-terminal-state
+continue-before-completion-rejected
+continue-during-interlude-pending-rejected
+continue-from-interlude-open-accepted
+continue-wrong-scene-rejected
+continue-stale-revision-rejected
+duplicate-continue-idempotent
+accepted-continue-correlates-next-save-and-stage
+final-continue-commits-terminal-state
 ```
 
-## Required reset rows
+## Required failure rows
 
 ```txt
-reset-clear-success-reloads-fresh-state
-reset-already-empty-is-idempotent
-reset-clear-failure-does-not-reload
-reset-result-json-safe
-```
-
-## Required boot/lifecycle rows
-
-```txt
-storage-denial-admitted-before-stage-acquisition
-initial-write-failure-cancels-raf
-initial-write-failure-removes-window-listeners
-initial-write-failure-removes-canvas-listeners
-initial-write-failure-disposes-render-targets
-initial-write-failure-disposes-scene-resources
-initial-write-failure-removes-canvas
-runtime-dispose-idempotent
-remount-owns-one-raf-and-one-listener-set
+inspection-write-failure-schedules-no-interlude
+phase-write-failure-projects-no-success-state
+transition-persistence-failure-keeps-prior-stage
+stage-preparation-failure-keeps-prior-phase
+finalization-failure-enters-recovering
+reload-recovering-resolves-exactly-once
 ```
 
 ## Required diagnostics rows
 
 ```txt
-load-write-clear-results-json-safe
-command-persistence-stage-correlation-complete
-persistence-journal-bounded
-pending-recovery-visible
+phase-row-json-safe
+completion-proof-json-safe
+timer-row-json-safe
+continue-result-json-safe
+phase-save-stage-correlation-complete
+journals-bounded
 no-dom-node-in-diagnostics
 no-raw-three-object-in-diagnostics
 ```
@@ -148,28 +133,12 @@ no-raw-three-object-in-diagnostics
 ## Browser smoke after fixtures
 
 ```txt
-load scene one with working storage
-complete scene and reload during interlude pending
-reload during interlude open
-continue once and verify save revision and stage epoch agree
-simulate write denial before an inspection
-simulate quota failure on final inspection and confirm no interlude
-simulate persistence failure before Continue and confirm prior stage remains
-simulate finalization failure and reload into deterministic recovery
-simulate clear failure and confirm no forced reload
-simulate boot write failure and confirm no live canvas or RAF remains
-restore storage and remount once
-confirm visuals, copy, framing and pacing remain unchanged
-```
-
-## Retained companion validation
-
-```txt
-story source schema and graph fixture
-save shape and reconciliation fixture
-story phase and terminal reload fixture
-atomic StageKit build/commit/discard fixture
-stage resource ledger and disposal fixture
-stage epoch interaction fixture
-repeated three-scene browser lifecycle smoke
+complete scene one and reload before 450 ms
+reload after the interlude should already be ready
+continue once and confirm scene two plus save revision plus stage epoch
+attempt hidden Continue before completion and confirm rejection
+reset while an interlude is pending and confirm no stale overlay
+complete final scene, Continue, reload and confirm terminal projection
+repeat mount/dispose and confirm one RAF, one timer set and one listener set
+confirm story copy, framing, shaders and pacing remain unchanged
 ```
