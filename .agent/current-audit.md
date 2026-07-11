@@ -1,6 +1,6 @@
 # Current audit: The Unmapped House
 
-Timestamp: `2026-07-11T15-30-50-04-00`
+Timestamp: `2026-07-11T17-10-50-04-00`
 
 ## Product read
 
@@ -8,49 +8,49 @@ A fixed-camera anime-horror point-and-click prototype with three authored scenes
 
 ## Plan ledger
 
-**Goal:** identify the authority and fixture boundary required to turn raw browser storage into one admitted StorySnapshot before stage, UI, persistence, and first-frame state become live.
+**Goal:** identify the authority and fixture boundary required to separate fixed 16:9 composition from bounded, recoverable internal GPU resolution.
 
-- [x] Trace localStorage read, parse, shallow merge, and fallback.
-- [x] Trace scene resolution and unknown-scene behavior.
-- [x] Trace StageKit allocation, listener installation, RAF start, live stage construction, UI projection, and startup write.
-- [x] Trace KeyR clear and reload.
+- [x] Trace `computeAspectFrame()` and `applyAspectFrame()`.
+- [x] Trace constructor-time renderer and post-target allocation.
+- [x] Trace DPR sampling, renderer sizing, target sizing, and resize callbacks.
+- [x] Trace stage-target and post-process frame submission.
 - [x] Inventory all active domains, implemented kits, and offered services.
-- [x] Define manifest, version, migration, semantic validation, reconciliation, quarantine, bootstrap, rollback, first-frame, result, journal, and fixture kits.
-- [ ] Implement StoryManifest and StorySnapshot authority.
-- [ ] Run pure admission, storage failure, browser rollback, and first-frame fixtures.
+- [x] Define resolution policy, pixel budget, resize generation, candidate preparation, atomic commit, rollback, fallback, retirement, observation, and fixture kits.
+- [ ] Implement StoryManifest, StorySnapshot, lifecycle, and render-surface authorities.
+- [ ] Run resolution-policy, allocation-failure, resize-storm, browser-DPR, and visible-frame fixtures.
 
 ## Interaction loop
 
 ```txt
 boot
-  -> read raw `.v1` localStorage value
-  -> parse inside a broad catch
-  -> shallow-merge candidate fields over defaults
-  -> resolve currentScene separately from state.sceneId
+  -> load mutable story state
   -> construct StageKit
-       -> create renderer, target, post resources and canvas
-       -> install resize, pointer and click listeners
+       -> create renderer
+       -> pixelRatio = min(devicePixelRatio, 2)
+       -> set renderer to design size 1920 x 1080
+       -> create 2-sample target at design size * DPR
+       -> create post scene and target-texture binding
+       -> call resize
+            -> compute contained 16:9 CSS frame
+            -> set renderer pixel ratio
+            -> set renderer CSS/drawing-buffer size
+            -> resize post target
+       -> install anonymous resize, pointer and click listeners
        -> start recursive RAF
-  -> build current scene directly in live stage ownership
-  -> project UI using assumed field shapes
-  -> write the mutable state back unconditionally
+  -> load scene
+  -> render UI and write state
 
-inspection
-  -> side-panel button or raycast submits full hotspot descriptor
-  -> mutate scene inspection, global clues, text and log
-  -> derive completion from clue strings
-  -> schedule anonymous 450 ms timeout
-  -> project UI and write full state
+resize / zoom / monitor transfer
+  -> synchronous resize callback for each browser event
+  -> sample current inner size and DPR
+  -> mutate CSS frame, renderer and target in place
+  -> return no plan, result, revision, fallback, rollback, or frame receipt
 
-Continue
-  -> mutate scene identity, route and log
-  -> replace live stage
-  -> project UI
-  -> write full state
-
-reset
-  -> remove save key
-  -> reload document
+frame
+  -> animate materials and camera parallax
+  -> render stage into current target
+  -> render target texture through post pass
+  -> present canvas
 ```
 
 ## Source ownership
@@ -60,8 +60,8 @@ reset
 | `index.html` | Fixed shell, stage mount, side-panel, hover label, debug panel, interlude, and Continue button. |
 | `src/story-data.js` | Scene order, hotspots, clue requirements, stage descriptors, camera, materials, post settings, and interlude copy. |
 | `src/game.js` | Raw load, mutable story state, inspection, completion, timeout scheduling, Continue, reset, projection, and persistence. |
-| `src/stage-kit.js` | Renderer allocation, live stage replacement, Three.js resources, hotspot meshes, input, camera parallax, and recursive RAF. |
-| `src/aspect-frame.js` | Fixed 1920×1080 composition and browser fitting. |
+| `src/stage-kit.js` | Renderer allocation, DPR admission, drawing-buffer and target sizing, live stage replacement, resources, picking, parallax, listeners, and recursive RAF. |
+| `src/aspect-frame.js` | Fixed 1920×1080 composition and CSS frame fitting. |
 | `package.json` | Syntax-only source checks and local static serving. |
 
 ## Domains in use
@@ -69,21 +69,24 @@ reset
 ```txt
 browser shell and fixed-aspect layout
 story, scene, hotspot, clue, camera, stage, material, post and copy descriptors
-raw browser storage read, parse, write and clear effects
-mutable story state and route
-scene-keyed inspection and global clue state
-flags and notebook log
-scene completion and interlude timing
-Continue and terminal routing
+raw browser storage and mutable story state
+scene route, inspection, clue, flags and notebook log
+scene completion, interlude timing, Continue and terminal projection
 DOM, hover, interlude and debug projection
 Three.js CDN runtime
 renderer, scene, camera, lights, render target, post scene and canvas
+CSS aspect-frame geometry
+device-pixel-ratio observation
+renderer drawing-buffer allocation
+multisampled post-target allocation
+post-target texture composition
+resize event admission
 live stage-group replacement
 procedural anime material construction
 hotspot volume creation and raycast picking
 pointer camera parallax
-recursive RAF and render-target composition
-runtime listener, timeout, frame and WebGL resource lifecycle
+recursive RAF and frame submission
+runtime callback and WebGL resource lifecycle
 syntax validation and static Pages deployment
 repo-local and central audit tracking
 ```
@@ -91,21 +94,18 @@ repo-local and central audit tracking
 Missing authority domains:
 
 ```txt
-canonical StoryManifest schema, indexes, deep freeze and fingerprint
-versioned save envelope
-raw read, parse and quarantine results
-pure save migration
-StorySnapshot structural and semantic admission
-manifest-aware reconciliation
-story phase, story revision and save revision
-inspection and clue provenance validation
-canonical snapshot fingerprint
-typed load, save and clear results
-bootstrap candidate and detached stage/UI preparation
-atomic bootstrap commit and rollback
-first-bootstrap-frame acknowledgement
-bounded persistence journal
-runtime session lifecycle and resource retirement
+render-resolution policy and immutable baseline
+pixel and capability budget admission
+resize command, coalescing and generation
+render-surface plan and revision
+renderer and post-target candidate preparation
+allocation-failure classification
+explicit quality fallback
+atomic surface commit and rollback
+stale resize-result rejection
+surface-resource retirement
+visible-frame surface acknowledgement
+render-surface observation and bounded journal
 ```
 
 ## Implemented kits and services
@@ -123,7 +123,7 @@ runtime session lifecycle and resource retirement
 | `interlude-timer-kit` | Schedule the unretained 450 ms completion callback. |
 | `terminal-route-kit` | Project prototype-complete copy without durable terminal state. |
 | `localstorage-save-kit` | Parse, shallow-merge, write, and clear raw browser state without typed results. |
-| `stage-render-kit` | Create renderer, camera, lights, render target, post scene, canvas, listeners, and recursive RAF. |
+| `stage-render-kit` | Create renderer, camera, lights, target, post scene, canvas, listeners, and recursive RAF. |
 | `scene-descriptor-consumer-kit` | Convert one scene descriptor into live Three.js resources. |
 | `anime-material-kit` | Build procedural shader materials. |
 | `post-process-kit` | Apply grain, vignette, chromatic offset, distortion, memory warp, and scan lines. |
@@ -137,127 +137,106 @@ runtime session lifecycle and resource retirement
 | `repo-local-agent-ledger-kit` | Maintain current pointers and timestamped audits. |
 | `central-ledger-sync-kit` | Maintain central selection and findings history. |
 
-## Main finding: startup accepts untrusted state before resources are safe
+## Main finding: composition and GPU resolution are conflated
 
-### Broad catch destroys malformed input
+### Boot reallocates surfaces
 
-`loadState()` wraps storage read and JSON parse in one broad catch and returns defaults on any failure. The module later calls `saveState()` unconditionally, so malformed input or a read failure can be replaced by a new default save without a typed rejection, retained raw payload, quarantine record, or user recovery decision.
+`StageKit` first configures the renderer at the 1920×1080 design size and creates a target at design size multiplied by DPR. The constructor then immediately calls `resize()`, which can resize both again to a different viewport-dependent size.
 
-### Shallow merge admits invalid field shapes
+### DPR is an unconditional multiplier
 
-The loader does not verify arrays, objects, strings, ids, bounds, revisions, or semantic relationships. A valid JSON object can cause later failures or impossible state:
+The only policy is `Math.min(devicePixelRatio, 2)`. No pixel count, memory budget, maximum renderbuffer size, sample support, backend capability, performance tier, or scene complexity is considered.
 
-```txt
-clues: null/object        -> `.includes` failure
-inspected: null           -> property access failure
-route: string/object      -> `.push` failure during Continue
-log: null/object          -> `.unshift` or `.slice` failure
-unknown sceneId           -> visible fallback scene, unrepaired persisted id
-later sceneId             -> direct progression skip
-forged required clues     -> completion without inspection evidence
-unknown inspections       -> noncanonical UI state
-```
+### High-DPI allocation can be extreme
 
-### Manifest and snapshot are not bound
+At a `3840×2160` viewport and DPR `2`, the post target requests `7680×4320`, or `33,177,600` pixels, with two samples and a depth buffer. The renderer drawing buffer is scaled similarly.
 
-No manifest id or fingerprint proves the save belongs to the current authored scene graph. No canonical indexes validate scene, hotspot, clue, successor, or requirement identities.
+### Resize events mutate live ownership immediately
 
-### Progression fields can disagree
+Every browser resize event directly changes CSS geometry, pixel ratio, renderer storage, target storage, and camera projection. There is no coalescing, candidate plan, predecessor preservation, frame-boundary commit, or stale result rejection.
 
-`sceneId`, `route`, `inspected`, and `clues` are independently trusted. The route need not be a canonical prefix, inspections need not grant clues, clues need not have inspection provenance, and the current scene need not match route or predecessor completion.
+### Allocation failure has no recovery contract
 
-### Renderer work starts before admission completes
+No typed result distinguishes capability rejection, memory pressure, context loss, or unknown failure. No lower-resolution fallback is declared. No rollback proves the predecessor surface remains usable.
 
-`StageKit` starts its RAF in the constructor. A later `renderUi()` or `saveState()` exception can leave renderer, target, canvas, listeners, live resources, and recursive frame work active after story bootstrap failed.
+### Diagnostics report no surface truth
 
-### Storage write failure has no rollback
-
-The startup write is untyped and uncaught. A quota or security error can occur after stage and UI state are visible, with no bootstrap commit result, rollback, disposal, or explicit offline mode.
-
-### First frame has no snapshot provenance
-
-No bootstrap generation, load result id, manifest fingerprint, snapshot fingerprint, stage epoch, or first-frame acknowledgement correlates the visible stage with the admitted story state.
+The debug panel reports story state only. It does not expose CSS frame dimensions, observed/admitted DPR, renderer drawing-buffer dimensions, target dimensions, samples, pixel count, quality tier, surface revision, resize generation, fallback receipt, or first visible frame.
 
 ## Required parent domain
 
 ```txt
-the-unmapped-house-story-snapshot-startup-authority-domain
+the-unmapped-house-render-surface-resolution-authority-domain
 ```
 
 Candidate kits:
 
 ```txt
-story-manifest-schema-kit
-story-manifest-index-kit
-story-manifest-fingerprint-kit
-story-save-envelope-kit
-story-save-raw-read-kit
-story-save-parse-kit
-story-save-migration-kit
-story-snapshot-schema-kit
-story-snapshot-semantic-admission-kit
-story-snapshot-reconciliation-kit
-story-snapshot-fingerprint-kit
-story-load-result-kit
-story-save-result-kit
-corrupt-save-quarantine-kit
-bootstrap-candidate-kit
-bootstrap-stage-preparation-kit
-bootstrap-commit-kit
-bootstrap-rollback-kit
-first-bootstrap-frame-ack-kit
-story-persistence-journal-kit
-story-snapshot-fixture-kit
-browser-bootstrap-failure-smoke-kit
+display-frame-observation-kit
+device-pixel-ratio-admission-kit
+render-resolution-policy-kit
+render-pixel-budget-kit
+resize-command-kit
+resize-coalescing-kit
+resize-generation-kit
+render-surface-revision-kit
+render-surface-plan-kit
+renderer-buffer-preparation-kit
+post-target-preparation-kit
+allocation-failure-classification-kit
+render-quality-fallback-kit
+render-surface-commit-kit
+render-surface-rollback-kit
+stale-resize-result-rejection-kit
+render-surface-resource-retirement-kit
+visible-frame-surface-ack-kit
+render-surface-observation-kit
+render-surface-journal-kit
+render-resolution-fixture-kit
+browser-resize-dpr-smoke-kit
 ```
 
-## Required load contract
+## Required surface result
 
 ```txt
-StoryLoadResult
-  status: absent_defaulted | loaded | migrated | reconciled |
-          rejected_malformed | rejected_schema | rejected_manifest |
-          rejected_semantic | storage_unavailable | prepare_failed |
-          persistence_failed | commit_failed | rolled_back | committed
-  resultId
+RenderSurfaceResult
+  status: duplicate | superseded | rejected | prepared | committed |
+          committed_with_fallback | allocation_failed | rolled_back |
+          visible_frame_acknowledged
   commandId
-  rawReadId
-  manifestId
-  manifestFingerprint
-  sourceSchemaVersion?
-  committedSchemaVersion?
-  migrationReceipts[]
-  reconciliationReceipts[]
-  rejectionReason?
-  snapshotFingerprint?
-  bootstrapGeneration?
-  stageEpoch?
-  firstVisibleFrameId?
+  planId
+  resizeGeneration
+  predecessorSurfaceRevision
+  candidateSurfaceRevision
+  committedSurfaceRevision?
+  observedDpr
+  admittedDpr?
+  cssFrame?
+  rendererBuffer?
+  postTarget?
+  pixelCount?
+  qualityTier?
+  failureClassification?
+  fallbackReceipt?
   rollbackResult?
+  retirementReceipt?
+  firstVisibleFrameId?
 ```
 
 ## Required authority flow
 
 ```txt
-admit canonical StoryManifest
-  -> read and retain exact raw save
-  -> parse detached envelope
-  -> validate version and manifest identity
-  -> migrate known version
-  -> structurally validate fields
-  -> semantically validate progression
-  -> reconcile only through explicit deterministic policy
-  -> canonicalize and fingerprint snapshot
-  -> prepare stage and UI off-line
-  -> commit one bootstrap generation
-  -> acknowledge first visible frame
-  -> publish immutable load result and bounded journal row
-
-failure before commit
-  -> preserve raw save
-  -> keep committed state unchanged
-  -> dispose candidate stage, renderer, listeners and RAF work
-  -> publish typed rejection or rollback
+observe display and DPR
+  -> admit latest resize generation
+  -> coalesce duplicates and supersede stale work
+  -> derive CSS frame
+  -> apply resolution and capability budget
+  -> prepare renderer and post-target candidate
+  -> classify failure and step through explicit fallback tiers
+  -> atomically commit CSS, camera, renderer and target revision
+  -> render and acknowledge one visible frame
+  -> retire superseded resources
+  -> publish actual applied values and bounded journal row
 ```
 
 ## Ordered implementation queue
@@ -268,16 +247,17 @@ failure before commit
 3. InspectionCommand, receipts, clue provenance and scene-completion proof
 4. Atomic Continue transition and first-visible-frame acknowledgement
 5. Runtime session lifecycle and resource retirement
-6. Committed-frame diagnostics
+6. Render Surface Resolution Authority
+7. Committed-frame diagnostics
 ```
 
 ## Current audit ledge
 
 ```txt
-TheUnmappedHouse StorySnapshot Startup Admission Authority
-+ Migration, Reconciliation, Bootstrap Rollback, and First-Frame Fixture Gate
+TheUnmappedHouse Render Surface Resolution Authority
++ Pixel Budget, Resize Generation, Fallback, Rollback, and Visible-Frame Fixture Gate
 ```
 
 ## Validation status
 
-The authority is not implemented. No current test proves malformed-save retention, semantic rejection, migration, reconciliation, storage failure rollback, resource disposal, retry, or first-bootstrap-frame correlation.
+The authority is not implemented. No current test proves bounded DPR behavior, pixel-budget admission, resize coalescing, allocation fallback, rollback, stale-generation rejection, actual-dimension readback, picking parity after resize, or visible-frame surface correlation.
