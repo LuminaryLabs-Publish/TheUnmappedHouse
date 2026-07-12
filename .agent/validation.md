@@ -1,19 +1,19 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-11T21-48-44-04-00`
+Timestamp: `2026-07-12T00-01-25-04-00`
 
 ## Summary
 
-This was a documentation-only StoryManifest audit. Runtime, gameplay, rendering, dependencies, package scripts and deployment configuration were not changed.
+This was a documentation-only Narrative Projection Authority audit. Runtime, gameplay, rendering, dependencies, package scripts and deployment configuration were not changed.
 
 ## Plan ledger
 
-**Goal:** define the executable evidence required before canonical content identity, stable progression, immutable descriptors, save compatibility and manifest-to-visible-frame correctness can be claimed.
+**Goal:** define executable evidence that proves narrative copy, story state, stage resources, hotspot lists, persistence and the first visible frame agree across inspection, completion, Continue, terminal and reload paths.
 
 - [x] Record the current syntax-only validation boundary.
-- [x] Define structural, semantic, graph, ownership, render-descriptor, freeze and fingerprint fixture rows.
-- [x] Define startup reconciliation and deployed browser evidence.
-- [x] Generate and parse the updated `.agent/kit-registry.json`.
+- [x] Define narrative source, revision, transition, persistence, accessibility and frame-correlation fixture rows.
+- [x] Define a deployed browser smoke sequence.
+- [x] Update `.agent/kit-registry.json` with the current and proposed kit inventory.
 - [x] Push repo-local documentation to `main`.
 - [x] Synchronize the central ledger and internal change log.
 - [ ] Implement and execute the validation gate.
@@ -31,15 +31,12 @@ deployment changed: no
 branch created: no
 pull request created: no
 npm run check: not run
-reason: execution container could not resolve github.com
 browser smoke: not run
-manifest schema fixture: unavailable
-duplicate-id fixture: unavailable
-requirement-ownership fixture: unavailable
-successor-graph fixture: unavailable
-freeze/fingerprint fixture: unavailable
-manifest-render parity fixture: unavailable
-kit-registry JSON: generated and parsed locally
+narrative projection fixture: unavailable
+transition copy parity fixture: unavailable
+reload policy fixture: unavailable
+aria-live fixture: unavailable
+first-frame acknowledgement fixture: unavailable
 repo-local docs pushed to main: yes
 central ledger sync: complete
 central internal change log: complete
@@ -56,112 +53,115 @@ src/stage-kit.js
 src/story-data.js
 ```
 
-It does not construct a StoryManifest, validate ids or descriptors, build indexes, resolve a successor graph, deep-freeze content, compute a fingerprint, reconcile saved content, allocate a stage from an admitted plan or correlate content identity with a visible frame.
+It does not execute the story loop, click a hotspot, wait for completion, press Continue, inspect DOM copy, validate accessibility announcements or correlate a visible WebGL frame.
 
 ## Required commands
 
 ```txt
-node scripts/validate-story-manifest-schema.mjs
-node scripts/validate-story-manifest-semantics.mjs
-node scripts/validate-story-successor-graph.mjs
-node scripts/validate-story-manifest-fingerprint.mjs
-node scripts/validate-story-manifest-render-parity.mjs
+node scripts/validate-narrative-projection.mjs
+node scripts/validate-narrative-transition-parity.mjs
+node scripts/validate-narrative-persistence-policy.mjs
 npm run check
 ```
 
 Recommended aggregate:
 
 ```txt
-npm run validate:story-manifest
+npm run validate:narrative
 ```
 
 ## Required fixture rows
 
-### Structure and identity
+### Projection identity
 
 ```txt
-manifest-root-required
-manifest-id-required
-schema-version-supported
-content-version-required
-initial-scene-resolves
-scene-ids-unique
-hotspot-ids-unique-within-scene
+projection-id-required
+projection-revision-monotonic
+scene-id-required
+source-kind-supported
+source-id-resolves
+story-revision-required
+dom-is-output-only
 ```
 
-### Progression and requirements
+### Scene opening and inspection
 
 ```txt
-all-grants-resolve
-all-requirements-resolve
-requirement-owner-declared
-required-clue-reachable
-nonterminal-scene-has-one-successor
-all-successors-resolve
-terminal-scene-explicit
-unsupported-cycle-rejected
-array-order-does-not-define-progression
+boot-projects-initial-scene-opening
+valid-saved-scene-projects-declared-restore-policy
+inspection-result-projects-hotspot-copy
+reinspection-is-idempotent-or-explicitly-revisioned
+hotspot-copy-cites-scene-and-hotspot
+stale-hotspot-result-rejected
 ```
 
-### Render descriptors
+### Completion and Continue
 
 ```txt
-camera-vectors-finite
-camera-fov-supported
-fog-finite-nonnegative
-geometry-dimensions-positive-finite
-prop-kind-supported
-material-colors-valid
-post-values-finite-bounded
-unsupported-descriptor-rejected-before-stage-allocation
+completion-proof-projects-interlude
+continue-prepares-successor-opening
+continue-retires-predecessor-hotspot-copy
+continue-retires-predecessor-interlude
+successor-title-body-stage-scene-match
+successor-hotspot-list-scene-match
+first-successor-frame-cites-narrative-revision
+transition-failure-restores-predecessor-projection
 ```
 
-### Canonicalization, freeze and fingerprint
+### Terminal projection
 
 ```txt
-canonical-order-stable
-equivalent-input-same-fingerprint
-semantic-change-new-fingerprint
-admitted-root-deep-frozen
-mutation-attempt-cannot-change-fingerprint
-manifest-observation-detached-json-safe
-manifest-journal-bounded
+terminal-result-projects-terminal-copy
+terminal-projection-is-durable
+terminal-continue-does-not-create-ordinary-successor
+terminal-button-policy-explicit
 ```
 
-### Startup compatibility
+### Persistence policy
 
 ```txt
-empty-save-admits-initial-scene
-valid-save-manifest-match-admitted
-unknown-saved-scene-explicitly-reconciled
-unknown-saved-scene-never-remains-behind-visible-fallback
-manifest-mismatch-requires-migration-or-rejection
-rejected-save-not-overwritten
-stage-allocation-waits-for-manifest-and-snapshot-admission
+canonical-scene-opening-policy-deterministic
+exact-projection-policy-deterministic
+unsupported-policy-rejected
+saved-source-id-migrated-or-rejected
+rejected-snapshot-not-overwritten
+reload-and-in-session-transition-follow-declared-policy
 ```
 
-### Render parity
+### Accessibility and observation
 
 ```txt
-stage-plan-cites-manifest-id-version-fingerprint
-scene-resource-set-cites-scene-id
-hotspot-set-cites-canonical-hotspot-ids
-side-panel-cites-canonical-hotspot-ids
-first-visible-frame-cites-manifest-fingerprint
-mutable-source-object-cannot-change-live-frame
+aria-live-announces-committed-projection-only
+stale-projection-not-announced
+one-accepted-result-one-announcement
+observation-detached-json-safe
+journal-bounded
+```
+
+### Duplicate and stale work
+
+```txt
+duplicate-command-returns-cached-result
+predecessor-session-projection-rejected
+stale-story-revision-rejected
+stale-scene-projection-rejected
+rolled-back-projection-not-visible
 ```
 
 ## Browser smoke
 
 ```txt
-admit current content and capture manifest identity
-verify StageKit is not allocated before admission
-boot from empty storage and each valid scene id
-inject unknown scene id and verify typed reconciliation
-reject duplicate ids, unknown requirements and malformed render descriptors
-attempt descriptor mutation and verify no runtime change
-advance through explicit successor edges to an explicit terminal scene
-verify stage, side panel, hotspot set and first visible frame cite one fingerprint
+clear storage
+open deployed route
+capture scene A title and opening body
+inspect all scene A hotspots
+wait for completion interlude
+press Continue
+capture the first scene B frame
+verify scene B title, opening body, stage and hotspot list agree
+repeat through scene C and terminal projection
+reload each saved scene and verify the declared narrative persistence policy
+capture narrative observation and visible-frame acknowledgement
 ```
 
 ## Deployment evidence
@@ -170,18 +170,20 @@ verify stage, side panel, hotspot set and first visible frame cite one fingerpri
 commit SHA
 GitHub Pages route URL
 browser and viewport
-manifest id
-schema version
-content version
 manifest fingerprint
-snapshot result
+snapshot revision
+story revision
 scene id
-scene-plan fingerprint
-hotspot-set fingerprint
+narrative projection id
+narrative projection revision
+narrative source kind
+narrative source id
+stage revision
+hotspot-set revision
 visible frame id
-bounded observation or artifact reference
+fixture artifact reference
 ```
 
 ## Validation claim
 
-The proof surface is documented but not implemented. Do not claim StoryManifest correctness, stable progression, descriptor immutability, save compatibility or content-to-frame provenance until the fixture gate passes.
+The proof surface is documented but not implemented. Do not claim narrative transition correctness, reload parity, accessibility announcement correctness or story-to-frame coherence until the fixture gate passes.
