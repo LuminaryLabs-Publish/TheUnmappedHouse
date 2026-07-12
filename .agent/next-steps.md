@@ -1,10 +1,10 @@
 # Next steps: The Unmapped House
 
-**Timestamp:** `2026-07-12T04-44-36-04-00`
+**Timestamp:** `2026-07-12T06-30-34-04-00`
 
 ## Goal
 
-Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, side-panel accessibility path and Three.js presentation while making content, startup, persistence, interaction, transitions, lifecycle and visible-frame proof deterministic.
+Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, side-panel inspection path and Three.js presentation while making content, startup, persistence, interaction, modal focus, transitions, lifecycle and visible-frame proof deterministic.
 
 ## Plan ledger
 
@@ -31,8 +31,20 @@ Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, s
 ### 4. Inspection and completion proof
 - [ ] Record immutable inspection receipts and derive one scene-completion proof.
 
+### 4a. Modal Focus and Continue Admission Authority
+- [ ] Introduce explicit closed, opening, open, continuing and closing modal states.
+- [ ] Make the closed interlude inert and remove Continue from sequential focus.
+- [ ] Add `role="dialog"` and `aria-modal="true"` only for committed open state.
+- [ ] Capture focus origin and move focus to the admitted Continue control.
+- [ ] Suspend background stage and inspection commands while the modal is open.
+- [ ] Trap sequential focus within the modal and restore it only when valid.
+- [ ] Require current scene, modal generation and unconsumed completion proof for Continue.
+- [ ] Return typed modal-open, modal-close and Continue-admission results.
+- [ ] Publish detached modal/focus observations and a bounded journal.
+
 ### 5. Atomic Continue transition
 - [ ] Prepare successor story, stage, hotspot, narrative and persistence candidates before mutation.
+- [ ] Consume the modal-authorized completion proof exactly once.
 
 ### 6. Narrative Projection Authority
 - [ ] Make DOM and aria-live output consume a typed, revisioned narrative projection.
@@ -51,22 +63,21 @@ Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, s
 - [ ] Add monotonic frame identity and immutable frame inputs.
 - [ ] Return typed stage and post pass results.
 - [ ] Commit public frame state only after visible canvas acknowledgement.
-- [ ] Correlate story, narrative, durable snapshot and screenshots with frame ids.
+- [ ] Correlate story, narrative, modal, durable snapshot and screenshots with frame ids.
 
-## Storage result contract
+## Modal result contract
 
 ```txt
-StorageCommitResult
+ModalContinueResult
   commandId
-  writerSessionId
-  manifestFingerprint
-  expectedRevision
-  observedRevision
-  committedRevision
+  runtimeSessionId
+  sceneId
+  completionProofId
+  modalGeneration
+  focusLeaseId
   status
-  conflictPolicy
-  changedKeys
-  storageMode
+  consumedProof
+  transitionCommandId
   reason
   resolvedAtMs
 ```
@@ -74,45 +85,47 @@ StorageCommitResult
 ## Required fixture rows
 
 ```txt
-storage-capability-available
-storage-capability-unavailable-volatile-mode
-snapshot-revision-monotonic
-expected-predecessor-required
-stale-writer-rejected
-manifest-mismatch-rejected
-clue-merge-policy-explicit
-ordered-route-conflict-rejected
-write-failure-does-not-claim-durable-success
-reset-barrier-prevents-resurrection
-storage-event-reconciles-newer-revision
-storage-observation-detached-json-safe
-storage-journal-bounded
+closed-interlude-continue-not-focusable
+closed-interlude-continue-not-activatable
+open-interlude-focus-enters-dialog
+open-interlude-background-inert
+open-interlude-focus-trapped
+close-interlude-focus-restored
+continue-without-completion-proof-rejected
+continue-with-stale-modal-generation-rejected
+duplicate-continue-idempotent
+continue-consumes-completion-proof-once
+screen-reader-dialog-semantics-current
+modal-observation-detached-json-safe
+modal-journal-bounded
 ```
 
-## Browser convergence smoke
+## Browser keyboard smoke
 
 ```txt
-open two tabs at revision R0
-Tab A commits one inspection
-Tab B attempts a stale full-state commit
-verify no silent lost update
-verify explicit reject or reconcile result
-verify both tabs converge on one accepted revision
-reset in Tab A
-verify Tab B observes the reset barrier
-verify Tab B cannot recreate predecessor progress
-block writes and verify explicit volatile mode
+load a fresh scene
+Tab through every focusable control
+verify hidden Continue is never reached
+complete the scene through admitted inspections
+verify focus moves into the interlude
+verify background inspection buttons cannot activate
+cycle Tab and Shift+Tab
+verify focus remains inside the dialog
+activate Continue once
+verify one successor transition
+verify predecessor modal and focus lease retire
 ```
 
 ## Implementation order
 
 ```txt
 1. StoryManifest Authority
-2. StorySnapshot startup authority
+2. StorySnapshot Startup Authority
 2a. Browser Storage Commit and Cross-Tab Convergence Authority
-3. Pointer and hotspot-pick authority
-4. Inspection and completion authority
-5. Atomic Continue transition
+3. Pointer and Hotspot-Pick Authority
+4. Inspection and Completion Authority
+4a. Modal Focus and Continue Admission Authority
+5. Atomic Continue Transition
 6. Narrative Projection Authority
 7. Runtime Session Lifecycle and Scene Resource Retirement Authority
 8. Render Surface Resolution Authority
