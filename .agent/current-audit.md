@@ -1,6 +1,6 @@
 # Current audit: The Unmapped House
 
-Timestamp: `2026-07-12T01-41-56-04-00`
+Timestamp: `2026-07-12T03-21-27-04-00`
 
 ## Product read
 
@@ -8,54 +8,58 @@ A fixed-camera anime-horror point-and-click prototype with three authored scenes
 
 ## Plan ledger
 
-**Goal:** give one runtime session exclusive ownership of callbacks, timers, frame submission, renderer resources and scene-resource generations.
+**Goal:** turn each canvas presentation into a typed committed-frame result correlated with the story and runtime state that produced it.
 
-- [x] Trace boot, StageKit construction, scene loading, scene replacement, input, resize, timeout and RAF paths.
-- [x] Confirm the animation request id and event callbacks are not retained for revocation.
-- [x] Confirm scene replacement detaches objects without disposing geometries, materials or hotspot resources.
+- [x] Trace inspection, scene completion, Continue, UI projection, persistence, scene loading and RAF submission.
+- [x] Confirm DOM/debug projection commits synchronously while canvas presentation occurs later.
+- [x] Confirm `animate()` returns no frame id, pass result, input snapshot or visible acknowledgement.
 - [x] Inventory all active domains, all 24 implemented kits and their services.
-- [x] Define session identity, lifecycle state, resource ownership, ordered disposal, rollback, observation and proof boundaries.
-- [ ] Implement upstream story authorities and the runtime lifecycle authority.
-- [ ] Execute restart, stale-callback and resource-retirement fixtures.
+- [x] Define frame identity, immutable inputs, pass results, diagnostics, public readback and proof boundaries.
+- [ ] Implement upstream authorities and committed-frame diagnostics.
+- [ ] Execute frame parity, transition and screenshot-correlation fixtures.
 
 ## Interaction loop
 
 ```txt
-module evaluation
-  -> load state and choose current scene
-  -> allocate StageKit
-  -> allocate renderer, target, post quad, camera, lights and root groups
-  -> install resize, pointer and click listeners
+module boot
+  -> load mutable story state
+  -> allocate StageKit and renderer graph
+  -> load the selected scene
+  -> project story DOM and debug JSON
   -> start recursive RAF
-  -> load current scene
-  -> install Continue and keyboard listeners
 
 inspection
-  -> optional unretained 450 ms completion timeout
-  -> callback can project an interlude
+  -> mutate inspected/clue/log state
+  -> possibly schedule completion timeout
+  -> project DOM and debug JSON immediately
+  -> save immediately
+  -> next RAF later renders from live stage state
 
 Continue
-  -> stage.loadScene(successor)
-  -> clear predecessor group
-  -> drop predecessor hotspot and material arrays
-  -> allocate successor meshes, materials and hotspot volumes
-  -> RAF continues through the replacement
+  -> mutate current scene and route
+  -> synchronously replace stage resources
+  -> project successor DOM and debug JSON
+  -> save immediately
+  -> next RAF later presents the successor scene
 
-page lifetime
-  -> no stop, reset, pagehide or dispose transaction
-  -> callbacks and GPU resources remain owned by ambient page lifetime
+RAF
+  -> sample wall-clock time
+  -> read live camera, material and scene objects
+  -> render stage target
+  -> render post scene to canvas
+  -> publish no receipt
 ```
 
 ## Source ownership
 
 | Source | Current responsibilities |
 |---|---|
-| `index.html` | Fixed shell and DOM mounts. |
+| `index.html` | Fixed shell, stage mount, story panel, notebook/debug panel and interlude. |
 | `src/story-data.js` | Authored story, stage, camera, material and post descriptors. |
-| `src/game.js` | Module-lifetime state, StageKit allocation, DOM listeners, completion timeout, scene changes and persistence. |
-| `src/stage-kit.js` | Three.js renderer graph, scene resources, pointer/resize listeners, scene replacement and recursive RAF. |
+| `src/game.js` | Mutable story state, inspection, completion, Continue, DOM/debug projection and persistence. |
+| `src/stage-kit.js` | Three.js resource graph, scene loading, picking, resize and unobserved frame submission. |
 | `src/aspect-frame.js` | Fixed 1920×1080 composition and CSS frame fitting. |
-| `package.json` | Syntax-only source checks and local static serving. |
+| `package.json` | Syntax-only source checks and static serving. |
 
 ## Domains in use
 
@@ -64,35 +68,34 @@ browser shell and fixed-aspect layout
 authored story and render descriptors
 raw localStorage and mutable story state
 scene routing, inspection, clues, log and completion
-ambient DOM narrative and interlude projection
+synchronous DOM narrative projection
+synchronous notebook/debug JSON projection
+unretained completion timeout
 module-lifetime runtime ownership
-unretained timeout callbacks
 Three.js CDN runtime
 WebGL renderer, target, scene, camera, lights and post composition
 live scene replacement
 procedural geometry and shader-material allocation
-hotspot volume allocation and descriptor-bearing userData
-pointer, click, keyboard, Continue and resize callbacks
-recursive RAF and wall-clock shader time
-syntax validation and static Pages deployment
-repo-local and central audit tracking
+hotspot volumes, raycast picking and camera parallax
+resize and input callbacks
+recursive wall-clock frame submission
+uncorrelated stage and post passes
+syntax validation, Pages deployment and audit tracking
 ```
 
 Missing authority domains:
 
 ```txt
-canonical StoryManifest and StorySnapshot
-typed pointer, inspection, transition and narrative authority
-runtime session identity and lifecycle state
-callback generation fencing
-RAF, listener and timeout leases
-scene-resource generations and retirement receipts
-renderer, target, geometry and material ownership
-ordered idempotent stop, restart and disposal
-startup rollback and partial-construction cleanup
-detached lifecycle observation and bounded journal
-render surface and WebGL context recovery
-committed-frame diagnostics
+versioned StoryManifest and StorySnapshot
+typed inspection, transition and narrative results
+runtime session and resource generations
+render surface and WebGL context generations
+frame sequence and immutable frame input
+typed stage-pass and post-pass results
+visible canvas acknowledgement
+stale/failed frame rejection
+detached frame readback and bounded journal
+screenshot and debug-frame correlation
 ```
 
 ## Implemented kits and services
@@ -118,121 +121,98 @@ committed-frame diagnostics
 | `hotspot-picking-kit` | Raycast hover/click input and dispatch selected descriptors. |
 | `camera-parallax-kit` | Apply mouse-driven fixed-camera offsets. |
 | `render-target-composition-kit` | Submit stage-target and post-process passes. |
-| `debug-json-projection-kit` | Project aggregate story state into the debug panel. |
+| `debug-json-projection-kit` | Project aggregate mutable story state into the notebook panel. |
 | `package-syntax-check-kit` | Syntax-check four JavaScript sources. |
 | `static-pages-deploy-kit` | Deploy the static route from `main`. |
 | `repo-local-agent-ledger-kit` | Maintain current pointers and timestamped audits. |
 | `central-ledger-sync-kit` | Maintain central selection and findings history. |
 
-## Main finding: page lifetime is the only owner
+## Main finding: public story state is ahead of unobserved rendering
 
-### RAF cannot be retired
+### Debug projection is not a frame observation
 
-`animate()` schedules the next callback before rendering and does not retain the returned request id. There is no running flag, generation check or `cancelAnimationFrame()` path.
+`renderUi()` serializes game, scene, clues, route, inspected state, completion and log rows. It includes no frame id, renderer result, surface dimensions, context state, camera revision or resource generation.
 
-### Listeners cannot be revoked
+### Scene and inspection changes have no first-frame boundary
 
-Resize, pointer, click, Continue and keyboard callbacks are installed directly. Several use anonymous closures, and no listener lease records the exact target, type and function needed for removal.
+Inspection updates the notebook and persistence immediately. Continue synchronously replaces scene resources and then updates the DOM. Neither path waits for or records the first canvas frame that reflects the accepted change.
 
-### Scene replacement leaks resource ownership
+### Render passes return no result
 
-`loadScene()` calls `stageGroup.clear()`, then replaces `hotspots` and `materials` with empty arrays. Clearing a Three.js group detaches children but does not dispose their geometries or materials. Dropping the arrays also loses the references needed for deterministic cleanup.
+`animate()` renders the stage into a target and the post scene into the default framebuffer. It does not catch or classify failures, increment a frame sequence, freeze inputs, expose pass timings or acknowledge final canvas presentation.
 
-### Root renderer resources have no disposer
+### Live mutable inputs can mix revisions
 
-The renderer, canvas, multisampled target, post material, post-plane geometry, scene resources and context remain live until the browser destroys the page.
-
-### Timeout work has no session fence
-
-The completion timeout is not retained and carries no session, scene or generation admission. A future reset, in-place restart or lifecycle feature would be vulnerable to stale completion work.
+The callback reads current camera, materials, scene objects and wall-clock time independently. Without a frozen frame input, diagnostics cannot prove that one frame used one coherent story, resource, surface and context revision.
 
 ## Required parent domain
 
 ```txt
-the-unmapped-house-runtime-session-lifecycle-authority-domain
+the-unmapped-house-committed-frame-diagnostics-authority-domain
 ```
 
 Candidate kits:
 
 ```txt
-runtime-session-id-kit
-runtime-session-generation-kit
-runtime-lifecycle-state-kit
-runtime-start-command-kit
-runtime-stop-command-kit
-callback-generation-fence-kit
-animation-frame-lease-kit
-event-listener-lease-kit
-timeout-lease-kit
-scene-resource-generation-kit
-stage-resource-registry-kit
-scene-resource-retirement-kit
-three-resource-disposer-kit
-renderer-resource-owner-kit
-render-target-resource-owner-kit
-hotspot-resource-owner-kit
-runtime-dispose-plan-kit
-runtime-dispose-result-kit
-startup-rollback-kit
-runtime-observation-kit
-runtime-lifecycle-journal-kit
-runtime-lifecycle-fixture-kit
-scene-transition-resource-leak-fixture-kit
-stale-callback-fixture-kit
-restart-idempotence-fixture-kit
+frame-sequence-kit
+story-revision-kit
+narrative-revision-kit
+frame-input-snapshot-kit
+render-command-kit
+render-admission-kit
+stage-pass-result-kit
+post-pass-result-kit
+frame-commit-result-kit
+visible-frame-acknowledgement-kit
+canvas-present-observation-kit
+frame-correlation-kit
+frame-debug-projection-kit
+public-frame-readback-kit
+stale-frame-rejection-kit
+frame-journal-kit
+first-frame-fixture-kit
+scene-transition-frame-fixture-kit
+inspection-frame-parity-fixture-kit
+browser-screenshot-correlation-smoke-kit
 ```
 
-## Required lifecycle flow
+## Required frame flow
 
 ```txt
-RuntimeStartCommand
-  -> allocate session id and generation
-  -> create detached cleanup stack
-  -> allocate StageKit resources
-  -> register listener and timeout leases
-  -> start one retained RAF lease
-  -> commit READY session
-
-SceneLoadCommand
-  -> build candidate scene resource generation
-  -> commit successor generation
-  -> acknowledge first successor frame
-  -> retire predecessor generation exactly once
-
-RuntimeStopCommand
-  -> move to STOPPING
-  -> fence new commands and callbacks
-  -> cancel RAF
-  -> cancel timeouts
-  -> remove listeners
-  -> retire active scene generation
-  -> dispose post, target, renderer and canvas resources
-  -> publish idempotent DISPOSED result
+RenderFrameCommand
+  -> admit runtime, lifecycle, scene, surface and context generations
+  -> freeze one immutable FrameInputSnapshot
+  -> execute stage pass and return StagePassResult
+  -> execute post pass and return PostPassResult
+  -> acknowledge final canvas presentation
+  -> commit one FrameCommitResult
+  -> publish detached debug/public observations
+  -> correlate DOM, notebook, screenshots and interaction evidence
 ```
 
 ## Ordered implementation queue
 
 ```txt
 1. StoryManifest Authority
-2. StorySnapshot startup admission and typed persistence
-3. Pointer Observation and Hotspot Pick Authority
-4. Inspection and scene-completion proof
+2. StorySnapshot startup authority
+3. Pointer and hotspot-pick authority
+4. Inspection and completion authority
 5. Atomic Continue transition
 6. Narrative Projection Authority
 7. Runtime Session Lifecycle and Scene Resource Retirement Authority
 8. Render Surface Resolution Authority
 9. WebGL Context Recovery Authority
-10. Committed-frame diagnostics
+10. Committed Frame Diagnostics Authority
 ```
 
 ## Current audit ledge
 
 ```txt
-TheUnmappedHouse Runtime Session Lifecycle Authority
-+ Callback Lease and Generation Fencing
-+ Scene Resource Retirement and Restart Idempotence Fixture Gate
+TheUnmappedHouse Committed Frame Diagnostics Authority
++ Immutable Frame Input and Two-Pass Result Contract
++ Story/Notebook/Canvas Correlation Fixture Gate
 ```
 
 ## Validation status
 
-The authority is not implemented. No current test proves that a scene transition disposes predecessor resources, that stop prevents later frames, or that restart creates exactly one callback and resource graph.
+The authority is not implemented. No current test proves that the notebook/debug state, accepted inspection, scene transition and visible canvas cite the same committed frame.
