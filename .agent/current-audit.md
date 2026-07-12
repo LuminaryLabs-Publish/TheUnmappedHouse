@@ -1,55 +1,66 @@
 # Current audit: The Unmapped House
 
-Timestamp: `2026-07-11T21-48-44-04-00`
+Timestamp: `2026-07-12T00-01-25-04-00`
 
 ## Product read
 
-A fixed-camera anime-horror point-and-click prototype with three authored scenes, three hotspots per scene, nine required clues, a 450 ms completion interlude, browser persistence, a fixed 16:9 shell, side-panel inspection buttons, and a descriptor-driven Three.js renderer.
+A fixed-camera anime-horror point-and-click prototype with three authored scenes, three hotspots per scene, nine required clues, a 450 ms completion interlude, browser persistence, a fixed 16:9 shell, side-panel inspection buttons and a descriptor-driven Three.js renderer.
 
 ## Plan ledger
 
-**Goal:** make authored story content an admitted runtime authority with stable identity, explicit progression, canonical lookup, immutable descriptors and render-consumption proof.
+**Goal:** make narrative copy a typed runtime projection that stays coherent with story state, scene resources, hotspot lists, persistence and the first visible frame.
 
-- [x] Trace story-data export, raw save hydration, current-scene fallback, scene completion, Continue, terminal projection, side-panel descriptor closures, StageKit scene consumption and hotspot `userData`.
-- [x] Confirm the runtime has no root manifest object, schema version, canonical indexes, explicit successor graph, deep freeze, fingerprint or typed admission result.
-- [x] Inventory all active domains, all 24 implemented kits, and their services.
-- [x] Define manifest schema, canonicalization, indexing, graph, ownership, render-descriptor validation, freeze, fingerprint, result, observation, journal and fixture kits.
-- [ ] Implement StoryManifest, StorySnapshot, pointer/pick, inspection, transition, lifecycle, surface, context-recovery and committed-frame authorities.
-- [ ] Run schema, duplicate-id, requirement-ownership, graph, freeze, fingerprint and render-parity fixtures.
+- [x] Trace boot, scene opening, hotspot inspection, completion interlude, Continue, terminal and reload copy behavior.
+- [x] Confirm `#scene-text` is used as both visual output and hidden state input.
+- [x] Confirm a successor scene can retain predecessor hotspot copy.
+- [x] Inventory all active domains, all 24 implemented kits and their services.
+- [x] Define narrative source, projection, revision, admission, commit, persistence, DOM, accessibility, observation and fixture boundaries.
+- [ ] Implement the upstream StoryManifest, StorySnapshot, inspection, transition and narrative authorities.
+- [ ] Execute narrative transition and visible-frame parity fixtures.
 
 ## Interaction loop
 
 ```txt
 module evaluation
-  -> export gameTitle and mutable scenes array
-  -> parse raw localStorage object
-  -> shallow-merge persisted fields over defaults
-  -> find scene by persisted sceneId
-  -> fall back visually to scenes[0] when not found
-  -> keep the unreconciled persisted sceneId in state
-  -> construct StageKit before content admission exists
-  -> pass the selected mutable scene descriptor into StageKit
-  -> attach mutable hotspot descriptor references to mesh.userData
-  -> close side-panel buttons over the same hotspot objects
+  -> export gameTitle and scenes
+  -> load raw localStorage state
+  -> select persisted scene or visually fall back to scenes[0]
+  -> allocate StageKit
+  -> load current stage
+  -> render opening copy only when #scene-text is empty or Loading
 
 inspection
-  -> mutate global clues and scene-keyed inspected state
-  -> evaluate scene requirements through global clue strings
+  -> inspectHotspot(hotspot descriptor)
+  -> write hotspot.text directly into #scene-text
+  -> mutate inspected and clue ledgers
+  -> update log
+  -> optionally schedule completion interlude
+  -> render buttons/debug without replacing body copy
+  -> save raw state
 
 Continue
-  -> find current scene array index
-  -> use scenes[index + 1] as successor
-  -> infer terminal state from missing next array element
+  -> select scenes[index + 1]
+  -> mutate currentScene, state.sceneId and route
+  -> close interlude
+  -> load successor stage
+  -> update title, hotspot buttons and debug
+  -> leave predecessor hotspot copy in #scene-text
+  -> save successor state
+
+reload
+  -> DOM body starts empty
+  -> saved scene opening copy is projected
+  -> exact prior narrative projection is not restored
 ```
 
 ## Source ownership
 
 | Source | Current responsibilities |
 |---|---|
-| `index.html` | Fixed shell, stage mount, side panel, hotspot list, hover label, debug panel, interlude, and Continue button. |
-| `src/story-data.js` | Separate title export plus mutable scene, hotspot, clue, stage, camera, material, post, requirement and interlude descriptors. |
-| `src/game.js` | Raw load, fallback scene resolution, mutable story state, inspection, completion, array-order Continue, reset, projection, persistence, and StageKit calls. |
-| `src/stage-kit.js` | Renderer, scene, camera, target, mutable scene descriptor reference, materials, hotspot volumes, descriptor-bearing `userData`, pointer listeners, resize, live replacement and RAF. |
+| `index.html` | Fixed shell, stage mount, `aria-live` story panel, hotspot list, debug panel, interlude and Continue button. |
+| `src/story-data.js` | Authored opening, hotspot, interlude, stage, camera, material, post, requirement and clue descriptors. |
+| `src/game.js` | Raw load/save, mutable story state, direct narrative DOM writes, completion timing, array-order Continue and projection. |
+| `src/stage-kit.js` | Three.js renderer, stage resources, hotspot meshes, picking, camera parallax, resize and recursive RAF. |
 | `src/aspect-frame.js` | Fixed 1920×1080 composition and CSS frame fitting. |
 | `package.json` | Syntax-only source checks and local static serving. |
 
@@ -57,16 +68,17 @@ Continue
 
 ```txt
 browser shell and fixed-aspect layout
-authored story source descriptors
-raw browser storage and mutable story state
-scene route, inspection, clue, flags and notebook log
+authored story and narrative descriptors
+raw localStorage and mutable story state
+scene route, inspection, clues, flags and notebook log
+ambient DOM narrative state
 scene completion, interlude timing, Continue and terminal projection
-DOM, hover, interlude and debug projection
+DOM, aria-live, hover, interlude and debug projection
 Three.js CDN runtime
 WebGL renderer, scene, camera, lights, target and post composition
 live scene replacement and procedural geometry allocation
 procedural anime shader materials
-hotspot volume creation and descriptor-bearing userData
+hotspot volume construction and descriptor-bearing userData
 mousemove observation, canvas click and side-panel activation
 pointer camera parallax
 resize event admission and render-surface mutation
@@ -79,39 +91,38 @@ repo-local and central audit tracking
 Missing authority domains:
 
 ```txt
-canonical StoryManifest root
-manifest id, schema version and fingerprint
-canonical scene, hotspot and clue indexes
-explicit successor graph and terminal descriptor
-requirement ownership and reachability validation
-render descriptor schema and capability admission
-deep-frozen descriptor graph
-typed manifest admission result
-legacy story-data compatibility adapter
-manifest observation and bounded journal
-manifest-to-stage and manifest-to-frame provenance
-manifest fixture and deployed parity gate
+canonical StoryManifest and content provenance
+versioned StorySnapshot startup admission
+canonical pointer and inspection results
+atomic Continue transition
+narrative projection identity, source and revision
+narrative persistence policy
+narrative DOM and aria-live adapters
+story/narrative/stage/frame commit correlation
+runtime session and resource lifecycle
+render surface and WebGL context recovery
+committed-frame diagnostics
 ```
 
 ## Implemented kits and services
 
 | Kit | Services |
 |---|---|
-| `static-page-shell-kit` | Stage, story panel, hotspot list, hover label, debug panel, interlude, and Continue shell. |
+| `static-page-shell-kit` | Stage, story panel, hotspot list, hover label, debug panel, interlude and Continue shell. |
 | `aspect-frame-kit` | Compute and apply the fixed 16:9 viewport. |
-| `story-data-kit` | Scene, hotspot, clue, stage, camera, material, post, and interlude descriptors. |
-| `browser-story-runtime-kit` | Load, inspection, completion, Continue, reset, projection, persistence, and StageKit calls. |
+| `story-data-kit` | Scene, opening, hotspot, clue, stage, camera, material, post and interlude descriptors. |
+| `browser-story-runtime-kit` | Load, inspection, completion, Continue, reset, projection, persistence and StageKit calls. |
 | `scene-route-kit` | Resolve and mutate current scene and route ids. |
 | `inspection-ledger-kit` | Track scene-keyed hotspot booleans. |
 | `clue-ledger-kit` | Grant and query global clue strings. |
 | `notebook-log-kit` | Prepend and cap story log rows. |
 | `interlude-timer-kit` | Schedule the unretained 450 ms completion callback. |
 | `terminal-route-kit` | Project prototype-complete copy without durable terminal state. |
-| `localstorage-save-kit` | Parse, shallow-merge, write, and clear raw browser state without typed results. |
-| `stage-render-kit` | Create renderer, camera, lights, target, post scene, canvas, listeners, and recursive RAF. |
+| `localstorage-save-kit` | Parse, shallow-merge, write and clear raw browser state without typed results. |
+| `stage-render-kit` | Create renderer, camera, lights, target, post scene, canvas, listeners and recursive RAF. |
 | `scene-descriptor-consumer-kit` | Convert one scene descriptor into live Three.js resources. |
 | `anime-material-kit` | Build procedural shader materials. |
-| `post-process-kit` | Apply grain, vignette, chromatic offset, distortion, memory warp, and scan lines. |
+| `post-process-kit` | Apply grain, vignette, chromatic offset, distortion, memory warp and scan lines. |
 | `hotspot-volume-kit` | Build invisible pick meshes and attach hotspot descriptors. |
 | `hotspot-picking-kit` | Raycast hover/click input and dispatch selected descriptors. |
 | `camera-parallax-kit` | Apply mouse-driven fixed-camera offsets. |
@@ -122,128 +133,113 @@ manifest fixture and deployed parity gate
 | `repo-local-agent-ledger-kit` | Maintain current pointers and timestamped audits. |
 | `central-ledger-sync-kit` | Maintain central selection and findings history. |
 
-## Main finding: authored content is ambient mutable authority
+## Main finding: DOM copy is ambient story authority
 
-### There is no root manifest
+### Opening copy depends on current DOM contents
 
-`gameTitle` and `scenes` are separate exports. No object binds title, schema version, story identity, initial scene, terminal policy, scene graph or content fingerprint.
+`renderUi()` sets `currentScene.openingText` only when the body is empty or equals `Loading`. Runtime behavior therefore depends on prior visual output.
 
-### Scene progression is array position
+### Inspection bypasses a narrative state model
 
-`nextScene()` calls `findIndex()` and selects `scenes[index + 1]`. Reordering or inserting scenes changes the progression graph and old-save interpretation without a declared migration.
+`inspectHotspot()` writes `hotspot.text` directly to `#scene-text`. No projection id, source kind, scene id, story revision or typed result is recorded.
 
-### Startup fallback does not reconcile state
+### Continue can create a split frame
 
-An unknown persisted `sceneId` renders `scenes[0]`, but `state.sceneId` remains the unknown value and is saved again. Visible story authority and persisted story authority can therefore disagree from the first frame.
+`nextScene()` changes the scene, route, stage, title, hotspot list and save, but does not reset the story body. The successor scene can display predecessor hotspot text until another inspection or reload.
 
-### Definitions are shared by reference
+### Reload follows a different implicit policy
 
-StageKit stores the supplied scene object, hotspot meshes store complete hotspot objects in `userData`, and side-panel buttons capture complete hotspot objects. The same mutable source descriptors act as content, render input and interaction authority.
+A reload recreates an empty DOM and displays the saved scene opening. In-session Continue may retain predecessor copy. The product therefore has two inconsistent and undocumented narrative restoration policies.
 
-### Requirements are not admitted
+### Accessibility output has no commit boundary
 
-No validation proves:
-- scene ids are unique;
-- hotspot ids are unique inside their scene;
-- grants resolve to known clue ids;
-- each required clue is reachable and correctly owned;
-- every nonterminal scene has one valid successor;
-- terminal scenes are explicit;
-- camera vectors, geometry dimensions, material colors and post values are finite and supported.
-
-### Rendering cannot cite content identity
-
-A visible frame has no manifest id, version, fingerprint, scene descriptor hash, hotspot-set hash or stage-plan receipt.
+The story panel is `aria-live="polite"`, but there is no revision or commit receipt proving which scene or result an announcement represents.
 
 ## Required parent domain
 
 ```txt
-the-unmapped-house-story-manifest-authority-domain
+the-unmapped-house-narrative-projection-authority-domain
 ```
 
 Candidate kits:
 
 ```txt
-story-manifest-schema-kit
-story-manifest-id-kit
-story-manifest-version-kit
-story-manifest-canonicalization-kit
-story-scene-index-kit
-story-hotspot-index-kit
-story-clue-index-kit
-story-successor-graph-kit
-story-terminal-descriptor-kit
-story-requirement-ownership-kit
-story-render-descriptor-schema-kit
-story-manifest-deep-freeze-kit
-story-manifest-fingerprint-kit
-story-manifest-admission-kit
-story-manifest-result-kit
-legacy-story-data-adapter-kit
-story-manifest-observation-kit
-story-manifest-journal-kit
-story-manifest-fixture-kit
-story-manifest-render-parity-fixture-kit
+narrative-source-kind-kit
+narrative-source-id-kit
+narrative-projection-state-kit
+narrative-projection-revision-kit
+scene-opening-projection-kit
+hotspot-copy-projection-kit
+completion-copy-projection-kit
+terminal-copy-projection-kit
+narrative-projection-admission-kit
+narrative-projection-commit-kit
+narrative-projection-result-kit
+narrative-persistence-policy-kit
+scene-transition-narrative-reset-kit
+narrative-dom-adapter-kit
+narrative-aria-live-adapter-kit
+narrative-frame-acknowledgement-kit
+narrative-observation-kit
+narrative-journal-kit
+narrative-projection-fixture-kit
+transition-copy-parity-fixture-kit
 ```
 
-## Required StoryManifest shape
+## Required projection shape
 
 ```txt
-StoryManifest
-  manifestId
-  schemaVersion
-  contentVersion
+NarrativeProjection
+  projectionId
+  revision
+  sceneId
+  phase
+  sourceKind
+  sourceId
   title
-  initialSceneId
-  terminalPolicy
-  scenes[]
-  sceneIndex
-  hotspotIndexByScene
-  clueIndex
-  successorGraph
-  requirementOwnership
-  renderDescriptorCapabilities
-  fingerprint
+  body
+  persistencePolicy
+  committedByResultId
+  storyRevision
+  acknowledgedFrameId
 ```
 
 ## Required authority flow
 
 ```txt
-legacy story-data exports
-  -> build manifest candidate
-  -> structural validation
-  -> semantic validation
-  -> canonicalize order and ids
-  -> build indexes and successor graph
-  -> validate clue reachability and requirement ownership
-  -> validate render descriptors and supported capabilities
-  -> deep-freeze the complete graph
-  -> compute deterministic fingerprint
-  -> publish ManifestAdmissionResult
-  -> only then hydrate StorySnapshot and allocate StageKit
+accepted inspection, completion, transition or terminal result
+  -> resolve canonical narrative source
+  -> prepare projection candidate
+  -> validate scene, phase, source and story revision
+  -> commit with the owning story transaction
+  -> project through one DOM and aria-live adapter
+  -> submit first correlated frame
+  -> publish acknowledgement and detached observation
 ```
 
 ## Ordered implementation queue
 
 ```txt
-1. StoryManifest schema, canonical indexes, validation, deep freeze and fingerprint
-2. StorySnapshot startup admission, migration, reconciliation and typed persistence
+1. StoryManifest Authority
+2. StorySnapshot startup admission and typed persistence
 3. Pointer Observation and Hotspot Pick Authority
-4. InspectionCommand, receipts, clue provenance and scene-completion proof
-5. Atomic Continue transition and first-visible-frame acknowledgement
-6. Runtime session lifecycle and scene-resource retirement
-7. Render Surface Resolution Authority
-8. WebGL Context Recovery Authority
-9. Committed-frame diagnostics
+4. Inspection and scene-completion proof
+5. Atomic Continue transition
+6. Narrative Projection Authority
+7. Runtime session lifecycle and scene-resource retirement
+8. Render Surface Resolution Authority
+9. WebGL Context Recovery Authority
+10. Committed-frame diagnostics
 ```
 
 ## Current audit ledge
 
 ```txt
-TheUnmappedHouse StoryManifest Authority
-+ Schema / Canonical Index / Successor Graph / Freeze / Fingerprint / Render-Parity Fixture Gate
+TheUnmappedHouse Narrative Projection Authority
++ Scene Opening / Hotspot / Completion / Terminal Source Identity
++ Transition Copy Parity / Persistence Policy / First-Frame Fixture Gate
 ```
 
 ## Validation status
 
-The authority is not implemented. No current test proves schema validity, unique ids, clue ownership, explicit progression, terminal declaration, stable fingerprinting, descriptor immutability, old-save compatibility or manifest-to-visible-frame parity.
+The authority is not implemented. No current test proves that title, body, stage, hotspot list, saved scene and first visible frame agree after Continue.
