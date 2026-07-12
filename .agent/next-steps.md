@@ -1,146 +1,134 @@
 # Next steps: The Unmapped House
 
-**Timestamp:** `2026-07-12T15-08-07-04-00`
+**Timestamp:** `2026-07-12T17-20-42-04-00`
 
 ## Goal
 
-Preserve the current three-scene story and anime-horror presentation while making content, persistence, interaction, notebook projection, lifecycle and rendering deterministic, bounded and observable.
+Preserve the current story and presentation while making authored content and browser state versioned, validated, compatible, immutable and observable before runtime consumers start.
 
 ## Plan ledger
 
-### 1. Canonical StoryManifest
-- [ ] Add stable manifest identity, versions, indexes, validation, freeze and fingerprint.
+### 1. StoryManifest Authority
+- [ ] Add `manifestId`, semantic version, schema version and content fingerprint.
+- [ ] Validate unique scene and hotspot IDs.
+- [ ] Build scene, hotspot and clue indexes.
+- [ ] Validate clue grants against completion requirements.
+- [ ] Validate camera, stage, material, post and hotspot descriptor shapes.
+- [ ] Define explicit route graph and terminal node instead of implicit array-only authority.
+- [ ] Deep-freeze the canonical manifest.
 
-### 2. Versioned StorySnapshot startup authority
-- [ ] Replace raw object spread with typed parse, migration, reconciliation and startup results.
+### 2. StorySnapshot Startup Authority
+- [ ] Add snapshot schema version, snapshot revision and manifest fingerprint.
+- [ ] Parse raw storage into a detached candidate.
+- [ ] Reject non-object roots and unknown fields.
+- [ ] Validate every field type and bounded collection size.
+- [ ] Add deterministic migrations.
+- [ ] Reconcile stale scene, route, clue, inspection and flag IDs against the accepted manifest.
+- [ ] Return one typed startup result.
+- [ ] Do not rewrite storage until admission succeeds.
 
-### 3. Browser storage and reset authority
-- [ ] Add writer identity, monotonic revisions, expected-predecessor checks and conflict policy.
-- [ ] Replace raw `KeyR` deletion with confirmed reset admission and a durable tombstone.
+### 3. Consumer installation
+- [ ] Construct `StageKit` only after manifest/snapshot admission.
+- [ ] Pass canonical IDs rather than mutable raw descriptors through interaction paths.
+- [ ] Bind UI, persistence and rendering to manifest fingerprint and snapshot revision.
+- [ ] Acknowledge the first visible startup frame.
 
-### 4. Interaction and progression authority
-- [ ] Unify canvas and side-panel activation around canonical id-only commands.
-- [ ] Record immutable inspection receipts and derive one scene-completion proof.
-- [ ] Replace raw completion timers with identity, generation, leases and stale rejection.
-- [ ] Make modal controls inert while closed and require a current completion proof.
-- [ ] Atomically commit successor story, stage, narrative and persistence candidates.
+### 4. Retained downstream authorities
+- [ ] Browser storage concurrency and reset authority.
+- [ ] Interaction and completion proof.
+- [ ] Timer, modal and transition authority.
+- [ ] Narrative and Notebook projection authority.
+- [ ] Runtime and WebGL lifecycle authority.
+- [ ] Render-surface and committed-frame authority.
 
-### 5. Narrative projection authority
-- [ ] Make title, body, hotspot controls, aria-live output and terminal copy consume one typed revisioned projection.
-
-### 6. Notebook Observability Projection Authority
-- [ ] Add `NotebookSurfaceId`, projection id and projection revision.
-- [ ] Define player, developer and support/export channel kinds.
-- [ ] Admit developer diagnostics only through explicit build and capability policy.
-- [ ] Classify story fields as player-safe, developer-only or prohibited.
-- [ ] Add immutable redaction profiles with versioned internal-id mapping.
-- [ ] Project authored player notebook entries independently from diagnostics.
-- [ ] Build diagnostic models without reusing the public Notebook contract.
-- [ ] Reject stale story and projection revisions.
-- [ ] Commit one typed projection result.
-- [ ] Publish detached observations and a bounded journal.
-- [ ] Acknowledge the first visible notebook frame.
-
-### 7. Runtime lifecycle authority
-- [ ] Add session identity, callback leases, resource generations and ordered disposal.
-
-### 8. Render Surface Resolution Authority
-- [ ] Add surface identity, bounded planning, WebGL capability admission, allocation readback, rollback, retirement and first-visible-frame proof.
-
-### 9. WebGL Context Recovery Authority
-- [ ] Coordinate context loss, restoration and replacement resource generations.
-
-### 10. Committed Frame Diagnostics Authority
-- [ ] Commit public frame state only after visible canvas acknowledgement.
-
-## Notebook projection contracts
+## Proposed contracts
 
 ```txt
-NotebookProjectionCommand
-  commandId
-  expectedStoryRevision
-  expectedProjectionRevision
-  sceneGeneration
-  requestedChannel
-  capabilityToken
-  requestedProfileId
-  requestedAtMs
+StoryManifest
+  manifestId
+  semanticVersion
+  schemaVersion
+  fingerprint
+  entrySceneId
+  terminalSceneId
+  sceneOrder
+  sceneIndex
+  hotspotIndex
+  clueIndex
+  routeGraph
 ```
 
 ```txt
-NotebookProjectionPlan
-  planId
-  storyRevision
-  sceneGeneration
-  channel
-  classificationRevision
-  redactionProfileId
-  redactionProfileRevision
-  includedFields
-  redactedFields
-  omittedFields
-  playerEntries
-  diagnosticModel
+StorySnapshot
+  schemaVersion
+  snapshotRevision
+  manifestId
+  manifestFingerprint
+  sceneId
+  clues
+  flags
+  inspected
+  route
+  log
 ```
 
 ```txt
-NotebookProjectionResult
+StoryStartupResult
   resultId
-  planId
   status
-  priorProjectionRevision
-  committedProjectionRevision
-  channel
-  appliedProfileId
-  includedFields
-  redactedFields
-  omittedFields
+  manifestFingerprint
+  sourceSnapshotSchemaVersion
+  committedSnapshotRevision
+  migrationsApplied
+  reconciliationsApplied
+  rejectedFields
+  fallbackReason
   firstVisibleFrameId
 ```
 
-## Required fixture rows
+## Required fixtures
 
 ```txt
-public-player-build-renders-authored-notebook-only
-developer-channel-requires-explicit-admission
-public-channel-rejects-developer-only-fields
-internal-scene-and-clue-ids-map-or-redact
-unknown-field-classification-rejected
-stale-story-revision-rejected
-stale-projection-revision-rejected
-player-and-developer-models-are-independent
-projection-result-is-detached-and-json-safe
-first-visible-frame-cites-story-and-projection-revisions
-projection-journal-is-bounded
-pages-public-build-contains-no-unadmitted-debug-json
+valid-manifest-valid-snapshot
+duplicate-scene-id-rejected
+duplicate-hotspot-id-rejected
+unknown-required-clue-rejected
+invalid-camera-vector-rejected
+non-object-save-rejected
+unknown-save-field-rejected
+wrong-field-types-rejected
+unknown-scene-id-reconciled
+stale-route-and-inspection-ids-reconciled
+old-schema-migrates-deterministically
+future-schema-rejected
+manifest-fingerprint-mismatch-handled
+startup-result-is-detached-and-json-safe
+storage-not-rewritten-before-admission
+first-visible-frame-cites-manifest-and-snapshot
+pages-startup-matrix
 ```
 
 ## Implementation order
 
 ```txt
-1. StoryManifest Authority
-2. StorySnapshot Startup Authority
-3. Browser Storage and Reset Authority
-4. Interaction and Progression Authorities
-5. Narrative Projection Authority
-6. Notebook Observability Projection Authority
-7. Runtime Lifecycle Authority
-8. Render Surface Resolution Authority
-9. WebGL Context Recovery Authority
-10. Committed Frame Diagnostics Authority
+1. Pure manifest validator and index builder
+2. Manifest freeze and fingerprint
+3. Pure snapshot parser and validator
+4. Migration and reconciliation policies
+5. Typed startup result
+6. Consumer installation barrier
+7. First-frame receipt
+8. Browser and Pages fixtures
 ```
 
 ## Do not do first
 
 ```txt
-new story rooms or branches
+new rooms or branches
 inventory
-audio or voice work
-renderer replacement
+audio
 shader redesign
 camera retuning
 visual polish
-adding more raw fields to #state-debug
+more fields in raw saved state
 ```
-
-The next notebook-specific implementation should begin with a pure field-classification and projection function before changing the DOM or public Pages build.
