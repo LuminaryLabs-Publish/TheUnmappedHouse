@@ -1,19 +1,19 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-12T00-01-25-04-00`
+Timestamp: `2026-07-12T01-41-56-04-00`
 
 ## Summary
 
-This was a documentation-only Narrative Projection Authority audit. Runtime, gameplay, rendering, dependencies, package scripts and deployment configuration were not changed.
+This was a documentation-only Runtime Session Lifecycle and Scene Resource Retirement audit. Runtime, gameplay, rendering, dependencies, package scripts and deployment configuration were not changed.
 
 ## Plan ledger
 
-**Goal:** define executable evidence that proves narrative copy, story state, stage resources, hotspot lists, persistence and the first visible frame agree across inspection, completion, Continue, terminal and reload paths.
+**Goal:** define executable evidence that proves callback isolation, ordered disposal, scene-resource retirement, restart idempotence and frame cessation.
 
 - [x] Record the current syntax-only validation boundary.
-- [x] Define narrative source, revision, transition, persistence, accessibility and frame-correlation fixture rows.
-- [x] Define a deployed browser smoke sequence.
-- [x] Update `.agent/kit-registry.json` with the current and proposed kit inventory.
+- [x] Define session, callback, timer, resource-generation, disposal and restart fixture rows.
+- [x] Define a deployed browser lifecycle smoke sequence.
+- [x] Update `.agent/kit-registry.json` with the implemented and proposed kit inventory.
 - [x] Push repo-local documentation to `main`.
 - [x] Synchronize the central ledger and internal change log.
 - [ ] Implement and execute the validation gate.
@@ -32,11 +32,10 @@ branch created: no
 pull request created: no
 npm run check: not run
 browser smoke: not run
-narrative projection fixture: unavailable
-transition copy parity fixture: unavailable
-reload policy fixture: unavailable
-aria-live fixture: unavailable
-first-frame acknowledgement fixture: unavailable
+runtime lifecycle fixture: unavailable
+scene resource retirement fixture: unavailable
+stale callback fixture: unavailable
+restart idempotence fixture: unavailable
 repo-local docs pushed to main: yes
 central ledger sync: complete
 central internal change log: complete
@@ -53,115 +52,110 @@ src/stage-kit.js
 src/story-data.js
 ```
 
-It does not execute the story loop, click a hotspot, wait for completion, press Continue, inspect DOM copy, validate accessibility announcements or correlate a visible WebGL frame.
+It does not create a WebGL renderer, submit RAF work, install and remove listeners, fire timers, transition scenes, inspect Three.js resource disposal or restart the runtime.
 
 ## Required commands
 
 ```txt
-node scripts/validate-narrative-projection.mjs
-node scripts/validate-narrative-transition-parity.mjs
-node scripts/validate-narrative-persistence-policy.mjs
+node scripts/validate-runtime-lifecycle.mjs
+node scripts/validate-scene-resource-retirement.mjs
+node scripts/validate-stale-callback-fencing.mjs
+node scripts/validate-runtime-restart-idempotence.mjs
 npm run check
 ```
 
 Recommended aggregate:
 
 ```txt
-npm run validate:narrative
+npm run validate:lifecycle
 ```
 
 ## Required fixture rows
 
-### Projection identity
+### Session and startup
 
 ```txt
-projection-id-required
-projection-revision-monotonic
-scene-id-required
-source-kind-supported
-source-id-resolves
-story-revision-required
-dom-is-output-only
+session-id-required
+session-generation-monotonic
+lifecycle-state-valid
+one-ready-session
+partial-startup-reverse-rollback
+failed-start-does-not-publish-ready
 ```
 
-### Scene opening and inspection
+### Callback ownership
 
 ```txt
-boot-projects-initial-scene-opening
-valid-saved-scene-projects-declared-restore-policy
-inspection-result-projects-hotspot-copy
-reinspection-is-idempotent-or-explicitly-revisioned
-hotspot-copy-cites-scene-and-hotspot
-stale-hotspot-result-rejected
+one-live-raf-lease
+stop-cancels-next-frame
+resize-listener-retired
+pointer-listener-retired
+click-listener-retired
+continue-listener-retired
+keyboard-listener-retired
+timeout-retired
+stale-generation-callback-rejected
+disposed-session-callback-rejected
 ```
 
-### Completion and Continue
+### Scene resources
 
 ```txt
-completion-proof-projects-interlude
-continue-prepares-successor-opening
-continue-retires-predecessor-hotspot-copy
-continue-retires-predecessor-interlude
-successor-title-body-stage-scene-match
-successor-hotspot-list-scene-match
-first-successor-frame-cites-narrative-revision
-transition-failure-restores-predecessor-projection
+scene-resource-generation-required
+successor-built-before-predecessor-retirement
+successor-frame-ack-before-retirement
+predecessor-geometry-disposed
+predecessor-material-disposed
+predecessor-hotspot-resources-disposed
+partial-successor-build-rolls-back
+repeated-transition-resource-count-bounded
 ```
 
-### Terminal projection
+### Root renderer resources
 
 ```txt
-terminal-result-projects-terminal-copy
-terminal-projection-is-durable
-terminal-continue-does-not-create-ordinary-successor
-terminal-button-policy-explicit
+post-plane-geometry-disposed
+post-material-disposed
+render-target-disposed
+renderer-disposed
+context-loss-policy-explicit
+canvas-removed
 ```
 
-### Persistence policy
+### Stop and restart
 
 ```txt
-canonical-scene-opening-policy-deterministic
-exact-projection-policy-deterministic
-unsupported-policy-rejected
-saved-source-id-migrated-or-rejected
-rejected-snapshot-not-overwritten
-reload-and-in-session-transition-follow-declared-policy
+stop-result-idempotent
+dispose-result-idempotent
+stop-fences-new-commands
+restart-allocates-new-session-generation
+restart-produces-one-canvas
+restart-produces-one-raf-chain
+restart-does-not-reuse-disposed-scene-resources
 ```
 
-### Accessibility and observation
+### Observation
 
 ```txt
-aria-live-announces-committed-projection-only
-stale-projection-not-announced
-one-accepted-result-one-announcement
 observation-detached-json-safe
+resource-inventory-complete
+retirement-receipt-cites-generation
 journal-bounded
-```
-
-### Duplicate and stale work
-
-```txt
-duplicate-command-returns-cached-result
-predecessor-session-projection-rejected
-stale-story-revision-rejected
-stale-scene-projection-rejected
-rolled-back-projection-not-visible
+first-frame-cites-session-and-resource-generation
 ```
 
 ## Browser smoke
 
 ```txt
-clear storage
 open deployed route
-capture scene A title and opening body
-inspect all scene A hotspots
-wait for completion interlude
-press Continue
-capture the first scene B frame
-verify scene B title, opening body, stage and hotspot list agree
-repeat through scene C and terminal projection
-reload each saved scene and verify the declared narrative persistence policy
-capture narrative observation and visible-frame acknowledgement
+capture initial session and resource inventory
+inspect one hotspot and schedule completion
+stop before timeout fires
+verify no interlude or frame commits after stop
+restart and verify one canvas and one RAF chain
+transition through all scenes
+verify each predecessor resource generation retires
+stop and verify renderer, target, post and canvas retirement
 ```
 
 ## Deployment evidence
@@ -170,20 +164,20 @@ capture narrative observation and visible-frame acknowledgement
 commit SHA
 GitHub Pages route URL
 browser and viewport
-manifest fingerprint
-snapshot revision
-story revision
-scene id
-narrative projection id
-narrative projection revision
-narrative source kind
-narrative source id
-stage revision
-hotspot-set revision
-visible frame id
+runtime session id
+session generation
+lifecycle revision
+RAF lease id
+listener lease count
+timeout lease count
+scene resource generation
+geometry/material/hotspot counts
+retirement receipt ids
+renderer/target disposal receipts
+last committed frame id
 fixture artifact reference
 ```
 
 ## Validation claim
 
-The proof surface is documented but not implemented. Do not claim narrative transition correctness, reload parity, accessibility announcement correctness or story-to-frame coherence until the fixture gate passes.
+The proof surface is documented but not implemented. Do not claim lifecycle safety, scene-resource retirement, callback isolation or restart idempotence until the fixture gate passes.
