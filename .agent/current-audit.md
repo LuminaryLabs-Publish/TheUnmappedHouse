@@ -1,98 +1,98 @@
 # Current audit: The Unmapped House
 
-**Timestamp:** `2026-07-12T15-08-07-04-00`  
-**Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
+**Timestamp:** `2026-07-12T17-20-42-04-00`  
+**Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`  
+**Status:** `story-manifest-snapshot-admission-authority-audited`
 
 ## Summary
 
-This audit isolates the notebook and diagnostics projection boundary in `index.html`, `src/styles.css` and `src/game.js`.
+This documentation-only audit isolates the boundary between authored story content, persisted browser state and startup consumers.
 
-The visible player surface is labelled `Notebook`, but `renderUi()` fills it with a raw JSON serialization of internal game, scene, clue, route, inspection, completion and log state. The surface is always present in the public page and has no product-versus-development channel policy, build gate, capability admission, field classification, redaction profile, projection identity, stale-revision rejection or first-visible-frame acknowledgement.
+`src/story-data.js` exports raw mutable descriptors. `src/game.js` parses any JSON object, shallow-merges it over defaults and immediately lets scene, gameplay, UI, storage and render consumers act on the result. There is no manifest/snapshot schema, version, compatibility check, migration, semantic validation, immutable canonical model or typed startup outcome.
 
 ## Plan ledger
 
-**Goal:** define one authoritative transaction from committed story state through channel admission, field classification, redaction, notebook/diagnostic projection, visible commit and observation.
+**Goal:** ensure startup either installs one compatible manifest/snapshot pair or fails closed with a typed result while preserving a recoverable predecessor.
 
 - [x] Compare the full Publish inventory with central tracking.
+- [x] Verify root `.agent/START_HERE.md` in all nine eligible repositories.
 - [x] Exclude `TheCavalryOfRome`.
-- [x] Confirm all eligible repositories are centrally tracked and root-documented.
-- [x] Select only `TheUnmappedHouse` as the oldest eligible synchronized repository.
-- [x] Inspect `index.html`, `src/styles.css`, `src/game.js`, `src/story-data.js`, package checks and prior authority boundaries.
-- [x] Trace boot, inspection, Continue and notebook projection paths.
-- [x] Identify every field written to the public notebook.
+- [x] Select only `TheUnmappedHouse` by oldest central timestamp.
+- [x] Inspect `index.html`, `package.json`, `src/game.js`, `src/story-data.js`, `src/stage-kit.js` and the existing root audit state.
+- [x] Trace manifest definition, startup parsing, scene resolution, inspection, Continue, persistence and render consumption.
 - [x] Preserve the complete 24-kit inventory and service map.
-- [x] Define channel, classification, redaction, commit, observation and fixture contracts.
+- [x] Define DSK boundaries, commands, results, observations and fixture gates.
 - [x] Change documentation only.
 - [ ] Implement and execute the authority.
 
 ## Selection state
 
 ```txt
-accessible Publish repositories: 10
-eligible non-Cavalry repositories: 9
-new eligible repositories: 0
-central-ledger-missing eligible repositories: 0
-root-.agent-missing eligible repositories: 0
-
-TheUnmappedHouse   2026-07-12T13-08-15-04-00 selected
-AetherVale         2026-07-12T13-20-00-04-00
-TheOpenAbove       2026-07-12T13-29-56-04-00
-IntoTheMeadow      2026-07-12T13-54-00-04-00
-PhantomCommand     2026-07-12T13-59-50-04-00
-PrehistoricRush    2026-07-12T14-10-22-04-00
-HorrorCorridor     2026-07-12T14-30-36-04-00
-ZombieOrchard      2026-07-12T14-38-35-04-00
-MyCozyIsland       2026-07-12T14-59-01-04-00
+TheUnmappedHouse   2026-07-12T15-08-07-04-00 selected
+AetherVale         2026-07-12T15-18-50-04-00
+TheOpenAbove       2026-07-12T15-40-04-04-00
+IntoTheMeadow      2026-07-12T15-49-09-04-00
+PhantomCommand     2026-07-12T16-00-03-04-00
+PrehistoricRush    2026-07-12T16-20-55-04-00
+HorrorCorridor     2026-07-12T16-39-35-04-00
+ZombieOrchard      2026-07-12T16-51-47-04-00
+MyCozyIsland       2026-07-12T17-10-31-04-00
 TheCavalryOfRome   excluded
 ```
 
-## Product and interaction loop
+## Complete interaction loop
 
 ```txt
-module boot
-  -> parse browser save
-  -> resolve current scene
-  -> create StageKit
-  -> load scene
-  -> renderUi()
-  -> create hotspot buttons
-  -> serialize aggregate state into Notebook
-  -> save state
+boot
+  -> import raw scene array
+  -> derive defaults from scenes[0]
+  -> parse localStorage value or use empty object
+  -> shallow-merge parsed values into defaults
+  -> resolve currentScene by id or fallback
+  -> create renderer and load raw scene descriptor
+  -> render UI and raw Notebook JSON
+  -> persist the merged object
 
-canvas or side-panel inspection
-  -> inspectHotspot(hotspot)
-  -> mutate inspected map
-  -> grant internal clue ids
-  -> prepend notebook log entry
-  -> derive exact scene-complete boolean
-  -> renderUi()
-  -> replace visible Notebook JSON
-  -> persist state
+canvas hover/click
+  -> normalize pointer
+  -> raycast raw hotspot volumes
+  -> dispatch attached hotspot descriptor
+
+side-panel click
+  -> dispatch the same raw hotspot descriptor
+
+inspect
+  -> read/write current scene inspection map
+  -> grant clue ids
+  -> write narrative log
+  -> derive completion from raw requirement list
+  -> schedule interlude
+  -> rebuild UI
+  -> save full mutable state
 
 Continue
-  -> resolve next scene
-  -> mutate scene and route ids
-  -> replace stage resources
-  -> renderUi()
-  -> replace visible Notebook JSON
-  -> persist state
+  -> find current scene index in raw array
+  -> select index + 1
+  -> update sceneId and route
+  -> load raw successor descriptor
+  -> rebuild UI and save
 
 frame
-  -> render Three.js stage and post pass
-  -> publish no notebook projection or visible-frame provenance
+  -> animate camera/materials
+  -> render stage target
+  -> render post pass to canvas
 ```
 
 ## Source ownership
 
 | Source | Current responsibilities |
 |---|---|
-| `index.html` | Fixed shell, story panel, hotspot list, visible Notebook `<pre>`, hover label and interlude. |
-| `src/styles.css` | Notebook and debug text visibility, panel layout, modal presentation and pointer routing. |
-| `src/game.js` | Mutable story state, persistence, inspection, completion, Continue, reset and raw JSON notebook projection. |
-| `src/story-data.js` | Three scenes, nine hotspots, internal clue ids, required clues, authored narrative and visual descriptors. |
-| `src/stage-kit.js` | Renderer, scene consumption, pointer picking, resize and recursive RAF. |
-| `src/aspect-frame.js` | Fixed `1920 x 1080` design size and aspect-frame calculation. |
-| `package.json` | Syntax-only source checks and local static serving. |
+| `src/story-data.js` | Raw game title, ordered scene descriptors, hotspot descriptors, clue grants, completion requirements and render settings. |
+| `src/game.js` | Defaults, raw save parse/merge, mutable snapshot, scene resolution, progression, UI, reset and persistence. |
+| `src/stage-kit.js` | Consume raw scene descriptors into Three.js resources and render continuously. |
+| `index.html` | Fixed shell and player-visible surfaces. |
+| `src/aspect-frame.js` | Fixed design frame computation. |
+| `package.json` | Syntax-only validation and local serving. |
 
 ## Domains in use
 
@@ -108,8 +108,7 @@ unretained completion timeout
 interlude visibility, Continue and terminal projection
 global keyboard and pointer input
 native focus and button activation
-player-visible notebook shell
-raw developer-style aggregate JSON projection
+player-visible notebook and raw diagnostic projection
 Three.js CDN runtime
 WebGL renderer and two-pass presentation
 procedural geometry and anime materials
@@ -122,183 +121,143 @@ repo-local audit tracking
 central ledger synchronization
 ```
 
-Missing notebook-observability authority domains:
+Missing startup-data authority domains:
 
 ```txt
-notebook surface identity
-projection id and revision
-story-state revision binding
-player notebook versus developer diagnostic channel policy
-build-channel and capability admission
-field classification
-redaction profile identity and revision
-player-safe notebook entry model
-developer diagnostic model
-projection plan and typed result
-stale projection rejection
-atomic DOM commit
-visible notebook frame acknowledgement
-projection observations and bounded journal
-browser and Pages notebook fixture gates
+manifest identity and semantic version
+manifest schema and semantic validation
+scene, hotspot and clue indexes
+route graph and terminal semantics
+manifest freeze and fingerprint
+snapshot schema version
+snapshot parse result
+snapshot migration chain
+manifest/snapshot compatibility
+snapshot reconciliation and canonicalization
+unknown-field rejection
+typed startup admission result
+startup observation and bounded journal
+first startup frame acknowledgement
+browser and Pages startup fixture gates
 ```
 
 ## Implemented kits and offered services
 
 | Kit | Services |
 |---|---|
-| `static-page-shell-kit` | Stage, story, hotspot, Notebook, debug, hover and interlude surfaces. |
-| `aspect-frame-kit` | Fixed 16:9 viewport computation and CSS application. |
-| `story-data-kit` | Scene, hotspot, clue, camera, material, post and interlude descriptors. |
-| `browser-story-runtime-kit` | Load, inspect, complete, Continue, reset, project, persist and call StageKit. |
-| `scene-route-kit` | Resolve and mutate current scene and route ids. |
+| `static-page-shell-kit` | Mount the stage, story panel, hotspot list, Notebook, hover label and interlude surfaces. |
+| `aspect-frame-kit` | Compute and apply the fixed 1920 x 1080 design frame inside the browser viewport. |
+| `story-data-kit` | Provide the three scene descriptors, nine hotspot descriptors, clue grants, completion requirements, camera, material and post settings. |
+| `browser-story-runtime-kit` | Boot state, resolve the current scene, inspect hotspots, derive completion, continue, reset, project UI and persist. |
+| `scene-route-kit` | Resolve the current scene from sceneId and advance through array order. |
 | `inspection-ledger-kit` | Track scene-keyed inspected hotspot booleans. |
-| `clue-ledger-kit` | Grant and query global internal clue strings. |
-| `notebook-log-kit` | Prepend and cap authored narrative log rows. |
-| `interlude-timer-kit` | Schedule the current unretained completion callback. |
-| `terminal-route-kit` | Project prototype-complete copy. |
-| `localstorage-save-kit` | Parse, merge, write and delete the single browser save key. |
-| `stage-render-kit` | Create renderer, camera, lights, target, canvas, listeners and RAF. |
-| `scene-descriptor-consumer-kit` | Convert scene descriptors into live Three.js resources. |
-| `anime-material-kit` | Allocate shader materials and advance time uniforms. |
-| `post-process-kit` | Render grain, vignette, chromatic, distortion and scan-line effects. |
-| `hotspot-volume-kit` | Allocate invisible pick volumes and attach descriptors. |
-| `hotspot-picking-kit` | Raycast hover/click input and dispatch selected hotspots. |
-| `camera-parallax-kit` | Apply pointer-driven camera offsets. |
-| `render-target-composition-kit` | Submit stage-target and post-process passes. |
-| `debug-json-projection-kit` | Serialize internal aggregate fields directly into the visible Notebook `<pre>`. |
-| `package-syntax-check-kit` | Syntax-check four JavaScript sources. |
-| `static-pages-deploy-kit` | Deploy the static route from main. |
-| `repo-local-agent-ledger-kit` | Maintain current pointers and timestamped audits. |
-| `central-ledger-sync-kit` | Maintain central selection and findings history. |
+| `clue-ledger-kit` | Grant and query clue identifiers. |
+| `notebook-log-kit` | Prepend and cap player-readable narrative log rows. |
+| `interlude-timer-kit` | Schedule the delayed completion interlude. |
+| `terminal-route-kit` | Project the prototype-complete terminal copy. |
+| `localstorage-save-kit` | Read one browser key, parse JSON, shallow-merge defaults, write the full object and delete on reset. |
+| `stage-render-kit` | Create the Three.js renderer, camera, lights, target, listeners and recursive RAF. |
+| `scene-descriptor-consumer-kit` | Turn scene camera, stage, hotspot and post descriptors into live Three.js resources. |
+| `anime-material-kit` | Allocate procedural shader materials and update time uniforms. |
+| `post-process-kit` | Apply grain, vignette, chromatic shift, distortion and scan-line effects. |
+| `hotspot-volume-kit` | Create invisible raycast volumes and attach hotspot descriptors. |
+| `hotspot-picking-kit` | Normalize pointer input, raycast current volumes and dispatch a selected hotspot. |
+| `camera-parallax-kit` | Apply pointer-driven offsets to the fixed camera. |
+| `render-target-composition-kit` | Render the stage to an offscreen target and the post pass to the canvas. |
+| `debug-json-projection-kit` | Serialize internal aggregate fields into the visible Notebook pre element. |
+| `package-syntax-check-kit` | Run Node syntax checks over the four JavaScript sources. |
+| `static-pages-deploy-kit` | Publish the static route from main. |
+| `repo-local-agent-ledger-kit` | Maintain root pointers and timestamped audit records. |
+| `central-ledger-sync-kit` | Mirror selection, findings and change history into LuminaryLabs-Dev/LuminaryLabs. |
 
 ## Main findings
 
-### The visible Notebook is the diagnostic surface
+### Raw content is executable without admission
 
-`index.html` mounts `#state-debug` inside a normal visible section labelled `Notebook`. CSS gives the `<pre>` normal text color, scrolling and height. There is no hidden attribute, development-only stylesheet, query gate or build-channel gate.
+The three-scene array is the manifest in practice, but no code proves unique scene IDs, unique hotspot IDs, valid clue references, complete camera vectors, valid stage geometry, reachable route order or terminal consistency before consumers execute it.
 
-### Raw aggregate fields are public UI
+### Parseable JSON is treated as a valid snapshot
 
-`renderUi()` writes:
+`loadState()` catches only parse failure. Type errors, unknown fields, stale identifiers and content-version mismatches survive the shallow merge.
 
-```txt
-game
-scene
-clues
-route
-inspected
-complete
-latest
-```
+### Fallback can diverge runtime scene and persisted scene identity
 
-The values include internal ids such as `library-blank-map` and `clue:blank-square`, exact current-scene inspection booleans and the authoritative scene-completion result.
+An unknown `state.sceneId` resolves `currentScene` to `scenes[0]`, but the state field is not corrected. Boot then calls `saveState()`, preserving the invalid ID while rendering the first scene.
 
-The current projection does not expose unacquired required-clue arrays, but it still promotes implementation identifiers and aggregate structure into the player-facing contract.
-
-### Player notebook and developer diagnostics have different semantics
-
-The authored `state.log` already provides player-readable notebook entries. The remaining aggregate fields are developer diagnostics. Combining both in one raw JSON document prevents independent product copy, localization, accessibility, redaction and diagnostic evolution.
-
-### Projection has no identity or state provenance
-
-There is no:
+### Wrong field types can fail after partial startup or mutation
 
 ```txt
-notebook surface id
-projection id
-projection revision
-story-state revision
-scene generation
-channel kind
-redaction profile
-field classification
-commit result
-first-visible-frame acknowledgement
+state.inspected = null
+state.clues = "clue:blank-square"
+state.route = object-instead-of-array
+state.log = "entry"
 ```
 
-A screenshot or DOM read therefore cannot prove which committed story state and channel policy produced the visible notebook.
+All are parseable and admitted. They can fail during rendering, clue grants, Continue or log writes after other work has already occurred.
 
-### Diagnostics cannot be independently disabled or exported
+### No content/snapshot provenance reaches presentation
 
-The runtime cannot produce:
-
-```txt
-player notebook only
-developer diagnostics only
-redacted support diagnostics
-no diagnostics in public production
-explicit authorized diagnostic export
-```
-
-Any change to the internal object shape can alter the public UI.
+The stage, controls, narrative and Notebook do not cite a manifest fingerprint, snapshot revision, migration result or startup admission ID.
 
 ## Required parent domain
 
 ```txt
-the-unmapped-house-notebook-observability-projection-authority-domain
+the-unmapped-house-story-manifest-snapshot-admission-authority-domain
 ```
 
 Candidate kits:
 
 ```txt
-notebook-surface-id-kit
-notebook-projection-id-kit
-notebook-projection-revision-kit
-notebook-channel-policy-kit
-notebook-build-channel-kit
-notebook-capability-admission-kit
-notebook-field-classification-kit
-notebook-redaction-profile-kit
-player-notebook-entry-kit
-developer-diagnostic-model-kit
-notebook-projection-plan-kit
-notebook-projection-result-kit
-notebook-projection-commit-kit
-stale-notebook-projection-rejection-kit
-notebook-visible-frame-ack-kit
-notebook-observation-kit
-notebook-journal-kit
-public-notebook-fixture-kit
-developer-diagnostics-fixture-kit
-browser-notebook-smoke-kit
-pages-notebook-smoke-kit
+story-manifest-id-kit
+story-manifest-version-kit
+story-manifest-schema-kit
+story-manifest-validation-kit
+scene-index-kit
+hotspot-index-kit
+clue-index-kit
+story-route-graph-kit
+story-manifest-freeze-kit
+story-manifest-fingerprint-kit
+story-snapshot-schema-version-kit
+story-snapshot-parser-kit
+story-snapshot-shape-validation-kit
+story-snapshot-migration-kit
+story-snapshot-reconciliation-kit
+story-snapshot-admission-kit
+canonical-story-snapshot-kit
+unknown-snapshot-field-rejection-kit
+manifest-snapshot-compatibility-kit
+story-startup-result-kit
+story-startup-observation-kit
+story-startup-journal-kit
+first-startup-frame-ack-kit
+story-manifest-fixture-kit
+story-snapshot-fixture-kit
+browser-startup-smoke-kit
+pages-startup-smoke-kit
 ```
 
 ## Required transaction
 
 ```txt
-CommittedStoryState
-  -> cite story revision, scene generation and mutation receipt
-  -> resolve build channel and requested notebook channel
-  -> admit player or developer capability
-  -> classify candidate fields
-  -> select immutable redaction profile
-  -> build player notebook entries or diagnostic model
-  -> reject stale story/projection revision
-  -> commit one NotebookProjectionResult
-  -> render only the admitted model
-  -> acknowledge the first visible notebook frame
+StartStoryRuntimeCommand
+  -> load and validate StoryManifest candidate
+  -> build canonical indexes and route graph
+  -> freeze and fingerprint the accepted manifest
+  -> read raw persisted bytes
+  -> parse into StorySnapshotCandidate
+  -> validate shape and declared schema version
+  -> migrate through named deterministic steps
+  -> verify manifest compatibility
+  -> reconcile stale or missing ids under explicit policy
+  -> reject unknown or unsafe fields
+  -> produce immutable CanonicalStorySnapshot
+  -> commit StoryStartupResult
+  -> construct scene/UI/render consumers from accepted values only
+  -> acknowledge the first visible startup frame
   -> publish detached observation and bounded journal
 ```
 
-Public player mode should project authored narrative entries and player-safe progress only. Developer diagnostics should require explicit admission and must not share the public Notebook contract by accident.
+## Proof boundary
 
-## Required statuses
-
-```txt
-Planned
-Committed
-Duplicate
-RejectedStaleStoryRevision
-RejectedStaleProjectionRevision
-RejectedChannel
-RejectedCapability
-RejectedFieldClassification
-Redacted
-Visible
-Exported
-```
-
-## Completion boundary
-
-Do not claim a production-safe notebook or diagnostic surface because the JSON contains only local browser state. Completion requires explicit channel policy, field classification, redaction, typed projection results, independent player/developer models and executable public-build proof.
+Source inspection proves the missing admission boundaries. It does not prove that any malformed save currently exists in deployed user storage, nor that every malformed value produces the same failure. Executable fixtures are required for those claims.
