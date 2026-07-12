@@ -1,69 +1,76 @@
 # Known gaps: The Unmapped House
 
-**Timestamp:** `2026-07-12T06-30-34-04-00`
+**Timestamp:** `2026-07-12T08-10-36-04-00`
 
 ## Summary
 
-The newest documented gap is modal focus and Continue admission. The interlude is visually closed but remains mounted with an enabled Continue button, while the open state does not isolate keyboard focus or background commands. `nextScene()` accepts every button activation without a completion-proof or modal-state guard.
+The newest documented gap is completion-timer generation and stale callback rejection. The 450 ms interlude timeout is scheduled without retaining its handle or freezing the scene and completion proof that authorized it. The callback reads mutable `currentScene`, so a predecessor timer can act on a successor scene or overwrite terminal copy.
 
 ## Plan ledger
 
-**Goal:** keep keyboard inertness, modal semantics, Continue proof admission and retained story/render dependencies explicit.
+**Goal:** keep delayed-work identity, lease ownership, cancellation, transition barriers and callback admission explicit.
 
-- [x] Trace the interlude DOM, closed/open CSS and native button behavior.
-- [x] Confirm Continue is never disabled, inert or removed from focus order.
-- [x] Confirm opening does not capture, move, trap or restore focus.
-- [x] Confirm background inspection controls remain keyboard reachable.
-- [x] Confirm `nextScene()` has no completion or modal-generation guard.
+- [x] Trace the final-hotspot completion path.
+- [x] Confirm `setTimeout()` return value is discarded.
+- [x] Confirm the callback references mutable `currentScene`.
+- [x] Confirm `nextScene()` does not cancel or invalidate the callback.
+- [x] Confirm terminal projection does not establish a timer barrier.
 - [x] Define fixture and browser proof gaps.
-- [ ] Implement and execute the modal focus authority.
+- [ ] Implement and execute the completion-timer authority.
 
-## Closed-state gaps
+## Scheduling gaps
 
 ```txt
-interlude inert: absent
-Continue disabled while closed: absent
-Continue removed from tab order: absent
-hidden-control activation rejection: absent
-closed modal generation: absent
-closed-state observation: absent
+schedule command id: absent
+timer id: absent
+timer generation: absent
+timeout handle retention: absent
+expected scene id: absent
+completion proof id: absent
+runtime session id: absent
+transition revision: absent
+modal generation: absent
+due-time observation: absent
+typed schedule result: absent
 ```
 
-## Open-modal gaps
+## Cancellation and barrier gaps
 
 ```txt
-role=dialog: absent
-aria-modal=true: absent
-focus origin capture: absent
-focus entry: absent
-focus trap: absent
-background inertness: absent
-background command suspension: absent
-focus return: absent
-modal lease: absent
+scene-transition cancellation: absent
+terminal-route cancellation: absent
+reset cancellation: absent
+session-stop cancellation: absent
+idempotent cancel result: absent
+live timer inventory: absent
+callback fence: absent
+transition timer barrier: absent
+terminal timer barrier: absent
 ```
 
-## Continue admission gaps
+## Callback-admission gaps
 
 ```txt
-Continue command id: absent
-current modal generation: absent
-scene completion proof requirement: absent
-proof consumption: absent
-stale activation rejection: absent
-duplicate activation handling: absent
-typed Continue result: absent
-modal/transition correlation: absent
+immutable callback context: absent
+expected-versus-observed scene comparison: absent
+completion-proof revalidation: absent
+transition-revision comparison: absent
+modal-state comparison: absent
+cancelled timer rejection: absent
+stale callback rejection: absent
+exactly-once lease retirement: absent
+typed fired/rejected result: absent
 ```
 
 ## Concrete risks
 
 ```txt
-hidden Continue can be keyboard-activated before any clue is collected
-repeated hidden activation can skip all authored scenes
-open interlude does not prevent background keyboard inspection commands
-screen-reader semantics can disagree with native focus reachability
-Continue can transition from stale or unproven UI state
+predecessor completion timer can open successor interlude
+successor scene can appear complete before any successor inspection
+stage B can be visible while timer A projects B interlude copy
+final terminal copy can be overwritten by delayed final-scene interlude copy
+a future reset or restart path can inherit callbacks unless explicitly fenced
+timer behavior cannot be correlated with persisted story or visible frames
 ```
 
 ## Retained upstream and downstream gaps
@@ -73,6 +80,7 @@ StoryManifest and StorySnapshot authorities remain unimplemented
 storage revision and cross-tab convergence remain unimplemented
 canvas and side-panel input parity remains unimplemented
 inspection/completion proof remains unimplemented
+modal focus and Continue admission remain unimplemented
 Atomic Continue transaction remains unimplemented
 narrative projection remains unrevisioned
 runtime callback and scene-resource lifecycle remains unimplemented
@@ -83,13 +91,13 @@ committed-frame diagnostics remain unimplemented
 ## Validation gaps
 
 - `npm run check` is syntax-only.
-- No DOM fixture proves hidden Continue is absent from sequential focus.
-- No browser keyboard smoke proves scene skip is impossible.
-- No modal fixture proves background controls are inert.
-- No assistive-technology contract verifies dialog semantics.
-- No typed result proves Continue consumed a current completion proof.
-- No frame observation cites the modal generation that authorized transition.
+- No fake-clock fixture captures or advances the 450 ms timer.
+- No fixture transitions before the due time.
+- No fixture proves a cancelled timer cannot mutate the interlude.
+- No terminal fixture proves prototype-complete copy remains stable.
+- No browser smoke verifies event-loop ordering and scene/interlude parity.
+- No timer observation cites the visible frame produced by an admitted callback.
 
 ## Completion boundary
 
-Do not claim modal or Continue correctness because the overlay blocks pointer clicks. Completion requires keyboard-inert closed state, focus-isolated open state, proof-admitted Continue, typed results and browser/accessibility proof.
+Do not claim delayed-interlude correctness because the normal path usually waits 450 ms. Completion requires immutable timer context, retained cancellable leases, transition and terminal barriers, stale callback rejection, typed results and executable event-loop proof.
