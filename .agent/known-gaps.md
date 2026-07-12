@@ -1,75 +1,92 @@
 # Known gaps: The Unmapped House
 
-Timestamp: `2026-07-12T03-21-27-04-00`
+**Timestamp:** `2026-07-12T04-44-36-04-00`
+
+## Summary
+
+The newest documented gap is browser-storage commit and cross-tab convergence. The runtime writes one full mutable story aggregate without a durable revision, writer identity, compare-and-swap admission, typed result, error containment or remote-tab reconciliation.
 
 ## Plan ledger
 
-**Goal:** keep story, lifecycle, rendering and committed-frame proof gaps explicit.
+**Goal:** keep durable-state, conflict, reset and existing story/render dependencies explicit.
 
-- [x] Trace synchronous story/debug projection and asynchronous canvas presentation.
-- [x] Confirm no frame sequence, immutable input, pass result or visible acknowledgement exists.
-- [x] Confirm screenshots and notebook/debug state cannot cite a committed frame.
-- [x] Define frame identity, correlation, observation and fixture gaps.
-- [ ] Implement and execute the Committed Frame Diagnostics Authority gate.
+- [x] Trace every storage read, write and reset path.
+- [x] Confirm full-state writes follow live mutation and DOM projection.
+- [x] Confirm no revision, writer identity or conflict policy exists.
+- [x] Confirm no `storage` event listener exists.
+- [x] Confirm write/reset exceptions are not contained.
+- [x] Define fixture and browser proof gaps.
+- [ ] Implement and execute the storage convergence authority.
 
-## Frame identity gaps
+## Storage capability and effect gaps
 
-- No frame id or monotonic frame sequence exists.
-- RAF callbacks are not associated with a runtime session or generation.
-- Frames do not cite scene-resource, surface or WebGL context generations.
-- No story, narrative, camera or hotspot-set revision is frozen for a frame.
-- No immutable frame-input snapshot exists.
+```txt
+storage capability observation: absent
+volatile-session status: absent
+write failure classification: absent
+quota/security classification: absent
+serialization result: absent
+write verification/readback: absent
+reset result: absent
+storage effect journal: absent
+```
 
-## Pass-result gaps
+## Revision and conflict gaps
 
-- The stage render target pass returns no typed result.
-- The post/default-framebuffer pass returns no typed result.
-- Failures are not classified as rejected, failed or partially submitted.
-- No final canvas presentation acknowledgement exists.
-- No first-frame receipt exists after startup, inspection or scene transition.
+```txt
+writer session id: absent
+snapshot revision: absent
+expected predecessor revision: absent
+compare-and-swap admission: absent
+stale writer rejection: absent
+manifest-aware merge policy: absent
+conflict result: absent
+reset barrier/tombstone: absent
+```
 
-## Story and diagnostics gaps
+## Cross-tab gaps
 
-- `renderUi()` projects notebook/debug state immediately after mutations.
-- Debug JSON contains mutable story state but no renderer or frame evidence.
-- Successor scene DOM can appear before a successor canvas frame is acknowledged.
-- Inspection completion can be reported without a frame that cites the inspection result.
-- No public detached frame snapshot or bounded frame journal exists.
-- No screenshot artifact can be tied to one committed frame.
+```txt
+storage event listener: absent
+remote writer identity: absent
+remote revision validation: absent
+cross-tab reconcile result: absent
+reset propagation: absent
+stale-tab retirement: absent
+convergence fixture: absent
+```
 
-## Runtime and resource dependencies
+## Concrete risks
 
-- Runtime session lifecycle and callback leases remain unimplemented.
-- Scene-resource generations and ordered retirement remain unimplemented.
-- Render-surface revisions remain unimplemented.
-- WebGL context generation and recovery remain unimplemented.
-- These identities are required inputs to authoritative committed-frame diagnostics.
+```txt
+Tab B can overwrite Tab A's newer clues, inspections, route and log
+startup save can throw after StageKit and UI initialization
+inspection save can throw after visible progress has changed
+reset in one tab can be undone by a stale write from another tab
+UI/debug state can claim progress without durable success status
+```
 
-## Existing upstream gaps
+## Retained upstream and downstream gaps
 
-- StoryManifest, StorySnapshot, pointer, inspection, transition and narrative authorities remain unimplemented.
-- Raw localStorage effects remain untyped.
-- Canvas and side-panel interaction parity remains unproven.
-- Scene and narrative commits remain non-atomic.
+```txt
+StoryManifest and StorySnapshot authorities remain unimplemented
+canvas and side-panel input parity remains unimplemented
+inspection/completion and Continue transactions remain unimplemented
+narrative projection remains unrevisioned
+runtime callback and scene-resource lifecycle remains unimplemented
+render-surface and WebGL context generations remain unimplemented
+committed-frame diagnostics remain unimplemented
+```
 
 ## Validation gaps
 
 - `npm run check` is syntax-only.
-- No fixture drives an actual renderer and captures pass results.
-- No fixture verifies first frame after inspection or Continue.
-- No fixture compares notebook/debug revision with canvas revision.
-- No fixture rejects stale frame results.
-- No browser smoke records a screenshot plus frame receipt.
-- No deployed readback exposes a committed-frame journal.
+- No fake-storage fixture injects write or reset failure.
+- No two-tab fixture proves stale-writer rejection or convergence.
+- No reset-barrier fixture prevents snapshot resurrection.
+- No browser smoke proves volatile mode when storage is unavailable.
+- No narrative or frame observation cites a durable snapshot revision.
 
-## Deferred work
+## Completion boundary
 
-```txt
-new story rooms or branches
-inventory
-audio
-renderer replacement
-new shader work
-camera retuning
-visual polish
-```
+Do not claim persistence correctness because one tab survives reload. Completion requires typed effects, revision admission, explicit conflict policy, reset propagation and multi-tab browser proof.
