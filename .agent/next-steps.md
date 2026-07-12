@@ -1,10 +1,10 @@
 # Next steps: The Unmapped House
 
-**Timestamp:** `2026-07-12T06-30-34-04-00`
+**Timestamp:** `2026-07-12T08-10-36-04-00`
 
 ## Goal
 
-Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, side-panel inspection path and Three.js presentation while making content, startup, persistence, interaction, modal focus, transitions, lifecycle and visible-frame proof deterministic.
+Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, side-panel inspection path and Three.js presentation while making content, startup, persistence, interaction, delayed completion, modal focus, transitions, lifecycle and visible-frame proof deterministic.
 
 ## Plan ledger
 
@@ -31,7 +31,18 @@ Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, s
 ### 4. Inspection and completion proof
 - [ ] Record immutable inspection receipts and derive one scene-completion proof.
 
-### 4a. Modal Focus and Continue Admission Authority
+### 4a. Completion Timer Generation Authority
+- [ ] Replace the raw `setTimeout()` call with a typed schedule command.
+- [ ] Allocate a stable timer id and monotonic timer generation.
+- [ ] Freeze runtime session, scene, completion proof, transition revision and modal generation in callback context.
+- [ ] Retain the timeout handle through a cancellable timer lease.
+- [ ] Cancel or invalidate incompatible timers on transition, terminal route, reset and session stop.
+- [ ] Reject stale callbacks before narrative or modal mutation.
+- [ ] Retire each lease exactly once after cancellation or admitted fire.
+- [ ] Return typed scheduled, cancelled, rejected and fired results.
+- [ ] Publish detached timer observations and a bounded journal.
+
+### 4b. Modal Focus and Continue Admission Authority
 - [ ] Introduce explicit closed, opening, open, continuing and closing modal states.
 - [ ] Make the closed interlude inert and remove Continue from sequential focus.
 - [ ] Add `role="dialog"` and `aria-modal="true"` only for committed open state.
@@ -40,10 +51,10 @@ Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, s
 - [ ] Trap sequential focus within the modal and restore it only when valid.
 - [ ] Require current scene, modal generation and unconsumed completion proof for Continue.
 - [ ] Return typed modal-open, modal-close and Continue-admission results.
-- [ ] Publish detached modal/focus observations and a bounded journal.
 
 ### 5. Atomic Continue transition
 - [ ] Prepare successor story, stage, hotspot, narrative and persistence candidates before mutation.
+- [ ] Cancel predecessor timer leases before committing successor ownership.
 - [ ] Consume the modal-authorized completion proof exactly once.
 
 ### 6. Narrative Projection Authority
@@ -63,21 +74,35 @@ Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, s
 - [ ] Add monotonic frame identity and immutable frame inputs.
 - [ ] Return typed stage and post pass results.
 - [ ] Commit public frame state only after visible canvas acknowledgement.
-- [ ] Correlate story, narrative, modal, durable snapshot and screenshots with frame ids.
+- [ ] Correlate story, timer, narrative, modal, durable snapshot and screenshots with frame ids.
 
-## Modal result contract
+## Timer result contracts
 
 ```txt
-ModalContinueResult
+CompletionTimerScheduledResult
   commandId
   runtimeSessionId
+  timerId
+  timerGeneration
   sceneId
   completionProofId
-  modalGeneration
-  focusLeaseId
+  transitionRevision
+  delayMs
+  dueAtMs
   status
-  consumedProof
-  transitionCommandId
+  reason
+
+CompletionTimerFiredResult
+  timerId
+  timerGeneration
+  expectedSceneId
+  observedSceneId
+  completionProofId
+  expectedTransitionRevision
+  observedTransitionRevision
+  modalGeneration
+  status
+  openInterludeCommandId
   reason
   resolvedAtMs
 ```
@@ -85,35 +110,33 @@ ModalContinueResult
 ## Required fixture rows
 
 ```txt
-closed-interlude-continue-not-focusable
-closed-interlude-continue-not-activatable
-open-interlude-focus-enters-dialog
-open-interlude-background-inert
-open-interlude-focus-trapped
-close-interlude-focus-restored
-continue-without-completion-proof-rejected
-continue-with-stale-modal-generation-rejected
-duplicate-continue-idempotent
-continue-consumes-completion-proof-once
-screen-reader-dialog-semantics-current
-modal-observation-detached-json-safe
-modal-journal-bounded
+completion-schedules-one-retained-timer
+callback-context-freezes-completing-scene
+transition-before-delay-cancels-timer
+transition-before-delay-stale-callback-rejected
+successor-interlude-does-not-open-from-predecessor-timer
+terminal-copy-survives-predecessor-delay
+reset-invalidates-live-timers
+session-stop-cancels-live-timers
+duplicate-cancel-idempotent
+cancelled-timer-cannot-fire
+fired-timer-retires-lease-once
+timer-observation-detached-json-safe
+timer-journal-bounded
 ```
 
-## Browser keyboard smoke
+## Browser timer-order smoke
 
 ```txt
-load a fresh scene
-Tab through every focusable control
-verify hidden Continue is never reached
-complete the scene through admitted inspections
-verify focus moves into the interlude
-verify background inspection buttons cannot activate
-cycle Tab and Shift+Tab
-verify focus remains inside the dialog
-activate Continue once
-verify one successor transition
-verify predecessor modal and focus lease retire
+complete scene A
+capture scheduled timer identity
+activate an admitted transition before 450 ms
+verify scene B becomes current
+wait beyond the original due time
+verify scene B interlude remains closed
+verify stale timer result reports rejection or cancellation
+repeat on final scene with terminal projection
+verify terminal copy is not overwritten
 ```
 
 ## Implementation order
@@ -124,7 +147,8 @@ verify predecessor modal and focus lease retire
 2a. Browser Storage Commit and Cross-Tab Convergence Authority
 3. Pointer and Hotspot-Pick Authority
 4. Inspection and Completion Authority
-4a. Modal Focus and Continue Admission Authority
+4a. Completion Timer Generation Authority
+4b. Modal Focus and Continue Admission Authority
 5. Atomic Continue Transition
 6. Narrative Projection Authority
 7. Runtime Session Lifecycle and Scene Resource Retirement Authority
