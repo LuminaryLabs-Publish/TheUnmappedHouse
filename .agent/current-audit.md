@@ -1,26 +1,27 @@
 # Current audit: The Unmapped House
 
-**Timestamp:** `2026-07-12T10-30-00-04-00`  
+**Timestamp:** `2026-07-12T13-08-15-04-00`  
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
 ## Summary
 
-This audit isolates the destructive reset path in `src/game.js`. A global `keydown` listener checks only `event.code === "KeyR"`, then calls `localStorage.removeItem(SAVE_KEY)` and `location.reload()`. It does not inspect modifier keys, repeat, trust, focus, visibility, story phase, expected save revision or user confirmation.
+This audit isolates render-surface resolution and allocation in `src/stage-kit.js`. The runtime creates an antialiased Three.js renderer, caps device pixel ratio at `2`, allocates a multisampled offscreen target at the fixed `1920 x 1080` design size multiplied by DPR, and then immediately calls `resize()` to allocate both surfaces again from the live aspect frame.
+
+No pixel budget, WebGL limit query, multisample admission, resize generation, allocation result, rollback, resource-retirement receipt or first-visible-frame acknowledgement exists.
 
 ## Plan ledger
 
-**Goal:** define one reset transaction that distinguishes an explicit in-game reset from browser refresh, stale input and unowned keyboard events.
+**Goal:** define one authoritative transaction from viewport observation through bounded renderer and offscreen-target allocation, atomic commit and visible-frame proof.
 
 - [x] Compare the full Publish inventory with central tracking.
 - [x] Exclude `TheCavalryOfRome`.
-- [x] Skip newer unsynchronized MyCozyIsland documentation.
-- [x] Select only `TheUnmappedHouse`.
-- [x] Inspect `src/game.js`, `src/stage-kit.js`, `src/story-data.js`, package checks and prior persistence/lifecycle boundaries.
-- [x] Trace reset from keyboard event through storage deletion and reload.
-- [x] Confirm modifier, repeat, trust, focus, confirmation and revision admission are absent.
-- [x] Confirm reset has no typed effect result, tombstone or first post-reset frame proof.
+- [x] Confirm all eligible repositories are centrally tracked and root-documented.
+- [x] Select only `TheUnmappedHouse` as the oldest eligible synchronized repository.
+- [x] Inspect `src/stage-kit.js`, `src/aspect-frame.js`, `src/game.js`, package checks and prior render/lifecycle boundaries.
+- [x] Trace constructor allocation, resize allocation and the two-pass frame loop.
+- [x] Quantify high-DPR and narrow-viewport allocation cases.
 - [x] Preserve the complete 24-kit inventory and service map.
-- [x] Define reset command, admission, barrier, effect, observation and fixture contracts.
+- [x] Define render-surface planning, admission, commit, rollback, observation and fixture contracts.
 - [x] Change documentation only.
 - [ ] Implement and execute the authority.
 
@@ -29,18 +30,19 @@ This audit isolates the destructive reset path in `src/game.js`. A global `keydo
 ```txt
 accessible Publish repositories: 10
 eligible non-Cavalry repositories: 9
-new or central-ledger-missing eligible repositories: 0
+new eligible repositories: 0
+central-ledger-missing eligible repositories: 0
 root-.agent-missing eligible repositories: 0
 
-MyCozyIsland       central 2026-07-12T08:00:16-04:00, repo-local 2026-07-12T10-20-02-04-00, skipped as newer unsynchronized work
-TheUnmappedHouse   2026-07-12T08-10-36-04-00 selected oldest synchronized eligible repository
-AetherVale         2026-07-12T08-31-49-04-00
-PrehistoricRush    2026-07-12T09-01-44-04-00
-TheOpenAbove       2026-07-12T09-02-10-04-00
-IntoTheMeadow      2026-07-12T09-21-40-04-00
-PhantomCommand     2026-07-12T09-28-05-04-00
-HorrorCorridor     2026-07-12T09-48-15-04-00
-ZombieOrchard      2026-07-12T10-09-07-04-00
+TheUnmappedHouse   2026-07-12T10-30-00-04-00 selected
+AetherVale         2026-07-12T10-48-19-04-00
+TheOpenAbove       2026-07-12T11-15-16-04-00
+IntoTheMeadow      2026-07-12T11-29-40-04-00
+PhantomCommand     2026-07-12T11-48-43-04-00
+PrehistoricRush    2026-07-12T12-08-05-04-00
+HorrorCorridor     2026-07-12T12-21-38-04-00
+ZombieOrchard      2026-07-12T12-39-25-04-00
+MyCozyIsland       2026-07-12T12-58-08-04-00
 TheCavalryOfRome   excluded
 ```
 
@@ -48,10 +50,13 @@ TheCavalryOfRome   excluded
 
 ```txt
 module boot
-  -> load and shallow-merge raw browser state
-  -> resolve currentScene
+  -> load browser story state
+  -> resolve current scene
   -> construct StageKit
-  -> load current scene, project UI and save
+  -> create WebGL renderer and offscreen target
+  -> perform fixed-design allocation
+  -> perform immediate live resize allocation
+  -> load scene, project UI and save
 
 inspection
   -> canvas or side-panel activation
@@ -59,17 +64,17 @@ inspection
   -> derive completion and delayed interlude
   -> render and save
 
-Continue
-  -> mutate scene and route
-  -> replace stage resources
-  -> project successor UI
-  -> save
+window resize
+  -> sample innerWidth, innerHeight and DPR
+  -> compute fixed-aspect CSS frame
+  -> resize default drawing buffer
+  -> resize multisampled offscreen target
+  -> continue rendering without surface revision or result
 
-reset
-  -> window keydown
-  -> match KeyR only
-  -> remove save key synchronously
-  -> request page reload
+frame
+  -> animate camera and material uniforms
+  -> render stage to offscreen target
+  -> render post-process pass to default framebuffer
 ```
 
 ## Source ownership
@@ -78,10 +83,10 @@ reset
 |---|---|
 | `index.html` | Fixed shell, story panel, hotspot list, debug panel and mounted interlude. |
 | `src/styles.css` | Fixed composition, modal appearance and pointer routing. |
-| `src/game.js` | Mutable story state, persistence, inspection, completion, Continue, terminal copy and global destructive reset. |
-| `src/story-data.js` | Three scenes, nine hotspots, nine clue requirements and visual descriptors. |
-| `src/stage-kit.js` | Three.js resource graph, scene replacement, pointer input, resize and recursive RAF. |
-| `src/aspect-frame.js` | Fixed 1920 by 1080 composition. |
+| `src/game.js` | Mutable story state, persistence, inspection, completion, Continue, terminal copy and reset. |
+| `src/story-data.js` | Three scenes, nine hotspots, clue requirements and visual descriptors. |
+| `src/stage-kit.js` | Renderer, DPR, target allocation, scene replacement, pointer input, resize and recursive RAF. |
+| `src/aspect-frame.js` | Fixed `1920 x 1080` design size and aspect-frame calculation. |
 | `package.json` | Syntax-only source checks and local static serving. |
 
 ## Domains in use
@@ -96,10 +101,15 @@ scene routing, inspection, clues, flags, route and notebook log
 scene-completion derivation
 unretained 450 ms completion timeout
 interlude visibility, Continue and terminal projection
-global keyboard input and destructive KeyR reset
+global keyboard and pointer input
 native focus and button activation
 Three.js CDN runtime
-WebGL renderer, render target, stage scene, camera, lighting and post processing
+WebGL renderer and default drawing buffer
+device-pixel-ratio sampling with a fixed cap of 2
+fixed-design startup allocation
+aspect-frame viewport observation and CSS application
+multisampled offscreen WebGLRenderTarget
+stage-to-target and post-to-default-framebuffer submission
 procedural geometry and anime materials
 hotspot volumes and raycast picking
 camera parallax
@@ -110,20 +120,23 @@ repo-local audit tracking
 central ledger synchronization
 ```
 
-Missing reset authority domains:
+Missing render-surface authority domains:
 
 ```txt
-reset intent and command identity
-keyboard binding and browser-refresh exclusion policy
-trusted-event, repeat and focus-context admission
-confirmation capability
-expected story and storage revisions
-reset operation generation
-durable reset tombstone and stale-writer barrier
-timer and runtime retirement
-typed storage removal and reload results
-reset observation and bounded journal
-browser shortcut and confirmed-reset fixtures
+render-surface identity and revision
+viewport-observation identity and resize generation
+DPR and render-scale policy
+product pixel and sample budgets
+WebGL texture, renderbuffer and sample capability admission
+default drawing-buffer plan
+offscreen color/depth/multisample target plan
+allocation readback and framebuffer completeness
+stale resize rejection
+atomic surface commit and rollback
+predecessor target retirement
+surface observations and bounded journal
+first-visible-surface-frame acknowledgement
+browser and Pages DPR/resize fixtures
 ```
 
 ## Implemented kits and offered services
@@ -131,7 +144,7 @@ browser shortcut and confirmed-reset fixtures
 | Kit | Services |
 |---|---|
 | `static-page-shell-kit` | Stage, story, hotspot, debug, hover and interlude surfaces. |
-| `aspect-frame-kit` | Fixed 16:9 viewport computation and application. |
+| `aspect-frame-kit` | Fixed 16:9 viewport computation and CSS application. |
 | `story-data-kit` | Scene, hotspot, clue, camera, material, post and interlude descriptors. |
 | `browser-story-runtime-kit` | Load, inspect, complete, Continue, reset, project, persist and call StageKit. |
 | `scene-route-kit` | Resolve and mutate current scene and route ids. |
@@ -155,98 +168,130 @@ browser shortcut and confirmed-reset fixtures
 | `repo-local-agent-ledger-kit` | Maintain current pointers and timestamped audits. |
 | `central-ledger-sync-kit` | Maintain central selection and findings history. |
 
-## Main finding
+## Main findings
 
-### Browser refresh and destructive reset share `KeyR`
+### Fixed-design allocation happens before live viewport admission
 
-The global handler does not exclude modifier chords. `Ctrl+R` on Windows/Linux and `Meta+R` on macOS still produce a keydown whose physical code is `KeyR`. The game removes durable progress before the browser completes the refresh.
-
-### Reset is admitted without intent evidence
+The constructor calls:
 
 ```txt
-event.isTrusted: unchecked
-event.repeat: unchecked
-modifier keys: unchecked
-document visibility/focus: unchecked
-event target or activeElement: unchecked
-explicit confirmation token: absent
+renderer.setPixelRatio(cappedDpr)
+renderer.setSize(1920, 1080, false)
+new WebGLRenderTarget(1920 * cappedDpr, 1080 * cappedDpr, { samples: 2 })
+resize()
 ```
 
-### Storage deletion and reload are untyped effects
+The first live `resize()` can immediately replace those dimensions. A narrow viewport at capped DPR `2` can therefore transiently allocate a `3840 x 2160` default buffer and target before shrinking to the actual aspect frame.
 
-There is no reset command id, expected save revision, durable tombstone, typed storage result, runtime retirement result, reload result or first clean-frame acknowledgement.
+### DPR cap does not provide a product pixel budget
 
-### Reset can race existing ownership
+For a `3840 x 2160` aspect frame at DPR `2`:
 
-Pending completion timers, scene resources, RAF work and another tab's stale save writer are not coordinated with reset. Prior lifecycle and storage-convergence audits define those dependencies; this audit defines the reset admission that must invoke them.
+```txt
+physical width:  7680
+physical height: 4320
+pixels/surface:  33,177,600
+offscreen samples requested: 2
+```
+
+The offscreen target alone requests `66,355,200` color sample positions before depth, resolve storage, the default framebuffer and implementation overhead. No product budget can lower DPR, render scale or samples.
+
+### WebGL limits are not admitted before allocation
+
+The runtime does not query or validate:
+
+```txt
+MAX_TEXTURE_SIZE
+MAX_RENDERBUFFER_SIZE
+MAX_SAMPLES
+renderer capabilities
+framebuffer completeness
+actual drawing-buffer width and height
+actual target width and height
+```
+
+Unsupported or excessive plans therefore have no typed rejection or fallback tier.
+
+### Resize has no generation, coalescing or rollback
+
+Every window resize directly mutates the renderer and target. There is no resize command id, expected surface revision, stale-observation rejection, prepare phase, atomic commit, predecessor preservation or allocation failure rollback.
+
+### Visible frames have no surface provenance
+
+The frame loop submits the offscreen and post passes but publishes no surface id, surface revision, CSS dimensions, physical dimensions, DPR, sample count, allocation result or first-visible-frame acknowledgement.
 
 ## Required parent domain
 
 ```txt
-the-unmapped-house-destructive-reset-admission-authority-domain
+the-unmapped-house-render-surface-resolution-authority-domain
 ```
 
 Candidate kits:
 
 ```txt
-reset-intent-envelope-kit
-reset-command-id-kit
-reset-binding-policy-kit
-browser-reload-shortcut-exclusion-kit
-trusted-key-event-policy-kit
-input-focus-context-kit
-reset-confirmation-capability-kit
-reset-command-admission-kit
-expected-story-revision-kit
-expected-storage-revision-kit
-reset-operation-generation-kit
-reset-tombstone-kit
-pending-timer-reset-barrier-kit
-runtime-reset-retirement-kit
-storage-reset-effect-kit
-reset-effect-result-kit
-reload-admission-kit
-reset-observation-kit
-reset-journal-kit
-destructive-reset-fixture-kit
-browser-refresh-preserves-save-smoke-kit
-confirmed-reset-clears-save-smoke-kit
+render-surface-id-kit
+render-surface-revision-kit
+viewport-observation-kit
+device-pixel-ratio-policy-kit
+render-pixel-budget-kit
+webgl-capability-query-kit
+render-surface-plan-kit
+drawing-buffer-plan-kit
+offscreen-target-plan-kit
+multisample-budget-kit
+surface-dimension-admission-kit
+surface-allocation-kit
+allocation-readback-kit
+surface-commit-kit
+surface-rollback-kit
+stale-resize-rejection-kit
+surface-resource-retirement-kit
+surface-observation-kit
+visible-surface-frame-ack-kit
+render-surface-fixture-kit
+browser-dpr-resize-smoke-kit
+pages-render-surface-smoke-kit
 ```
 
 ## Required transaction
 
 ```txt
-ResetIntentEnvelope
-  -> classify source binding and modifier chord
-  -> reject browser refresh and unsupported chords
-  -> validate trusted event, focus, visibility and repeat policy
-  -> acquire explicit confirmation capability
-  -> include expected story and storage revisions
-  -> admit one reset command id and generation
-  -> install reset tombstone and stale-writer barrier
-  -> cancel pending timers and retire runtime ownership
-  -> execute typed storage reset effect
-  -> publish ResetEffectResult
-  -> admit reload only after committed reset
-  -> acknowledge first clean boot/frame
-  -> append detached observation and bounded journal
+ViewportObservation
+  -> allocate observation id and resize generation
+  -> sample CSS bounds and requested DPR
+  -> query WebGL texture, renderbuffer and sample capabilities
+  -> apply product pixel, sample and quality budgets
+  -> derive one RenderSurfacePlan
+  -> reject stale predecessor revision
+  -> prepare renderer drawing buffer and offscreen target
+  -> read back actual dimensions and framebuffer status
+  -> commit one surface revision or preserve predecessor
+  -> retire replaced target resources exactly once
+  -> submit stage and post passes against committed surface
+  -> acknowledge first visible frame
+  -> publish detached observation and bounded journal
 ```
 
-Rejected reset intent must perform zero storage, story, timer, render or navigation mutation.
+Rejected or failed surface plans must not leave the renderer and offscreen target on mixed revisions.
 
 ## Required statuses
 
 ```txt
-RejectedBrowserRefreshChord
-RejectedUntrustedEvent
-RejectedRepeat
-RejectedFocusContext
-RejectedConfirmationMissing
-RejectedStaleStoryRevision
-RejectedStaleStorageRevision
-ResetCommitted
-ResetEffectFailed
-RuntimeRetirementFailed
-ReloadRequested
-FirstCleanFrameAcknowledged
+Planned
+Committed
+Duplicate
+RejectedStaleRevision
+RejectedInvalidDimensions
+RejectedPixelBudget
+RejectedTextureLimit
+RejectedRenderbufferLimit
+RejectedSampleLimit
+AllocationFailed
+FramebufferIncomplete
+RolledBack
+Visible
 ```
+
+## Completion boundary
+
+Do not claim high-DPR safety, resize safety or render-surface correctness from a fixed DPR cap or visual inspection. Completion requires bounded planning, capability admission, allocation readback, atomic commit/rollback and executable browser proof.
