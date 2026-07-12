@@ -1,10 +1,10 @@
 # Next steps: The Unmapped House
 
-Timestamp: `2026-07-12T03-21-27-04-00`
+**Timestamp:** `2026-07-12T04-44-36-04-00`
 
 ## Goal
 
-Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, side-panel accessibility path and Three.js presentation while making content, state, picking, transitions, narrative, lifecycle and visible-frame proof deterministic.
+Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, side-panel accessibility path and Three.js presentation while making content, startup, persistence, interaction, transitions, lifecycle and visible-frame proof deterministic.
 
 ## Plan ledger
 
@@ -12,7 +12,18 @@ Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, s
 - [ ] Add stable manifest identity, versions, indexes, validation, freeze and fingerprint.
 
 ### 2. Versioned StorySnapshot startup authority
-- [ ] Replace the raw save with typed parse, migration, reconciliation and commit results.
+- [ ] Replace raw object spread with typed parse, migration, reconciliation and startup results.
+
+### 2a. Browser Storage Commit and Cross-Tab Convergence Authority
+- [ ] Observe storage capability and support explicit volatile mode.
+- [ ] Add writer session identity and monotonic snapshot revisions.
+- [ ] Require expected predecessor revisions for commits.
+- [ ] Add stale-writer rejection and a named manifest-aware conflict policy.
+- [ ] Return typed read, commit and reset results.
+- [ ] Add `storage` event admission and cross-tab reconciliation.
+- [ ] Add a reset barrier so stale tabs cannot resurrect deleted progress.
+- [ ] Publish detached storage observations and a bounded effect journal.
+- [ ] Correlate durable or volatile revision with narrative and future frames.
 
 ### 3. Pointer observation and hotspot-pick authority
 - [ ] Unify canvas and side-panel activation around canonical id-only commands.
@@ -37,54 +48,60 @@ Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, s
 - [ ] Coordinate context loss, restoration and replacement resource generations.
 
 ### 10. Committed Frame Diagnostics Authority
-- [ ] Add a monotonic frame sequence.
-- [ ] Freeze one immutable frame input per callback.
-- [ ] Require runtime, scene-resource, surface, context, camera and story revisions.
-- [ ] Return typed stage-pass and post-pass results.
-- [ ] Commit public frame state only after final canvas acknowledgement.
-- [ ] Reject stale or failed frame results.
-- [ ] Publish detached JSON-safe frame readback and a bounded journal.
-- [ ] Correlate notebook/debug projection, screenshots and interaction receipts with frame ids.
+- [ ] Add monotonic frame identity and immutable frame inputs.
+- [ ] Return typed stage and post pass results.
+- [ ] Commit public frame state only after visible canvas acknowledgement.
+- [ ] Correlate story, narrative, durable snapshot and screenshots with frame ids.
 
-## Required committed-frame fixture rows
+## Storage result contract
 
 ```txt
-frame-sequence-monotonic
-frame-input-frozen
-frame-input-cites-story-revision
-frame-input-cites-runtime-generation
-frame-input-cites-scene-resource-generation
-frame-input-cites-surface-revision
-frame-input-cites-context-generation
-stage-pass-result-required
-post-pass-result-required
-failed-stage-pass-not-public
-failed-post-pass-not-public
-visible-frame-ack-required
-first-frame-after-start
-first-frame-after-inspection
-first-frame-after-scene-transition
-debug-readback-cites-frame
-notebook-and-canvas-revision-parity
-stale-frame-rejected
-frame-observation-detached-json-safe
-frame-journal-bounded
-screenshot-cites-frame-and-commit
+StorageCommitResult
+  commandId
+  writerSessionId
+  manifestFingerprint
+  expectedRevision
+  observedRevision
+  committedRevision
+  status
+  conflictPolicy
+  changedKeys
+  storageMode
+  reason
+  resolvedAtMs
 ```
 
-## Browser committed-frame smoke
+## Required fixture rows
 
 ```txt
-open deployed route
-capture initial frame receipt and screenshot
-inspect one hotspot through the side panel
-wait for the first frame citing the inspection result
-verify notebook, story state and canvas cite that frame
-complete the scene and Continue
-verify successor DOM is not claimed visible until successor-frame acknowledgement
-capture successor frame receipt and screenshot
-force one stale frame result and verify rejection
-verify bounded detached frame journal
+storage-capability-available
+storage-capability-unavailable-volatile-mode
+snapshot-revision-monotonic
+expected-predecessor-required
+stale-writer-rejected
+manifest-mismatch-rejected
+clue-merge-policy-explicit
+ordered-route-conflict-rejected
+write-failure-does-not-claim-durable-success
+reset-barrier-prevents-resurrection
+storage-event-reconciles-newer-revision
+storage-observation-detached-json-safe
+storage-journal-bounded
+```
+
+## Browser convergence smoke
+
+```txt
+open two tabs at revision R0
+Tab A commits one inspection
+Tab B attempts a stale full-state commit
+verify no silent lost update
+verify explicit reject or reconcile result
+verify both tabs converge on one accepted revision
+reset in Tab A
+verify Tab B observes the reset barrier
+verify Tab B cannot recreate predecessor progress
+block writes and verify explicit volatile mode
 ```
 
 ## Implementation order
@@ -92,6 +109,7 @@ verify bounded detached frame journal
 ```txt
 1. StoryManifest Authority
 2. StorySnapshot startup authority
+2a. Browser Storage Commit and Cross-Tab Convergence Authority
 3. Pointer and hotspot-pick authority
 4. Inspection and completion authority
 5. Atomic Continue transition
@@ -100,15 +118,6 @@ verify bounded detached frame journal
 8. Render Surface Resolution Authority
 9. WebGL Context Recovery Authority
 10. Committed Frame Diagnostics Authority
-```
-
-## Next safe ledge
-
-```txt
-TheUnmappedHouse Committed Frame Diagnostics Authority
-+ Immutable Input Snapshot
-+ Stage/Post Pass Results
-+ Visible Canvas Acknowledgement
 ```
 
 ## Do not do first
