@@ -1,25 +1,26 @@
 # START HERE: The Unmapped House
 
-Last updated: `2026-07-11T18-38-45-04-00`
+Last updated: `2026-07-11T20-11-26-04-00`
 
 ## Summary
 
 `TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three authored scenes, nine hotspots, browser persistence, a fixed 16:9 shell, and a descriptor-driven Three.js stage.
 
-The current audit isolates WebGL context recovery authority. `StageKit` owns a persistent renderer, multisampled target, post pass, scene geometries, shader materials, hotspot resources, resize/input listeners, and a recursive RAF, but the application has no context state, context generation, loss/restore event authority, render suspension, resource rebuild transaction, stale-generation fence, or first recovered frame acknowledgement.
+The current audit isolates pointer observation and hotspot-pick authority. `StageKit` updates a shared pointer only during `mousemove`, but the canvas `click` listener ignores the click event and raycasts with that shared value. A first click, touch-oriented activation, activation after resize, or activation after a scene/camera replacement can therefore use default or stale coordinates.
 
 ## Plan ledger
 
-**Goal:** preserve story and stage authority through WebGL context loss while rebuilding every required context-bound resource under one new generation and proving one recovered visible frame before input and rendering resume.
+**Goal:** require every canvas activation to sample its own event coordinates and cite one current session, stage, surface, camera, hotspot-set, context, and visible-frame revision before story mutation is admitted.
 
 - [x] Compare all ten accessible `LuminaryLabs-Publish` repositories with central tracking.
 - [x] Exclude `TheCavalryOfRome`.
 - [x] Confirm all nine eligible repositories have central ledger and root `.agent` state.
-- [x] Select only `TheUnmappedHouse` under the oldest eligible fallback rule.
-- [x] Trace renderer, target, post binding, materials, geometries, hotspots, listeners, input, resize, scene loading, persistence, and RAF ownership.
+- [x] Avoid active overlapping work in `ZombieOrchard` and `PrehistoricRush`.
+- [x] Select only `TheUnmappedHouse` as the oldest stable eligible repository.
+- [x] Trace mouse movement, canvas click, coordinate normalization, raycasting, hover, camera parallax, resize, scene replacement, side-panel ingress, inspection, persistence, and visible rendering.
 - [x] Identify all active domains, all 24 implemented kits, and their services.
-- [x] Define context state, generation, suspension, rebuild, rollback, stale-result, recovered-frame, observation, and fixture boundaries.
-- [x] Add timestamped architecture, render, gameplay, interaction, WebGL-context, deploy, tracker, and turn-ledger records.
+- [x] Define pointer samples, coordinate-space results, input modality, revision provenance, typed pick results, stale rejection, dual-ingress parity, observations, journals, and fixtures.
+- [x] Add timestamped architecture, render, gameplay, interaction, pointer-picking, deploy, tracker, and turn-ledger records.
 - [x] Refresh required root `.agent` state.
 - [x] Change no runtime source.
 - [x] Push only to `main`; create no branch or pull request.
@@ -28,7 +29,7 @@ The current audit isolates WebGL context recovery authority. `StageKit` owns a p
 ## Read this first
 
 ```txt
-.agent/trackers/2026-07-11T18-38-45-04-00/project-breakdown.md
+.agent/trackers/2026-07-11T20-11-26-04-00/project-breakdown.md
 .agent/current-audit.md
 .agent/next-steps.md
 .agent/known-gaps.md
@@ -39,81 +40,101 @@ The current audit isolates WebGL context recovery authority. `StageKit` owns a p
 ## Current audit set
 
 ```txt
-.agent/architecture-audit/2026-07-11T18-38-45-04-00-webgl-context-recovery-dsk-map.md
-.agent/render-audit/2026-07-11T18-38-45-04-00-context-generation-recovered-frame-gap.md
-.agent/gameplay-audit/2026-07-11T18-38-45-04-00-context-loss-story-input-divergence-loop.md
-.agent/interaction-audit/2026-07-11T18-38-45-04-00-context-state-input-admission-map.md
-.agent/webgl-context-audit/2026-07-11T18-38-45-04-00-loss-restore-resource-generation-contract.md
-.agent/deploy-audit/2026-07-11T18-38-45-04-00-webgl-context-recovery-fixture-gate.md
+.agent/architecture-audit/2026-07-11T20-11-26-04-00-pointer-pick-authority-dsk-map.md
+.agent/render-audit/2026-07-11T20-11-26-04-00-stale-pointer-visible-hotspot-gap.md
+.agent/gameplay-audit/2026-07-11T20-11-26-04-00-hover-click-inspect-loop.md
+.agent/interaction-audit/2026-07-11T20-11-26-04-00-pointer-event-pick-result-map.md
+.agent/pointer-picking-audit/2026-07-11T20-11-26-04-00-coordinate-provenance-parity-contract.md
+.agent/deploy-audit/2026-07-11T20-11-26-04-00-pointer-pick-fixture-gate.md
 ```
 
 ## Main finding
 
 ```txt
-WebGL renderer graph exists
-  -> renderer, target, post binding, materials, geometries and hotspots are context-bound
-  -> no application `webglcontextlost` admission
-  -> no application `webglcontextrestored` transaction
-  -> no context/resource generation
-  -> no render or input suspension result
-  -> no complete resource-registry rebuild
-  -> no first recovered visible-frame acknowledgement
+StageKit creates pointer = (0, 0)
+  -> mousemove updates pointer from that event
+  -> hover raycasts the updated pointer
+  -> click receives its own coordinates
+  -> click coordinates are discarded
+  -> click raycasts the ambient pointer
+  -> current hit descriptor mutates story state
 ```
 
-Story inspection, clue grants, completion timers, Continue, reset, persistence, resize, pointer input, and RAF remain independent from context readiness. The application cannot prove that current story state, current scene resources, current surface revision, current context generation, and the visible canvas agree.
+The activation has no pointer sample id, modality, stage epoch, surface revision, camera revision, hotspot-set revision, context generation, visible frame id, typed pick result, or stale-result rejection.
+
+## Concrete failure cases
+
+```txt
+click before first mousemove
+  -> center-screen raycast
+
+touch or pen activation without mousemove
+  -> default or stale mouse coordinates
+
+resize between hover and click
+  -> predecessor sample has no surface provenance
+
+Continue between hover and click
+  -> predecessor sample is reinterpreted through a new camera and hotspot set
+
+pointer leaves or page blurs
+  -> hover label and parallax are not explicitly cancelled
+```
 
 ## Required parent domain
 
 ```txt
-the-unmapped-house-webgl-context-recovery-authority-domain
+the-unmapped-house-pointer-pick-authority-domain
 ```
 
 Required composition:
 
 ```txt
-webgl-context-state-kit
-webgl-context-generation-kit
-webgl-context-event-adapter-kit
-context-loss-admission-kit
-render-suspension-kit
-render-dependent-input-fence-kit
-context-loss-result-kit
-context-resource-registry-kit
-context-resource-generation-kit
-context-resource-rebuild-plan-kit
-renderer-state-reinitialization-kit
-render-target-rebuild-kit
-material-program-rebind-kit
-scene-resource-reupload-kit
-context-restore-transaction-kit
-context-restore-rollback-kit
-stale-context-result-rejection-kit
-recovered-frame-ack-kit
-context-observation-kit
-context-recovery-journal-kit
-webgl-context-recovery-fixture-kit
-browser-context-loss-restore-smoke-kit
+pointer-event-adapter-kit
+pointer-sample-id-kit
+pointer-modality-kit
+pointer-coordinate-observation-kit
+pointer-coordinate-normalization-kit
+pointer-surface-revision-kit
+pointer-stage-epoch-kit
+pointer-camera-revision-kit
+hotspot-set-revision-kit
+hotspot-pick-plan-kit
+hotspot-pick-result-kit
+stale-pointer-observation-rejection-kit
+stale-hotspot-pick-rejection-kit
+hover-state-kit
+pointer-leave-cancel-kit
+canvas-activation-command-kit
+side-panel-activation-command-kit
+activation-parity-result-kit
+pointer-pick-observation-kit
+pointer-pick-journal-kit
+pointer-pick-fixture-kit
+browser-input-modality-smoke-kit
 ```
 
 ## Required invariant
 
 ```txt
-No frame is ready while context state is LOST, RESTORING, FAILED or DISPOSED.
-No render-dependent command commits without the active context generation and a matching frame.
-No restored generation becomes authoritative until renderer, target, post binding,
-scene resources, hotspot resources and one visible frame cite the same generation.
+A canvas activation uses coordinates captured from that activation event.
+A pick cannot commit after its session, stage, surface, camera, hotspot set,
+context or visible frame has been retired.
+A hit returns a canonical hotspot id rather than mutable descriptor authority.
+Canvas and side-panel activation share one semantic command/result contract.
 ```
 
 ## Dependency order
 
 ```txt
 1. Versioned StoryManifest and StorySnapshot startup authority
-2. Inspection Command Authority and scene-completion proof
-3. Atomic Continue transition and first-frame acknowledgement
-4. Runtime session lifecycle and scene-resource retirement
-5. Render Surface Resolution Authority
-6. WebGL Context Recovery Authority
-7. Committed-frame diagnostics
+2. Pointer Observation and Hotspot Pick Authority
+3. Inspection Command Authority and scene-completion proof
+4. Atomic Continue transition and first-frame acknowledgement
+5. Runtime session lifecycle and scene-resource retirement
+6. Render Surface Resolution Authority
+7. WebGL Context Recovery Authority
+8. Committed-frame diagnostics
 ```
 
 ## Validation status
@@ -126,12 +147,13 @@ dependencies changed: no
 deployment changed: no
 branch created: no
 pull request created: no
-npm run check: not run
+npm run check: not run because the execution container could not resolve github.com
 browser smoke: not run
-context-state fixtures: unavailable
-resource-generation fixtures: unavailable
-loss/restore browser smoke: unavailable
-recovered-frame fixture: unavailable
+coordinate fixtures: unavailable
+stale-pick fixtures: unavailable
+input-modality fixtures: unavailable
+canvas/side-panel parity fixture: unavailable
+visible-frame pick fixture: unavailable
 ```
 
-Do not claim WebGL context-loss resilience, automatic resource recovery, restored interaction correctness, or recovered-frame parity until the documented gate passes.
+Do not claim canvas-pick correctness, touch or pen support, stale-pick rejection, dual-ingress parity, or visible-hotspot correlation until the documented gate passes.
