@@ -1,169 +1,109 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-12T03-21-27-04-00`
+**Timestamp:** `2026-07-12T04-44-36-04-00`
 
 ## Summary
 
-This was a documentation-only Committed Frame Diagnostics audit. Runtime, gameplay, rendering, dependencies, package scripts and deployment configuration were not changed.
+This run changed documentation only. Source inspection proves that story state is loaded once, written as one full localStorage value after startup and mutations, and reset with an unobserved `removeItem`. No current code returns storage effects, classifies write failure, cites a durable revision, rejects stale writers or reconciles other tabs.
 
 ## Plan ledger
 
-**Goal:** define executable evidence that proves story, notebook/debug state and the visible two-pass canvas cite one committed frame.
+**Goal:** distinguish single-tab source-level persistence from failure-safe, revisioned and convergent storage authority.
 
-- [x] Record the current syntax-only validation boundary.
-- [x] Define frame identity, immutable input, stage-pass, post-pass, visible-ack and correlation fixture rows.
-- [x] Define a deployed browser screenshot-correlation sequence.
-- [x] Update `.agent/kit-registry.json` with the implemented and proposed kit inventory.
-- [x] Push repo-local documentation to `main`.
-- [x] Synchronize the central ledger and internal change log.
-- [ ] Implement and execute the validation gate.
+- [x] Inspect storage key and initial state construction.
+- [x] Inspect load, save and reset effects.
+- [x] Inspect inspection and Continue ordering around persistence.
+- [x] Confirm absence of storage-event handling.
+- [x] Confirm current package validation is syntax-only.
+- [x] Document required pure and browser fixtures.
+- [ ] Execute fixtures after implementation.
 
-## This pass
+## Proven from source
+
+```txt
+save key: the-unmapped-house.stage-prototype.v1
+load read/parse failure falls back to initial state
+parsed state is shallow-merged over defaults
+startup performs an unconditional full-state write
+inspection performs a full-state write
+re-read performs a full-state write
+Continue performs a full-state write
+reset calls removeItem then reload
+setItem errors are not caught
+removeItem errors are not caught
+writer/session id is absent
+snapshot revision is absent
+compare-and-swap is absent
+storage event listener is absent
+conflict and merge results are absent
+```
+
+## Existing checks prove
+
+```txt
+src/aspect-frame.js parses
+src/game.js parses
+src/stage-kit.js parses
+src/story-data.js parses
+```
+
+## Existing checks do not prove
+
+```txt
+storage availability
+write success or readback
+quota/security failure containment
+stale-writer rejection
+cross-tab convergence
+reset propagation
+volatile-session behavior
+narrative/durable revision parity
+frame/durable revision parity
+```
+
+## Change boundary
 
 ```txt
 runtime source changed: no
+story content changed: no
+storage behavior changed: no
+render behavior changed: no
 package scripts changed: no
 dependencies changed: no
-routes changed: no
-gameplay changed: no
-rendering changed: no
 deployment changed: no
 branch created: no
 pull request created: no
 npm run check: not run
 browser smoke: not run
-committed-frame fixture: unavailable
-stage/post pass fixture: unavailable
-story/canvas parity fixture: unavailable
-screenshot correlation fixture: unavailable
-repo-local docs pushed to main: yes
-central ledger sync: complete
-central internal change log: complete
 ```
 
-## Available validation
-
-`npm run check` syntax-checks:
+## Required fixtures
 
 ```txt
-src/aspect-frame.js
-src/game.js
-src/stage-kit.js
-src/story-data.js
+fixture:storage-envelope-parse
+fixture:storage-capability-unavailable
+fixture:storage-write-failure
+fixture:storage-reset-failure
+fixture:snapshot-revision-monotonic
+fixture:stale-writer-rejected
+fixture:manifest-conflict
+fixture:reset-barrier
+fixture:storage-observation-detached
+fixture:storage-journal-bounded
+smoke:two-tab-convergence
+smoke:cross-tab-reset-propagation
+smoke:volatile-session
+smoke:pages-storage-convergence
 ```
 
-It does not create a WebGL renderer, submit frames, freeze frame inputs, inspect pass results, capture screenshots or compare story/debug state with the visible canvas.
-
-## Required commands
+## Current result
 
 ```txt
-node scripts/validate-frame-contract.mjs
-node scripts/validate-stage-post-results.mjs
-node scripts/validate-story-frame-parity.mjs
-node scripts/validate-stale-frame-rejection.mjs
-npm run check
+storage authority implemented: no
+cross-tab convergence proven: no
+write failure containment proven: no
+reset propagation proven: no
+durable/visible correlation proven: no
 ```
 
-Recommended aggregate:
-
-```txt
-npm run validate:frames
-```
-
-## Required fixture rows
-
-### Frame admission and identity
-
-```txt
-frame-command-requires-runtime-generation
-frame-command-requires-scene-resource-generation
-frame-command-requires-surface-revision
-frame-command-requires-context-generation
-frame-sequence-monotonic
-duplicate-frame-id-rejected
-stale-frame-generation-rejected
-```
-
-### Immutable input
-
-```txt
-frame-input-frozen
-story-revision-required
-narrative-revision-required
-camera-revision-required
-hotspot-set-revision-required
-wall-time-sample-recorded
-live-mutation-cannot-change-inflight-input
-```
-
-### Pass results
-
-```txt
-stage-pass-result-required
-stage-pass-target-identity-recorded
-post-pass-result-required
-default-framebuffer-result-recorded
-failed-stage-pass-not-committed
-failed-post-pass-not-committed
-```
-
-### Visible acknowledgement and parity
-
-```txt
-visible-frame-ack-required
-first-frame-after-start
-first-frame-after-inspection
-first-frame-after-scene-transition
-debug-readback-cites-committed-frame
-notebook-story-canvas-revision-parity
-screenshot-cites-frame-id
-screenshot-cites-commit-sha
-```
-
-### Observation
-
-```txt
-frame-observation-detached-json-safe
-frame-journal-bounded
-failed-frame-observable
-stale-frame-observable
-latest-committed-frame-stable
-```
-
-## Browser smoke
-
-```txt
-open deployed route
-record initial frame receipt and screenshot
-inspect a hotspot
-verify notebook does not claim visible parity until frame acknowledgement
-record first frame citing the inspection result
-complete the current scene and Continue
-record first frame citing successor story and scene-resource revisions
-compare DOM, debug JSON, canvas screenshot and frame receipt
-submit or simulate a stale frame and verify rejection
-```
-
-## Deployment evidence
-
-```txt
-commit SHA
-GitHub Pages route URL
-browser and viewport
-runtime session id and generation
-story and narrative revisions
-scene-resource generation
-surface revision
-context generation
-frame id
-stage-pass result id
-post-pass result id
-visible-frame acknowledgement id
-debug observation
-screenshot artifact reference
-fixture artifact reference
-```
-
-## Validation claim
-
-The proof surface is documented but not implemented. Do not claim that notebook/debug state matches the visible canvas until the committed-frame fixture gate passes.
+No storage reliability, conflict-safety, cross-tab convergence or reset-propagation claim is made.
