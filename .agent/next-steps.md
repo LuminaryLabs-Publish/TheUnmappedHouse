@@ -1,10 +1,10 @@
 # Next steps: The Unmapped House
 
-**Timestamp:** `2026-07-12T10-30-00-04-00`
+**Timestamp:** `2026-07-12T13-08-15-04-00`
 
 ## Goal
 
-Preserve the current three-scene story and Three.js presentation while making content, persistence, interaction, reset, delayed completion, modal focus, transitions, lifecycle and visible-frame proof deterministic.
+Preserve the current three-scene story and anime-horror presentation while making content, persistence, interaction, lifecycle and render-surface behavior deterministic, bounded and observable.
 
 ## Plan ledger
 
@@ -14,107 +14,110 @@ Preserve the current three-scene story and Three.js presentation while making co
 ### 2. Versioned StorySnapshot startup authority
 - [ ] Replace raw object spread with typed parse, migration, reconciliation and startup results.
 
-### 2a. Browser Storage Commit and Cross-Tab Convergence Authority
+### 3. Browser storage and reset authority
 - [ ] Add writer identity, monotonic revisions, expected-predecessor checks and conflict policy.
-- [ ] Add typed read, commit and reset effects.
-- [ ] Add reset tombstones so stale tabs cannot resurrect deleted progress.
-- [ ] Correlate durable or volatile revision with narrative and frames.
+- [ ] Replace raw `KeyR` deletion with confirmed reset admission and a durable tombstone.
 
-### 2b. Destructive Reset Admission Authority
-- [ ] Replace the global raw `KeyR` effect with a typed `ResetStoryCommand`.
-- [ ] Explicitly reject `Ctrl+R`, `Meta+R` and unsupported modifier chords.
-- [ ] Reject repeated, untrusted, hidden-page and invalid-focus events.
-- [ ] Require an explicit confirmation capability.
-- [ ] Include expected story and storage revisions.
-- [ ] Allocate one reset command id and generation.
-- [ ] Install a durable reset tombstone and stale-writer barrier.
-- [ ] Cancel completion timers and retire runtime ownership before storage deletion.
-- [ ] Return typed storage-reset and reload results.
-- [ ] Acknowledge the first clean boot and visible frame.
-- [ ] Publish detached observations and a bounded reset journal.
-
-### 3. Pointer observation and hotspot-pick authority
+### 4. Interaction and progression authority
 - [ ] Unify canvas and side-panel activation around canonical id-only commands.
-
-### 4. Inspection and completion proof
 - [ ] Record immutable inspection receipts and derive one scene-completion proof.
+- [ ] Replace raw completion timers with identity, generation, leases and stale rejection.
+- [ ] Make modal controls inert while closed and require a current completion proof.
+- [ ] Atomically commit successor story, stage, narrative and persistence candidates.
 
-### 4a. Completion Timer Generation Authority
-- [ ] Replace raw delayed callbacks with identity, generation, leases and stale rejection.
-
-### 4b. Modal Focus and Continue Admission Authority
-- [ ] Make closed controls inert and require a current unconsumed completion proof.
-
-### 5. Atomic Continue transition
-- [ ] Prepare and atomically commit successor story, stage, narrative and persistence candidates.
-
-### 6. Narrative Projection Authority
+### 5. Narrative and lifecycle authority
 - [ ] Make DOM and aria-live output consume one typed revisioned projection.
-
-### 7. Runtime Session Lifecycle and Scene Resource Retirement Authority
 - [ ] Add session identity, callback leases, resource generations and ordered disposal.
 
-### 8. Render Surface Resolution Authority
-- [ ] Separate CSS composition from internal GPU resolution and commit surface revisions.
+### 6. Render Surface Resolution Authority
+- [ ] Add `RenderSurfaceId`, surface revision and resize generation.
+- [ ] Create a pure viewport, DPR, pixel-budget and sample-budget planner.
+- [ ] Query texture, renderbuffer and sample limits before allocation.
+- [ ] Remove the fixed-design predecessor allocation before live viewport admission.
+- [ ] Prepare renderer and offscreen-target candidates before commit.
+- [ ] Read back actual drawing-buffer and target dimensions.
+- [ ] Check framebuffer completeness.
+- [ ] Reject stale resize observations.
+- [ ] Roll back failed allocations without mixing renderer and target revisions.
+- [ ] Retire predecessor target resources exactly once.
+- [ ] Publish detached surface observations and a bounded journal.
+- [ ] Acknowledge the first visible frame for each committed surface revision.
 
-### 9. WebGL Context Recovery Authority
+### 7. WebGL Context Recovery Authority
 - [ ] Coordinate context loss, restoration and replacement resource generations.
 
-### 10. Committed Frame Diagnostics Authority
+### 8. Committed Frame Diagnostics Authority
 - [ ] Commit public frame state only after visible canvas acknowledgement.
 
-## Reset command contract
+## Render-surface command contract
 
 ```txt
-ResetStoryCommand
-  commandId
-  resetGeneration
+ViewportObservation
+  observationId
+  resizeGeneration
+  expectedSurfaceRevision
+  cssWidth
+  cssHeight
+  requestedDevicePixelRatio
   sourceKind
-  trustedEvent
-  modifierState
-  confirmationCapabilityId
-  expectedSceneId
-  expectedStoryRevision
-  expectedStorageRevision
-  requestedAtMs
+  observedAtMs
 ```
 
 ```txt
-ResetStoryResult
-  commandId
-  resetGeneration
+RenderSurfacePlan
+  planId
+  expectedSurfaceRevision
+  cssWidth
+  cssHeight
+  requestedDpr
+  appliedDpr
+  physicalWidth
+  physicalHeight
+  sampleCount
+  pixelBudget
+  sampleBudget
+  capabilityFingerprint
+  fallbackTier
+```
+
+```txt
+RenderSurfaceResult
+  resultId
+  planId
   status
-  reason
-  priorStoryRevision
-  priorStorageRevision
-  tombstoneRevision
-  timerRetirementResult
-  runtimeRetirementResult
-  storageEffectResult
-  reloadResult
-  firstCleanFrameId
+  priorSurfaceRevision
+  committedSurfaceRevision
+  actualDrawingBufferWidth
+  actualDrawingBufferHeight
+  actualTargetWidth
+  actualTargetHeight
+  framebufferStatus
+  rollbackResult
+  retirementResult
+  firstVisibleFrameId
 ```
 
 ## Required fixture rows
 
 ```txt
-plain-r-without-confirmation-rejected
-ctrl-r-classified-as-browser-refresh
-meta-r-classified-as-browser-refresh
-browser-refresh-performs-zero-storage-mutation
-repeat-keydown-rejected
-untrusted-event-rejected
-hidden-page-reset-rejected
-stale-story-revision-rejected
-stale-storage-revision-rejected
-confirmed-reset-installs-tombstone
-stale-tab-cannot-resurrect-reset-save
-storage-remove-failure-does-not-report-success
-pending-timers-retired-before-reset
-runtime-retired-before-reload
-first-clean-frame-cites-reset-generation
-reset-observation-detached
-reset-journal-bounded
+boot-uses-one-admitted-surface-plan
+mobile-viewport-avoids-fixed-design-preallocation
+1920x1080-dpr1-commits
+1920x1080-dpr2-within-budget-commits
+3840x2160-dpr2-downscales-to-budget
+texture-limit-plan-rejected-or-fallback
+renderbuffer-limit-plan-rejected-or-fallback
+sample-limit-plan-rejected-or-fallback
+zero-and-nonfinite-dimensions-rejected
+rapid-resize-coalesces-to-newest-generation
+stale-resize-rejected
+allocation-failure-preserves-predecessor
+framebuffer-incomplete-rolls-back
+replaced-target-retired-once
+actual-dimensions-match-committed-plan
+first-visible-frame-cites-surface-revision
+surface-observation-detached
+surface-journal-bounded
 ```
 
 ## Implementation order
@@ -122,18 +125,12 @@ reset-journal-bounded
 ```txt
 1. StoryManifest Authority
 2. StorySnapshot Startup Authority
-2a. Browser Storage Commit and Cross-Tab Convergence Authority
-2b. Destructive Reset Admission Authority
-3. Pointer and Hotspot-Pick Authority
-4. Inspection and Completion Authority
-4a. Completion Timer Generation Authority
-4b. Modal Focus and Continue Admission Authority
-5. Atomic Continue Transition
-6. Narrative Projection Authority
-7. Runtime Session Lifecycle and Scene Resource Retirement Authority
-8. Render Surface Resolution Authority
-9. WebGL Context Recovery Authority
-10. Committed Frame Diagnostics Authority
+3. Browser Storage and Reset Authority
+4. Interaction and Progression Authorities
+5. Narrative and Runtime Lifecycle Authorities
+6. Render Surface Resolution Authority
+7. WebGL Context Recovery Authority
+8. Committed Frame Diagnostics Authority
 ```
 
 ## Do not do first
@@ -147,3 +144,5 @@ shader redesign
 camera retuning
 visual polish
 ```
+
+The next render-specific implementation should begin with a pure surface planner and fixture matrix before changing Three.js allocation behavior.
