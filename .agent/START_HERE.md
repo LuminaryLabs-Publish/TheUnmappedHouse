@@ -1,30 +1,31 @@
-# START HERE: The Unmapped House Render-Surface Resolution Authority
+# START HERE: The Unmapped House Notebook Observability Projection Authority
 
-Last updated: `2026-07-12T13-08-15-04-00`
+Last updated: `2026-07-12T15-08-07-04-00`
 
 ## Summary
 
 `TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three authored scenes, nine hotspots, browser persistence, a fixed 16:9 shell and a descriptor-driven Three.js stage.
 
-The current audit isolates render-surface allocation. `StageKit` first allocates the renderer and a multisampled offscreen target at the fixed `1920 x 1080` design size multiplied by device pixel ratio, then immediately resizes both to the live aspect frame. Later resize events repeat drawing-buffer and target reallocations without a pixel budget, WebGL capability admission, resize generation, rollback or visible-frame receipt.
+The current audit isolates the player notebook and developer diagnostics boundary. The visible `Notebook` surface is a raw `JSON.stringify` projection of internal game, scene, clue, route, inspection, completion and log state. It is always mounted in the public page and has no build-channel gate, capability check, field classification, redaction profile, projection revision or visible-frame receipt.
 
 ## Plan ledger
 
-**Goal:** make CSS layout, device pixel ratio, renderer drawing-buffer size and offscreen target allocation one bounded, revisioned transaction that can reject unsupported plans, roll back failed allocation and prove the first visible frame.
+**Goal:** preserve useful player notes and developer diagnostics while making each projection explicitly classified, channel-admitted, revisioned, redacted and visibly attributable to the story state that produced it.
 
 - [x] Compare all ten accessible `LuminaryLabs-Publish` repositories.
 - [x] Exclude `TheCavalryOfRome`.
 - [x] Confirm all nine eligible repositories have central-ledger and root `.agent` coverage.
 - [x] Select only `TheUnmappedHouse`, the oldest eligible synchronized repository.
-- [x] Identify the complete interaction and render loop.
+- [x] Identify the complete interaction, notebook and render loop.
 - [x] Identify all active domains.
 - [x] Preserve all 24 implemented kits and their offered services.
-- [x] Trace constructor allocation, aspect-frame resize, DPR policy, multisampling, render-target use and visible submission.
+- [x] Trace the visible notebook DOM, CSS, aggregate fields and projection calls.
+- [x] Define notebook channel, classification, redaction, commit, observation and fixture contracts.
 - [x] Add timestamped architecture and system-specific audits.
 - [x] Refresh all required root `.agent` files and machine registry.
 - [x] Push only to `main`.
 - [x] Create no branch or pull request.
-- [ ] Runtime render-surface authority and executable browser fixtures remain future work.
+- [ ] Runtime notebook/diagnostic separation and executable browser fixtures remain future work.
 
 ## Selection
 
@@ -35,77 +36,95 @@ new eligible repositories: 0
 central-ledger-missing eligible repositories: 0
 root-.agent-missing eligible repositories: 0
 
-TheUnmappedHouse   2026-07-12T10-30-00-04-00 selected
-AetherVale         2026-07-12T10-48-19-04-00
-TheOpenAbove       2026-07-12T11-15-16-04-00
-IntoTheMeadow      2026-07-12T11-29-40-04-00
-PhantomCommand     2026-07-12T11-48-43-04-00
-PrehistoricRush    2026-07-12T12-08-05-04-00
-HorrorCorridor     2026-07-12T12-21-38-04-00
-ZombieOrchard      2026-07-12T12-39-25-04-00
-MyCozyIsland       2026-07-12T12-58-08-04-00
+TheUnmappedHouse   2026-07-12T13-08-15-04-00 selected
+AetherVale         2026-07-12T13-20-00-04-00
+TheOpenAbove       2026-07-12T13-29-56-04-00
+IntoTheMeadow      2026-07-12T13-54-00-04-00
+PhantomCommand     2026-07-12T13-59-50-04-00
+PrehistoricRush    2026-07-12T14-10-22-04-00
+HorrorCorridor     2026-07-12T14-30-36-04-00
+ZombieOrchard      2026-07-12T14-38-35-04-00
+MyCozyIsland       2026-07-12T14-59-01-04-00
 TheCavalryOfRome   excluded
 ```
 
-## Active render loop
+## Active notebook loop
 
 ```txt
-StageKit constructor
-  -> create antialiased WebGLRenderer
-  -> cap DPR at 2
-  -> allocate renderer at 1920 x 1080 CSS units
-  -> allocate samples:2 target at 1920 x 1080 x DPR
-  -> call resize immediately
+boot
+  -> load mutable story state
+  -> renderUi()
+  -> serialize internal aggregate fields
+  -> write raw JSON into the visible Notebook surface
 
-resize
-  -> sample innerWidth, innerHeight and devicePixelRatio
-  -> compute and apply fixed-aspect CSS frame
-  -> resize renderer drawing buffer through setPixelRatio + setSize
-  -> resize offscreen target to viewport x DPR
-  -> publish no plan, revision, allocation result or rollback receipt
+inspection
+  -> mutate inspected map, clues, log and completion
+  -> renderUi()
+  -> replace the visible Notebook JSON
+  -> save the same mutable aggregate
 
-frame
-  -> render stage into multisampled target
-  -> render post-process pass to default framebuffer
-  -> publish no surface/frame provenance
+Continue
+  -> mutate scene and route
+  -> renderUi()
+  -> replace the visible Notebook JSON
+  -> publish no notebook projection result or frame acknowledgement
 ```
 
 ## Main finding
 
-A DPR cap does not bound total work. A `3840 x 2160` aspect frame at DPR `2` requests a `7680 x 4320` drawing buffer and offscreen target, or `33,177,600` pixels each. The offscreen target also requests two samples, before accounting for depth, resolve storage, the default framebuffer or implementation overhead.
+The player-facing page always contains:
 
-The constructor also allocates the fixed design surface before the first live resize. On a narrow mobile viewport, it can transiently allocate a `3840 x 2160` target and renderer buffer before shrinking to the actual aspect frame.
+```html
+<section class="notes">
+  <h2>Notebook</h2>
+  <pre id="state-debug"></pre>
+</section>
+```
+
+`renderUi()` then publishes:
+
+```txt
+game title
+internal scene id
+acquired clue ids
+route ids
+current-scene inspection booleans
+exact completion boolean
+recent log entries
+```
+
+The projection is useful for development, but it is neither a curated player notebook nor an admitted diagnostic surface. Internal IDs and aggregate shape are therefore part of the public UI contract by accident.
 
 ## Domains and kits
 
 ```txt
 implemented kits: 24
-planned render-surface authority kits: 22
+planned notebook-observability authority kits: 21
 ```
 
-The current domains cover browser hosting, story descriptors, persistence, progression, timers, modal and terminal projection, keyboard and pointer input, fixed-aspect layout, Three.js/WebGL rendering, DPR sampling, drawing-buffer and offscreen-target allocation, diagnostics, validation and Pages deployment.
+Current domains cover browser hosting, story descriptors, persistence, progression, timers, modal and terminal projection, pointer and keyboard input, fixed-aspect layout, Three.js/WebGL rendering, diagnostics, syntax checks and Pages deployment.
 
 ## Required authority
 
 ```txt
-the-unmapped-house-render-surface-resolution-authority-domain
+the-unmapped-house-notebook-observability-projection-authority-domain
 ```
 
-It must own surface identity and revision, viewport observation, DPR policy, pixel and multisample budgets, WebGL capability admission, renderer and offscreen target plans, allocation readback, stale resize rejection, atomic commit, rollback, resource retirement, observations and first-visible-frame proof.
+It must own player-versus-developer channel policy, build and capability admission, field classification, redaction profiles, player notebook entries, diagnostic projections, projection identity and revision, stale rejection, typed commit results, observations, bounded journals and first-visible-frame proof.
 
 ## Read order
 
 1. `current-audit.md`
 2. `known-gaps.md`
-3. `trackers/2026-07-12T13-08-15-04-00/project-breakdown.md`
-4. `architecture-audit/2026-07-12T13-08-15-04-00-render-surface-resolution-dsk-map.md`
-5. `render-surface-audit/2026-07-12T13-08-15-04-00-pixel-budget-capability-commit-contract.md`
-6. `render-audit/2026-07-12T13-08-15-04-00-startup-dpr-offscreen-allocation-gap.md`
-7. `interaction-audit/2026-07-12T13-08-15-04-00-viewport-observation-surface-result-map.md`
-8. `gameplay-audit/2026-07-12T13-08-15-04-00-resize-scene-visible-cost-loop.md`
+3. `trackers/2026-07-12T15-08-07-04-00/project-breakdown.md`
+4. `architecture-audit/2026-07-12T15-08-07-04-00-notebook-observability-projection-dsk-map.md`
+5. `notebook-observability-audit/2026-07-12T15-08-07-04-00-classification-redaction-projection-contract.md`
+6. `render-audit/2026-07-12T15-08-07-04-00-raw-debug-json-visible-notebook-gap.md`
+7. `interaction-audit/2026-07-12T15-08-07-04-00-state-change-notebook-result-map.md`
+8. `gameplay-audit/2026-07-12T15-08-07-04-00-inspect-state-public-projection-loop.md`
 9. `next-steps.md`
 10. `validation.md`
 
 ## Next safe ledge
 
-Introduce a pure render-surface planner that receives CSS dimensions, DPR, WebGL limits and quality policy, chooses bounded physical dimensions and samples, prepares renderer and target allocations, verifies actual dimensions and framebuffer completeness, commits one surface revision or preserves the predecessor, then acknowledges the first visible frame.
+Create a pure notebook projection function that receives an immutable story snapshot, channel policy and redaction profile, returns either a player-safe narrative model or an admitted diagnostic model, commits one projection revision and proves the first frame that displays it.
