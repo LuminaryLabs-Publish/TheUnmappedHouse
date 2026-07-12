@@ -24,8 +24,8 @@ input-modality fixture: unavailable
 activation-parity fixture: unavailable
 visible-frame pick fixture: unavailable
 repo-local docs pushed to main: yes
-central ledger sync: pending central update
-central internal change log: pending central update
+central ledger sync: complete after this run's central update
+central internal change log: complete after this run's central update
 ```
 
 ## Plan ledger
@@ -37,6 +37,7 @@ central internal change log: pending central update
 - [x] Define stage, surface, camera, hotspot, context, and frame revision fixtures.
 - [x] Define mouse, touch, pen, leave, cancel, blur, miss, and dual-ingress fixtures.
 - [x] Define browser and deployed-Page evidence.
+- [x] Synchronize the repo-local audit with the central ledger and internal change log.
 - [ ] Implement and execute the validation gate.
 
 ## Available validation
