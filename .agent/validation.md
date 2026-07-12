@@ -1,54 +1,41 @@
 # Validation: The Unmapped House
 
-**Timestamp:** `2026-07-12T15-08-07-04-00`
+**Timestamp:** `2026-07-12T17-20-42-04-00`
 
 ## Summary
 
-This run changed documentation only. Source inspection proves that the public page always mounts a visible `Notebook` `<pre>` and that `renderUi()` writes a raw JSON serialization of internal game, scene, clue, route, inspection, completion and log fields into it without channel admission, classification, redaction, projection identity or visible-frame proof.
+This run changed documentation only. Source inspection proves that raw scene descriptors and shallow-merged browser state enter runtime consumers without manifest/snapshot admission.
 
 ## Plan ledger
 
-**Goal:** distinguish source-backed notebook/diagnostic findings from production-safety claims that require executable browser proof.
+**Goal:** separate source-backed startup findings from correctness claims that require executable fixtures.
 
-- [x] Inspect the Notebook shell in `index.html`.
-- [x] Inspect Notebook visibility and `<pre>` styling in `src/styles.css`.
-- [x] Inspect aggregate fields written by `renderUi()`.
-- [x] Confirm projection occurs at boot, inspection and scene transition.
-- [x] Confirm no build, query, role or capability gate exists.
-- [x] Confirm no field classification or redaction policy exists.
-- [x] Confirm no projection revision or visible-frame acknowledgement exists.
-- [x] Document pure and browser fixture requirements.
+- [x] Inspect `src/story-data.js`.
+- [x] Inspect `createInitialState()`, `loadState()`, current-scene resolution and boot persistence.
+- [x] Inspect inspection, Continue, StageKit loading and render consumption.
+- [x] Confirm no manifest or snapshot versions exist.
+- [x] Confirm no structural or semantic validator exists.
+- [x] Confirm no migration, compatibility or reconciliation result exists.
+- [x] Confirm no startup result or first-frame acknowledgement exists.
 - [ ] Execute fixtures after implementation.
 
 ## Proven from source
 
 ```txt
-#state-debug is mounted in index.html
-#state-debug is inside a section labelled Notebook
-.notes and pre are visible in normal page CSS
-renderUi writes JSON.stringify output directly to #state-debug
-projected fields are game, scene, clues, route, inspected, complete and latest
-scene values are internal scene ids
-clue values are internal clue ids
-inspected values are current-scene internal hotspot booleans
-complete is the authoritative scene-completion boolean
-renderUi runs during initial boot
-renderUi runs after each inspection
-renderUi runs after Continue scene transition
-no public/player/developer channel distinction exists
-no build-channel or capability admission exists
-no field classification or redaction profile exists
-no projection id or revision exists
-no story-revision binding exists
-no first-visible notebook frame acknowledgement exists
-```
-
-## Important precision boundary
-
-```txt
-future requiresToComplete arrays are not directly projected
-the current issue is not a claim that every future answer is disclosed
-the issue is that acquired internal ids and aggregate structure are unclassified public UI
+scenes is a raw exported array
+scene order drives Continue
+scene and hotspot ids are not validated
+completion clue references are not validated
+loadState accepts any parseable JSON value compatible with object spread
+loaded fields are shallow-merged over defaults
+unknown fields are retained
+field types are not validated
+unknown sceneId falls back currentScene without correcting state.sceneId
+boot immediately rewrites the merged state
+StageKit receives raw scene descriptors
+no manifest fingerprint reaches consumers
+no snapshot schema/revision reaches consumers
+no typed startup result exists
 ```
 
 ## Existing checks prove
@@ -63,15 +50,18 @@ src/story-data.js parses
 ## Existing checks do not prove
 
 ```txt
-player-versus-developer channel separation
-build-channel admission
-diagnostic capability admission
-field classification
-redaction and internal-id mapping
-stale story/projection rejection
-typed projection results
-public Pages omission of developer diagnostics
-visible frame provenance
+manifest structural validity
+manifest semantic validity
+unique identifiers
+route reachability
+save field types
+save schema compatibility
+migration determinism
+stale-id reconciliation
+unknown-field rejection
+storage-write ordering
+startup atomicity
+first-visible-frame provenance
 ```
 
 ## Change boundary
@@ -79,8 +69,7 @@ visible frame provenance
 ```txt
 runtime source changed: no
 story content changed: no
-notebook behavior changed: no
-diagnostic behavior changed: no
+save behavior changed: no
 render behavior changed: no
 package scripts changed: no
 dependencies changed: no
@@ -88,37 +77,40 @@ deployment changed: no
 branch created: no
 pull request created: no
 npm run check: not run
-browser notebook smoke: not run
-Pages notebook smoke: not run
+browser startup smoke: not run
+Pages startup smoke: not run
 ```
 
 ## Required fixtures
 
 ```txt
-fixture:public-player-notebook-only
-fixture:developer-capability-required
-fixture:developer-field-rejected-in-public-channel
-fixture:internal-id-redaction
-fixture:unknown-field-classification-rejected
-fixture:stale-story-revision-rejected
-fixture:stale-projection-revision-rejected
-fixture:independent-player-and-diagnostic-models
-fixture:detached-projection-result
-fixture:bounded-projection-journal
-fixture:first-visible-notebook-frame
-smoke:browser-notebook-channel-matrix
-smoke:pages-public-build-no-unadmitted-debug-json
+fixture:manifest-valid
+fixture:duplicate-scene-id-rejected
+fixture:duplicate-hotspot-id-rejected
+fixture:unknown-clue-reference-rejected
+fixture:invalid-render-descriptor-rejected
+fixture:non-object-snapshot-rejected
+fixture:wrong-snapshot-types-rejected
+fixture:unknown-snapshot-fields-rejected
+fixture:old-snapshot-migrates
+fixture:future-snapshot-rejected
+fixture:stale-ids-reconciled
+fixture:manifest-fingerprint-mismatch
+fixture:storage-not-rewritten-before-admission
+fixture:detached-startup-result
+fixture:first-visible-startup-frame
+smoke:browser-startup-matrix
+smoke:pages-startup-matrix
 ```
 
 ## Current result
 
 ```txt
-notebook projection authority implemented: no
-player/developer channel separation proven: no
-field classification proven: no
-redaction proven: no
-public-build diagnostic exclusion proven: no
-first visible notebook frame proof: no
+manifest authority implemented: no
+snapshot authority implemented: no
+migration and reconciliation proven: no
+startup atomicity proven: no
+first visible startup frame proven: no
 ```
 
-No production-safe notebook, diagnostic-channel or deployment-readiness claim is made.
+No save-compatibility, malformed-state recovery, startup-atomicity or deployment-readiness claim is made.
