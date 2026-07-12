@@ -1,78 +1,66 @@
 # Known gaps: The Unmapped House
 
-Timestamp: `2026-07-12T01-41-56-04-00`
+Timestamp: `2026-07-12T03-21-27-04-00`
 
 ## Plan ledger
 
-**Goal:** keep lifecycle, callback, scene-resource, rendering, story and validation gaps explicit.
+**Goal:** keep story, lifecycle, rendering and committed-frame proof gaps explicit.
 
-- [x] Trace page-lifetime ownership of RAF, listeners, timeouts and Three.js resources.
-- [x] Confirm scene replacement detaches but does not dispose resource graphs.
-- [x] Confirm no session generation, lifecycle state or ordered disposal result exists.
-- [x] Define callback leases, resource generations, retirement and restart-proof gaps.
-- [ ] Implement and execute the Runtime Session Lifecycle Authority gate.
+- [x] Trace synchronous story/debug projection and asynchronous canvas presentation.
+- [x] Confirm no frame sequence, immutable input, pass result or visible acknowledgement exists.
+- [x] Confirm screenshots and notebook/debug state cannot cite a committed frame.
+- [x] Define frame identity, correlation, observation and fixture gaps.
+- [ ] Implement and execute the Committed Frame Diagnostics Authority gate.
 
-## Runtime session gaps
+## Frame identity gaps
 
-- No runtime session id or generation exists.
-- No lifecycle state distinguishes constructing, ready, stopping, disposed or failed.
-- No typed start, stop, restart, dispose or rollback result exists.
-- Module evaluation creates the runtime immediately; no admitted startup transaction exists.
-- No idempotent stop or dispose operation exists.
-- No pagehide or visibility-retirement policy exists.
+- No frame id or monotonic frame sequence exists.
+- RAF callbacks are not associated with a runtime session or generation.
+- Frames do not cite scene-resource, surface or WebGL context generations.
+- No story, narrative, camera or hotspot-set revision is frozen for a frame.
+- No immutable frame-input snapshot exists.
 
-## Callback lease gaps
+## Pass-result gaps
 
-- The RAF request id is not retained.
-- `animate()` always schedules another callback before rendering.
-- Resize, mousemove, click, Continue and keyboard listeners are not represented as leases.
-- Anonymous listener closures cannot be removed without retained references.
-- The 450 ms completion timeout is not retained or cancelled.
-- No callback checks a session generation or lifecycle state.
-- No stale callback rejection or observation exists.
+- The stage render target pass returns no typed result.
+- The post/default-framebuffer pass returns no typed result.
+- Failures are not classified as rejected, failed or partially submitted.
+- No final canvas presentation acknowledgement exists.
+- No first-frame receipt exists after startup, inspection or scene transition.
 
-## Scene-resource gaps
+## Story and diagnostics gaps
 
-- `stageGroup.clear()` detaches children but does not dispose their geometries or materials.
-- The `materials` array is replaced before predecessor materials are retired.
-- Hotspot geometry and transparent materials are not disposed.
-- Scene loads have no resource generation, commit receipt or retirement result.
-- Predecessor resources are not retained until a successor-frame acknowledgement.
-- No rollback exists when successor resource construction partially fails.
+- `renderUi()` projects notebook/debug state immediately after mutations.
+- Debug JSON contains mutable story state but no renderer or frame evidence.
+- Successor scene DOM can appear before a successor canvas frame is acknowledged.
+- Inspection completion can be reported without a frame that cites the inspection result.
+- No public detached frame snapshot or bounded frame journal exists.
+- No screenshot artifact can be tied to one committed frame.
 
-## Renderer ownership gaps
+## Runtime and resource dependencies
 
-- The renderer and canvas have no owner lease.
-- The multisampled render target is never disposed.
-- The post material and full-screen plane geometry are never disposed.
-- Scene lights, groups and context are not retired through one plan.
-- No context-loss handling is coordinated with lifecycle disposal.
-- No detached resource inventory or leak observation exists.
-
-## Gameplay and interaction gaps
-
-- Completion timeout work can outlive the state that scheduled it in any future in-place reset or restart.
-- Input remains admitted until the page itself disappears.
-- A disposed or stale stage cannot currently reject hotspot picks because no disposed state exists.
-- Continue has no session or scene generation precondition.
-- Narrative, story and stage commits do not cite runtime identity.
+- Runtime session lifecycle and callback leases remain unimplemented.
+- Scene-resource generations and ordered retirement remain unimplemented.
+- Render-surface revisions remain unimplemented.
+- WebGL context generation and recovery remain unimplemented.
+- These identities are required inputs to authoritative committed-frame diagnostics.
 
 ## Existing upstream gaps
 
 - StoryManifest, StorySnapshot, pointer, inspection, transition and narrative authorities remain unimplemented.
-- Render Surface Resolution and WebGL Context Recovery remain unimplemented.
-- No committed frame correlates runtime, scene-resource, story, narrative, surface and context generations.
+- Raw localStorage effects remain untyped.
+- Canvas and side-panel interaction parity remains unproven.
+- Scene and narrative commits remain non-atomic.
 
 ## Validation gaps
 
 - `npm run check` is syntax-only.
-- No fixture counts live RAF chains.
-- No fixture proves listener removal.
-- No fixture advances a stale timeout after stop.
-- No fixture records geometry/material/target disposal.
-- No fixture repeats scene transitions and checks bounded resource counts.
-- No fixture restarts the runtime and proves one canvas and one session.
-- No deployed browser artifact exposes lifecycle or resource-retirement receipts.
+- No fixture drives an actual renderer and captures pass results.
+- No fixture verifies first frame after inspection or Continue.
+- No fixture compares notebook/debug revision with canvas revision.
+- No fixture rejects stale frame results.
+- No browser smoke records a screenshot plus frame receipt.
+- No deployed readback exposes a committed-frame journal.
 
 ## Deferred work
 
