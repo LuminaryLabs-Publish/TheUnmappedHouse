@@ -1,25 +1,25 @@
 # Current audit: The Unmapped House
 
-**Timestamp:** `2026-07-12T06-30-34-04-00`  
+**Timestamp:** `2026-07-12T08-10-36-04-00`  
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
 ## Summary
 
-The current audit isolates modal focus and Continue admission. `index.html` keeps the interlude and Continue button mounted at all times. Closed state is expressed with `aria-hidden="true"`, opacity zero and `pointer-events: none`, but the button is never disabled, made inert or removed from sequential focus. `src/game.js` attaches an unconditional click handler to `nextScene()`, and `nextScene()` does not verify scene completion, an open interlude or an unconsumed completion proof.
+The current audit isolates the completion-to-interlude delay in `src/game.js`. When the last required clue is granted, `inspectHotspot()` calls `setTimeout(() => showInterlude(currentScene), 450)`. The timeout handle is discarded, and the callback references the mutable module variable `currentScene`. `nextScene()` can change that variable, replace stage resources, hide the interlude and save the successor before the timeout fires. The callback then opens whichever scene is current at fire time without validating the scene or completion proof that admitted the delay.
 
 ## Plan ledger
 
-**Goal:** define one authoritative modal/focus transaction from completion proof through interlude visibility, keyboard isolation, Continue admission and focus retirement.
+**Goal:** define one authoritative delayed-interlude transaction from scene completion through timer scheduling, cancellation, callback admission, modal opening and visible projection.
 
 - [x] Compare the full Publish inventory against central ledger state.
 - [x] Exclude `TheCavalryOfRome`.
-- [x] Select only `TheUnmappedHouse` from the oldest eligible central timestamp.
-- [x] Inspect `index.html`, `src/styles.css`, `src/game.js`, `src/stage-kit.js` and current audit state.
-- [x] Trace native focus behavior for closed and open interlude states.
-- [x] Confirm opacity, pointer blocking and `aria-hidden` do not create a disabled keyboard state.
-- [x] Confirm Continue has no completion or modal-generation admission guard.
+- [x] Select only `TheUnmappedHouse` from the oldest synchronized eligible timestamp.
+- [x] Inspect `src/game.js`, `src/story-data.js`, `src/stage-kit.js`, package checks and prior lifecycle/modal boundaries.
+- [x] Trace completion, timer scheduling, scene transition, terminal copy and delayed interlude projection.
+- [x] Confirm the timeout handle and immutable callback context are absent.
+- [x] Confirm transitions and terminal handling do not cancel or fence pending callbacks.
 - [x] Inventory all active domains, all 24 implemented kits and offered services.
-- [x] Define modal, focus, Continue capability, command, result, observation and fixture kits.
+- [x] Define timer generation, lease, callback context, barriers, results, observation and fixture kits.
 - [x] Change documentation only.
 - [ ] Implement and execute the authority.
 
@@ -31,15 +31,15 @@ eligible non-Cavalry repositories: 9
 new or ledger-missing eligible repositories: 0
 root-.agent-missing eligible repositories: 0
 
-TheUnmappedHouse    2026-07-12T04-44-36-04-00 selected
-AetherVale          2026-07-12T04-50-41-04-00
-MyCozyIsland        2026-07-12T05-00-19-04-00
-TheOpenAbove        2026-07-12T05-11-46-04-00
-PrehistoricRush     2026-07-12T05-21-52-04-00
-IntoTheMeadow       2026-07-12T05-39-42-04-00
-PhantomCommand      2026-07-12T05-49-04-04-00
-HorrorCorridor      2026-07-12T05-59-28-04-00
-ZombieOrchard       2026-07-12T06-19-56-04-00
+TheUnmappedHouse    2026-07-12T06-30-34-04-00 selected
+AetherVale          2026-07-12T06-41-32-04-00
+MyCozyIsland        2026-07-12T06-51-27-04-00
+TheOpenAbove        2026-07-12T07-00-48-04-00
+PrehistoricRush     2026-07-12T07-09-49-04-00
+IntoTheMeadow       2026-07-12T07-19-47-04-00
+PhantomCommand      2026-07-12T07-29-32-04-00
+HorrorCorridor      2026-07-12T07-41-06-04-00
+ZombieOrchard       2026-07-12T07-51-04-04-00
 TheCavalryOfRome    excluded
 ```
 
@@ -47,50 +47,41 @@ TheCavalryOfRome    excluded
 
 ```txt
 module boot
-  -> mount stage, story panel and interlude DOM
-  -> interlude starts aria-hidden=true
-  -> closed CSS sets opacity:0 and pointer-events:none
-  -> Continue remains an enabled button in document order
-  -> load state, stage and UI
+  -> load raw localStorage snapshot
+  -> resolve currentScene from mutable state
+  -> construct StageKit
+  -> load the scene, project UI and save
 
 inspection
   -> canvas or side-panel activation calls inspectHotspot()
-  -> mutate inspection, clues, log and narrative
-  -> if complete, schedule showInterlude() after 450 ms
+  -> mutate inspected map, clues, log and narrative
+  -> if the scene is complete, schedule one 450 ms timeout
+  -> timeout handle is not retained
+  -> callback context is not frozen
+  -> render UI and persist state
 
-showInterlude
-  -> write completion copy
-  -> add .open
-  -> set aria-hidden=false
-  -> does not capture current focus
-  -> does not move focus into the interlude
-  -> does not make background controls inert
+transition during delay
+  -> Continue or another caller invokes nextScene()
+  -> currentScene changes
+  -> interlude is hidden
+  -> StageKit replaces live scene resources
+  -> successor state is rendered and saved
 
-hidden keyboard path
-  -> Tab navigation can reach Continue while closed
-  -> Enter or Space dispatches click
-  -> nextScene() advances without completion proof
-
-open keyboard path
-  -> focus can remain in background or traverse background controls
-  -> background inspection commands remain keyboard reachable
-
-Continue
-  -> derive successor by scene-array order
-  -> mutate current scene, route and log
-  -> replace stage resources
-  -> project UI and save
+callback fire
+  -> arrow callback resolves mutable currentScene
+  -> showInterlude() writes that scene's copy
+  -> interlude opens without scene/proof/timer/transition admission
 ```
 
 ## Source ownership
 
 | Source | Current responsibilities |
 |---|---|
-| `index.html` | Fixed shell, story panel, mounted interlude and native Continue control. |
-| `src/styles.css` | Closed/open interlude appearance and pointer routing. |
-| `src/game.js` | Mutable story state, completion timeout, interlude projection, unconditional Continue handler and scene transition. |
-| `src/story-data.js` | Scene, hotspot, clue, stage and post descriptors. |
-| `src/stage-kit.js` | Three.js resource graph, canvas pointer input, scene loading and frame submission. |
+| `index.html` | Fixed shell, story panel, mounted interlude and Continue control. |
+| `src/styles.css` | Interlude appearance and pointer routing. |
+| `src/game.js` | Mutable story state, completion test, unretained timeout, interlude projection, transition, terminal copy and persistence. |
+| `src/story-data.js` | Three scenes, nine hotspots, nine required clues and interlude descriptors. |
+| `src/stage-kit.js` | Three.js resource graph, scene replacement, pointer input, resize and recursive RAF. |
 | `src/aspect-frame.js` | Fixed 1920 by 1080 composition. |
 | `package.json` | Syntax-only source checks and local static serving. |
 
@@ -102,33 +93,32 @@ authored story, scene, hotspot and render descriptors
 raw localStorage read, write and reset effects
 mutable story snapshot ownership
 scene route, inspection, clue, flags and log
-completion and unretained interlude timing
-DOM narrative and debug projection
-native sequential focus and button activation
-CSS modal visibility and pointer-event routing
+scene-completion derivation
+unretained 450 ms completion timeout
+interlude and terminal narrative projection
+modal visibility, native focus and Continue activation
 Three.js CDN runtime
 WebGL renderer, target, scene, camera, lights and post composition
 live scene replacement and procedural resource allocation
 hotspot volumes, raycasting and camera parallax
-resize, input, timeouts and recursive RAF callbacks
+resize, input, timeout and recursive RAF callbacks
 syntax validation, Pages deployment and audit tracking
 ```
 
 Missing authority domains:
 
 ```txt
-modal state and generation
-closed-state inertness
-modal dialog semantics
-focus origin capture
-focus entry, trap and return
-background interaction suspension
-Continue capability
-Continue command admission
-completion-proof consumption
-modal and Continue typed results
-focus observation and bounded journal
-keyboard and assistive-technology fixture gate
+completion timer identity and generation
+completion schedule command admission
+immutable callback context
+timeout lease ownership
+scene-transition timer barrier
+terminal-route timer barrier
+session-stop timer barrier
+stale callback rejection
+typed schedule, cancel and fire results
+timer observations and bounded journal
+event-loop ordering fixture gate
 ```
 
 ## Implemented kits and services
@@ -143,8 +133,8 @@ keyboard and assistive-technology fixture gate
 | `inspection-ledger-kit` | Track scene-keyed hotspot booleans. |
 | `clue-ledger-kit` | Grant and query global clue strings. |
 | `notebook-log-kit` | Prepend and cap story log rows. |
-| `interlude-timer-kit` | Schedule the unretained 450 ms completion callback. |
-| `terminal-route-kit` | Project prototype-complete copy without durable terminal state. |
+| `interlude-timer-kit` | Schedule an unretained 450 ms callback against mutable `currentScene`. |
+| `terminal-route-kit` | Write terminal copy without durable terminal state or timer barrier. |
 | `localstorage-save-kit` | Parse, shallow-merge, write and clear raw browser state without typed results. |
 | `stage-render-kit` | Create renderer, camera, lights, target, post scene, canvas, listeners and recursive RAF. |
 | `scene-descriptor-consumer-kit` | Convert one scene descriptor into live Three.js resources. |
@@ -162,85 +152,93 @@ keyboard and assistive-technology fixture gate
 
 ## Main finding
 
-### Closed visual state is not a closed keyboard state
+### The completion delay has no identity or owner
 
-The interlude is always mounted. Closed state changes opacity, pointer handling and `aria-hidden`, but does not set `inert`, `hidden`, `disabled`, `tabindex="-1"` or any equivalent focus policy on Continue.
+`setTimeout()` returns a handle, but the source does not retain it. There is no timer id, generation, expected scene id, completion-proof id, runtime session id or transition revision.
 
-### Continue has no admission predicate
+### The callback reads mutable scene state
 
-The native button click handler calls `nextScene()` directly. `nextScene()` derives the next array entry and mutates route and stage state without checking `sceneComplete(currentScene)`, `interlude.classList.contains("open")` or an immutable completion proof.
+The callback is `() => showInterlude(currentScene)`. JavaScript closes over the binding, so `currentScene` is read when the callback runs. It is not a frozen reference to the scene that completed.
 
-### Open interlude is not modal to keyboard users
+### Scene transition does not fence the callback
 
-The interlude has no `role="dialog"` or `aria-modal="true"`. Opening does not capture focus origin, focus Continue, trap focus, suspend background inspection buttons or restore focus on close.
+`nextScene()` mutates `currentScene`, hides the interlude, calls `stage.loadScene(currentScene)`, renders UI and saves. It does not cancel or invalidate a pending completion timeout.
 
-### Reachable bypass
+### Reachable stale projection
 
 ```txt
-fresh scene with zero required clues
-  -> press Tab until hidden Continue receives focus
-  -> press Enter or Space
-  -> browser dispatches click
-  -> nextScene() advances and saves successor scene
-  -> repeat to reach terminal copy without inspections
+complete scene A
+  -> timer A scheduled for +450 ms
+  -> before fire, transition to scene B
+  -> currentScene becomes B
+  -> stage B and story B are committed
+  -> timer A fires
+  -> callback resolves currentScene as B
+  -> B interlude opens without B completion
 ```
 
-This is a source-level reachability finding. No browser execution is claimed in this documentation-only run.
+The currently documented hidden Continue path makes the race source-reachable. The timer defect remains independently relevant because future programmatic transitions, restart flows or modal fixes also require explicit callback ownership.
+
+### Terminal copy can be overwritten
+
+On the final scene, `nextScene()` writes `Prototype complete` copy but does not establish a terminal state or cancel pending timers. A delayed callback can subsequently rewrite the interlude title and text with the final scene's normal interlude copy.
 
 ## Required parent domain
 
 ```txt
-the-unmapped-house-modal-focus-continue-admission-authority-domain
+the-unmapped-house-completion-timer-generation-authority-domain
 ```
 
 Candidate kits:
 
 ```txt
-modal-state-kit
-modal-generation-kit
-modal-open-command-kit
-modal-close-command-kit
-modal-visibility-adapter-kit
-hidden-control-inertness-kit
-focus-origin-capture-kit
-modal-focus-entry-kit
-modal-focus-trap-kit
-modal-focus-return-kit
-background-interaction-suspension-kit
-continue-capability-kit
-continue-command-kit
-continue-command-admission-kit
-scene-completion-proof-consumption-kit
-modal-command-result-kit
-modal-focus-observation-kit
-modal-focus-journal-kit
-hidden-continue-fixture-kit
-open-modal-background-activation-fixture-kit
-keyboard-modal-browser-smoke-kit
-screen-reader-modal-contract-fixture-kit
+completion-delay-policy-kit
+completion-timer-id-kit
+completion-timer-generation-kit
+completion-schedule-command-kit
+completion-schedule-admission-kit
+completion-callback-context-kit
+completion-timer-lease-kit
+completion-timer-cancel-kit
+scene-transition-timer-barrier-kit
+terminal-route-timer-barrier-kit
+runtime-stop-timer-barrier-kit
+stale-completion-callback-rejection-kit
+completion-timer-scheduled-result-kit
+completion-timer-cancelled-result-kit
+completion-timer-fired-result-kit
+interlude-open-intent-kit
+completion-timer-observation-kit
+completion-timer-journal-kit
+delayed-interlude-fixture-kit
+transition-before-delay-fixture-kit
+terminal-before-delay-fixture-kit
+browser-timer-order-smoke-kit
 ```
 
 ## Required transaction
 
 ```txt
 SceneCompletionProof
-  -> admit OpenInterludeCommand for current scene and runtime generation
-  -> capture focus origin
-  -> commit modal generation
-  -> make background stage and story controls inert
-  -> expose role=dialog and aria-modal=true
-  -> focus the admitted Continue control
-  -> constrain sequential focus to the modal
-  -> publish ModalOpenResult
+  -> create ScheduleInterludeCommand
+  -> validate runtime session, scene, proof and transition revision
+  -> allocate timer id and generation
+  -> freeze callback context
+  -> retain timeout lease
+  -> publish CompletionTimerScheduledResult
 
-ContinueCommand
-  -> cite modal generation and current completion proof
-  -> reject hidden, stale, duplicate or unproven activation
-  -> consume completion proof exactly once
-  -> retire modal focus lease
-  -> route through Atomic Continue Transition
-  -> restore focus only if predecessor UI remains current
-  -> publish ModalContinueResult and bounded journal row
+transition, terminal route, reset or stop
+  -> enumerate incompatible live timer leases
+  -> cancel or invalidate them
+  -> publish one cancellation result per lease or aggregate result
+
+callback fire
+  -> admit by timer id and generation
+  -> validate frozen scene, proof, transition, modal and runtime identities
+  -> reject stale or cancelled callbacks with zero mutation
+  -> submit one OpenInterludeCommand
+  -> retire lease exactly once
+  -> publish CompletionTimerFiredResult
 ```
 
 ## Ordered implementation queue
@@ -251,7 +249,8 @@ ContinueCommand
 2a. Browser Storage Commit and Cross-Tab Convergence Authority
 3. Pointer and Hotspot-Pick Authority
 4. Inspection and Completion Authority
-4a. Modal Focus and Continue Admission Authority
+4a. Completion Timer Generation Authority
+4b. Modal Focus and Continue Admission Authority
 5. Atomic Continue Transition
 6. Narrative Projection Authority
 7. Runtime Session Lifecycle and Scene Resource Retirement Authority
@@ -262,4 +261,4 @@ ContinueCommand
 
 ## Validation boundary
 
-Documentation only. Runtime source, story content, focus behavior, modal semantics, transitions, rendering, package scripts, dependencies and deployment were not changed. No browser fixture currently proves hidden-control inertness, modal focus isolation, completion-gated Continue or assistive-technology semantics.
+Documentation only. Runtime source, story content, timer behavior, modal behavior, transitions, rendering, package scripts, dependencies and deployment were not changed. No current executable fixture proves timer identity, cancellation, stale callback rejection, transition barriers, terminal-copy stability or event-loop ordering.
