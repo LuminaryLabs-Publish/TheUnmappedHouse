@@ -1,10 +1,10 @@
 # Next steps: The Unmapped House
 
-**Timestamp:** `2026-07-12T13-08-15-04-00`
+**Timestamp:** `2026-07-12T15-08-07-04-00`
 
 ## Goal
 
-Preserve the current three-scene story and anime-horror presentation while making content, persistence, interaction, lifecycle and render-surface behavior deterministic, bounded and observable.
+Preserve the current three-scene story and anime-horror presentation while making content, persistence, interaction, notebook projection, lifecycle and rendering deterministic, bounded and observable.
 
 ## Plan ledger
 
@@ -25,99 +25,94 @@ Preserve the current three-scene story and anime-horror presentation while makin
 - [ ] Make modal controls inert while closed and require a current completion proof.
 - [ ] Atomically commit successor story, stage, narrative and persistence candidates.
 
-### 5. Narrative and lifecycle authority
-- [ ] Make DOM and aria-live output consume one typed revisioned projection.
+### 5. Narrative projection authority
+- [ ] Make title, body, hotspot controls, aria-live output and terminal copy consume one typed revisioned projection.
+
+### 6. Notebook Observability Projection Authority
+- [ ] Add `NotebookSurfaceId`, projection id and projection revision.
+- [ ] Define player, developer and support/export channel kinds.
+- [ ] Admit developer diagnostics only through explicit build and capability policy.
+- [ ] Classify story fields as player-safe, developer-only or prohibited.
+- [ ] Add immutable redaction profiles with versioned internal-id mapping.
+- [ ] Project authored player notebook entries independently from diagnostics.
+- [ ] Build diagnostic models without reusing the public Notebook contract.
+- [ ] Reject stale story and projection revisions.
+- [ ] Commit one typed projection result.
+- [ ] Publish detached observations and a bounded journal.
+- [ ] Acknowledge the first visible notebook frame.
+
+### 7. Runtime lifecycle authority
 - [ ] Add session identity, callback leases, resource generations and ordered disposal.
 
-### 6. Render Surface Resolution Authority
-- [ ] Add `RenderSurfaceId`, surface revision and resize generation.
-- [ ] Create a pure viewport, DPR, pixel-budget and sample-budget planner.
-- [ ] Query texture, renderbuffer and sample limits before allocation.
-- [ ] Remove the fixed-design predecessor allocation before live viewport admission.
-- [ ] Prepare renderer and offscreen-target candidates before commit.
-- [ ] Read back actual drawing-buffer and target dimensions.
-- [ ] Check framebuffer completeness.
-- [ ] Reject stale resize observations.
-- [ ] Roll back failed allocations without mixing renderer and target revisions.
-- [ ] Retire predecessor target resources exactly once.
-- [ ] Publish detached surface observations and a bounded journal.
-- [ ] Acknowledge the first visible frame for each committed surface revision.
+### 8. Render Surface Resolution Authority
+- [ ] Add surface identity, bounded planning, WebGL capability admission, allocation readback, rollback, retirement and first-visible-frame proof.
 
-### 7. WebGL Context Recovery Authority
+### 9. WebGL Context Recovery Authority
 - [ ] Coordinate context loss, restoration and replacement resource generations.
 
-### 8. Committed Frame Diagnostics Authority
+### 10. Committed Frame Diagnostics Authority
 - [ ] Commit public frame state only after visible canvas acknowledgement.
 
-## Render-surface command contract
+## Notebook projection contracts
 
 ```txt
-ViewportObservation
-  observationId
-  resizeGeneration
-  expectedSurfaceRevision
-  cssWidth
-  cssHeight
-  requestedDevicePixelRatio
-  sourceKind
-  observedAtMs
+NotebookProjectionCommand
+  commandId
+  expectedStoryRevision
+  expectedProjectionRevision
+  sceneGeneration
+  requestedChannel
+  capabilityToken
+  requestedProfileId
+  requestedAtMs
 ```
 
 ```txt
-RenderSurfacePlan
+NotebookProjectionPlan
   planId
-  expectedSurfaceRevision
-  cssWidth
-  cssHeight
-  requestedDpr
-  appliedDpr
-  physicalWidth
-  physicalHeight
-  sampleCount
-  pixelBudget
-  sampleBudget
-  capabilityFingerprint
-  fallbackTier
+  storyRevision
+  sceneGeneration
+  channel
+  classificationRevision
+  redactionProfileId
+  redactionProfileRevision
+  includedFields
+  redactedFields
+  omittedFields
+  playerEntries
+  diagnosticModel
 ```
 
 ```txt
-RenderSurfaceResult
+NotebookProjectionResult
   resultId
   planId
   status
-  priorSurfaceRevision
-  committedSurfaceRevision
-  actualDrawingBufferWidth
-  actualDrawingBufferHeight
-  actualTargetWidth
-  actualTargetHeight
-  framebufferStatus
-  rollbackResult
-  retirementResult
+  priorProjectionRevision
+  committedProjectionRevision
+  channel
+  appliedProfileId
+  includedFields
+  redactedFields
+  omittedFields
   firstVisibleFrameId
 ```
 
 ## Required fixture rows
 
 ```txt
-boot-uses-one-admitted-surface-plan
-mobile-viewport-avoids-fixed-design-preallocation
-1920x1080-dpr1-commits
-1920x1080-dpr2-within-budget-commits
-3840x2160-dpr2-downscales-to-budget
-texture-limit-plan-rejected-or-fallback
-renderbuffer-limit-plan-rejected-or-fallback
-sample-limit-plan-rejected-or-fallback
-zero-and-nonfinite-dimensions-rejected
-rapid-resize-coalesces-to-newest-generation
-stale-resize-rejected
-allocation-failure-preserves-predecessor
-framebuffer-incomplete-rolls-back
-replaced-target-retired-once
-actual-dimensions-match-committed-plan
-first-visible-frame-cites-surface-revision
-surface-observation-detached
-surface-journal-bounded
+public-player-build-renders-authored-notebook-only
+developer-channel-requires-explicit-admission
+public-channel-rejects-developer-only-fields
+internal-scene-and-clue-ids-map-or-redact
+unknown-field-classification-rejected
+stale-story-revision-rejected
+stale-projection-revision-rejected
+player-and-developer-models-are-independent
+projection-result-is-detached-and-json-safe
+first-visible-frame-cites-story-and-projection-revisions
+projection-journal-is-bounded
+pages-public-build-contains-no-unadmitted-debug-json
 ```
 
 ## Implementation order
@@ -127,10 +122,12 @@ surface-journal-bounded
 2. StorySnapshot Startup Authority
 3. Browser Storage and Reset Authority
 4. Interaction and Progression Authorities
-5. Narrative and Runtime Lifecycle Authorities
-6. Render Surface Resolution Authority
-7. WebGL Context Recovery Authority
-8. Committed Frame Diagnostics Authority
+5. Narrative Projection Authority
+6. Notebook Observability Projection Authority
+7. Runtime Lifecycle Authority
+8. Render Surface Resolution Authority
+9. WebGL Context Recovery Authority
+10. Committed Frame Diagnostics Authority
 ```
 
 ## Do not do first
@@ -143,6 +140,7 @@ renderer replacement
 shader redesign
 camera retuning
 visual polish
+adding more raw fields to #state-debug
 ```
 
-The next render-specific implementation should begin with a pure surface planner and fixture matrix before changing Three.js allocation behavior.
+The next notebook-specific implementation should begin with a pure field-classification and projection function before changing the DOM or public Pages build.
