@@ -1,18 +1,18 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-12T01-41-56-04-00`
+Timestamp: `2026-07-12T03-21-27-04-00`
 
 ## Summary
 
-This was a documentation-only Runtime Session Lifecycle and Scene Resource Retirement audit. Runtime, gameplay, rendering, dependencies, package scripts and deployment configuration were not changed.
+This was a documentation-only Committed Frame Diagnostics audit. Runtime, gameplay, rendering, dependencies, package scripts and deployment configuration were not changed.
 
 ## Plan ledger
 
-**Goal:** define executable evidence that proves callback isolation, ordered disposal, scene-resource retirement, restart idempotence and frame cessation.
+**Goal:** define executable evidence that proves story, notebook/debug state and the visible two-pass canvas cite one committed frame.
 
 - [x] Record the current syntax-only validation boundary.
-- [x] Define session, callback, timer, resource-generation, disposal and restart fixture rows.
-- [x] Define a deployed browser lifecycle smoke sequence.
+- [x] Define frame identity, immutable input, stage-pass, post-pass, visible-ack and correlation fixture rows.
+- [x] Define a deployed browser screenshot-correlation sequence.
 - [x] Update `.agent/kit-registry.json` with the implemented and proposed kit inventory.
 - [x] Push repo-local documentation to `main`.
 - [x] Synchronize the central ledger and internal change log.
@@ -32,10 +32,10 @@ branch created: no
 pull request created: no
 npm run check: not run
 browser smoke: not run
-runtime lifecycle fixture: unavailable
-scene resource retirement fixture: unavailable
-stale callback fixture: unavailable
-restart idempotence fixture: unavailable
+committed-frame fixture: unavailable
+stage/post pass fixture: unavailable
+story/canvas parity fixture: unavailable
+screenshot correlation fixture: unavailable
 repo-local docs pushed to main: yes
 central ledger sync: complete
 central internal change log: complete
@@ -52,110 +52,96 @@ src/stage-kit.js
 src/story-data.js
 ```
 
-It does not create a WebGL renderer, submit RAF work, install and remove listeners, fire timers, transition scenes, inspect Three.js resource disposal or restart the runtime.
+It does not create a WebGL renderer, submit frames, freeze frame inputs, inspect pass results, capture screenshots or compare story/debug state with the visible canvas.
 
 ## Required commands
 
 ```txt
-node scripts/validate-runtime-lifecycle.mjs
-node scripts/validate-scene-resource-retirement.mjs
-node scripts/validate-stale-callback-fencing.mjs
-node scripts/validate-runtime-restart-idempotence.mjs
+node scripts/validate-frame-contract.mjs
+node scripts/validate-stage-post-results.mjs
+node scripts/validate-story-frame-parity.mjs
+node scripts/validate-stale-frame-rejection.mjs
 npm run check
 ```
 
 Recommended aggregate:
 
 ```txt
-npm run validate:lifecycle
+npm run validate:frames
 ```
 
 ## Required fixture rows
 
-### Session and startup
+### Frame admission and identity
 
 ```txt
-session-id-required
-session-generation-monotonic
-lifecycle-state-valid
-one-ready-session
-partial-startup-reverse-rollback
-failed-start-does-not-publish-ready
+frame-command-requires-runtime-generation
+frame-command-requires-scene-resource-generation
+frame-command-requires-surface-revision
+frame-command-requires-context-generation
+frame-sequence-monotonic
+duplicate-frame-id-rejected
+stale-frame-generation-rejected
 ```
 
-### Callback ownership
+### Immutable input
 
 ```txt
-one-live-raf-lease
-stop-cancels-next-frame
-resize-listener-retired
-pointer-listener-retired
-click-listener-retired
-continue-listener-retired
-keyboard-listener-retired
-timeout-retired
-stale-generation-callback-rejected
-disposed-session-callback-rejected
+frame-input-frozen
+story-revision-required
+narrative-revision-required
+camera-revision-required
+hotspot-set-revision-required
+wall-time-sample-recorded
+live-mutation-cannot-change-inflight-input
 ```
 
-### Scene resources
+### Pass results
 
 ```txt
-scene-resource-generation-required
-successor-built-before-predecessor-retirement
-successor-frame-ack-before-retirement
-predecessor-geometry-disposed
-predecessor-material-disposed
-predecessor-hotspot-resources-disposed
-partial-successor-build-rolls-back
-repeated-transition-resource-count-bounded
+stage-pass-result-required
+stage-pass-target-identity-recorded
+post-pass-result-required
+default-framebuffer-result-recorded
+failed-stage-pass-not-committed
+failed-post-pass-not-committed
 ```
 
-### Root renderer resources
+### Visible acknowledgement and parity
 
 ```txt
-post-plane-geometry-disposed
-post-material-disposed
-render-target-disposed
-renderer-disposed
-context-loss-policy-explicit
-canvas-removed
-```
-
-### Stop and restart
-
-```txt
-stop-result-idempotent
-dispose-result-idempotent
-stop-fences-new-commands
-restart-allocates-new-session-generation
-restart-produces-one-canvas
-restart-produces-one-raf-chain
-restart-does-not-reuse-disposed-scene-resources
+visible-frame-ack-required
+first-frame-after-start
+first-frame-after-inspection
+first-frame-after-scene-transition
+debug-readback-cites-committed-frame
+notebook-story-canvas-revision-parity
+screenshot-cites-frame-id
+screenshot-cites-commit-sha
 ```
 
 ### Observation
 
 ```txt
-observation-detached-json-safe
-resource-inventory-complete
-retirement-receipt-cites-generation
-journal-bounded
-first-frame-cites-session-and-resource-generation
+frame-observation-detached-json-safe
+frame-journal-bounded
+failed-frame-observable
+stale-frame-observable
+latest-committed-frame-stable
 ```
 
 ## Browser smoke
 
 ```txt
 open deployed route
-capture initial session and resource inventory
-inspect one hotspot and schedule completion
-stop before timeout fires
-verify no interlude or frame commits after stop
-restart and verify one canvas and one RAF chain
-transition through all scenes
-verify each predecessor resource generation retires
-stop and verify renderer, target, post and canvas retirement
+record initial frame receipt and screenshot
+inspect a hotspot
+verify notebook does not claim visible parity until frame acknowledgement
+record first frame citing the inspection result
+complete the current scene and Continue
+record first frame citing successor story and scene-resource revisions
+compare DOM, debug JSON, canvas screenshot and frame receipt
+submit or simulate a stale frame and verify rejection
 ```
 
 ## Deployment evidence
@@ -164,20 +150,20 @@ stop and verify renderer, target, post and canvas retirement
 commit SHA
 GitHub Pages route URL
 browser and viewport
-runtime session id
-session generation
-lifecycle revision
-RAF lease id
-listener lease count
-timeout lease count
-scene resource generation
-geometry/material/hotspot counts
-retirement receipt ids
-renderer/target disposal receipts
-last committed frame id
+runtime session id and generation
+story and narrative revisions
+scene-resource generation
+surface revision
+context generation
+frame id
+stage-pass result id
+post-pass result id
+visible-frame acknowledgement id
+debug observation
+screenshot artifact reference
 fixture artifact reference
 ```
 
 ## Validation claim
 
-The proof surface is documented but not implemented. Do not claim lifecycle safety, scene-resource retirement, callback isolation or restart idempotence until the fixture gate passes.
+The proof surface is documented but not implemented. Do not claim that notebook/debug state matches the visible canvas until the committed-frame fixture gate passes.
