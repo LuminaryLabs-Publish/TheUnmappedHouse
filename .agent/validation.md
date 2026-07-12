@@ -1,6 +1,6 @@
 # Validation: The Unmapped House
 
-Timestamp: `2026-07-11T18-38-45-04-00`
+Timestamp: `2026-07-11T20-11-26-04-00`
 
 ## This pass
 
@@ -15,28 +15,28 @@ deployment changed: no
 branch created: no
 pull request created: no
 npm run check: not run
+reason: execution container could not resolve github.com
 browser smoke: not run
-context-state fixture: unavailable
-context-loss admission fixture: unavailable
-resource-generation fixture: unavailable
-restore rollback fixture: unavailable
-input-suspension fixture: unavailable
-recovered-frame fixture: unavailable
-repeated-cycle resource fixture: unavailable
+pointer-coordinate fixture: unavailable
+pointer-revision fixture: unavailable
+stale-pick fixture: unavailable
+input-modality fixture: unavailable
+activation-parity fixture: unavailable
+visible-frame pick fixture: unavailable
 repo-local docs pushed to main: yes
-central ledger sync: complete after central update
-central internal change log: complete after central update
+central ledger sync: pending central update
+central internal change log: pending central update
 ```
 
 ## Plan ledger
 
-**Goal:** define the executable evidence required before WebGL context loss, resource rebuilding, resumed interaction, and recovered-frame parity can be claimed.
+**Goal:** define the executable evidence required before event-local coordinates, stale-pick rejection, input-modality support, canvas/side-panel parity, and visible-frame hotspot correctness can be claimed.
 
 - [x] Record the current syntax-only validation boundary.
-- [x] Define context-state and generation fixtures.
-- [x] Define resource rebuild, rollback, and stale-result fixtures.
-- [x] Define interaction suspension and story-preservation fixtures.
-- [x] Define browser and deployed-Page recovery evidence.
+- [x] Define coordinate normalization and event-local activation fixtures.
+- [x] Define stage, surface, camera, hotspot, context, and frame revision fixtures.
+- [x] Define mouse, touch, pen, leave, cancel, blur, miss, and dual-ingress fixtures.
+- [x] Define browser and deployed-Page evidence.
 - [ ] Implement and execute the validation gate.
 
 ## Available validation
@@ -50,150 +50,159 @@ src/stage-kit.js
 src/story-data.js
 ```
 
-It does not instantiate a WebGL renderer, force context loss, restore a context, rebuild GPU resources, inspect context generations, fence input, measure resource counts, or acknowledge a recovered visible frame.
+It does not instantiate a browser input loop, sample coordinates, raycast a hotspot, resize a surface, transition scenes, exercise touch or pen input, reject stale picks, compare side-panel behavior, or correlate a pick with a visible frame.
 
 ## Required validation commands
 
 ```txt
-node scripts/validate-context-state.mjs
-node scripts/validate-context-resource-generations.mjs
-node scripts/validate-context-recovery-failures.mjs
-node scripts/validate-context-input-admission.mjs
-node scripts/validate-context-observations.mjs
+node scripts/validate-pointer-coordinate-normalization.mjs
+node scripts/validate-pointer-pick-revisions.mjs
+node scripts/validate-pointer-pick-results.mjs
+node scripts/validate-activation-parity.mjs
+node scripts/validate-pointer-observations.mjs
 npm run check
 ```
 
 Recommended aggregate:
 
 ```txt
-npm run validate:webgl-context-recovery
+npm run validate:pointer-picking
 ```
 
-## Required context-state rows
+## Required coordinate rows
 
 ```txt
-context-state-transition-table-valid
-context-loss-command-idempotent
-repeated-loss-does-not-advance-generation
-restore-command-admitted-only-from-valid-state
-context-generation-monotonic
-resource-generation-bound-to-context-generation
-ready-requires-complete-resource-registry
-ready-requires-recovered-frame-ack
-failed-and-disposed-never-report-ready
-late-context-event-after-dispose-rejected
+client-to-canvas-coordinate-correct
+canvas-to-ndc-coordinate-correct
+left-top-edge-maps-correctly
+right-bottom-edge-maps-correctly
+center-maps-to-zero
+zero-width-canvas-rejected
+zero-height-canvas-rejected
+nonfinite-client-x-rejected
+nonfinite-client-y-rejected
+canvas-rect-revision-recorded
+click-sample-uses-click-event-coordinates
+hover-sample-not-reused-for-click
 ```
 
-## Required loss and suspension rows
+## Required revision rows
 
 ```txt
-accepted-loss-suspends-ready-frame-commit
-accepted-loss-preserves-story-snapshot
-accepted-loss-preserves-stage-and-surface-descriptors
-raycast-hover-rejected-while-lost
-raycast-click-rejected-while-lost
-side-panel-inspection-loss-policy-explicit
-continue-rejected-while-lost-or-restoring
-completion-timeout-fenced-during-loss
-resize-observation-retained-without-resource-commit
-reset-retry-dispose-capabilities-explicit
+sample-cites-session-generation
+sample-cites-stage-epoch
+sample-cites-surface-revision
+sample-cites-camera-revision
+sample-cites-hotspot-set-revision
+sample-cites-context-generation
+sample-cites-resource-generation
+sample-cites-visible-frame-id
+resize-invalidates-predecessor-sample
+scene-change-invalidates-predecessor-sample
+camera-change-invalidates-predecessor-sample
+hotspot-set-change-invalidates-predecessor-sample
+context-change-invalidates-predecessor-sample
+restart-invalidates-predecessor-sample
+disposal-rejects-late-sample
 ```
 
-## Required resource-generation rows
+## Required pick-result rows
 
 ```txt
-renderer-state-reinitialized-for-candidate-generation
-render-target-storage-rebuilt
-post-material-rebound-to-rebuilt-target
-stage-material-programs-ready
-post-material-program-ready
-stage-geometries-ready
-hotspot-geometries-and-materials-ready
-picking-set-revision-matches-stage
-complete-resource-registry-required-before-commit
-same-surface-revision-does-not-bypass-resource-rebuild
+hit-resolves-one-canonical-hotspot-id
+hit-never-returns-mutable-descriptor-authority
+miss-is-explicit
+miss-does-not-mutate-story
+stale-result-is-explicit
+stale-result-does-not-mutate-story
+unsupported-modality-is-explicit
+raycast-failure-is-explicit
+duplicate-sample-is-idempotent
+result-cites-sample-and-visible-frame
 ```
 
-## Required failure and rollback rows
+## Required modality and cancellation rows
 
 ```txt
-partial-renderer-rebuild-disposed
-partial-target-rebuild-disposed
-partial-material-rebuild-disposed
-partial-scene-rebuild-disposed
-failed-candidate-never-becomes-visible
-stale-session-restore-result-rejected
-stale-stage-restore-result-rejected
-stale-surface-restore-result-rejected
-newer-loss-supersedes-active-restore
-rollback-reports-all-resource-rows
-exhausted-recovery-policy-enters-failed
+mouse-click-before-first-move-correct
+touch-activation-without-mousemove-correct
+pen-activation-without-mousemove-correct
+keyboard-side-panel-activation-correct
+pointer-leave-clears-hover
+pointer-cancel-clears-hover
+window-blur-clears-hover
+page-hidden-clears-or-suspends-hover
+context-loss-suspends-picking
+runtime-dispose-clears-hover-and-rejects-input
 ```
 
-## Required recovered-frame rows
+## Required dual-ingress parity rows
 
 ```txt
-first-recovered-frame-has-story-revision
-first-recovered-frame-has-stage-epoch
-first-recovered-frame-has-surface-revision
-first-recovered-frame-has-context-generation
-first-recovered-frame-has-resource-generation
-first-recovered-frame-has-target-generation
-first-recovered-frame-has-hotspot-set-revision
-first-recovered-frame-uses-rebuilt-post-target
-first-post-recovery-input-cites-recovered-frame
-second-frame-retains-active-generation
+map-canvas-equals-side-panel
+window-canvas-equals-side-panel
+shelf-gap-canvas-equals-side-panel
+wrong-door-canvas-equals-side-panel
+class-number-canvas-equals-side-panel
+unfinished-photo-canvas-equals-side-panel
+bucket-storm-canvas-equals-side-panel
+wet-shadow-canvas-equals-side-panel
+closet-map-canvas-equals-side-panel
+inspection-receipt-parity
+clue-receipt-parity
+completion-proof-parity
+persistence-candidate-parity
+story-revision-parity
+visible-frame-projection-parity
 ```
 
-## Required repeated-cycle rows
+## Required observation rows
 
 ```txt
-three-loss-restore-cycles-complete
-live-renderer-count-stable
-live-target-count-stable
-live-material-count-stable
-live-geometry-count-stable
-listener-count-stable
-raf-chain-count-stable
-context-journal-bounded
-context-observation-detached-json-safe
+pointer-pick-observation-detached
+pointer-pick-observation-json-safe
+pointer-pick-observation-has-no-dom-node
+pointer-pick-observation-has-no-three-object
+pointer-pick-observation-has-no-browser-event
+pointer-pick-journal-bounded
+journal-hit-row-complete
+journal-miss-row-complete
+journal-stale-row-complete
 ```
 
 ## Browser matrix
 
 ```txt
-Chrome current, WebGL2 available
-Chrome current, WebGL1 fallback if supported
-Firefox current
-Safari current where extension-based loss is available
+Chrome current with mouse
+Chrome current with touch emulation
+Chrome current with pen emulation where available
+Firefox current with mouse
+Safari current with touch where available
 1280x720 DPR 1
 1920x1080 DPR 2
 3840x2160 DPR 2 under admitted surface policy
-context loss during idle frame
-context loss during resize
-context loss during interlude delay
-context loss during scene-transition preparation
-context loss during page visibility change
-context restore after repeated loss
-context event after runtime disposal
+activation before first mousemove
+activation after resize
+activation after scene transition
+activation after context restoration
+pointer leave and page blur
+all nine hotspots through both ingress paths
 ```
 
 ## Browser smoke
 
 ```txt
-boot and capture story, stage, surface, context, resource and frame identities
-force WebGL context loss
-verify context state becomes LOST
-verify no ready frames commit while lost
-verify render-dependent input is fenced
-verify story snapshot does not advance from rejected input
-restore context under the declared policy
-verify context and resource generations advance exactly once
-verify renderer, target, post binding, scene resources and hotspots rebuild
-verify first recovered frame carries all active identities
-verify hotspot input resumes only after recovered-frame acknowledgement
-repeat loss/restore three times and compare live resource/listener counts
-dispose the runtime and verify later context events are rejected
+boot and capture session, stage, surface, camera, hotspot-set, context, resource and frame identities
+click a hotspot before any mousemove and verify the click position is used
+hover hotspot A, resize, click hotspot B and verify B is selected
+hover in scene one, Continue, click in scene two and reject predecessor state
+activate a hotspot through touch without prior mouse movement
+activate a hotspot through pen without prior mouse movement where supported
+leave the canvas and verify hover and parallax reset
+blur the page and verify hover resets
+activate all nine hotspots through canvas and side-panel paths
+compare canonical inspection, clue, completion, persistence and visible-frame results
+verify misses, stale results and unsupported inputs do not mutate story state
 ```
 
 ## Deployment evidence
@@ -201,18 +210,25 @@ dispose the runtime and verify later context events are rejected
 ```txt
 commit SHA
 GitHub Pages route URL
-browser and GPU/backend details
-initial context/resource generations
-context-loss result
-suspended capabilities
-resource rebuild rows
-rollback rows for injected failure
-first recovered frame id
-story/stage/surface/context parity record
-resource counts before and after repeated cycles
-bounded logs or artifact references
+browser and input modality
+viewport and DPR
+session generation
+stage epoch
+surface revision
+camera revision
+hotspot-set revision
+context generation
+resource generation
+visible frame id
+pointer sample id
+pick result id
+activation result id
+canonical hotspot id
+story revision before and after
+parity result
+bounded observation or artifact reference
 ```
 
 ## Validation claim
 
-This pass documents the proof surface for context state, context/resource generations, render suspension, input fencing, complete resource rebuilding, rollback, stale-result rejection, story preservation, repeated-cycle resource bounds, and recovered-frame correlation. It does not claim those runtime authorities or fixtures are implemented.
+This pass documents the proof surface for event-local pointer coordinates, coordinate normalization, revision provenance, stale-pick rejection, input-modality capability, hover cancellation, explicit miss results, canonical hotspot identity, canvas/side-panel parity, detached observations, bounded journals, and visible-frame correlation. It does not claim those runtime authorities or fixtures are implemented.
