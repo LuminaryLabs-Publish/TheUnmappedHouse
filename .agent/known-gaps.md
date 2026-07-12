@@ -1,15 +1,15 @@
 # Known gaps: The Unmapped House
 
-Timestamp: `2026-07-11T18-38-45-04-00`
+Timestamp: `2026-07-11T20-11-26-04-00`
 
 ## Plan ledger
 
-**Goal:** keep story, lifecycle, rendering, resolution, WebGL recovery, input, and validation gaps explicit while promoting context recovery into an implementation-ready contract.
+**Goal:** keep story, pointer, inspection, lifecycle, rendering, resolution, WebGL recovery, diagnostics, and validation gaps explicit while promoting pointer picking into an implementation-ready contract.
 
-- [x] Preserve StoryManifest, StorySnapshot, inspection, Continue, lifecycle, and render-surface authority as prerequisites.
-- [x] Trace renderer, target, post binding, materials, geometries, hotspots, input, resize, scene loading, and RAF ownership.
-- [x] Define context state, generation, resource registry, suspension, rebuild, rollback, stale-result, recovered-frame, observation, and fixture gaps.
-- [x] Preserve committed-frame diagnostics as the downstream proof gate.
+- [x] Preserve StoryManifest and StorySnapshot authority as prerequisites.
+- [x] Trace mousemove, click, normalized coordinates, hover, raycasting, parallax, resize, scene loading, side-panel activation, and story mutation.
+- [x] Define pointer sample, modality, revision provenance, stale rejection, typed pick result, parity, observation, journal, and fixture gaps.
+- [x] Preserve inspection, Continue, lifecycle, surface, context, and committed-frame work downstream.
 
 ## Story and persistence gaps
 
@@ -18,13 +18,57 @@ Timestamp: `2026-07-11T18-38-45-04-00`
 - No semantic admission, migration, reconciliation, quarantine, typed persistence result, bootstrap rollback, or first-bootstrap-frame result exists.
 - Inspections, clues, route, current scene, completion, and terminal state can disagree.
 
+## Pointer observation gaps
+
+- The runtime uses `mousemove`, not one canonical pointer-event adapter.
+- The shared pointer begins at `(0, 0)` and has no sample id.
+- Input modality is not recorded.
+- Client coordinates, canvas-local coordinates, normalized coordinates, and canvas-rect identity are not retained as one immutable result.
+- No pointer id, event type, timestamp, session generation, stage epoch, surface revision, camera revision, hotspot-set revision, context generation, resource generation, or visible frame id is attached to a sample.
+- Hover samples and activation samples are not distinct authority types.
+- No leave, cancel, blur, visibility, suspension, restart, or disposal reset contract exists.
+
+## Canvas activation and pick gaps
+
+- The click listener ignores the click event object.
+- `clickHotspot()` raycasts with ambient pointer state from the most recent `mousemove`.
+- A click before the first mousemove raycasts the canvas center.
+- Touch- or pen-oriented activation can depend on default or stale mouse coordinates.
+- A resize can retire the canvas geometry without invalidating predecessor pointer state.
+- A scene transition can replace camera and hotspot meshes without invalidating predecessor pointer state.
+- Context recovery, surface fallback, restart, and disposal have no pointer-sample invalidation path.
+- No immutable pick plan exists.
+- No typed hit, miss, stale, rejected, unsupported, or failed result exists.
+- No stale-result check runs after raycasting.
+- Hits expose full mutable hotspot descriptors rather than canonical hotspot ids.
+- Misses have no explicit result or diagnostic row.
+
+## Hover and parallax gaps
+
+- Hover state is stored as a mutable descriptor.
+- The hover label has no stage, surface, camera, hotspot-set, context, or frame provenance.
+- Pointer leave does not explicitly clear hover.
+- Window blur does not explicitly clear hover.
+- Pointer cancellation is not handled.
+- Parallax continues from the last mouse sample until another movement occurs.
+- Hover state is not fenced during scene transition, context loss, restart, or disposal.
+
+## Canvas and side-panel parity gaps
+
+- Side-panel buttons close over complete hotspot descriptors.
+- Canvas hits dispatch complete hotspot descriptors from `mesh.userData`.
+- Neither path returns a typed activation result.
+- No canonical activation command unifies the two sources.
+- No proof shows both sources resolve the same hotspot id, inspection receipt, clue receipts, completion proof, persistence candidate, story revision, or visible frame.
+- No input-modality capability result declares which paths are supported.
+
 ## Inspection and transition gaps
 
-- Side-panel and raycast paths submit full mutable hotspot descriptors.
-- No command identity, sequence, canonical lookup, immutable receipt, clue provenance, or typed result exists.
+- No command identity, sequence, canonical lookup, immutable receipt, clue provenance, or typed inspection result exists.
 - Completion is derived from global clue strings rather than accepted current-scene receipts.
 - Continue mutates live story state before replacement stage and persistence success.
 - No transition lock, rollback, stage epoch, first-successor-frame, retirement result, or durable terminal phase exists.
+- Pointer and hover state are not explicitly invalidated during Continue.
 
 ## Runtime lifecycle and resource gaps
 
@@ -37,68 +81,34 @@ Timestamp: `2026-07-11T18-38-45-04-00`
 
 - CSS aspect-frame geometry and internal GPU resolution are conflated inside `StageKit.resize()`.
 - DPR is sampled directly and capped only at `2`; no pixel or capability budget exists.
-- The constructor allocates design-sized renderer and target storage, then immediately resizes both.
-- Renderer and target dimensions are derived independently without one canonical plan or read-back result.
-- No immutable quality tiers, maximum long edge, maximum pixel count, sample policy, or fallback chain exists.
-- No resize generation, surface revision, detached preparation, atomic commit, rollback, stale-result rejection, or first-visible-frame surface acknowledgement exists.
+- Renderer and target dimensions are derived without one canonical plan or read-back result.
+- No resize generation, surface revision, atomic commit, rollback, stale-result rejection, or first-visible-frame surface acknowledgement exists.
+- Pointer normalization cannot cite an admitted surface revision.
 
 ## WebGL context lifecycle gaps
 
-- The application installs no `webglcontextlost` listener.
-- The application installs no `webglcontextrestored` listener.
-- No canonical context state distinguishes ready, lost, restoring, failed, or disposed rendering.
-- No `contextGeneration` or `resourceGeneration` exists.
-- No typed loss command/result records predecessor story, stage, surface, and frame identities.
-- No render-suspension result prevents ready-frame commits during loss.
-- No capability fence rejects raycast-dependent input while no valid frame exists.
-- No canonical context-bound resource inventory exists.
+- The application installs no context-loss or restoration listener.
+- No canonical context state, `contextGeneration`, or `resourceGeneration` exists.
+- No render suspension or pointer-pick capability fence exists.
 - No complete rebuild plan covers renderer state, target storage, post binding, materials, geometries, hotspot resources, and picking state.
-- No restore transaction stages candidate resources before authority transfer.
-- No rollback result proves partial candidate resources were disposed.
-- No stale context/session/stage/surface result rejection exists.
-- No first recovered frame acknowledgement exists.
-- No context observation or bounded recovery journal exists.
+- No restore transaction, rollback result, stale rejection, or first recovered frame acknowledgement exists.
+- Pointer samples cannot be invalidated when context or resource generation changes.
 
-## Story/render divergence gaps during loss
+## Visible-frame and diagnostics gaps
 
-- Side-panel inspection can mutate clues without any visible-frame requirement.
-- Canvas click remains wired even when render availability is unknown.
-- Completion timers can fire while the renderer is unavailable or restoring.
-- Continue can replace the story/stage while no recovered frame exists.
-- Persistence can commit story state that has never been proven visible.
-- Reset/reload has no context-aware result or cleanup acknowledgement.
-
-## Context recovery resource gaps
-
-- Renderer-internal recovery behavior is not surfaced as application evidence.
-- The post material has no proof that `tDiffuse` references storage rebuilt for the active context generation.
-- Stage and hotspot geometries/materials have no generation identity or readiness receipt.
-- Render target, target texture, depth/multisample storage, shader programs, and picking state have no rebuild rows.
-- Repeated loss/restore cycles have no live-resource-count or listener-count bound.
-- Late restoration events after disposal have no rejection path.
-
-## Input and visible-frame gaps
-
-- No barrier proves pointer observations, camera projection, hotspot set, renderer surface, context generation, and visible output share one committed frame.
-- A click uses the stored pointer rather than sampling the click event directly; no frame/context identity proves the stored pointer remains current.
-- No first-post-recovery input admission exists.
-- No recovered-frame story/stage/surface/context parity record exists.
-
-## Diagnostics gaps
-
-- The debug panel exposes story state but no context or resource state.
-- Context state, context generation, resource generation, suspended capabilities, rebuild rows, rollback rows, last ready frame, and last recovered frame are absent.
-- No detached clone-safe context observation exists.
-- No bounded context recovery journal exists.
+- No barrier proves pointer sample, canvas rectangle, camera projection, hotspot set, context generation, and displayed frame agree.
+- The debug panel exposes story state but no pointer, modality, pick, stage, surface, camera, hotspot, context, resource, or visible-frame identities.
+- No detached clone-safe pointer/pick observation exists.
+- No bounded pointer/pick journal exists.
 
 ## Validation gaps
 
 - `npm run check` performs syntax checks only.
-- No WebGL context is created during validation.
-- No context-loss or restoration event is exercised.
-- No resource-generation, rebuild, rollback, stale-result, input-fence, repeated-cycle, or recovered-frame fixture exists.
-- No browser matrix covers context loss during resize, interlude, transition preparation, visibility changes, or disposal.
-- Existing validation does not execute StoryManifest, persistence, interaction, transition, lifecycle, render-surface, resource retirement, context recovery, or committed-frame behavior.
+- No browser input is generated during validation.
+- No click-before-move, touch, pen, leave, cancel, blur, resize, scene-change, context-change, stale-pick, miss, or parity fixture exists.
+- No fixture iterates all nine hotspots through both canvas and side-panel paths.
+- No accepted pick is correlated with a visible frame.
+- Existing validation does not execute StoryManifest, persistence, pointer picking, inspection, transition, lifecycle, render-surface, resource retirement, context recovery, or committed-frame behavior.
 
 ## Deferred work
 
