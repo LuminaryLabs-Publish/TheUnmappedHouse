@@ -1,41 +1,42 @@
 # Validation: The Unmapped House
 
-**Timestamp:** `2026-07-12T04-44-36-04-00`
+**Timestamp:** `2026-07-12T06-30-34-04-00`
 
 ## Summary
 
-This run changed documentation only. Source inspection proves that story state is loaded once, written as one full localStorage value after startup and mutations, and reset with an unobserved `removeItem`. No current code returns storage effects, classifies write failure, cites a durable revision, rejects stale writers or reconciles other tabs.
+This run changed documentation only. Source inspection proves that the interlude remains mounted while closed, closed state uses opacity, pointer blocking and `aria-hidden`, Continue stays enabled, and its click handler calls `nextScene()` without a completion or modal-state predicate. No current code establishes keyboard inertness, dialog focus isolation or completion-proof consumption.
 
 ## Plan ledger
 
-**Goal:** distinguish single-tab source-level persistence from failure-safe, revisioned and convergent storage authority.
+**Goal:** distinguish visual overlay state from keyboard-safe modal and Continue authority.
 
-- [x] Inspect storage key and initial state construction.
-- [x] Inspect load, save and reset effects.
-- [x] Inspect inspection and Continue ordering around persistence.
-- [x] Confirm absence of storage-event handling.
+- [x] Inspect the interlude markup and native Continue control.
+- [x] Inspect closed/open CSS.
+- [x] Inspect interlude opening and Continue handling.
+- [x] Confirm absence of `inert`, disabled and tabindex policies.
+- [x] Confirm absence of dialog role, `aria-modal`, focus entry, trap and return.
+- [x] Confirm absence of Continue admission and proof consumption.
 - [x] Confirm current package validation is syntax-only.
-- [x] Document required pure and browser fixtures.
+- [x] Document required pure DOM and browser fixtures.
 - [ ] Execute fixtures after implementation.
 
 ## Proven from source
 
 ```txt
-save key: the-unmapped-house.stage-prototype.v1
-load read/parse failure falls back to initial state
-parsed state is shallow-merged over defaults
-startup performs an unconditional full-state write
-inspection performs a full-state write
-re-read performs a full-state write
-Continue performs a full-state write
-reset calls removeItem then reload
-setItem errors are not caught
-removeItem errors are not caught
-writer/session id is absent
-snapshot revision is absent
-compare-and-swap is absent
-storage event listener is absent
-conflict and merge results are absent
+interlude is always present in index.html
+closed state starts aria-hidden=true
+closed CSS uses opacity:0
+closed CSS uses pointer-events:none
+Continue is a native enabled button
+Continue has no disabled attribute
+interlude has no inert attribute
+interlude has no role=dialog
+interlude has no aria-modal=true
+showInterlude does not move focus
+nextScene does not check sceneComplete()
+nextScene does not check interlude open state
+nextScene does not consume a completion proof
+background inspection buttons are not disabled or inert while open
 ```
 
 ## Existing checks prove
@@ -50,15 +51,16 @@ src/story-data.js parses
 ## Existing checks do not prove
 
 ```txt
-storage availability
-write success or readback
-quota/security failure containment
-stale-writer rejection
-cross-tab convergence
-reset propagation
-volatile-session behavior
-narrative/durable revision parity
-frame/durable revision parity
+closed-control keyboard inertness
+sequential focus order
+hidden Continue activation rejection
+dialog semantics
+focus entry, trap or return
+background command suspension
+completion-gated Continue
+stale or duplicate activation handling
+modal-to-transition correlation
+screen-reader behavior
 ```
 
 ## Change boundary
@@ -66,7 +68,9 @@ frame/durable revision parity
 ```txt
 runtime source changed: no
 story content changed: no
-storage behavior changed: no
+focus behavior changed: no
+modal semantics changed: no
+transition behavior changed: no
 render behavior changed: no
 package scripts changed: no
 dependencies changed: no
@@ -80,30 +84,33 @@ browser smoke: not run
 ## Required fixtures
 
 ```txt
-fixture:storage-envelope-parse
-fixture:storage-capability-unavailable
-fixture:storage-write-failure
-fixture:storage-reset-failure
-fixture:snapshot-revision-monotonic
-fixture:stale-writer-rejected
-fixture:manifest-conflict
-fixture:reset-barrier
-fixture:storage-observation-detached
-fixture:storage-journal-bounded
-smoke:two-tab-convergence
-smoke:cross-tab-reset-propagation
-smoke:volatile-session
-smoke:pages-storage-convergence
+fixture:closed-modal-inertness
+fixture:hidden-continue-not-focusable
+fixture:hidden-continue-activation-rejected
+fixture:open-modal-dialog-semantics
+fixture:focus-origin-capture
+fixture:focus-entry
+fixture:focus-trap
+fixture:background-controls-inert
+fixture:focus-return
+fixture:continue-requires-completion-proof
+fixture:stale-modal-generation-rejected
+fixture:duplicate-continue-idempotent
+fixture:modal-observation-detached
+fixture:modal-journal-bounded
+smoke:keyboard-scene-skip-blocked
+smoke:screen-reader-modal-contract
+smoke:pages-modal-focus
 ```
 
 ## Current result
 
 ```txt
-storage authority implemented: no
-cross-tab convergence proven: no
-write failure containment proven: no
-reset propagation proven: no
-durable/visible correlation proven: no
+modal focus authority implemented: no
+hidden Continue inertness proven: no
+background interaction isolation proven: no
+completion-gated Continue proven: no
+assistive-technology semantics proven: no
 ```
 
-No storage reliability, conflict-safety, cross-tab convergence or reset-propagation claim is made.
+No keyboard-modal safety, scene-skip prevention, focus isolation or completion-admission claim is made.
