@@ -1,25 +1,25 @@
 # START HERE: The Unmapped House
 
-Last updated: `2026-07-12T00-01-25-04-00`
+Last updated: `2026-07-12T01-41-56-04-00`
 
 ## Summary
 
 `TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three authored scenes, nine hotspots, browser persistence, a fixed 16:9 shell and a descriptor-driven Three.js stage.
 
-The current audit isolates Narrative Projection Authority. The runtime stores story-panel copy in DOM elements instead of authoritative state. After the player inspects the final hotspot and presses Continue, the successor title, stage, hotspot buttons, route and save can update while the predecessor hotspot text remains visible.
+The current audit isolates Runtime Session Lifecycle and Scene Resource Retirement Authority. `StageKit` starts a recursive animation loop and installs resize, pointer and click listeners in its constructor, but retains no revocable leases and exposes no stop or dispose operation. Every scene transition calls `stageGroup.clear()` and then drops the old material references without disposing the detached geometries, materials or hotspot resources.
 
 ## Plan ledger
 
-**Goal:** make scene opening, hotspot, completion and terminal copy one typed, revisioned projection that cannot disagree with the current story or visible stage.
+**Goal:** make one runtime session own every browser callback and Three.js resource so stop, reset, restart, scene replacement and page retirement are ordered, idempotent and observable.
 
 - [x] Compare all ten accessible `LuminaryLabs-Publish` repositories with central tracking.
 - [x] Exclude `TheCavalryOfRome`.
 - [x] Confirm all nine eligible repositories have central ledger entries and root `.agent` state.
 - [x] Select only `TheUnmappedHouse` as the oldest eligible repository.
-- [x] Trace boot, inspection, completion, Continue, terminal and reload narrative behavior.
+- [x] Trace module boot, StageKit construction, scene replacement, timeout work, RAF submission, input callbacks and page-lifetime ownership.
 - [x] Identify all active domains, all 24 implemented kits and their services.
-- [x] Define Narrative Projection Authority, persistence policy, DOM adapter and frame acknowledgement boundaries.
-- [x] Add timestamped architecture, render, gameplay, interaction, narrative and deploy audits.
+- [x] Define runtime identity, callback leases, scene-resource generations, retirement, rollback, observation and fixture boundaries.
+- [x] Add timestamped architecture, render, gameplay, interaction, lifecycle and deploy audits.
 - [x] Push only to `main`; create no branch or pull request.
 - [x] Synchronize the central ledger and internal change log.
 - [ ] Implement the authority and execute the documented fixtures.
@@ -27,7 +27,7 @@ The current audit isolates Narrative Projection Authority. The runtime stores st
 ## Read this first
 
 ```txt
-.agent/trackers/2026-07-12T00-01-25-04-00/project-breakdown.md
+.agent/trackers/2026-07-12T01-41-56-04-00/project-breakdown.md
 .agent/current-audit.md
 .agent/next-steps.md
 .agent/known-gaps.md
@@ -38,71 +38,76 @@ The current audit isolates Narrative Projection Authority. The runtime stores st
 ## Current audit set
 
 ```txt
-.agent/architecture-audit/2026-07-12T00-01-25-04-00-narrative-projection-authority-dsk-map.md
-.agent/render-audit/2026-07-12T00-01-25-04-00-scene-copy-visible-stage-correlation-gap.md
-.agent/gameplay-audit/2026-07-12T00-01-25-04-00-inspect-interlude-continue-copy-loop.md
-.agent/interaction-audit/2026-07-12T00-01-25-04-00-narrative-source-command-result-map.md
-.agent/narrative-projection-audit/2026-07-12T00-01-25-04-00-scene-copy-revision-persistence-contract.md
-.agent/deploy-audit/2026-07-12T00-01-25-04-00-narrative-transition-fixture-gate.md
+.agent/architecture-audit/2026-07-12T01-41-56-04-00-runtime-session-lifecycle-dsk-map.md
+.agent/render-audit/2026-07-12T01-41-56-04-00-scene-resource-retirement-frame-loop-gap.md
+.agent/gameplay-audit/2026-07-12T01-41-56-04-00-scene-transition-resource-leak-loop.md
+.agent/interaction-audit/2026-07-12T01-41-56-04-00-callback-lease-command-result-map.md
+.agent/lifecycle-audit/2026-07-12T01-41-56-04-00-session-generation-ordered-dispose-contract.md
+.agent/deploy-audit/2026-07-12T01-41-56-04-00-runtime-lifecycle-resource-fixture-gate.md
 ```
 
 ## Main finding
 
 ```txt
-inspect final hotspot in scene A
-  -> #scene-text = scene A hotspot text
-  -> completion interlude opens
+module evaluation
+  -> allocate one StageKit
+  -> create renderer, target, post resources, scene and camera
+  -> install resize, mousemove and click callbacks
+  -> start recursive RAF without retaining the request id
 
-Continue
-  -> currentScene = scene B
-  -> title = scene B
-  -> Three.js stage = scene B
-  -> hotspot buttons = scene B
-  -> route and save = scene B
-  -> #scene-text remains scene A hotspot text
+scene transition
+  -> stageGroup.clear()
+  -> reset hotspots and materials arrays
+  -> allocate successor geometries, materials and hotspot volumes
+  -> predecessor GPU resources remain undisposed
 ```
 
-`renderUi()` only writes the current opening text when the DOM body is empty or equals `Loading`. The DOM is therefore both output and hidden control state.
+The page also installs Continue and keyboard listeners and creates an unretained 450 ms timeout. No session id or generation exists to reject stale callbacks, and no pagehide path retires the renderer graph.
 
 ## Required parent domain
 
 ```txt
-the-unmapped-house-narrative-projection-authority-domain
+the-unmapped-house-runtime-session-lifecycle-authority-domain
 ```
 
 Required composition:
 
 ```txt
-narrative-source-kind-kit
-narrative-source-id-kit
-narrative-projection-state-kit
-narrative-projection-revision-kit
-scene-opening-projection-kit
-hotspot-copy-projection-kit
-completion-copy-projection-kit
-terminal-copy-projection-kit
-narrative-projection-admission-kit
-narrative-projection-commit-kit
-narrative-projection-result-kit
-narrative-persistence-policy-kit
-scene-transition-narrative-reset-kit
-narrative-dom-adapter-kit
-narrative-aria-live-adapter-kit
-narrative-frame-acknowledgement-kit
-narrative-observation-kit
-narrative-journal-kit
-narrative-projection-fixture-kit
-transition-copy-parity-fixture-kit
+runtime-session-id-kit
+runtime-session-generation-kit
+runtime-lifecycle-state-kit
+runtime-start-command-kit
+runtime-stop-command-kit
+callback-generation-fence-kit
+animation-frame-lease-kit
+event-listener-lease-kit
+timeout-lease-kit
+scene-resource-generation-kit
+stage-resource-registry-kit
+scene-resource-retirement-kit
+three-resource-disposer-kit
+renderer-resource-owner-kit
+render-target-resource-owner-kit
+hotspot-resource-owner-kit
+runtime-dispose-plan-kit
+runtime-dispose-result-kit
+startup-rollback-kit
+runtime-observation-kit
+runtime-lifecycle-journal-kit
+runtime-lifecycle-fixture-kit
+scene-transition-resource-leak-fixture-kit
+stale-callback-fixture-kit
+restart-idempotence-fixture-kit
 ```
 
 ## Required invariant
 
 ```txt
-DOM text is output only.
-Every committed narrative projection cites one scene, source, story revision and projection revision.
-Continue replaces predecessor copy with successor opening copy before the successor becomes ready.
-The first visible successor frame acknowledges matching story, narrative, stage and hotspot-set revisions.
-Reload behavior follows one explicit persistence policy.
+Every callback and resource belongs to one runtime session generation.
+Scene replacement retires the predecessor resource generation exactly once.
+Stop cancels RAF before listeners, timers and GPU resources are retired.
+Disposed or stale generations cannot inspect hotspots, mutate story state or submit frames.
+Restart creates a fresh session and cannot multiply callbacks or retain prior GPU resources.
 ```
 
 ## Dependency order
@@ -114,7 +119,7 @@ Reload behavior follows one explicit persistence policy.
 4. Inspection and scene-completion proof
 5. Atomic Continue transition
 6. Narrative Projection Authority
-7. Runtime session lifecycle and scene-resource retirement
+7. Runtime Session Lifecycle and Scene Resource Retirement Authority
 8. Render Surface Resolution Authority
 9. WebGL Context Recovery Authority
 10. Committed-frame diagnostics
@@ -132,8 +137,8 @@ branch created: no
 pull request created: no
 npm run check: not run
 browser smoke: not run
-narrative projection fixtures: unavailable
-transition copy parity fixture: unavailable
+runtime lifecycle fixtures: unavailable
+resource retirement fixtures: unavailable
 ```
 
-Do not claim narrative transition correctness until a fixture proves that predecessor copy is retired and successor opening copy appears in the first correlated successor frame.
+Do not claim restart safety, scene-resource retirement or callback isolation until executable fixtures prove one live session, one RAF chain and zero retained predecessor scene resources.
