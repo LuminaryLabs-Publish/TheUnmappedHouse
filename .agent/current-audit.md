@@ -1,6 +1,6 @@
 # Current audit: The Unmapped House
 
-Timestamp: `2026-07-11T20-11-26-04-00`
+Timestamp: `2026-07-11T21-48-44-04-00`
 
 ## Product read
 
@@ -8,45 +8,38 @@ A fixed-camera anime-horror point-and-click prototype with three authored scenes
 
 ## Plan ledger
 
-**Goal:** define the application-owned authority required to sample activation coordinates from the activation event, bind a pick to one committed render state, reject stale observations, and preserve semantic parity between canvas and side-panel inspection.
+**Goal:** make authored story content an admitted runtime authority with stable identity, explicit progression, canonical lookup, immutable descriptors and render-consumption proof.
 
-- [x] Trace browser mouse observation, normalized coordinates, camera parallax, hover raycasting, click raycasting, side-panel activation, inspection, clue grants, completion, persistence, scene loading, resize, and RAF presentation.
-- [x] Confirm the click listener ignores click coordinates and uses ambient mutable pointer state.
+- [x] Trace story-data export, raw save hydration, current-scene fallback, scene completion, Continue, terminal projection, side-panel descriptor closures, StageKit scene consumption and hotspot `userData`.
+- [x] Confirm the runtime has no root manifest object, schema version, canonical indexes, explicit successor graph, deep freeze, fingerprint or typed admission result.
 - [x] Inventory all active domains, all 24 implemented kits, and their services.
-- [x] Define pointer sample, modality, coordinate, revision, pick plan, pick result, stale-rejection, activation parity, observation, journal, and fixture kits.
-- [ ] Implement StoryManifest, pointer/pick, inspection, transition, lifecycle, surface, context-recovery, and committed-frame authorities.
-- [ ] Run coordinate, revision, stale-pick, modality, parity, and browser fixtures.
+- [x] Define manifest schema, canonicalization, indexing, graph, ownership, render-descriptor validation, freeze, fingerprint, result, observation, journal and fixture kits.
+- [ ] Implement StoryManifest, StorySnapshot, pointer/pick, inspection, transition, lifecycle, surface, context-recovery and committed-frame authorities.
+- [ ] Run schema, duplicate-id, requirement-ownership, graph, freeze, fingerprint and render-parity fixtures.
 
 ## Interaction loop
 
 ```txt
-boot
-  -> load mutable story state
-  -> construct StageKit
-       -> initialize pointer and mouse vectors at zero
-       -> install mousemove listener
-       -> install click listener that discards its event
-       -> create renderer, camera, target and RAF
-  -> load current scene and hotspot meshes
-  -> render side-panel buttons and persist state
+module evaluation
+  -> export gameTitle and mutable scenes array
+  -> parse raw localStorage object
+  -> shallow-merge persisted fields over defaults
+  -> find scene by persisted sceneId
+  -> fall back visually to scenes[0] when not found
+  -> keep the unreconciled persisted sceneId in state
+  -> construct StageKit before content admission exists
+  -> pass the selected mutable scene descriptor into StageKit
+  -> attach mutable hotspot descriptor references to mesh.userData
+  -> close side-panel buttons over the same hotspot objects
 
-mousemove
-  -> sample client coordinates
-  -> normalize against the current canvas rect
-  -> mutate shared pointer and parallax vectors
-  -> raycast current hotspot meshes
-  -> mutate hover label
+inspection
+  -> mutate global clues and scene-keyed inspected state
+  -> evaluate scene requirements through global clue strings
 
-canvas click
-  -> receive event with client coordinates
-  -> discard event coordinates and modality
-  -> raycast with the last shared pointer
-  -> dispatch a full descriptor from mesh.userData
-  -> mutate inspection, clues, completion, UI and persistence
-
-side-panel click
-  -> invoke a closure over a full descriptor
-  -> mutate the same story state without pick evidence
+Continue
+  -> find current scene array index
+  -> use scenes[index + 1] as successor
+  -> infer terminal state from missing next array element
 ```
 
 ## Source ownership
@@ -54,9 +47,9 @@ side-panel click
 | Source | Current responsibilities |
 |---|---|
 | `index.html` | Fixed shell, stage mount, side panel, hotspot list, hover label, debug panel, interlude, and Continue button. |
-| `src/story-data.js` | Scene order, hotspots, clue requirements, stage descriptors, camera, materials, post settings, and interlude copy. |
-| `src/game.js` | Raw load, mutable story state, inspection, completion, timeout scheduling, Continue, reset, projection, persistence, and StageKit calls. |
-| `src/stage-kit.js` | Renderer, scene, camera, target, materials, hotspot volumes, pointer vectors, mousemove/click listeners, hover, raycasting, resize, scene replacement, and recursive RAF. |
+| `src/story-data.js` | Separate title export plus mutable scene, hotspot, clue, stage, camera, material, post, requirement and interlude descriptors. |
+| `src/game.js` | Raw load, fallback scene resolution, mutable story state, inspection, completion, array-order Continue, reset, projection, persistence, and StageKit calls. |
+| `src/stage-kit.js` | Renderer, scene, camera, target, mutable scene descriptor reference, materials, hotspot volumes, descriptor-bearing `userData`, pointer listeners, resize, live replacement and RAF. |
 | `src/aspect-frame.js` | Fixed 1920×1080 composition and CSS frame fitting. |
 | `package.json` | Syntax-only source checks and local static serving. |
 
@@ -64,7 +57,7 @@ side-panel click
 
 ```txt
 browser shell and fixed-aspect layout
-story, scene, hotspot, clue, camera, geometry, material, post and copy descriptors
+authored story source descriptors
 raw browser storage and mutable story state
 scene route, inspection, clue, flags and notebook log
 scene completion, interlude timing, Continue and terminal projection
@@ -73,12 +66,8 @@ Three.js CDN runtime
 WebGL renderer, scene, camera, lights, target and post composition
 live scene replacement and procedural geometry allocation
 procedural anime shader materials
-hotspot volume creation
-mousemove coordinate observation
-normalized-device-coordinate mutation
-hover raycast picking
-canvas click activation
-side-panel button activation
+hotspot volume creation and descriptor-bearing userData
+mousemove observation, canvas click and side-panel activation
 pointer camera parallax
 resize event admission and render-surface mutation
 recursive RAF and visible frame submission
@@ -90,21 +79,18 @@ repo-local and central audit tracking
 Missing authority domains:
 
 ```txt
-canonical browser input event envelope
-pointer sample identity and modality
-coordinate normalization result
-stage epoch and surface revision provenance
-camera and hotspot-set revisions
-context and visible-frame correlation
-activation-local coordinate sampling
-stale sample and stale result rejection
-hover leave, cancel and blur policy
-canonical hit identity
-canvas and side-panel activation parity
-typed pick and activation results
-detached pointer/pick observation
-bounded pointer/pick journal
-browser input-modality fixtures
+canonical StoryManifest root
+manifest id, schema version and fingerprint
+canonical scene, hotspot and clue indexes
+explicit successor graph and terminal descriptor
+requirement ownership and reachability validation
+render descriptor schema and capability admission
+deep-frozen descriptor graph
+typed manifest admission result
+legacy story-data compatibility adapter
+manifest observation and bounded journal
+manifest-to-stage and manifest-to-frame provenance
+manifest fixture and deployed parity gate
 ```
 
 ## Implemented kits and services
@@ -114,7 +100,7 @@ browser input-modality fixtures
 | `static-page-shell-kit` | Stage, story panel, hotspot list, hover label, debug panel, interlude, and Continue shell. |
 | `aspect-frame-kit` | Compute and apply the fixed 16:9 viewport. |
 | `story-data-kit` | Scene, hotspot, clue, stage, camera, material, post, and interlude descriptors. |
-| `browser-story-runtime-kit` | Coordinate load, inspection, completion, Continue, reset, projection, persistence, and StageKit calls. |
+| `browser-story-runtime-kit` | Load, inspection, completion, Continue, reset, projection, persistence, and StageKit calls. |
 | `scene-route-kit` | Resolve and mutate current scene and route ids. |
 | `inspection-ledger-kit` | Track scene-keyed hotspot booleans. |
 | `clue-ledger-kit` | Grant and query global clue strings. |
@@ -127,7 +113,7 @@ browser input-modality fixtures
 | `anime-material-kit` | Build procedural shader materials. |
 | `post-process-kit` | Apply grain, vignette, chromatic offset, distortion, memory warp, and scan lines. |
 | `hotspot-volume-kit` | Build invisible pick meshes and attach hotspot descriptors. |
-| `hotspot-picking-kit` | Raycast hover/click input using ambient pointer state and dispatch selected descriptors. |
+| `hotspot-picking-kit` | Raycast hover/click input and dispatch selected descriptors. |
 | `camera-parallax-kit` | Apply mouse-driven fixed-camera offsets. |
 | `render-target-composition-kit` | Submit stage-target and post-process passes. |
 | `debug-json-projection-kit` | Project aggregate story state into the debug panel. |
@@ -136,99 +122,105 @@ browser input-modality fixtures
 | `repo-local-agent-ledger-kit` | Maintain current pointers and timestamped audits. |
 | `central-ledger-sync-kit` | Maintain central selection and findings history. |
 
-## Main finding: click authority is ambient
+## Main finding: authored content is ambient mutable authority
 
-### Pointer state is shared and mutable
+### There is no root manifest
 
-`StageKit` constructs `this.pointer` and `this.mouse` once. `handlePointer(event)` mutates both during `mousemove` and performs hover picking.
+`gameTitle` and `scenes` are separate exports. No object binds title, schema version, story identity, initial scene, terminal policy, scene graph or content fingerprint.
 
-### The activation event is ignored
+### Scene progression is array position
 
-The canvas click listener calls `this.clickHotspot()` without passing the event. `clickHotspot()` invokes `pick()`, which uses the existing pointer value. The actual click coordinates never enter the decision.
+`nextScene()` calls `findIndex()` and selects `scenes[index + 1]`. Reordering or inserting scenes changes the progression graph and old-save interpretation without a declared migration.
 
-### Input modality is implicit
+### Startup fallback does not reconcile state
 
-The canvas path is wired with `mousemove` and `click`, not a canonical pointer-event adapter. Touch and pen behavior is not admitted, classified, or proven. A generated click can depend on a pointer sample that was never produced for that modality.
+An unknown persisted `sceneId` renders `scenes[0]`, but `state.sceneId` remains the unknown value and is saved again. Visible story authority and persisted story authority can therefore disagree from the first frame.
 
-### Render-state provenance is absent
+### Definitions are shared by reference
 
-The stored pointer has no session id, stage epoch, surface revision, camera revision, hotspot-set revision, context generation, resource generation, or visible frame id. A resize, scene transition, camera replacement, hotspot replacement, context recovery, or lifecycle restart cannot invalidate it explicitly.
+StageKit stores the supplied scene object, hotspot meshes store complete hotspot objects in `userData`, and side-panel buttons capture complete hotspot objects. The same mutable source descriptors act as content, render input and interaction authority.
 
-### Hover cannot authorize activation
+### Requirements are not admitted
 
-Hover and click need separate samples. Hover is presentation state; it must not become ambient authority for a later activation.
+No validation proves:
+- scene ids are unique;
+- hotspot ids are unique inside their scene;
+- grants resolve to known clue ids;
+- each required clue is reachable and correctly owned;
+- every nonterminal scene has one valid successor;
+- terminal scenes are explicit;
+- camera vectors, geometry dimensions, material colors and post values are finite and supported.
 
-### Side-panel and canvas parity is unproven
+### Rendering cannot cite content identity
 
-Both paths currently dispatch complete hotspot descriptors, but neither yields a typed activation result. There is no proof that both sources resolve the same canonical hotspot id, inspection receipt, clue receipts, completion proof, persistence candidate, or visible-frame result.
+A visible frame has no manifest id, version, fingerprint, scene descriptor hash, hotspot-set hash or stage-plan receipt.
 
 ## Required parent domain
 
 ```txt
-the-unmapped-house-pointer-pick-authority-domain
+the-unmapped-house-story-manifest-authority-domain
 ```
 
 Candidate kits:
 
 ```txt
-pointer-event-adapter-kit
-pointer-sample-id-kit
-pointer-modality-kit
-pointer-coordinate-observation-kit
-pointer-coordinate-normalization-kit
-pointer-surface-revision-kit
-pointer-stage-epoch-kit
-pointer-camera-revision-kit
-hotspot-set-revision-kit
-hotspot-pick-plan-kit
-hotspot-pick-result-kit
-stale-pointer-observation-rejection-kit
-stale-hotspot-pick-rejection-kit
-hover-state-kit
-pointer-leave-cancel-kit
-canvas-activation-command-kit
-side-panel-activation-command-kit
-activation-parity-result-kit
-pointer-pick-observation-kit
-pointer-pick-journal-kit
-pointer-pick-fixture-kit
-browser-input-modality-smoke-kit
+story-manifest-schema-kit
+story-manifest-id-kit
+story-manifest-version-kit
+story-manifest-canonicalization-kit
+story-scene-index-kit
+story-hotspot-index-kit
+story-clue-index-kit
+story-successor-graph-kit
+story-terminal-descriptor-kit
+story-requirement-ownership-kit
+story-render-descriptor-schema-kit
+story-manifest-deep-freeze-kit
+story-manifest-fingerprint-kit
+story-manifest-admission-kit
+story-manifest-result-kit
+legacy-story-data-adapter-kit
+story-manifest-observation-kit
+story-manifest-journal-kit
+story-manifest-fixture-kit
+story-manifest-render-parity-fixture-kit
 ```
 
-## Required pick result
+## Required StoryManifest shape
 
 ```txt
-HotspotPickResult
-  status: hit | miss | rejected | stale | unsupported | failed
-  sampleId
-  sessionId
-  sessionGeneration
-  stageEpoch
-  surfaceRevision
-  cameraRevision
-  hotspotSetRevision
-  contextGeneration
-  resourceGeneration
-  visibleFrameId
-  modality
-  hotspotId?
-  rejectionReason?
+StoryManifest
+  manifestId
+  schemaVersion
+  contentVersion
+  title
+  initialSceneId
+  terminalPolicy
+  scenes[]
+  sceneIndex
+  hotspotIndexByScene
+  clueIndex
+  successorGraph
+  requirementOwnership
+  renderDescriptorCapabilities
+  fingerprint
 ```
 
 ## Required authority flow
 
 ```txt
-browser event
-  -> capture event-local coordinates immediately
-  -> admit lifecycle and input modality
-  -> bind current stage, surface, camera, hotspot, context and frame identities
-  -> normalize against the admitted canvas rect
-  -> build an immutable pick plan
-  -> raycast once
-  -> reject stale results
-  -> return a canonical hotspot id or miss
-  -> submit an id-only activation and inspection command
-  -> publish typed results and a bounded detached journal
+legacy story-data exports
+  -> build manifest candidate
+  -> structural validation
+  -> semantic validation
+  -> canonicalize order and ids
+  -> build indexes and successor graph
+  -> validate clue reachability and requirement ownership
+  -> validate render descriptors and supported capabilities
+  -> deep-freeze the complete graph
+  -> compute deterministic fingerprint
+  -> publish ManifestAdmissionResult
+  -> only then hydrate StorySnapshot and allocate StageKit
 ```
 
 ## Ordered implementation queue
@@ -248,10 +240,10 @@ browser event
 ## Current audit ledge
 
 ```txt
-TheUnmappedHouse Pointer Observation and Hotspot Pick Authority
-+ Event-Local Coordinates / Revision Provenance / Input-Modality and Dual-Ingress Fixture Gate
+TheUnmappedHouse StoryManifest Authority
++ Schema / Canonical Index / Successor Graph / Freeze / Fingerprint / Render-Parity Fixture Gate
 ```
 
 ## Validation status
 
-The authority is not implemented. No current test proves click-local coordinates, touch or pen activation, leave/cancel reset, stale sample rejection, stage/surface/camera/hotspot/frame provenance, canvas/side-panel parity, or miss-without-mutation behavior.
+The authority is not implemented. No current test proves schema validity, unique ids, clue ownership, explicit progression, terminal declaration, stable fingerprinting, descriptor immutability, old-save compatibility or manifest-to-visible-frame parity.
