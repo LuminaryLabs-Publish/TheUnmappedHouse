@@ -1,34 +1,33 @@
 # START HERE: The Unmapped House
 
-Last updated: `2026-07-11T21-48-44-04-00`
+Last updated: `2026-07-12T00-01-25-04-00`
 
 ## Summary
 
-`TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three authored scenes, nine hotspots, browser persistence, a fixed 16:9 shell, and a descriptor-driven Three.js stage.
+`TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three authored scenes, nine hotspots, browser persistence, a fixed 16:9 shell and a descriptor-driven Three.js stage.
 
-The current audit promotes the authored story data into an explicit authority boundary. The runtime currently exports one mutable `scenes` array, infers progression from array order, passes nested descriptors by reference into UI closures and Three.js `userData`, and starts without validating ids, clue ownership, successor edges, render descriptors, schema version, or fingerprint.
+The current audit isolates Narrative Projection Authority. The runtime stores story-panel copy in DOM elements instead of authoritative state. After the player inspects the final hotspot and presses Continue, the successor title, stage, hotspot buttons, route and save can update while the predecessor hotspot text remains visible.
 
 ## Plan ledger
 
-**Goal:** admit one canonical, immutable and fingerprinted StoryManifest before save hydration, stage allocation, input binding or story mutation can begin.
+**Goal:** make scene opening, hotspot, completion and terminal copy one typed, revisioned projection that cannot disagree with the current story or visible stage.
 
 - [x] Compare all ten accessible `LuminaryLabs-Publish` repositories with central tracking.
 - [x] Exclude `TheCavalryOfRome`.
 - [x] Confirm all nine eligible repositories have central ledger entries and root `.agent` state.
-- [x] Select only `TheUnmappedHouse`, the oldest eligible repository by central timestamp.
-- [x] Trace story-data export, startup selection, scene progression, clue requirements, side-panel closures, StageKit descriptor consumption, hotspot `userData`, persistence and terminal projection.
-- [x] Identify all active domains, all 24 implemented kits, and their services.
-- [x] Define StoryManifest schema, indexes, graph, validation, freeze, fingerprint, result, observation, journal and fixture boundaries.
-- [x] Add timestamped architecture, render, gameplay, interaction, story-manifest, deploy, tracker and turn-ledger records.
-- [x] Refresh the required root `.agent` state.
-- [x] Change no runtime source.
+- [x] Select only `TheUnmappedHouse` as the oldest eligible repository.
+- [x] Trace boot, inspection, completion, Continue, terminal and reload narrative behavior.
+- [x] Identify all active domains, all 24 implemented kits and their services.
+- [x] Define Narrative Projection Authority, persistence policy, DOM adapter and frame acknowledgement boundaries.
+- [x] Add timestamped architecture, render, gameplay, interaction, narrative and deploy audits.
 - [x] Push only to `main`; create no branch or pull request.
-- [ ] Implement and execute the documented authority and fixture gate.
+- [x] Synchronize the central ledger and internal change log.
+- [ ] Implement the authority and execute the documented fixtures.
 
 ## Read this first
 
 ```txt
-.agent/trackers/2026-07-11T21-48-44-04-00/project-breakdown.md
+.agent/trackers/2026-07-12T00-01-25-04-00/project-breakdown.md
 .agent/current-audit.md
 .agent/next-steps.md
 .agent/known-gaps.md
@@ -39,107 +38,86 @@ The current audit promotes the authored story data into an explicit authority bo
 ## Current audit set
 
 ```txt
-.agent/architecture-audit/2026-07-11T21-48-44-04-00-story-manifest-authority-dsk-map.md
-.agent/render-audit/2026-07-11T21-48-44-04-00-mutable-descriptor-visible-frame-provenance-gap.md
-.agent/gameplay-audit/2026-07-11T21-48-44-04-00-array-order-scene-progression-loop.md
-.agent/interaction-audit/2026-07-11T21-48-44-04-00-manifest-admission-lookup-result-map.md
-.agent/story-manifest-audit/2026-07-11T21-48-44-04-00-schema-index-freeze-fingerprint-contract.md
-.agent/deploy-audit/2026-07-11T21-48-44-04-00-story-manifest-fixture-gate.md
+.agent/architecture-audit/2026-07-12T00-01-25-04-00-narrative-projection-authority-dsk-map.md
+.agent/render-audit/2026-07-12T00-01-25-04-00-scene-copy-visible-stage-correlation-gap.md
+.agent/gameplay-audit/2026-07-12T00-01-25-04-00-inspect-interlude-continue-copy-loop.md
+.agent/interaction-audit/2026-07-12T00-01-25-04-00-narrative-source-command-result-map.md
+.agent/narrative-projection-audit/2026-07-12T00-01-25-04-00-scene-copy-revision-persistence-contract.md
+.agent/deploy-audit/2026-07-12T00-01-25-04-00-narrative-transition-fixture-gate.md
 ```
 
 ## Main finding
 
 ```txt
-story-data module
-  -> exports mutable title and scenes array
-  -> startup shallow-loads raw browser state
-  -> unknown saved scene falls back visually to scenes[0]
-  -> saved state.sceneId remains unreconciled
-  -> StageKit consumes the selected descriptor by reference
-  -> hotspot meshes store descriptor references in userData
-  -> side-panel buttons close over the same descriptor objects
-  -> Continue infers the successor from array index + 1
+inspect final hotspot in scene A
+  -> #scene-text = scene A hotspot text
+  -> completion interlude opens
+
+Continue
+  -> currentScene = scene B
+  -> title = scene B
+  -> Three.js stage = scene B
+  -> hotspot buttons = scene B
+  -> route and save = scene B
+  -> #scene-text remains scene A hotspot text
 ```
 
-No manifest identity, schema version, canonical index, successor graph, terminal descriptor, deep freeze, fingerprint or admission result exists.
-
-## Concrete failure cases
-
-```txt
-duplicate scene id
-  -> first matching scene wins; route and successor semantics become ambiguous
-
-unknown saved scene id
-  -> first scene renders while the invalid id remains persisted
-
-scene array reorder
-  -> Continue graph and old-save meaning change without a version transition
-
-unknown or cross-owned required clue
-  -> completion can become impossible or be satisfied by unrelated global state
-
-malformed camera, geometry or material descriptor
-  -> failure occurs after browser state and renderer construction have started
-
-descriptor mutation after boot
-  -> UI closures, stage state and hotspot userData change without a manifest revision
-```
+`renderUi()` only writes the current opening text when the DOM body is empty or equals `Loading`. The DOM is therefore both output and hidden control state.
 
 ## Required parent domain
 
 ```txt
-the-unmapped-house-story-manifest-authority-domain
+the-unmapped-house-narrative-projection-authority-domain
 ```
 
 Required composition:
 
 ```txt
-story-manifest-schema-kit
-story-manifest-id-kit
-story-manifest-version-kit
-story-manifest-canonicalization-kit
-story-scene-index-kit
-story-hotspot-index-kit
-story-clue-index-kit
-story-successor-graph-kit
-story-terminal-descriptor-kit
-story-requirement-ownership-kit
-story-render-descriptor-schema-kit
-story-manifest-deep-freeze-kit
-story-manifest-fingerprint-kit
-story-manifest-admission-kit
-story-manifest-result-kit
-legacy-story-data-adapter-kit
-story-manifest-observation-kit
-story-manifest-journal-kit
-story-manifest-fixture-kit
-story-manifest-render-parity-fixture-kit
+narrative-source-kind-kit
+narrative-source-id-kit
+narrative-projection-state-kit
+narrative-projection-revision-kit
+scene-opening-projection-kit
+hotspot-copy-projection-kit
+completion-copy-projection-kit
+terminal-copy-projection-kit
+narrative-projection-admission-kit
+narrative-projection-commit-kit
+narrative-projection-result-kit
+narrative-persistence-policy-kit
+scene-transition-narrative-reset-kit
+narrative-dom-adapter-kit
+narrative-aria-live-adapter-kit
+narrative-frame-acknowledgement-kit
+narrative-observation-kit
+narrative-journal-kit
+narrative-projection-fixture-kit
+transition-copy-parity-fixture-kit
 ```
 
 ## Required invariant
 
 ```txt
-No story state, renderer resource, input binding or save snapshot becomes authoritative
-until exactly one canonical StoryManifest has been validated, indexed, deep-frozen
-and fingerprinted.
-
-Every scene transition resolves through an explicit successor edge.
-Every hotspot, clue and requirement resolves through canonical indexes.
-Every rendered descriptor cites the admitted manifest id, version and fingerprint.
+DOM text is output only.
+Every committed narrative projection cites one scene, source, story revision and projection revision.
+Continue replaces predecessor copy with successor opening copy before the successor becomes ready.
+The first visible successor frame acknowledges matching story, narrative, stage and hotspot-set revisions.
+Reload behavior follows one explicit persistence policy.
 ```
 
 ## Dependency order
 
 ```txt
-1. StoryManifest schema, canonical indexes, validation, deep freeze and fingerprint
-2. StorySnapshot startup admission, migration, reconciliation and typed persistence
+1. StoryManifest Authority
+2. StorySnapshot startup admission and typed persistence
 3. Pointer Observation and Hotspot Pick Authority
-4. InspectionCommand, receipts, clue provenance and scene-completion proof
-5. Atomic Continue transition and first-visible-frame acknowledgement
-6. Runtime session lifecycle and scene-resource retirement
-7. Render Surface Resolution Authority
-8. WebGL Context Recovery Authority
-9. Committed-frame diagnostics
+4. Inspection and scene-completion proof
+5. Atomic Continue transition
+6. Narrative Projection Authority
+7. Runtime session lifecycle and scene-resource retirement
+8. Render Surface Resolution Authority
+9. WebGL Context Recovery Authority
+10. Committed-frame diagnostics
 ```
 
 ## Validation status
@@ -152,13 +130,10 @@ dependencies changed: no
 deployment changed: no
 branch created: no
 pull request created: no
-npm run check: not run because the execution container could not resolve github.com
+npm run check: not run
 browser smoke: not run
-manifest schema fixture: unavailable
-duplicate-id fixture: unavailable
-successor-graph fixture: unavailable
-freeze/fingerprint fixture: unavailable
-manifest-to-render parity fixture: unavailable
+narrative projection fixtures: unavailable
+transition copy parity fixture: unavailable
 ```
 
-Do not claim StoryManifest correctness, save compatibility, stable progression, immutable descriptors, canonical lookup or render provenance until the documented fixture gate passes.
+Do not claim narrative transition correctness until a fixture proves that predecessor copy is retired and successor opening copy appears in the first correlated successor frame.
