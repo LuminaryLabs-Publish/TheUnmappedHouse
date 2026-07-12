@@ -1,101 +1,121 @@
 # Current audit: The Unmapped House
 
-Timestamp: `2026-07-12T03-21-27-04-00`
+**Timestamp:** `2026-07-12T04-44-36-04-00`  
+**Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
-## Product read
+## Summary
 
-A fixed-camera anime-horror point-and-click prototype with three authored scenes, three hotspots per scene, nine required clues, a 450 ms completion interlude, browser persistence, a fixed 16:9 shell, side-panel inspection buttons and a descriptor-driven Three.js renderer.
+The current audit isolates browser-storage commit and cross-tab convergence. `src/game.js` loads one localStorage value at module startup, shallow-merges it over defaults, owns one mutable story aggregate and writes the full aggregate after startup, inspection and Continue. The write and reset paths return no result and are not failure-contained. There is no durable revision, writer identity, compare-and-swap admission, conflict policy, storage-event reconciliation or reset barrier.
 
 ## Plan ledger
 
-**Goal:** turn each canvas presentation into a typed committed-frame result correlated with the story and runtime state that produced it.
+**Goal:** define one authoritative storage transaction from capability observation and snapshot revision through commit admission, conflict handling, reset propagation, durable readback and visible-state correlation.
 
-- [x] Trace inspection, scene completion, Continue, UI projection, persistence, scene loading and RAF submission.
-- [x] Confirm DOM/debug projection commits synchronously while canvas presentation occurs later.
-- [x] Confirm `animate()` returns no frame id, pass result, input snapshot or visible acknowledgement.
-- [x] Inventory all active domains, all 24 implemented kits and their services.
-- [x] Define frame identity, immutable inputs, pass results, diagnostics, public readback and proof boundaries.
-- [ ] Implement upstream authorities and committed-frame diagnostics.
-- [ ] Execute frame parity, transition and screenshot-correlation fixtures.
+- [x] Compare the full Publish inventory against central ledger state.
+- [x] Exclude `TheCavalryOfRome`.
+- [x] Skip `ZombieOrchard` because newer repo-local documentation indicates concurrent work.
+- [x] Select only `TheUnmappedHouse` as the oldest stable eligible repository.
+- [x] Inspect `src/game.js`, `src/story-data.js`, `src/stage-kit.js`, `package.json` and current audit state.
+- [x] Trace boot load/write, inspection writes, Continue writes and reset.
+- [x] Confirm no writer identity, snapshot revision, expected predecessor revision or conflict result exists.
+- [x] Confirm no `storage` event listener or cross-tab reconciliation exists.
+- [x] Confirm `setItem` and `removeItem` failures are not caught.
+- [x] Inventory all active domains, all 24 implemented kits and offered services.
+- [x] Define storage commit, conflict, reset, observation and fixture kits.
+- [x] Change documentation only.
+- [ ] Implement and execute the authority.
 
-## Interaction loop
+## Selection state
+
+```txt
+accessible Publish repositories: 10
+eligible non-Cavalry repositories: 9
+new or ledger-missing eligible repositories: 0
+root-.agent-missing eligible repositories: 0
+ZombieOrchard: skipped because repo-local docs advanced to 2026-07-12T04-38-12-04-00 during central lag
+TheUnmappedHouse: selected as the oldest stable eligible repository
+TheCavalryOfRome: excluded
+```
+
+## Product and interaction loop
 
 ```txt
 module boot
-  -> load mutable story state
-  -> allocate StageKit and renderer graph
-  -> load the selected scene
-  -> project story DOM and debug JSON
-  -> start recursive RAF
+  -> import authored scenes and StageKit
+  -> load localStorage key once
+  -> shallow-merge parsed fields over initial state
+  -> resolve currentScene with fallback
+  -> construct StageKit and renderer graph
+  -> load current scene
+  -> project DOM/debug state
+  -> save the full mutable state immediately
 
 inspection
-  -> mutate inspected/clue/log state
-  -> possibly schedule completion timeout
-  -> project DOM and debug JSON immediately
-  -> save immediately
-  -> next RAF later renders from live stage state
+  -> mutate inspected map
+  -> grant global clues
+  -> mutate log and narrative copy
+  -> possibly schedule interlude
+  -> project DOM/debug state
+  -> save full mutable state
 
 Continue
-  -> mutate current scene and route
-  -> synchronously replace stage resources
-  -> project successor DOM and debug JSON
-  -> save immediately
-  -> next RAF later presents the successor scene
+  -> derive successor by array order
+  -> mutate sceneId, route and log
+  -> replace stage scene resources
+  -> project DOM/debug state
+  -> save full mutable state
 
-RAF
-  -> sample wall-clock time
-  -> read live camera, material and scene objects
-  -> render stage target
-  -> render post scene to canvas
-  -> publish no receipt
+reset
+  -> localStorage.removeItem
+  -> location.reload
+
+other browser tab
+  -> loads its own independent mutable copy
+  -> does not subscribe to storage changes
+  -> can later save a stale full aggregate
 ```
 
 ## Source ownership
 
 | Source | Current responsibilities |
 |---|---|
-| `index.html` | Fixed shell, stage mount, story panel, notebook/debug panel and interlude. |
-| `src/story-data.js` | Authored story, stage, camera, material and post descriptors. |
-| `src/game.js` | Mutable story state, inspection, completion, Continue, DOM/debug projection and persistence. |
-| `src/stage-kit.js` | Three.js resource graph, scene loading, picking, resize and unobserved frame submission. |
-| `src/aspect-frame.js` | Fixed 1920×1080 composition and CSS frame fitting. |
-| `package.json` | Syntax-only source checks and static serving. |
+| `index.html` | Fixed shell, stage, story panel, notebook/debug panel, interlude and Continue button. |
+| `src/story-data.js` | Three scenes, nine hotspots, clues, camera, stage and post descriptors. |
+| `src/game.js` | Mutable story state, load/save/reset, inspection, completion, Continue and DOM/debug projection. |
+| `src/stage-kit.js` | Three.js resource graph, scene loading, picking, resize and recursive frame submission. |
+| `src/aspect-frame.js` | Fixed 1920 by 1080 composition. |
+| `package.json` | Syntax-only source checks and local static serving. |
 
 ## Domains in use
 
 ```txt
-browser shell and fixed-aspect layout
-authored story and render descriptors
-raw localStorage and mutable story state
-scene routing, inspection, clues, log and completion
+browser shell and fixed-aspect composition
+authored story, scene, hotspot and render descriptors
+raw localStorage read, write and reset effects
+mutable story snapshot ownership
+scene routing, inspection, clues, flags, route and log
+completion and interlude timing
 synchronous DOM narrative projection
-synchronous notebook/debug JSON projection
-unretained completion timeout
-module-lifetime runtime ownership
+synchronous debug JSON projection
 Three.js CDN runtime
 WebGL renderer, target, scene, camera, lights and post composition
-live scene replacement
-procedural geometry and shader-material allocation
-hotspot volumes, raycast picking and camera parallax
-resize and input callbacks
-recursive wall-clock frame submission
-uncorrelated stage and post passes
+live scene replacement and procedural resource allocation
+hotspot volumes, raycasting and camera parallax
+resize, input and recursive RAF callbacks
 syntax validation, Pages deployment and audit tracking
 ```
 
 Missing authority domains:
 
 ```txt
-versioned StoryManifest and StorySnapshot
-typed inspection, transition and narrative results
-runtime session and resource generations
-render surface and WebGL context generations
-frame sequence and immutable frame input
-typed stage-pass and post-pass results
-visible canvas acknowledgement
-stale/failed frame rejection
-detached frame readback and bounded journal
-screenshot and debug-frame correlation
+storage capability and failure classification
+writer session and durable snapshot revision
+storage commit admission and compare-and-swap
+cross-tab conflict detection and reconciliation
+reset barrier and propagation
+volatile-session policy
+storage observation and bounded journal
+narrative/frame correlation with durable revision
 ```
 
 ## Implemented kits and services
@@ -104,7 +124,7 @@ screenshot and debug-frame correlation
 |---|---|
 | `static-page-shell-kit` | Stage, story panel, hotspot list, hover label, debug panel, interlude and Continue shell. |
 | `aspect-frame-kit` | Compute and apply the fixed 16:9 viewport. |
-| `story-data-kit` | Scene, opening, hotspot, clue, stage, camera, material, post and interlude descriptors. |
+| `story-data-kit` | Scene, hotspot, clue, stage, camera, material, post and interlude descriptors. |
 | `browser-story-runtime-kit` | Load, inspection, completion, Continue, reset-by-reload, projection, persistence and StageKit calls. |
 | `scene-route-kit` | Resolve and mutate current scene and route ids. |
 | `inspection-ledger-kit` | Track scene-keyed hotspot booleans. |
@@ -119,7 +139,7 @@ screenshot and debug-frame correlation
 | `post-process-kit` | Allocate and render grain, vignette, chromatic, distortion, memory and scan-line effects. |
 | `hotspot-volume-kit` | Allocate invisible pick meshes and attach hotspot descriptors. |
 | `hotspot-picking-kit` | Raycast hover/click input and dispatch selected descriptors. |
-| `camera-parallax-kit` | Apply mouse-driven fixed-camera offsets. |
+| `camera-parallax-kit` | Apply pointer-driven fixed-camera offsets. |
 | `render-target-composition-kit` | Submit stage-target and post-process passes. |
 | `debug-json-projection-kit` | Project aggregate mutable story state into the notebook panel. |
 | `package-syntax-check-kit` | Syntax-check four JavaScript sources. |
@@ -127,67 +147,71 @@ screenshot and debug-frame correlation
 | `repo-local-agent-ledger-kit` | Maintain current pointers and timestamped audits. |
 | `central-ledger-sync-kit` | Maintain central selection and findings history. |
 
-## Main finding: public story state is ahead of unobserved rendering
+## Main finding
 
-### Debug projection is not a frame observation
+### Durable effects are unobserved
 
-`renderUi()` serializes game, scene, clues, route, inspected state, completion and log rows. It includes no frame id, renderer result, surface dimensions, context state, camera revision or resource generation.
+`saveState()` calls `localStorage.setItem()` directly and returns nothing. Reset calls `removeItem()` directly and then reloads. A quota, security or serialization failure can propagate after live story and visible UI state have already changed.
 
-### Scene and inspection changes have no first-frame boundary
+### Stale full-state writers are admissible
 
-Inspection updates the notebook and persistence immediately. Continue synchronously replaces scene resources and then updates the DOM. Neither path waits for or records the first canvas frame that reflects the accepted change.
+Every tab owns an independent mutable aggregate and writes the complete object. With no expected predecessor revision or compare-and-swap, a stale tab can overwrite newer clues, inspections, route and log rows.
 
-### Render passes return no result
+### Cross-tab events are ignored
 
-`animate()` renders the stage into a target and the post scene into the default framebuffer. It does not catch or classify failures, increment a frame sequence, freeze inputs, expose pass timings or acknowledge final canvas presentation.
+No `storage` listener validates or reconciles remote changes. Reset in one tab does not retire stale state in another tab, and the stale tab can later recreate the removed snapshot.
 
-### Live mutable inputs can mix revisions
+### Startup claims no durable mode
 
-The callback reads current camera, materials, scene objects and wall-clock time independently. Without a frozen frame input, diagnostics cannot prove that one frame used one coherent story, resource, surface and context revision.
+Boot always calls `saveState()` after stage and UI initialization. There is no typed distinction between durable mode, volatile in-memory mode, rejected stale state or unavailable storage.
 
 ## Required parent domain
 
 ```txt
-the-unmapped-house-committed-frame-diagnostics-authority-domain
+the-unmapped-house-story-storage-commit-convergence-authority-domain
 ```
 
 Candidate kits:
 
 ```txt
-frame-sequence-kit
-story-revision-kit
-narrative-revision-kit
-frame-input-snapshot-kit
-render-command-kit
-render-admission-kit
-stage-pass-result-kit
-post-pass-result-kit
-frame-commit-result-kit
-visible-frame-acknowledgement-kit
-canvas-present-observation-kit
-frame-correlation-kit
-frame-debug-projection-kit
-public-frame-readback-kit
-stale-frame-rejection-kit
-frame-journal-kit
-first-frame-fixture-kit
-scene-transition-frame-fixture-kit
-inspection-frame-parity-fixture-kit
-browser-screenshot-correlation-smoke-kit
+story-storage-key-kit
+storage-capability-observation-kit
+storage-writer-session-id-kit
+story-snapshot-revision-kit
+storage-read-command-kit
+storage-read-result-kit
+storage-commit-command-kit
+storage-commit-admission-kit
+storage-compare-and-swap-kit
+storage-conflict-detection-kit
+storage-conflict-policy-kit
+storage-merge-plan-kit
+storage-commit-result-kit
+storage-reset-command-kit
+storage-reset-result-kit
+storage-event-adapter-kit
+cross-tab-reconciliation-kit
+storage-effect-journal-kit
+storage-observation-kit
+storage-unavailable-fixture-kit
+cross-tab-lost-update-fixture-kit
+reset-propagation-fixture-kit
+browser-storage-convergence-smoke-kit
 ```
 
-## Required frame flow
+## Required transaction
 
 ```txt
-RenderFrameCommand
-  -> admit runtime, lifecycle, scene, surface and context generations
-  -> freeze one immutable FrameInputSnapshot
-  -> execute stage pass and return StagePassResult
-  -> execute post pass and return PostPassResult
-  -> acknowledge final canvas presentation
-  -> commit one FrameCommitResult
-  -> publish detached debug/public observations
-  -> correlate DOM, notebook, screenshots and interaction evidence
+CommitStorySnapshotCommand
+  -> validate runtime session, manifest and writer identity
+  -> cite expected predecessor revision
+  -> observe current durable revision
+  -> reject, merge or supersede under one named policy
+  -> serialize one immutable candidate
+  -> attempt and verify storage effect
+  -> return one StorageCommitResult
+  -> publish detached observation and journal row
+  -> correlate narrative and future frames with durable or volatile status
 ```
 
 ## Ordered implementation queue
@@ -195,6 +219,7 @@ RenderFrameCommand
 ```txt
 1. StoryManifest Authority
 2. StorySnapshot startup authority
+2a. Browser Storage Commit and Cross-Tab Convergence Authority
 3. Pointer and hotspot-pick authority
 4. Inspection and completion authority
 5. Atomic Continue transition
@@ -205,14 +230,6 @@ RenderFrameCommand
 10. Committed Frame Diagnostics Authority
 ```
 
-## Current audit ledge
+## Validation boundary
 
-```txt
-TheUnmappedHouse Committed Frame Diagnostics Authority
-+ Immutable Frame Input and Two-Pass Result Contract
-+ Story/Notebook/Canvas Correlation Fixture Gate
-```
-
-## Validation status
-
-The authority is not implemented. No current test proves that the notebook/debug state, accepted inspection, scene transition and visible canvas cite the same committed frame.
+Documentation only. Runtime source, story content, storage behavior, rendering, package scripts, dependencies and deployment were not changed. No current fixture proves write-failure containment, stale-writer rejection, cross-tab convergence or reset propagation.
