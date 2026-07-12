@@ -1,42 +1,39 @@
 # Validation: The Unmapped House
 
-**Timestamp:** `2026-07-12T06-30-34-04-00`
+**Timestamp:** `2026-07-12T08-10-36-04-00`
 
 ## Summary
 
-This run changed documentation only. Source inspection proves that the interlude remains mounted while closed, closed state uses opacity, pointer blocking and `aria-hidden`, Continue stays enabled, and its click handler calls `nextScene()` without a completion or modal-state predicate. No current code establishes keyboard inertness, dialog focus isolation or completion-proof consumption.
+This run changed documentation only. Source inspection proves that scene completion schedules `setTimeout(() => showInterlude(currentScene), 450)`, discards the timeout handle, captures no immutable scene/proof context, and installs no cancellation or stale-callback guard around scene transitions or terminal projection.
 
 ## Plan ledger
 
-**Goal:** distinguish visual overlay state from keyboard-safe modal and Continue authority.
+**Goal:** distinguish a visually delayed interlude from a generation-safe, cancellable and transition-aware completion callback.
 
-- [x] Inspect the interlude markup and native Continue control.
-- [x] Inspect closed/open CSS.
-- [x] Inspect interlude opening and Continue handling.
-- [x] Confirm absence of `inert`, disabled and tabindex policies.
-- [x] Confirm absence of dialog role, `aria-modal`, focus entry, trap and return.
-- [x] Confirm absence of Continue admission and proof consumption.
+- [x] Inspect completion derivation and timeout scheduling.
+- [x] Confirm the timeout handle is discarded.
+- [x] Confirm the arrow callback resolves mutable `currentScene` at fire time.
+- [x] Inspect scene transition and terminal projection.
+- [x] Confirm no transition, terminal, reset or session timer barrier exists.
 - [x] Confirm current package validation is syntax-only.
-- [x] Document required pure DOM and browser fixtures.
+- [x] Document required pure timer and browser fixtures.
 - [ ] Execute fixtures after implementation.
 
 ## Proven from source
 
 ```txt
-interlude is always present in index.html
-closed state starts aria-hidden=true
-closed CSS uses opacity:0
-closed CSS uses pointer-events:none
-Continue is a native enabled button
-Continue has no disabled attribute
-interlude has no inert attribute
-interlude has no role=dialog
-interlude has no aria-modal=true
-showInterlude does not move focus
-nextScene does not check sceneComplete()
-nextScene does not check interlude open state
-nextScene does not consume a completion proof
-background inspection buttons are not disabled or inert while open
+completion is derived from required clues
+completion schedules a 450 ms setTimeout callback
+timeout return value is not assigned
+callback calls showInterlude(currentScene)
+currentScene is a mutable module binding
+nextScene mutates currentScene
+nextScene hides the interlude
+nextScene replaces stage resources
+nextScene persists successor state
+nextScene does not cancel pending completion timeouts
+terminal copy has no durable terminal-state guard
+showInterlude performs no scene or proof admission
 ```
 
 ## Existing checks prove
@@ -51,16 +48,18 @@ src/story-data.js parses
 ## Existing checks do not prove
 
 ```txt
-closed-control keyboard inertness
-sequential focus order
-hidden Continue activation rejection
-dialog semantics
-focus entry, trap or return
-background command suspension
-completion-gated Continue
-stale or duplicate activation handling
-modal-to-transition correlation
-screen-reader behavior
+timer identity or generation
+timeout handle retention
+immutable callback context
+scene-transition cancellation
+terminal-route cancellation
+reset or stop cancellation
+stale callback rejection
+exactly-once timer retirement
+successor interlude parity
+terminal-copy stability
+event-loop ordering
+visible-frame correlation
 ```
 
 ## Change boundary
@@ -68,8 +67,8 @@ screen-reader behavior
 ```txt
 runtime source changed: no
 story content changed: no
-focus behavior changed: no
-modal semantics changed: no
+timer behavior changed: no
+modal behavior changed: no
 transition behavior changed: no
 render behavior changed: no
 package scripts changed: no
@@ -84,33 +83,34 @@ browser smoke: not run
 ## Required fixtures
 
 ```txt
-fixture:closed-modal-inertness
-fixture:hidden-continue-not-focusable
-fixture:hidden-continue-activation-rejected
-fixture:open-modal-dialog-semantics
-fixture:focus-origin-capture
-fixture:focus-entry
-fixture:focus-trap
-fixture:background-controls-inert
-fixture:focus-return
-fixture:continue-requires-completion-proof
-fixture:stale-modal-generation-rejected
-fixture:duplicate-continue-idempotent
-fixture:modal-observation-detached
-fixture:modal-journal-bounded
-smoke:keyboard-scene-skip-blocked
-smoke:screen-reader-modal-contract
-smoke:pages-modal-focus
+fixture:completion-schedules-one-timer
+fixture:timer-context-freezes-scene
+fixture:timer-context-cites-completion-proof
+fixture:transition-before-due-cancels-timer
+fixture:stale-callback-rejected
+fixture:cancelled-timer-zero-mutation
+fixture:successor-interlude-remains-closed
+fixture:terminal-copy-not-overwritten
+fixture:reset-cancels-live-timers
+fixture:session-stop-cancels-live-timers
+fixture:duplicate-cancel-idempotent
+fixture:fired-timer-retires-once
+fixture:timer-observation-detached
+fixture:timer-journal-bounded
+smoke:browser-transition-before-delay
+smoke:browser-terminal-before-delay
+smoke:pages-timer-order
 ```
 
 ## Current result
 
 ```txt
-modal focus authority implemented: no
-hidden Continue inertness proven: no
-background interaction isolation proven: no
-completion-gated Continue proven: no
-assistive-technology semantics proven: no
+completion timer authority implemented: no
+retained timer lease proven: no
+transition cancellation proven: no
+stale callback rejection proven: no
+terminal-copy stability proven: no
+browser event-loop parity proven: no
 ```
 
-No keyboard-modal safety, scene-skip prevention, focus isolation or completion-admission claim is made.
+No delayed-interlude ordering, timer cancellation, stale-callback safety or terminal-projection stability claim is made.
