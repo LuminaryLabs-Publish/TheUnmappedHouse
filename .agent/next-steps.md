@@ -1,10 +1,10 @@
 # Next steps: The Unmapped House
 
-Timestamp: `2026-07-11T18-38-45-04-00`
+Timestamp: `2026-07-11T20-11-26-04-00`
 
 ## Goal
 
-Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, and visible rendering while making story admission, transitions, lifecycle, internal resolution, WebGL context recovery, and committed-frame proof deterministic.
+Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, side-panel accessibility path, and visible rendering while making story admission, pointer picking, inspection, transitions, lifecycle, internal resolution, WebGL recovery, and committed-frame proof deterministic.
 
 ## Plan ledger
 
@@ -27,112 +27,123 @@ Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, a
 - [ ] Roll back candidate resources on preparation, persistence, projection, or first-frame failure.
 - [ ] Publish typed load, save, clear, reset, rollback, and first-frame results.
 
-### 3. Inspection and completion proof
+### 3. Pointer observation and hotspot-pick authority
+
+- [ ] Replace `mousemove` and ambient click picking with one pointer-event adapter.
+- [ ] Capture activation coordinates from the activation event itself.
+- [ ] Add monotonic pointer sample ids and explicit input modality.
+- [ ] Normalize client coordinates against one admitted canvas rectangle.
+- [ ] Bind every sample to session generation, stage epoch, surface revision, camera revision, hotspot-set revision, context generation, resource generation, and visible frame id.
+- [ ] Separate hover samples from activation samples.
+- [ ] Reject predecessor samples after resize, scene change, camera change, hotspot replacement, context recovery, restart, or disposal.
+- [ ] Return typed hit, miss, stale, rejected, unsupported, and failed pick results.
+- [ ] Return canonical hotspot ids rather than mutable descriptors.
+- [ ] Clear hover and parallax on pointer leave, cancel, blur, suspension, and disposal.
+- [ ] Support declared mouse, touch, pen, keyboard, and assistive-technology capabilities.
+- [ ] Make side-panel and canvas activation produce one shared command/result semantic shape.
+- [ ] Publish detached pointer/pick observations and a bounded journal.
+
+### 4. Inspection and completion proof
 
 - [ ] Replace descriptor ingress with id-only `InspectionCommand` values.
 - [ ] Resolve canonical hotspots after admission.
+- [ ] Require an accepted canvas pick result or side-panel activation result.
 - [ ] Record immutable inspection receipts and clue provenance.
 - [ ] Derive one `SceneCompletionProof` from current-scene receipts.
-- [ ] Prove side-panel/raycast parity and stale-observation rejection.
+- [ ] Prove dual-ingress parity and stale-observation rejection.
 
-### 4. Atomic Continue transition
+### 5. Atomic Continue transition
 
 - [ ] Add command, proof, revision, transition, and stage identities.
 - [ ] Build successor story and stage candidates without mutating live state.
 - [ ] Persist and commit story, UI, stage, camera, fog, hotspots, and post settings atomically.
+- [ ] Invalidate all predecessor pointer samples and hover state.
 - [ ] Acknowledge the first visible successor frame.
 - [ ] Retire predecessor resources only after acknowledgement.
 - [ ] Roll back to predecessor authority on failure.
 - [ ] Persist an explicit terminal phase when no successor exists.
 
-### 5. Runtime lifecycle and scene-resource retirement
+### 6. Runtime lifecycle and scene-resource retirement
 
 - [ ] Add stable `sessionId` and monotonic `sessionGeneration`.
-- [ ] Fence boot, interaction, timeout, reset, retry, resize, context, and frame work.
+- [ ] Fence boot, pointer, inspection, timeout, reset, retry, resize, context, and frame work.
 - [ ] Retain RAF, listener, timeout, stage, renderer, canvas, target, and context leases.
 - [ ] Inventory and dispose stage geometries, materials, hotspot resources, post resources, target, renderer, canvas, and context state.
 - [ ] Add ordered idempotent stop, reset, restart, and dispose results.
 
-### 6. Render Surface Resolution Authority
+### 7. Render Surface Resolution Authority
 
 - [ ] Separate CSS aspect-frame composition from internal render resolution.
 - [ ] Add immutable quality tiers with DPR, long-edge, pixel-count, sample, and fallback limits.
-- [ ] Query relevant renderer and target capabilities before candidate allocation.
+- [ ] Query renderer and target capabilities before candidate allocation.
 - [ ] Convert boot, resize, DPR change, retry, and fallback into one `ResizeCommand` path.
 - [ ] Coalesce duplicate resize observations and reject stale generations.
 - [ ] Produce one immutable `RenderSurfacePlan` with requested and admitted values.
 - [ ] Prepare renderer and post-target dimensions under candidate ownership.
 - [ ] Keep the predecessor surface committed during preparation.
 - [ ] Classify allocation failures and step through declared fallback tiers.
-- [ ] Commit CSS frame, camera projection, renderer buffer, target, and post binding as one surface revision.
+- [ ] Commit CSS frame, camera projection, renderer buffer, target, post binding, and pointer-surface revision as one surface revision.
 - [ ] Read back actual applied dimensions.
 - [ ] Acknowledge the first visible frame for each committed surface revision.
 - [ ] Retire superseded allocations only after frame acknowledgement.
-- [ ] Publish detached observations and a bounded render-surface journal.
 
-### 7. WebGL Context Recovery Authority
+### 8. WebGL Context Recovery Authority
 
-- [ ] Add canonical context states: `UNINITIALIZED`, `INITIALIZING`, `READY`, `LOST`, `RESTORING`, `FAILED`, and `DISPOSED`.
-- [ ] Add monotonic `contextGeneration` and `resourceGeneration` identities.
-- [ ] Install revocable `webglcontextlost` and `webglcontextrestored` adapters through runtime lifecycle ownership.
-- [ ] Suspend ready-frame commits immediately after accepted context loss.
-- [ ] Fence raycast-dependent and story-mutating input under an explicit context policy.
-- [ ] Preserve canonical story, stage, surface, camera, post, and hotspot descriptors through loss.
+- [ ] Add canonical context states and monotonic context/resource generations.
+- [ ] Install revocable context-loss and restoration adapters.
+- [ ] Suspend ready-frame commits and pointer-pick admission after accepted loss.
+- [ ] Preserve canonical story, stage, surface, camera, post, and hotspot descriptors.
 - [ ] Build a complete context-bound resource registry.
-- [ ] Prepare renderer state, target storage, post binding, materials, geometries, and hotspots under candidate ownership.
-- [ ] Reject stale session, stage, surface, context, and resource generations.
-- [ ] Roll back and dispose every partial candidate resource on failure.
-- [ ] Commit one complete resource generation atomically.
-- [ ] Render and acknowledge one recovered visible frame before returning to `READY`.
+- [ ] Prepare and atomically commit one complete replacement generation.
+- [ ] Reject stale session, stage, surface, context, resource, and pointer samples.
+- [ ] Render and acknowledge one recovered visible frame before returning to ready.
 - [ ] Prove repeated loss/restore cycles keep resource and listener counts bounded.
-- [ ] Reject late context events after disposal.
 
-### 8. Committed-frame diagnostics
+### 9. Committed-frame diagnostics
 
-- [ ] Correlate frame id, story snapshot, stage epoch, surface revision, context generation, resource generation, camera, hotspot set, and post settings.
+- [ ] Correlate frame id, story snapshot, stage epoch, surface revision, camera revision, hotspot-set revision, context generation, resource generation, pointer sample, pick result, and post settings.
 - [ ] Expose detached clone-safe observations.
-- [ ] Record bootstrap, successor-frame, resize-frame, context-loss, recovered-frame, rollback, and resource-retirement acknowledgements.
+- [ ] Record bootstrap, activation, transition, resize, context-loss, recovered-frame, rollback, and resource-retirement acknowledgements.
 
-## Required WebGL context fixture rows
+## Required pointer-pick fixture rows
 
 ```txt
-context-state-transition-table
-loss-command-idempotent
-context-generation-monotonic
-resource-generation-bound-to-context
-loss-suspends-ready-frame-commit
-raycast-input-rejected-while-lost
-story-state-preserved-through-loss
-restore-rebuilds-complete-resource-registry
-same-surface-revision-cannot-skip-resource-rebuild
-stale-restore-result-cannot-commit
-partial-rebuild-rolls-back-and-disposes
-first-recovered-frame-cites-active-generations
-post-material-samples-rebuilt-target
-hotspot-picking-resumes-on-recovered-frame
-repeated-loss-restore-resource-count-stable
-late-context-event-after-dispose-rejected
-context-observation-detached-json-safe
-context-journal-bounded
+event-local-click-coordinate-used
+click-before-first-move-correct
+touch-activation-does-not-require-mousemove
+pen-activation-does-not-require-mousemove
+hover-sample-never-authorizes-activation
+pointer-leave-clears-hover
+window-blur-clears-hover
+zero-size-canvas-rejected
+nonfinite-coordinates-rejected
+resize-invalidates-predecessor-sample
+stage-change-invalidates-predecessor-sample
+camera-change-invalidates-predecessor-sample
+hotspot-set-change-invalidates-predecessor-sample
+context-change-invalidates-predecessor-sample
+miss-does-not-mutate-story
+hit-resolves-one-canonical-hotspot-id
+all-nine-hotspots-dual-ingress-parity
+accepted-pick-cites-visible-frame
+pointer-observation-detached-json-safe
+pointer-journal-bounded
 ```
 
-## Browser WebGL recovery smoke
+## Browser pointer smoke
 
 ```txt
-boot and capture baseline story, stage, surface, context, resource and frame identities
-force WebGL context loss
-verify state becomes LOST and no ready frame commits
-verify render-dependent input is fenced
-verify story state remains stable
-restore context under declared policy
-verify context and resource generations advance once
-verify target, post binding, scene resources and hotspots rebuild
-verify first recovered frame cites all active identities
-repeat loss/restore three times and compare live resource counts
-lose context during resize
-lose context during interlude
-lose context during transition preparation
-verify late events after disposal are rejected
+boot and capture session, stage, surface, camera, hotspot-set, context and frame identities
+click a hotspot before any mousemove
+hover hotspot A, resize, click hotspot B
+hover in scene one, Continue, activate in scene two
+activate through touch without prior mouse movement
+activate through pen without prior mouse movement where available
+leave the canvas and verify hover clears
+blur the page and verify hover clears
+activate all nine hotspots through canvas and side-panel paths
+compare inspection, clue, completion, persistence and visible-frame parity
+verify misses and stale results do not mutate story state
 ```
 
 ## Implementation order
@@ -140,19 +151,20 @@ verify late events after disposal are rejected
 ```txt
 1. StoryManifest authority
 2. StorySnapshot startup admission and typed persistence authority
-3. Inspection and scene-completion proof authority
-4. Atomic Continue transition authority
-5. Runtime session lifecycle and scene-resource retirement
-6. Render Surface Resolution Authority
-7. WebGL Context Recovery Authority
-8. Committed-frame diagnostics
+3. Pointer Observation and Hotspot Pick Authority
+4. Inspection and scene-completion proof authority
+5. Atomic Continue transition authority
+6. Runtime session lifecycle and scene-resource retirement
+7. Render Surface Resolution Authority
+8. WebGL Context Recovery Authority
+9. Committed-frame diagnostics
 ```
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse WebGL Context Recovery Authority
-+ Context Generation / Resource Rebuild / Input Suspension / Recovered-Frame Fixture Gate
+TheUnmappedHouse Pointer Observation and Hotspot Pick Authority
++ Event-Local Coordinate / Revision Provenance / Input-Modality / Dual-Ingress Fixture Gate
 ```
 
 ## Do not do first
