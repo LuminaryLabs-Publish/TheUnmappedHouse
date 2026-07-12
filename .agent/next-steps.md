@@ -1,6 +1,6 @@
 # Next steps: The Unmapped House
 
-Timestamp: `2026-07-12T01-41-56-04-00`
+Timestamp: `2026-07-12T03-21-27-04-00`
 
 ## Goal
 
@@ -27,18 +27,8 @@ Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, s
 - [ ] Make DOM and aria-live output consume a typed, revisioned narrative projection.
 
 ### 7. Runtime Session Lifecycle and Scene Resource Retirement Authority
-- [ ] Add runtime session identity, generation and lifecycle state.
-- [ ] Construct the runtime through a startup transaction with reverse-order rollback.
-- [ ] Retain exactly one RAF request id and cancel it before resource retirement.
-- [ ] Represent resize, pointer, click, Continue and keyboard listeners as revocable leases.
-- [ ] Retain and cancel completion timeouts.
-- [ ] Add callback generation fences and stale-callback results.
-- [ ] Build each scene into a resource generation with an explicit inventory.
-- [ ] Keep the predecessor generation until the first successor-frame acknowledgement.
-- [ ] Dispose predecessor geometries, materials and hotspot resources exactly once.
-- [ ] Dispose post geometry/material, render target, renderer, context and canvas in order.
-- [ ] Add idempotent stop, reset, restart and dispose results.
-- [ ] Publish detached lifecycle and resource observations with a bounded journal.
+- [ ] Add session identity, callback leases, scene-resource generations and ordered disposal.
+- [ ] Retain predecessor resources until the first accepted successor frame.
 
 ### 8. Render Surface Resolution Authority
 - [ ] Separate CSS composition from internal GPU resolution and commit surface revisions.
@@ -46,49 +36,55 @@ Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, s
 ### 9. WebGL Context Recovery Authority
 - [ ] Coordinate context loss, restoration and replacement resource generations.
 
-### 10. Committed-frame diagnostics
-- [ ] Correlate manifest, snapshot, story, narrative, runtime, resource, surface, context and frame identities.
+### 10. Committed Frame Diagnostics Authority
+- [ ] Add a monotonic frame sequence.
+- [ ] Freeze one immutable frame input per callback.
+- [ ] Require runtime, scene-resource, surface, context, camera and story revisions.
+- [ ] Return typed stage-pass and post-pass results.
+- [ ] Commit public frame state only after final canvas acknowledgement.
+- [ ] Reject stale or failed frame results.
+- [ ] Publish detached JSON-safe frame readback and a bounded journal.
+- [ ] Correlate notebook/debug projection, screenshots and interaction receipts with frame ids.
 
-## Required lifecycle fixture rows
+## Required committed-frame fixture rows
 
 ```txt
-one-runtime-session-id
-one-live-raf-chain
-stop-cancels-next-frame
-listeners-retired-on-stop
-timeout-retired-on-stop
-stale-timeout-rejected
-stale-pointer-rejected
-scene-load-creates-new-resource-generation
-predecessor-retained-until-successor-frame
-predecessor-geometries-disposed
-predecessor-materials-disposed
-predecessor-hotspot-resources-disposed
-render-target-disposed
-post-resources-disposed
-renderer-and-canvas-retired
-partial-startup-rolls-back
-partial-scene-build-rolls-back
-stop-idempotent
-dispose-idempotent
-restart-creates-one-canvas
-restart-creates-one-raf
-repeated-scene-transitions-bounded
-observation-detached-json-safe
-journal-bounded
+frame-sequence-monotonic
+frame-input-frozen
+frame-input-cites-story-revision
+frame-input-cites-runtime-generation
+frame-input-cites-scene-resource-generation
+frame-input-cites-surface-revision
+frame-input-cites-context-generation
+stage-pass-result-required
+post-pass-result-required
+failed-stage-pass-not-public
+failed-post-pass-not-public
+visible-frame-ack-required
+first-frame-after-start
+first-frame-after-inspection
+first-frame-after-scene-transition
+debug-readback-cites-frame
+notebook-and-canvas-revision-parity
+stale-frame-rejected
+frame-observation-detached-json-safe
+frame-journal-bounded
+screenshot-cites-frame-and-commit
 ```
 
-## Browser lifecycle smoke
+## Browser committed-frame smoke
 
 ```txt
-boot and record session/resource observation
-transition A -> B -> C
-verify each predecessor generation retires after successor-frame acknowledgement
-stop runtime
-verify no later frame, pointer, resize or timeout work commits
-restart runtime
-verify one canvas, one RAF chain and one active session
-repeat transitions and compare bounded resource counts
+open deployed route
+capture initial frame receipt and screenshot
+inspect one hotspot through the side panel
+wait for the first frame citing the inspection result
+verify notebook, story state and canvas cite that frame
+complete the scene and Continue
+verify successor DOM is not claimed visible until successor-frame acknowledgement
+capture successor frame receipt and screenshot
+force one stale frame result and verify rejection
+verify bounded detached frame journal
 ```
 
 ## Implementation order
@@ -103,15 +99,16 @@ repeat transitions and compare bounded resource counts
 7. Runtime Session Lifecycle and Scene Resource Retirement Authority
 8. Render Surface Resolution Authority
 9. WebGL Context Recovery Authority
-10. Committed-frame diagnostics
+10. Committed Frame Diagnostics Authority
 ```
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse Runtime Session Lifecycle Authority
-+ Ordered Callback and Three Resource Disposal
-+ Scene Transition Leak and Restart Idempotence Gate
+TheUnmappedHouse Committed Frame Diagnostics Authority
++ Immutable Input Snapshot
++ Stage/Post Pass Results
++ Visible Canvas Acknowledgement
 ```
 
 ## Do not do first
