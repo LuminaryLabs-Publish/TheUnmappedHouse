@@ -1,171 +1,160 @@
 # Next steps: The Unmapped House
 
-Timestamp: `2026-07-11T21-48-44-04-00`
+Timestamp: `2026-07-12T00-01-25-04-00`
 
 ## Goal
 
-Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, side-panel accessibility path and visible rendering while making authored content, persistence, picking, inspection, transitions, lifecycle and frame proof deterministic.
+Preserve the current three-scene story, 450 ms pacing, fixed 16:9 composition, side-panel accessibility path and Three.js presentation while making content, state, picking, inspection, transitions, narrative copy, lifecycle and visible-frame proof deterministic.
 
 ## Plan ledger
 
 ### 1. Canonical StoryManifest
 
-- [ ] Create one root `StoryManifest` instead of separate title and scenes exports.
-- [ ] Add stable manifest id, schema version, content version and deterministic fingerprint.
-- [ ] Declare one initial scene id and an explicit terminal policy.
-- [ ] Validate unique scene ids and scene-scoped hotspot ids.
-- [ ] Build canonical scene, hotspot, clue, requirement and successor indexes.
-- [ ] Replace array-position progression with explicit successor edges.
-- [ ] Validate every successor target and reject cycles unless explicitly supported.
-- [ ] Validate each grant and requirement against the canonical clue index.
-- [ ] Validate requirement ownership and reachability.
-- [ ] Validate camera, stage, geometry, material, post and hotspot descriptors.
-- [ ] Canonicalize ordering before fingerprinting.
-- [ ] Deep-freeze the admitted definition graph.
-- [ ] Return typed accepted, rejected and failed admission results.
-- [ ] Expose detached manifest observations and a bounded journal.
+- [ ] Create one root `StoryManifest` with stable id, schema version, content version and fingerprint.
+- [ ] Validate and index scenes, hotspots, clues, requirements, successors and terminal declarations.
+- [ ] Canonicalize and deep-freeze the admitted graph.
+- [ ] Validate render descriptors before StageKit allocation.
+- [ ] Publish typed admission, observation and journal results.
 
 ### 2. Versioned StorySnapshot startup authority
 
-- [ ] Replace the raw `.v1` object with a versioned envelope citing manifest id and fingerprint.
-- [ ] Separate read, parse, migration, structural admission, semantic admission, reconciliation and commit results.
-- [ ] Reconcile unknown scene, hotspot and clue ids explicitly.
-- [ ] Never render one scene while retaining a different unresolved `state.sceneId`.
-- [ ] Retain malformed or rejected raw input without automatic overwrite.
-- [ ] Delay StageKit allocation until both manifest and snapshot candidates are accepted.
-- [ ] Prepare stage and UI off-line under one bootstrap generation.
-- [ ] Roll back candidate resources on preparation, persistence, projection or first-frame failure.
-- [ ] Publish typed load, save, clear, reset, rollback and first-frame results.
+- [ ] Replace the raw `.v1` object with a versioned envelope citing manifest identity.
+- [ ] Separate read, parse, migration, admission, reconciliation and commit results.
+- [ ] Explicitly reconcile unknown scene, hotspot and clue ids.
+- [ ] Delay StageKit allocation until manifest and snapshot candidates are accepted.
+- [ ] Preserve rejected raw saves for diagnosis instead of overwriting them.
 
 ### 3. Pointer observation and hotspot-pick authority
 
-- [ ] Replace `mousemove` and ambient click picking with one pointer-event adapter.
-- [ ] Capture activation coordinates from the activation event itself.
-- [ ] Add monotonic pointer sample ids and explicit input modality.
-- [ ] Bind every sample to admitted manifest, scene, stage, surface, camera, hotspot-set, context, resource and frame identities.
-- [ ] Return canonical hotspot ids rather than mutable descriptors.
-- [ ] Make side-panel and canvas activation produce one shared command/result shape.
+- [ ] Use one pointer-event adapter for hover and activation.
+- [ ] Capture activation coordinates from the activation event.
+- [ ] Add pointer sample ids, modality and surface/camera provenance.
+- [ ] Return canonical hotspot ids instead of mutable descriptors.
+- [ ] Make canvas and side-panel activation produce the same command/result shape.
 
 ### 4. Inspection and completion proof
 
-- [ ] Replace descriptor ingress with id-only `InspectionCommand` values.
-- [ ] Resolve canonical hotspots from the admitted manifest.
+- [ ] Admit id-only `InspectionCommand` values.
+- [ ] Resolve hotspots through canonical indexes.
 - [ ] Record immutable inspection receipts and clue provenance.
-- [ ] Derive one `SceneCompletionProof` from current-scene receipts and admitted requirements.
+- [ ] Derive one `SceneCompletionProof` from accepted current-scene receipts.
 
 ### 5. Atomic Continue transition
 
-- [ ] Resolve the successor through the admitted successor graph.
-- [ ] Reject Continue from explicit terminal scenes.
-- [ ] Add command, proof, revision, transition and stage identities.
-- [ ] Build successor story and stage candidates without mutating live state.
-- [ ] Persist and commit story, UI, stage, camera, fog, hotspots and post settings atomically.
-- [ ] Acknowledge the first visible successor frame.
-- [ ] Retire predecessor resources only after acknowledgement.
-- [ ] Roll back to predecessor authority on failure.
+- [ ] Resolve successors through the admitted graph.
+- [ ] Prepare successor story, stage, hotspot and persistence candidates before mutation.
+- [ ] Commit them under one transition revision.
+- [ ] Retire predecessor authority only after the first successor-frame acknowledgement.
+- [ ] Roll back on preparation, persistence, projection or frame failure.
 
-### 6. Runtime lifecycle and scene-resource retirement
+### 6. Narrative Projection Authority
 
-- [ ] Add stable `sessionId` and monotonic `sessionGeneration`.
-- [ ] Fence boot, pointer, inspection, timeout, reset, retry, resize, context and frame work.
-- [ ] Retain RAF, listener, timeout, stage, renderer, canvas, target and context leases.
-- [ ] Inventory and dispose scene and post resources.
+- [ ] Remove all story behavior that reads `#scene-text.textContent`.
+- [ ] Add `NarrativeProjection` state with source kind, source id, scene id and revision.
+- [ ] Derive scene-opening copy from the admitted scene.
+- [ ] Derive hotspot copy from an accepted inspection result.
+- [ ] Derive completion copy from a completion proof.
+- [ ] Derive terminal copy from a durable terminal result.
+- [ ] Commit successor opening copy inside the Continue transaction.
+- [ ] Retire predecessor hotspot and interlude projections on scene change.
+- [ ] Select and document a reload persistence policy.
+- [ ] Project through one DOM and `aria-live` adapter.
+- [ ] Correlate the first visible frame with story, narrative, stage and hotspot revisions.
+- [ ] Publish detached observations and a bounded journal.
+
+### 7. Runtime lifecycle and scene-resource retirement
+
+- [ ] Add stable session identity and generation.
+- [ ] Fence RAF, pointer, timeout, resize, reset, context and frame work.
+- [ ] Retain and revoke listener, timeout, renderer, target, stage and context leases.
+- [ ] Dispose geometries and materials instead of only clearing groups.
 - [ ] Add ordered idempotent stop, reset, restart and dispose results.
 
-### 7. Render Surface Resolution Authority
+### 8. Render Surface Resolution Authority
 
-- [ ] Separate CSS aspect-frame composition from internal render resolution.
-- [ ] Add immutable quality tiers and allocation budgets.
-- [ ] Commit CSS frame, camera projection, renderer buffer, target, post binding and pointer-surface revision as one surface revision.
-- [ ] Acknowledge the first visible frame for each committed surface revision.
+- [ ] Separate CSS aspect-frame composition from internal GPU resolution.
+- [ ] Add immutable quality tiers and pixel budgets.
+- [ ] Commit CSS frame, camera projection, renderer buffer, target and pointer surface under one revision.
+- [ ] Acknowledge the first visible frame for each surface revision.
 
-### 8. WebGL Context Recovery Authority
+### 9. WebGL Context Recovery Authority
 
-- [ ] Add canonical context states and monotonic context/resource generations.
-- [ ] Suspend ready-frame commits and pointer admission after accepted loss.
+- [ ] Add context loss/restoration listeners and canonical context states.
+- [ ] Suspend pointer and ready-frame admission after accepted loss.
 - [ ] Rebuild one complete replacement resource generation.
-- [ ] Render and acknowledge one recovered visible frame before returning to ready.
+- [ ] Return to ready only after a recovered visible frame is acknowledged.
 
-### 9. Committed-frame diagnostics
+### 10. Committed-frame diagnostics
 
-- [ ] Correlate manifest fingerprint, snapshot revision, scene id, stage epoch, surface revision, camera revision, hotspot-set revision, context generation, resource generation and frame id.
+- [ ] Correlate manifest fingerprint, snapshot revision, story revision, narrative revision, scene id, stage revision, hotspot-set revision, surface revision, context generation and frame id.
 - [ ] Expose detached clone-safe observations.
-- [ ] Record bootstrap, activation, transition, resize, recovery, rollback and retirement acknowledgements.
+- [ ] Record bootstrap, inspection, completion, transition, resize, recovery, rollback and retirement acknowledgements.
 
-## Required StoryManifest fixture rows
+## Required narrative fixture rows
 
 ```txt
-manifest-root-required
-manifest-id-required
-schema-version-supported
-content-version-present
-initial-scene-resolves
-scene-ids-unique
-hotspot-ids-unique-per-scene
-all-grants-resolve-known-clues
-all-requirements-resolve-known-clues
-requirements-have-declared-owner
-requirements-are-reachable
-all-nonterminal-scenes-have-one-successor
-all-successors-resolve
-terminal-scenes-explicit
-unsupported-cycle-rejected
-camera-vectors-finite
-geometry-dimensions-positive-finite
-material-colors-valid
-post-values-finite-and-bounded
-canonical-order-stable
-fingerprint-stable-across-equivalent-input
-fingerprint-changes-on-semantic-change
-admitted-manifest-deep-frozen
-legacy-adapter-preserves-current-three-scenes
-manifest-observation-detached-json-safe
-manifest-journal-bounded
-manifest-to-stage-plan-fingerprint-equal
-manifest-to-first-frame-fingerprint-equal
+dom-is-output-only
+boot-initial-scene-opening-copy
+inspect-hotspot-projects-copy
+reinspect-hotspot-projects-canonical-copy
+completion-proof-projects-interlude
+continue-projects-successor-opening
+predecessor-hotspot-copy-retired
+successor-title-body-stage-parity
+successor-hotspot-list-parity
+reload-policy-deterministic
+terminal-projection-durable
+stale-scene-projection-rejected
+stale-session-projection-rejected
+duplicate-command-idempotent
+aria-live-committed-revision-only
+narrative-observation-detached-json-safe
+narrative-journal-bounded
+first-visible-frame-cites-narrative-revision
 ```
 
-## Browser manifest smoke
+## Browser narrative smoke
 
 ```txt
-admit the current three-scene story
-capture manifest id, version and fingerprint
-boot from an empty save
-boot from each valid scene id
-inject an unknown saved scene id and verify explicit reconciliation
-attempt duplicate scene and hotspot ids and verify rejection before StageKit allocation
-attempt unknown clue requirements and verify rejection before runtime mutation
-attempt malformed camera and geometry values and verify rejection
-attempt descriptor mutation after admission and verify it cannot change the frozen graph
-advance through explicit successor edges to the explicit terminal scene
-verify each visible frame cites the admitted manifest fingerprint
+clear storage
+boot scene A and capture opening copy
+inspect all scene A hotspots
+wait for completion interlude
+press Continue
+capture the first scene B frame
+verify scene B title, opening body, stage and hotspot list agree
+repeat through scene C and terminal projection
+reload each saved scene and verify the declared persistence policy
 ```
 
 ## Implementation order
 
 ```txt
-1. StoryManifest authority
-2. StorySnapshot startup admission and typed persistence authority
-3. Pointer Observation and Hotspot Pick Authority
-4. Inspection and scene-completion proof authority
-5. Atomic Continue transition authority
-6. Runtime session lifecycle and scene-resource retirement
-7. Render Surface Resolution Authority
-8. WebGL Context Recovery Authority
-9. Committed-frame diagnostics
+1. StoryManifest Authority
+2. StorySnapshot startup authority
+3. Pointer and hotspot-pick authority
+4. Inspection and completion authority
+5. Atomic Continue transition
+6. Narrative Projection Authority
+7. Runtime lifecycle and resource retirement
+8. Render Surface Resolution Authority
+9. WebGL Context Recovery Authority
+10. Committed-frame diagnostics
 ```
 
 ## Next safe ledge
 
 ```txt
-TheUnmappedHouse StoryManifest Authority
-+ Schema / Canonical Index / Successor Graph / Freeze / Fingerprint / Render-Parity Fixture Gate
+TheUnmappedHouse Narrative Projection Authority
++ Successor Opening Copy Commit
++ Narrative Persistence Policy
++ Story / Stage / Copy First-Frame Parity Gate
 ```
 
 ## Do not do first
 
 ```txt
-new rooms or branches
+new story rooms or branches
 inventory
 audio or voice work
 renderer replacement
