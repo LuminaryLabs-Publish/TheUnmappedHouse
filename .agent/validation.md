@@ -1,62 +1,55 @@
 # Validation: The Unmapped House
 
-**Timestamp:** `2026-07-12T13-08-15-04-00`
+**Timestamp:** `2026-07-12T15-08-07-04-00`
 
 ## Summary
 
-This run changed documentation only. Source inspection proves that `StageKit` performs a fixed-design renderer and multisampled-target allocation before the first live resize, then reallocates both surfaces from CSS viewport dimensions and capped DPR without a product pixel budget, WebGL capability admission, allocation readback, commit/rollback result or visible-frame receipt.
+This run changed documentation only. Source inspection proves that the public page always mounts a visible `Notebook` `<pre>` and that `renderUi()` writes a raw JSON serialization of internal game, scene, clue, route, inspection, completion and log fields into it without channel admission, classification, redaction, projection identity or visible-frame proof.
 
 ## Plan ledger
 
-**Goal:** distinguish source-backed render-surface findings from runtime safety claims that require executable browser proof.
+**Goal:** distinguish source-backed notebook/diagnostic findings from production-safety claims that require executable browser proof.
 
-- [x] Inspect renderer and target construction.
-- [x] Inspect aspect-frame and resize calculations.
-- [x] Confirm DPR is capped at two.
-- [x] Confirm total pixels and samples are not budgeted.
-- [x] Confirm WebGL texture, renderbuffer and sample limits are not admitted.
-- [x] Confirm actual allocation dimensions and framebuffer status are not read back.
-- [x] Confirm resize has no revision, rollback or frame acknowledgement.
+- [x] Inspect the Notebook shell in `index.html`.
+- [x] Inspect Notebook visibility and `<pre>` styling in `src/styles.css`.
+- [x] Inspect aggregate fields written by `renderUi()`.
+- [x] Confirm projection occurs at boot, inspection and scene transition.
+- [x] Confirm no build, query, role or capability gate exists.
+- [x] Confirm no field classification or redaction policy exists.
+- [x] Confirm no projection revision or visible-frame acknowledgement exists.
 - [x] Document pure and browser fixture requirements.
 - [ ] Execute fixtures after implementation.
 
 ## Proven from source
 
 ```txt
-design width is 1920
-design height is 1080
-renderer antialias is enabled
-requested DPR is capped at 2
-renderer is initially sized to design dimensions
-offscreen target is initially sized to design dimensions multiplied by DPR
-offscreen target requests two samples
-constructor calls resize after initial allocation
-resize uses innerWidth and innerHeight through fixed-aspect calculation
-resize resizes both renderer and offscreen target
-no product pixel or sample budget exists
-no WebGL capability query exists
-no allocation readback exists
-no framebuffer-completeness result exists
-no surface id or revision exists
-no resize generation or stale rejection exists
-no commit, rollback or retirement receipt exists
-no visible-frame surface acknowledgement exists
+#state-debug is mounted in index.html
+#state-debug is inside a section labelled Notebook
+.notes and pre are visible in normal page CSS
+renderUi writes JSON.stringify output directly to #state-debug
+projected fields are game, scene, clues, route, inspected, complete and latest
+scene values are internal scene ids
+clue values are internal clue ids
+inspected values are current-scene internal hotspot booleans
+complete is the authoritative scene-completion boolean
+renderUi runs during initial boot
+renderUi runs after each inspection
+renderUi runs after Continue scene transition
+no public/player/developer channel distinction exists
+no build-channel or capability admission exists
+no field classification or redaction profile exists
+no projection id or revision exists
+no story-revision binding exists
+no first-visible notebook frame acknowledgement exists
 ```
 
-## Quantified source-derived cases
+## Important precision boundary
 
 ```txt
-1920 x 1080 CSS at DPR 2
-  physical dimensions: 3840 x 2160
-  pixels per surface: 8,294,400
-
-3840 x 2160 CSS at DPR 2
-  physical dimensions: 7680 x 4320
-  pixels per surface: 33,177,600
-  offscreen color sample positions at samples 2: 66,355,200
+future requiresToComplete arrays are not directly projected
+the current issue is not a claim that every future answer is disclosed
+the issue is that acquired internal ids and aggregate structure are unclassified public UI
 ```
-
-These counts exclude depth, resolve storage, the default framebuffer and implementation overhead.
 
 ## Existing checks prove
 
@@ -70,19 +63,15 @@ src/story-data.js parses
 ## Existing checks do not prove
 
 ```txt
-bounded surface planning
-WebGL capability admission
-mobile startup allocation behavior
-DPR fallback policy
-multisample fallback policy
-actual drawing-buffer dimensions
-actual target dimensions
-framebuffer completeness
-atomic renderer/target commit
-allocation rollback
-predecessor retirement
-rapid resize coalescing
-first visible frame provenance
+player-versus-developer channel separation
+build-channel admission
+diagnostic capability admission
+field classification
+redaction and internal-id mapping
+stale story/projection rejection
+typed projection results
+public Pages omission of developer diagnostics
+visible frame provenance
 ```
 
 ## Change boundary
@@ -90,50 +79,46 @@ first visible frame provenance
 ```txt
 runtime source changed: no
 story content changed: no
-renderer behavior changed: no
-surface allocation behavior changed: no
-DPR policy changed: no
-multisample policy changed: no
+notebook behavior changed: no
+diagnostic behavior changed: no
+render behavior changed: no
 package scripts changed: no
 dependencies changed: no
 deployment changed: no
 branch created: no
 pull request created: no
 npm run check: not run
-browser smoke: not run
-Pages smoke: not run
+browser notebook smoke: not run
+Pages notebook smoke: not run
 ```
 
 ## Required fixtures
 
 ```txt
-fixture:boot-single-admitted-allocation
-fixture:mobile-no-fixed-design-preallocation
-fixture:pixel-budget-downscale
-fixture:texture-limit-admission
-fixture:renderbuffer-limit-admission
-fixture:sample-limit-admission
-fixture:invalid-dimensions-rejected
-fixture:stale-resize-rejected
-fixture:rapid-resize-coalescing
-fixture:allocation-failure-rollback
-fixture:framebuffer-incomplete-rollback
-fixture:predecessor-target-retired-once
-fixture:actual-dimensions-match-plan
-fixture:first-visible-frame-surface-revision
-smoke:browser-dpr-resize-matrix
-smoke:pages-dpr-resize-matrix
+fixture:public-player-notebook-only
+fixture:developer-capability-required
+fixture:developer-field-rejected-in-public-channel
+fixture:internal-id-redaction
+fixture:unknown-field-classification-rejected
+fixture:stale-story-revision-rejected
+fixture:stale-projection-revision-rejected
+fixture:independent-player-and-diagnostic-models
+fixture:detached-projection-result
+fixture:bounded-projection-journal
+fixture:first-visible-notebook-frame
+smoke:browser-notebook-channel-matrix
+smoke:pages-public-build-no-unadmitted-debug-json
 ```
 
 ## Current result
 
 ```txt
-render-surface authority implemented: no
-bounded pixel budget proven: no
-capability admission proven: no
-atomic commit and rollback proven: no
-resource retirement proven: no
-first visible surface frame proof: no
+notebook projection authority implemented: no
+player/developer channel separation proven: no
+field classification proven: no
+redaction proven: no
+public-build diagnostic exclusion proven: no
+first visible notebook frame proof: no
 ```
 
-No high-DPR safety, allocation safety, resize correctness, framebuffer completeness or deployment-readiness claim is made.
+No production-safe notebook, diagnostic-channel or deployment-readiness claim is made.
