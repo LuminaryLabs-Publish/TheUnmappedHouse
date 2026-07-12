@@ -1,98 +1,109 @@
 # Known gaps: The Unmapped House
 
-Timestamp: `2026-07-11T21-48-44-04-00`
+Timestamp: `2026-07-12T00-01-25-04-00`
 
 ## Plan ledger
 
-**Goal:** keep story, persistence, pointer, inspection, transition, lifecycle, rendering, WebGL recovery, diagnostics and validation gaps explicit while promoting StoryManifest admission into an implementation-ready contract.
+**Goal:** keep content, persistence, pointer, inspection, transition, narrative, lifecycle, rendering, WebGL recovery, diagnostics and validation gaps explicit.
 
-- [x] Trace authored story definitions through startup, progression, UI closures, StageKit consumption, hotspot `userData`, completion and persistence.
-- [x] Define schema, index, graph, ownership, descriptor validation, freeze, fingerprint, admission result, observation, journal and fixture gaps.
-- [x] Preserve StorySnapshot, pointer, inspection, Continue, lifecycle, surface, context and committed-frame work downstream.
-- [ ] Implement and execute the manifest gate.
+- [x] Trace narrative copy through boot, inspection, completion, Continue, terminal and reload paths.
+- [x] Confirm DOM output is also used as hidden runtime state.
+- [x] Confirm predecessor hotspot copy can survive a successor scene commit.
+- [x] Define source, revision, persistence, DOM, accessibility, observation and first-frame gaps.
+- [ ] Implement and execute the Narrative Projection Authority gate.
+
+## Narrative projection gaps
+
+- No authoritative `NarrativeProjection` state exists.
+- `#scene-text` stores whichever string was written most recently.
+- `renderUi()` reads DOM contents to decide whether to write opening copy.
+- Narrative copy has no projection id, revision, scene id, source kind or source id.
+- Inspection writes hotspot copy directly into the DOM.
+- Completion and terminal copy are stored directly in interlude elements.
+- No typed narrative projection result exists.
+- No stale, duplicate, conflict or rollback result exists.
+- No detached narrative observation or bounded journal exists.
+
+## Scene-transition copy gaps
+
+- `nextScene()` does not clear or replace `#scene-text`.
+- A successor title, stage, hotspot list, route and save can coexist with predecessor hotspot copy.
+- Predecessor narrative projection has no retirement result.
+- Successor opening copy is not prepared with the transition candidate.
+- No first successor-frame acknowledgement includes narrative identity.
+- Terminal copy is not represented as a durable terminal projection.
+
+## Persistence-policy gaps
+
+- No explicit policy chooses between restoring the canonical scene opening and restoring the exact last narrative source.
+- In-session Continue and page reload currently follow different implicit policies.
+- Arbitrary displayed copy is not persisted, but no canonical source reference is persisted either.
+- No migration rule exists for narrative source ids across content versions.
+- No typed load result reports narrative reconciliation.
+
+## Accessibility gaps
+
+- `#story-panel` is `aria-live="polite"`, but announcements have no projection revision.
+- No adapter ensures only committed narrative copy is announced.
+- A stale predecessor string can be announced under a successor title.
+- No accessibility fixture proves one announcement per accepted projection.
 
 ## StoryManifest gaps
 
-- No root StoryManifest object exists.
-- `gameTitle` and `scenes` are separate mutable exports.
-- No manifest id, schema version, content version or deterministic fingerprint exists.
-- No canonical initial-scene declaration exists outside array position zero.
-- No scene, hotspot, clue, requirement or successor indexes exist.
-- Scene progression is inferred from array order.
-- Terminal state is inferred from the absence of `scenes[index + 1]`.
-- No explicit successor graph or terminal descriptor exists.
-- No validation proves scene ids are unique.
-- No validation proves hotspot ids are unique within a scene.
-- No validation proves clue grants and requirements resolve.
-- No validation proves required clues are owned and reachable.
-- No validation proves camera, geometry, material or post descriptors are supported and finite.
-- The descriptor graph is not canonicalized or deep-frozen.
-- No typed manifest admission result exists.
-- No detached manifest observation or bounded journal exists.
+- No root StoryManifest, schema version, content version or deterministic fingerprint exists.
+- No canonical scene, hotspot, clue, requirement or successor indexes exist.
+- Progression is inferred from array position.
+- Terminal state is inferred from a missing next element.
+- Authored descriptors are mutable and shared by reference.
+- No manifest-to-stage or manifest-to-frame provenance exists.
 
-## Manifest consumption gaps
+## StorySnapshot gaps
 
-- StageKit stores the supplied scene object by reference.
-- Hotspot meshes store complete mutable hotspot descriptors in `mesh.userData`.
-- Side-panel buttons close over complete mutable hotspot descriptors.
-- No scene-plan hash, hotspot-set hash or manifest fingerprint is attached to stage resources.
-- No visible frame cites the content identity that produced it.
-- No stale-manifest or stale-descriptor result can be rejected.
+- The `.v1` save is a raw shallow-merged object.
+- Saved data cites no manifest identity or snapshot schema.
+- An unknown saved scene can render the first scene while retaining the invalid id.
+- No migration, quarantine, reconciliation, rollback or typed persistence result exists.
 
-## Story and persistence gaps
+## Pointer and inspection gaps
 
-- The `.v1` save remains an unversioned raw object with broad-catch parsing and shallow merge.
-- Saved data cites no manifest id, schema version or fingerprint.
-- An unknown saved `sceneId` visually falls back to the first scene while the invalid id remains in persisted state.
-- No semantic admission, migration, reconciliation, quarantine, typed persistence result, bootstrap rollback or first-bootstrap-frame result exists.
-- Inspections, clues, route, current scene, completion and terminal state can disagree.
-
-## Pointer observation and pick gaps
-
-- The runtime uses `mousemove`, not one canonical pointer-event adapter.
-- The click listener ignores the click event object and uses ambient pointer state.
-- No pointer sample, input modality, revision provenance, stale-result rejection or typed pick result exists.
-- Canvas and side-panel paths dispatch complete descriptors rather than canonical ids.
-
-## Inspection and transition gaps
-
-- No command identity, sequence, canonical lookup, immutable receipt, clue provenance or typed inspection result exists.
-- Completion is derived from global clue strings rather than accepted current-scene receipts.
-- Continue mutates live story state before replacement stage and persistence success.
-- Continue resolves successor by array position instead of an admitted graph.
-- No transition lock, rollback, stage epoch, first-successor-frame, retirement result or durable terminal phase exists.
+- Canvas click uses ambient pointer state instead of activation-event coordinates.
+- Canvas and side-panel paths pass complete mutable descriptors.
+- No canonical pointer sample, pick result, inspection command or immutable receipt exists.
+- Completion is derived from global clue strings rather than current-scene receipts.
 
 ## Runtime lifecycle and resource gaps
 
-- RAF, resize, pointer, click, keyboard, button closures, context events and timeouts are not managed through revocable leases.
+- RAF, resize, pointer, click, keyboard, button and timeout callbacks are not revocable leases.
 - `stageGroup.clear()` detaches resources without disposing geometries or materials.
-- Renderer, target, post resources, canvas and WebGL context have no explicit teardown result.
-- No `sessionId`, session generation, callback fence, resource inventory or idempotent stop/dispose contract exists.
+- No session id, generation, callback fence or idempotent disposal result exists.
 
 ## Render composition and resolution gaps
 
-- CSS aspect-frame geometry and internal GPU resolution are conflated inside `StageKit.resize()`.
-- DPR is sampled directly and capped only at `2`; no pixel or capability budget exists.
-- No resize generation, surface revision, atomic commit, rollback or first-visible-frame acknowledgement exists.
+- CSS frame size and GPU render resolution are coupled.
+- No product pixel policy, surface revision, atomic resize commit or rollback exists.
+- No visible frame cites matching story, narrative, stage and hotspot revisions.
 
-## WebGL context lifecycle gaps
+## WebGL context gaps
 
-- The application installs no context-loss or restoration listener.
-- No canonical context state, context generation or resource generation exists.
-- No complete rebuild, rollback or recovered-frame transaction exists.
+- No context-loss or restoration listeners exist.
+- No context state, context generation, resource generation or recovery transaction exists.
+- Pointer and narrative projection are not fenced during context failure.
 
-## Visible-frame and diagnostics gaps
+## Diagnostics gaps
 
-- No barrier proves manifest, snapshot, scene descriptor, stage resources, camera, hotspot set, post settings and displayed frame agree.
-- The debug panel exposes story state but no manifest identity, version, fingerprint, snapshot revision or frame provenance.
-- No detached clone-safe manifest observation exists.
+- Debug output includes scene, clues, route and inspection state but no narrative source or revision.
+- No committed frame observation correlates content, snapshot, story, narrative, stage, surface and context identity.
+- No clone-safe public readback exists.
 
 ## Validation gaps
 
-- `npm run check` performs syntax checks only.
-- No StoryManifest schema, duplicate-id, graph, ownership, descriptor, freeze, fingerprint or render-parity fixture exists.
-- No fixture proves an unknown saved scene is reconciled instead of silently split from the visible scene.
-- Existing validation does not execute StoryManifest, persistence, pointer picking, inspection, transition, lifecycle, render-surface, resource retirement, context recovery or committed-frame behavior.
+- `npm run check` is syntax-only.
+- No fixture executes Continue and verifies successor opening copy.
+- No fixture proves predecessor text retirement.
+- No fixture proves title, body, stage, hotspot list and save parity.
+- No fixture proves reload narrative policy.
+- No fixture proves committed `aria-live` announcements.
+- No deployed browser artifact captures narrative revision and first-frame acknowledgement.
 
 ## Deferred work
 
