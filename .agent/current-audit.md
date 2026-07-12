@@ -1,98 +1,75 @@
 # Current audit: The Unmapped House
 
-**Timestamp:** `2026-07-12T17-20-42-04-00`  
+**Timestamp:** `2026-07-12T19-11-01-04-00`  
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`  
-**Status:** `story-manifest-snapshot-admission-authority-audited`
+**Status:** `stage-resource-lifecycle-authority-audited`
 
 ## Summary
 
-This documentation-only audit isolates the boundary between authored story content, persisted browser state and startup consumers.
+This documentation-only audit isolates the boundary between scene replacement, GPU resource ownership, browser callback lifetime and visible presentation.
 
-`src/story-data.js` exports raw mutable descriptors. `src/game.js` parses any JSON object, shallow-merges it over defaults and immediately lets scene, gameplay, UI, storage and render consumers act on the result. There is no manifest/snapshot schema, version, compatibility check, migration, semantic validation, immutable canonical model or typed startup outcome.
+`StageKit.loadScene()` clears the prior scene graph and immediately drops tracking arrays, but it never disposes geometries or materials. `StageKit` also starts a recursive RAF and anonymous resize, mousemove and click listeners without a stop path. No typed lifecycle result proves which resource set is active, retired or visible.
 
 ## Plan ledger
 
-**Goal:** ensure startup either installs one compatible manifest/snapshot pair or fails closed with a typed result while preserving a recoverable predecessor.
+**Goal:** ensure scene loading and stage shutdown either commit one complete resource generation or leave the predecessor intact, with exact-once retirement and visible-frame evidence.
 
 - [x] Compare the full Publish inventory with central tracking.
-- [x] Verify root `.agent/START_HERE.md` in all nine eligible repositories.
+- [x] Verify all nine eligible repositories remain centrally tracked and root-documented.
 - [x] Exclude `TheCavalryOfRome`.
-- [x] Select only `TheUnmappedHouse` by oldest central timestamp.
-- [x] Inspect `index.html`, `package.json`, `src/game.js`, `src/story-data.js`, `src/stage-kit.js` and the existing root audit state.
-- [x] Trace manifest definition, startup parsing, scene resolution, inspection, Continue, persistence and render consumption.
+- [x] Select only `TheUnmappedHouse` by oldest current timestamp.
+- [x] Inspect `index.html`, `package.json`, `src/game.js`, `src/story-data.js`, `src/stage-kit.js` and current audit state.
+- [x] Trace boot, scene allocation, Continue, replacement, render, hover, reset and page lifetime.
 - [x] Preserve the complete 24-kit inventory and service map.
 - [x] Define DSK boundaries, commands, results, observations and fixture gates.
 - [x] Change documentation only.
 - [ ] Implement and execute the authority.
 
-## Selection state
-
-```txt
-TheUnmappedHouse   2026-07-12T15-08-07-04-00 selected
-AetherVale         2026-07-12T15-18-50-04-00
-TheOpenAbove       2026-07-12T15-40-04-04-00
-IntoTheMeadow      2026-07-12T15-49-09-04-00
-PhantomCommand     2026-07-12T16-00-03-04-00
-PrehistoricRush    2026-07-12T16-20-55-04-00
-HorrorCorridor     2026-07-12T16-39-35-04-00
-ZombieOrchard      2026-07-12T16-51-47-04-00
-MyCozyIsland       2026-07-12T17-10-31-04-00
-TheCavalryOfRome   excluded
-```
-
 ## Complete interaction loop
 
 ```txt
 boot
-  -> import raw scene array
-  -> derive defaults from scenes[0]
-  -> parse localStorage value or use empty object
-  -> shallow-merge parsed values into defaults
-  -> resolve currentScene by id or fallback
-  -> create renderer and load raw scene descriptor
-  -> render UI and raw Notebook JSON
-  -> persist the merged object
+  -> parse browser state and resolve current scene
+  -> create StageKit
+  -> allocate WebGLRenderer and append canvas
+  -> allocate scene, stageGroup, camera, lights and raycaster
+  -> allocate multisampled render target
+  -> allocate post shader and fullscreen plane
+  -> attach resize, mousemove and click callbacks
+  -> start recursive RAF
+  -> allocate current scene layers, props, materials and hotspot volumes
 
-canvas hover/click
-  -> normalize pointer
-  -> raycast raw hotspot volumes
-  -> dispatch attached hotspot descriptor
-
-side-panel click
-  -> dispatch the same raw hotspot descriptor
-
-inspect
-  -> read/write current scene inspection map
-  -> grant clue ids
-  -> write narrative log
-  -> derive completion from raw requirement list
-  -> schedule interlude
-  -> rebuild UI
-  -> save full mutable state
+canvas or side-panel inspection
+  -> select current hotspot descriptor
+  -> mutate story state and UI
+  -> stage resources remain active
 
 Continue
-  -> find current scene index in raw array
-  -> select index + 1
-  -> update sceneId and route
-  -> load raw successor descriptor
-  -> rebuild UI and save
+  -> choose successor scene
+  -> stageGroup.clear()
+  -> set hotspots = []
+  -> set materials = []
+  -> allocate successor camera state, layers, props, materials and hotspots
+  -> render without a load result or predecessor disposal receipt
 
-frame
-  -> animate camera/materials
-  -> render stage target
-  -> render post pass to canvas
+terminal and page lifetime
+  -> prototype-complete copy does not stop StageKit
+  -> RAF continues
+  -> listeners remain attached
+  -> renderer, target and post resources have no explicit shutdown
 ```
 
 ## Source ownership
 
 | Source | Current responsibilities |
 |---|---|
-| `src/story-data.js` | Raw game title, ordered scene descriptors, hotspot descriptors, clue grants, completion requirements and render settings. |
-| `src/game.js` | Defaults, raw save parse/merge, mutable snapshot, scene resolution, progression, UI, reset and persistence. |
-| `src/stage-kit.js` | Consume raw scene descriptors into Three.js resources and render continuously. |
-| `index.html` | Fixed shell and player-visible surfaces. |
-| `src/aspect-frame.js` | Fixed design frame computation. |
+| `src/story-data.js` | Three scene descriptors, 9 hotspots, 6 layers, 13 props, camera/material/post settings and progression copy. |
+| `src/game.js` | Browser state, inspection, Continue, interlude, UI, persistence and StageKit calls. |
+| `src/stage-kit.js` | Renderer, scene resources, materials, hotspot volumes, render target, listeners, RAF and scene replacement. |
+| `src/aspect-frame.js` | Fixed 16:9 viewport calculation and application. |
+| `index.html` | Stage, story, Notebook, hover and interlude surfaces. |
 | `package.json` | Syntax-only validation and local serving. |
+| `.github/workflows/deploy.yml` | Static Pages deployment from `main`. |
 
 ## Domains in use
 
@@ -100,164 +77,159 @@ frame
 browser application shell
 fixed 16:9 aspect composition
 authored story, scene, hotspot and render descriptors
-raw localStorage read, write and reset effects
-mutable story snapshot ownership
-scene routing, inspection, clues, flags, route and notebook log
-scene-completion derivation
-unretained completion timeout
-interlude visibility, Continue and terminal projection
-global keyboard and pointer input
-native focus and button activation
-player-visible notebook and raw diagnostic projection
+browser persistence and reset
+scene routing, inspection, clues, logs and completion
+completion timeout, interlude and terminal projection
+canvas and side-panel interaction
 Three.js CDN runtime
 WebGL renderer and two-pass presentation
-procedural geometry and anime materials
-hotspot volumes and raycast picking
-camera parallax
-resize, timeout, input and recursive RAF callbacks
-syntax validation
-static Pages deployment
-repo-local audit tracking
-central ledger synchronization
+scene graph and scene-resource allocation
+procedural geometry and shader materials
+invisible hotspot volumes and raycast picking
+camera parallax and hover projection
+render-target allocation
+resize, pointer, click, timeout and recursive RAF callbacks
+syntax validation and Pages deployment
+repo-local and central audit tracking
 ```
 
-Missing startup-data authority domains:
+Missing lifecycle authority:
 
 ```txt
-manifest identity and semantic version
-manifest schema and semantic validation
-scene, hotspot and clue indexes
-route graph and terminal semantics
-manifest freeze and fingerprint
-snapshot schema version
-snapshot parse result
-snapshot migration chain
-manifest/snapshot compatibility
-snapshot reconciliation and canonicalization
-unknown-field rejection
-typed startup admission result
-startup observation and bounded journal
-first startup frame acknowledgement
-browser and Pages startup fixture gates
+stage session and generation identity
+scene resource-set identity and revision
+detached scene-resource preparation
+atomic resource-set commit and rollback
+geometry, material and hotspot leases
+resource ownership transfer
+exact-once disposal results
+hover and pointer-derived-state reset
+RAF handle and stop admission
+listener leases and removal
+render-target and renderer shutdown
+stale scene-load rejection
+first visible scene-frame acknowledgement
+lifecycle observations and bounded journal
+browser and Pages lifecycle fixtures
 ```
 
 ## Implemented kits and offered services
 
 | Kit | Services |
 |---|---|
-| `static-page-shell-kit` | Mount the stage, story panel, hotspot list, Notebook, hover label and interlude surfaces. |
-| `aspect-frame-kit` | Compute and apply the fixed 1920 x 1080 design frame inside the browser viewport. |
-| `story-data-kit` | Provide the three scene descriptors, nine hotspot descriptors, clue grants, completion requirements, camera, material and post settings. |
-| `browser-story-runtime-kit` | Boot state, resolve the current scene, inspect hotspots, derive completion, continue, reset, project UI and persist. |
-| `scene-route-kit` | Resolve the current scene from sceneId and advance through array order. |
+| `static-page-shell-kit` | Mount stage, story panel, hotspot list, Notebook, hover label and interlude surfaces. |
+| `aspect-frame-kit` | Compute and apply the fixed 1920 x 1080 design frame. |
+| `story-data-kit` | Provide three scenes, nine hotspots, clue grants, completion rules, camera, material and post settings. |
+| `browser-story-runtime-kit` | Boot state, resolve scene, inspect, complete, continue, reset, project UI and persist. |
+| `scene-route-kit` | Resolve scene IDs and advance through authored array order. |
 | `inspection-ledger-kit` | Track scene-keyed inspected hotspot booleans. |
 | `clue-ledger-kit` | Grant and query clue identifiers. |
-| `notebook-log-kit` | Prepend and cap player-readable narrative log rows. |
-| `interlude-timer-kit` | Schedule the delayed completion interlude. |
-| `terminal-route-kit` | Project the prototype-complete terminal copy. |
-| `localstorage-save-kit` | Read one browser key, parse JSON, shallow-merge defaults, write the full object and delete on reset. |
-| `stage-render-kit` | Create the Three.js renderer, camera, lights, target, listeners and recursive RAF. |
-| `scene-descriptor-consumer-kit` | Turn scene camera, stage, hotspot and post descriptors into live Three.js resources. |
+| `notebook-log-kit` | Prepend and cap narrative log rows. |
+| `interlude-timer-kit` | Schedule delayed completion interludes. |
+| `terminal-route-kit` | Project prototype-complete terminal copy. |
+| `localstorage-save-kit` | Parse, merge, write and delete one browser save key. |
+| `stage-render-kit` | Create renderer, camera, lights, target, callbacks and recursive RAF. |
+| `scene-descriptor-consumer-kit` | Convert scene descriptors into camera, geometry, materials, hotspot volumes and post settings. |
 | `anime-material-kit` | Allocate procedural shader materials and update time uniforms. |
 | `post-process-kit` | Apply grain, vignette, chromatic shift, distortion and scan-line effects. |
-| `hotspot-volume-kit` | Create invisible raycast volumes and attach hotspot descriptors. |
-| `hotspot-picking-kit` | Normalize pointer input, raycast current volumes and dispatch a selected hotspot. |
-| `camera-parallax-kit` | Apply pointer-driven offsets to the fixed camera. |
-| `render-target-composition-kit` | Render the stage to an offscreen target and the post pass to the canvas. |
-| `debug-json-projection-kit` | Serialize internal aggregate fields into the visible Notebook pre element. |
-| `package-syntax-check-kit` | Run Node syntax checks over the four JavaScript sources. |
-| `static-pages-deploy-kit` | Publish the static route from main. |
+| `hotspot-volume-kit` | Allocate invisible raycast volumes and attach hotspot descriptors. |
+| `hotspot-picking-kit` | Normalize pointer input, raycast and dispatch a hotspot. |
+| `camera-parallax-kit` | Apply pointer-driven fixed-camera offsets. |
+| `render-target-composition-kit` | Render stage to an offscreen target and post pass to canvas. |
+| `debug-json-projection-kit` | Serialize aggregate fields into the visible Notebook. |
+| `package-syntax-check-kit` | Run Node syntax checks over four JavaScript sources. |
+| `static-pages-deploy-kit` | Publish the static route from `main`. |
 | `repo-local-agent-ledger-kit` | Maintain root pointers and timestamped audit records. |
-| `central-ledger-sync-kit` | Mirror selection, findings and change history into LuminaryLabs-Dev/LuminaryLabs. |
+| `central-ledger-sync-kit` | Mirror selection, findings and history into the central ledger. |
 
-## Main findings
-
-### Raw content is executable without admission
-
-The three-scene array is the manifest in practice, but no code proves unique scene IDs, unique hotspot IDs, valid clue references, complete camera vectors, valid stage geometry, reachable route order or terminal consistency before consumers execute it.
-
-### Parseable JSON is treated as a valid snapshot
-
-`loadState()` catches only parse failure. Type errors, unknown fields, stale identifiers and content-version mismatches survive the shallow merge.
-
-### Fallback can diverge runtime scene and persisted scene identity
-
-An unknown `state.sceneId` resolves `currentScene` to `scenes[0]`, but the state field is not corrected. Boot then calls `saveState()`, preserving the invalid ID while rendering the first scene.
-
-### Wrong field types can fail after partial startup or mutation
+## Quantified resource replacement
 
 ```txt
-state.inspected = null
-state.clues = "clue:blank-square"
-state.route = object-instead-of-array
-state.log = "entry"
+scene 1: 2 layers + 5 props + 3 hotspots = 10 meshes
+scene 2: 2 layers + 4 props + 3 hotspots = 9 meshes
+scene 3: 2 layers + 4 props + 3 hotspots = 9 meshes
+
+normal progression retires before final scene:
+  19 meshes
+  19 geometries
+  19 materials
 ```
 
-All are parseable and admitted. They can fail during rendering, clue grants, Continue or log writes after other work has already occurred.
+Every layer and prop allocates one geometry and one shader material. Every hotspot allocates one box geometry and one transparent material. `stageGroup.clear()` detaches them but does not call `dispose()`. Resetting `materials` loses the shader-material handles, while hotspot materials were never recorded there.
 
-### No content/snapshot provenance reaches presentation
+## Additional lifecycle findings
 
-The stage, controls, narrative and Notebook do not cite a manifest fingerprint, snapshot revision, migration result or startup admission ID.
+- `hovered` and the visible hover label are not reset during `loadScene()`.
+- Candidate resources are allocated directly into the live group, so partial allocation failure has no rollback.
+- `requestAnimationFrame(() => this.animate())` retains no cancellable frame ID.
+- Event listeners are anonymous closures and cannot be removed by identity.
+- The render target, post material, fullscreen plane geometry and renderer have no stage shutdown path.
+- No scene generation reaches UI, renderer diagnostics or the first visible frame.
 
 ## Required parent domain
 
 ```txt
-the-unmapped-house-story-manifest-snapshot-admission-authority-domain
+the-unmapped-house-stage-resource-lifecycle-authority-domain
 ```
 
 Candidate kits:
 
 ```txt
-story-manifest-id-kit
-story-manifest-version-kit
-story-manifest-schema-kit
-story-manifest-validation-kit
-scene-index-kit
-hotspot-index-kit
-clue-index-kit
-story-route-graph-kit
-story-manifest-freeze-kit
-story-manifest-fingerprint-kit
-story-snapshot-schema-version-kit
-story-snapshot-parser-kit
-story-snapshot-shape-validation-kit
-story-snapshot-migration-kit
-story-snapshot-reconciliation-kit
-story-snapshot-admission-kit
-canonical-story-snapshot-kit
-unknown-snapshot-field-rejection-kit
-manifest-snapshot-compatibility-kit
-story-startup-result-kit
-story-startup-observation-kit
-story-startup-journal-kit
-first-startup-frame-ack-kit
-story-manifest-fixture-kit
-story-snapshot-fixture-kit
-browser-startup-smoke-kit
-pages-startup-smoke-kit
+stage-session-id-kit
+stage-session-generation-kit
+scene-resource-set-id-kit
+scene-resource-revision-kit
+scene-load-command-kit
+scene-resource-plan-kit
+geometry-resource-lease-kit
+material-resource-lease-kit
+hotspot-resource-lease-kit
+render-target-resource-lease-kit
+listener-lease-kit
+raf-loop-lease-kit
+scene-resource-prepare-kit
+scene-resource-commit-kit
+scene-resource-rollback-kit
+scene-resource-retirement-kit
+scene-resource-disposal-result-kit
+hover-state-reset-kit
+stale-scene-load-rejection-kit
+stage-stop-command-kit
+stage-stop-result-kit
+first-visible-scene-frame-ack-kit
+stage-lifecycle-observation-kit
+stage-lifecycle-journal-kit
+scene-transition-resource-fixture-kit
+browser-stage-stop-smoke-kit
+pages-stage-lifecycle-smoke-kit
 ```
 
 ## Required transaction
 
 ```txt
-StartStoryRuntimeCommand
-  -> load and validate StoryManifest candidate
-  -> build canonical indexes and route graph
-  -> freeze and fingerprint the accepted manifest
-  -> read raw persisted bytes
-  -> parse into StorySnapshotCandidate
-  -> validate shape and declared schema version
-  -> migrate through named deterministic steps
-  -> verify manifest compatibility
-  -> reconcile stale or missing ids under explicit policy
-  -> reject unknown or unsafe fields
-  -> produce immutable CanonicalStorySnapshot
-  -> commit StoryStartupResult
-  -> construct scene/UI/render consumers from accepted values only
-  -> acknowledge the first visible startup frame
-  -> publish detached observation and bounded journal
+LoadSceneCommand
+  -> admit stage session, expected resource revision and scene ID
+  -> build candidate resources outside the live stage group
+  -> validate complete geometry, material, hotspot and camera plan
+  -> atomically swap candidate and predecessor groups
+  -> reset hover and pointer-derived scene state
+  -> render and acknowledge the first visible candidate frame
+  -> retire predecessor leases exactly once
+  -> publish SceneLoadResult and lifecycle observation
+
+on prepare or first-frame failure
+  -> restore predecessor
+  -> dispose candidate leases
+  -> return rejected or rolled-back result
+
+StageStopCommand
+  -> stop RAF
+  -> remove listeners
+  -> retire active scene and post resources
+  -> dispose target and renderer
+  -> return StageStopResult
 ```
 
 ## Proof boundary
 
-Source inspection proves the missing admission boundaries. It does not prove that any malformed save currently exists in deployed user storage, nor that every malformed value produces the same failure. Executable fixtures are required for those claims.
+Source inspection proves missing ownership and disposal calls. It does not by itself quantify browser GPU memory growth or prove a user-visible failure. Those claims require renderer-info, disposal-spy and repeated-transition fixtures.

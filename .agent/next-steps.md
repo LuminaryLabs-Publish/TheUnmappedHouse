@@ -1,134 +1,80 @@
 # Next steps: The Unmapped House
 
-**Timestamp:** `2026-07-12T17-20-42-04-00`
+**Timestamp:** `2026-07-12T19-11-01-04-00`
 
 ## Goal
 
-Preserve the current story and presentation while making authored content and browser state versioned, validated, compatible, immutable and observable before runtime consumers start.
+Preserve the authored scenes and visual output while making scene replacement and stage shutdown deterministic, reversible and resource-safe.
 
 ## Plan ledger
 
-### 1. StoryManifest Authority
-- [ ] Add `manifestId`, semantic version, schema version and content fingerprint.
-- [ ] Validate unique scene and hotspot IDs.
-- [ ] Build scene, hotspot and clue indexes.
-- [ ] Validate clue grants against completion requirements.
-- [ ] Validate camera, stage, material, post and hotspot descriptor shapes.
-- [ ] Define explicit route graph and terminal node instead of implicit array-only authority.
-- [ ] Deep-freeze the canonical manifest.
+### 1. Resource ownership
+- [ ] Add stage-session, scene-resource-set and scene-resource-revision identities.
+- [ ] Track every geometry, material, hotspot volume, post geometry, render target, listener and RAF handle through one owner.
+- [ ] Make lease ownership and transfer explicit.
 
-### 2. StorySnapshot Startup Authority
-- [ ] Add snapshot schema version, snapshot revision and manifest fingerprint.
-- [ ] Parse raw storage into a detached candidate.
-- [ ] Reject non-object roots and unknown fields.
-- [ ] Validate every field type and bounded collection size.
-- [ ] Add deterministic migrations.
-- [ ] Reconcile stale scene, route, clue, inspection and flag IDs against the accepted manifest.
-- [ ] Return one typed startup result.
-- [ ] Do not rewrite storage until admission succeeds.
+### 2. Detached preparation and commit
+- [ ] Build successor scene resources in a detached group.
+- [ ] Validate the complete candidate before changing the live group.
+- [ ] Return typed prepare, commit and rollback results.
+- [ ] Reset hover and pointer-derived scene state during commit.
+- [ ] Reject stale scene-load commands.
 
-### 3. Consumer installation
-- [ ] Construct `StageKit` only after manifest/snapshot admission.
-- [ ] Pass canonical IDs rather than mutable raw descriptors through interaction paths.
-- [ ] Bind UI, persistence and rendering to manifest fingerprint and snapshot revision.
-- [ ] Acknowledge the first visible startup frame.
+### 3. Retirement and shutdown
+- [ ] Traverse predecessor resources and dispose each unique geometry and material exactly once.
+- [ ] Retain named listener callbacks and remove them on stop.
+- [ ] Retain the RAF ID and cancel it on stop.
+- [ ] Dispose post resources, render target and renderer.
+- [ ] Make repeated `stop()` idempotent.
 
-### 4. Retained downstream authorities
-- [ ] Browser storage concurrency and reset authority.
-- [ ] Interaction and completion proof.
-- [ ] Timer, modal and transition authority.
-- [ ] Narrative and Notebook projection authority.
-- [ ] Runtime and WebGL lifecycle authority.
-- [ ] Render-surface and committed-frame authority.
+### 4. Presentation proof
+- [ ] Publish active scene-resource revision in diagnostics.
+- [ ] Acknowledge the first visible frame after commit.
+- [ ] Retire the predecessor only after candidate-frame success, or define a tested earlier-retirement policy.
 
-## Proposed contracts
-
-```txt
-StoryManifest
-  manifestId
-  semanticVersion
-  schemaVersion
-  fingerprint
-  entrySceneId
-  terminalSceneId
-  sceneOrder
-  sceneIndex
-  hotspotIndex
-  clueIndex
-  routeGraph
-```
-
-```txt
-StorySnapshot
-  schemaVersion
-  snapshotRevision
-  manifestId
-  manifestFingerprint
-  sceneId
-  clues
-  flags
-  inspected
-  route
-  log
-```
-
-```txt
-StoryStartupResult
-  resultId
-  status
-  manifestFingerprint
-  sourceSnapshotSchemaVersion
-  committedSnapshotRevision
-  migrationsApplied
-  reconciliationsApplied
-  rejectedFields
-  fallbackReason
-  firstVisibleFrameId
-```
-
-## Required fixtures
-
-```txt
-valid-manifest-valid-snapshot
-duplicate-scene-id-rejected
-duplicate-hotspot-id-rejected
-unknown-required-clue-rejected
-invalid-camera-vector-rejected
-non-object-save-rejected
-unknown-save-field-rejected
-wrong-field-types-rejected
-unknown-scene-id-reconciled
-stale-route-and-inspection-ids-reconciled
-old-schema-migrates-deterministically
-future-schema-rejected
-manifest-fingerprint-mismatch-handled
-startup-result-is-detached-and-json-safe
-storage-not-rewritten-before-admission
-first-visible-frame-cites-manifest-and-snapshot
-pages-startup-matrix
-```
+### 5. Fixtures
+- [ ] Mock geometry/material disposal counters.
+- [ ] Test scene 1 to 2 to 3 replacement.
+- [ ] Test candidate allocation failure and rollback.
+- [ ] Test repeated load of the same scene.
+- [ ] Test stale load rejection.
+- [ ] Test hover-label reset.
+- [ ] Test stop before first frame and stop after terminal copy.
+- [ ] Test repeated stop.
+- [ ] Run local browser and Pages lifecycle smoke.
 
 ## Implementation order
 
 ```txt
-1. Pure manifest validator and index builder
-2. Manifest freeze and fingerprint
-3. Pure snapshot parser and validator
-4. Migration and reconciliation policies
-5. Typed startup result
-6. Consumer installation barrier
-7. First-frame receipt
+1. ResourceSet and lease types
+2. Detached scene builder
+3. Atomic swap and rollback
+4. Exact-once disposer
+5. Hover reset
+6. RAF/listener stop ownership
+7. Visible-frame receipt
 8. Browser and Pages fixtures
+```
+
+## Retained downstream work
+
+```txt
+story manifest and snapshot admission
+storage revision and cross-tab convergence
+completion timer and modal admission
+Notebook/player diagnostics separation
+render-surface pixel budgeting and context recovery
+committed-frame diagnostics
 ```
 
 ## Do not do first
 
 ```txt
-new rooms or branches
-inventory
-audio
+new scenes
 shader redesign
 camera retuning
+new interactions
+audio
+inventory
 visual polish
-more fields in raw saved state
 ```

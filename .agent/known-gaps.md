@@ -1,96 +1,82 @@
 # Known gaps: The Unmapped House
 
-**Timestamp:** `2026-07-12T17-20-42-04-00`
+**Timestamp:** `2026-07-12T19-11-01-04-00`
 
 ## Summary
 
-The newest documented gap is StoryManifest and StorySnapshot startup admission. Raw content descriptors and any parseable save object are consumed without version, schema, semantic validation, migration, compatibility, canonicalization or typed startup results.
+The newest documented gap is stage resource lifecycle authority. Scene replacement detaches previous Three.js objects but does not explicitly dispose their geometries or materials, and the stage has no stop path for RAF, listeners, renderer or render targets.
 
 ## Plan ledger
 
-**Goal:** fail closed on invalid content or state while preserving deterministic recovery and explicit evidence.
+**Goal:** eliminate unowned scene and callback lifetime while preserving rollback and visible-frame correctness.
 
-- [x] Trace raw manifest definition and all startup consumers.
-- [x] Trace save parse, shallow merge, scene fallback and immediate rewrite.
-- [x] Identify type, identifier, compatibility and provenance gaps.
+- [x] Trace every StageKit allocation and retained callback.
+- [x] Trace scene replacement and terminal lifetime.
+- [x] Quantify normal-progression resource retirement.
 - [x] Define candidate authority kits and fixture rows.
 - [ ] Implement and execute the authority.
 
-## Manifest gaps
+## Scene-resource gaps
 
 ```txt
-manifest id: absent
-semantic version: absent
-schema version: absent
-content fingerprint: absent
-unique scene-id validation: absent
-unique hotspot-id validation: absent
-clue index and reference validation: absent
-route graph validation: absent
-entry and terminal scene declarations: absent
-camera/stage/material/post shape validation: absent
-deep freeze: absent
+stage session ID: absent
+scene resource-set ID/revision: absent
+detached candidate group: absent
+atomic commit: absent
+rollback: absent
+geometry ownership: implicit
+material ownership: partial
+hotspot material tracking: absent
+exact-once disposal result: absent
+stale load rejection: absent
 ```
 
-## Snapshot gaps
+## Runtime-lifecycle gaps
 
 ```txt
-snapshot schema version: absent
-snapshot revision: absent
-manifest identity/fingerprint binding: absent
-non-object root rejection: absent
-field type validation: absent
-unknown-field rejection: absent
-collection bounds: absent
-migration chain: absent
-stale-id reconciliation: absent
-typed parse/admission result: absent
-storage rewrite barrier: absent
+RAF handle: not retained
+RAF cancellation: absent
+listener identities: not retained
+listener removal: absent
+stage stop state: absent
+idempotent stop result: absent
+render target disposal: absent
+post geometry/material disposal: absent
+renderer disposal: absent
 ```
 
-## Concrete startup risks
+## Presentation gaps
 
 ```txt
-unknown sceneId renders the first scene while preserving the invalid persisted id
-null inspected can fail UI or inspection access
-string clues can pass includes checks and later fail push
-non-array route can fail Continue
-non-array log can fail writeLog
-unknown fields are retained and republished
-duplicate content ids resolve by first match
-array order silently defines route semantics
-content updates have no save compatibility signal
+hovered descriptor reset on scene load: absent
+hover label clear on scene load: absent
+scene-resource revision in diagnostics: absent
+first visible scene-frame acknowledgement: absent
+candidate-frame failure rollback: absent
 ```
 
-## Presentation and proof gaps
+## Quantified source boundary
 
 ```txt
-manifest fingerprint is absent from scene/UI/render state
-snapshot revision is absent from scene/UI/render state
-startup result is absent
-migration and reconciliation receipts are absent
-first visible startup frame acknowledgement is absent
-browser startup fixture matrix is absent
-Pages startup fixture matrix is absent
+scene 1 retirement: 10 geometries + 10 materials
+scene 2 retirement: 9 geometries + 9 materials
+normal full progression: 19 geometries + 19 materials detached without explicit dispose
 ```
 
-## Retained downstream gaps
+This is a source-level count, not a measured GPU-memory claim.
+
+## Retained gaps
 
 ```txt
-storage revision and cross-tab convergence
-destructive reset admission
-pointer/canvas/side-panel input parity
-inspection and completion proof
+story manifest/snapshot admission
+storage concurrency and destructive reset
 completion timer generation
 modal focus and Continue admission
-atomic Continue transition
-narrative and Notebook projection
-runtime callback and scene-resource lifecycle
-WebGL context recovery
-render-surface resolution authority
+Notebook channel separation
+render-surface budgeting and context recovery
 committed-frame diagnostics
 ```
 
 ## Completion boundary
 
-Do not claim save compatibility or safe startup because parse errors fall back to defaults. Completion requires structural and semantic manifest validation, versioned snapshot migration, explicit reconciliation, typed results, storage-write barriers and visible provenance.
+Do not claim lifecycle safety because objects are removed from the scene graph or become garbage-collectable. Completion requires explicit ownership, exact-once disposal receipts, cancellable callbacks, idempotent stop behavior, rollback tests and visible-frame correlation.
