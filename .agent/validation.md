@@ -1,39 +1,40 @@
 # Validation: The Unmapped House
 
-**Timestamp:** `2026-07-12T08-10-36-04-00`
+**Timestamp:** `2026-07-12T10-30-00-04-00`
 
 ## Summary
 
-This run changed documentation only. Source inspection proves that scene completion schedules `setTimeout(() => showInterlude(currentScene), 450)`, discards the timeout handle, captures no immutable scene/proof context, and installs no cancellation or stale-callback guard around scene transitions or terminal projection.
+This run changed documentation only. Source inspection proves that every global `keydown` with `event.code === "KeyR"` removes the save key and requests reload without modifier, repeat, trust, focus, confirmation or revision admission.
 
 ## Plan ledger
 
-**Goal:** distinguish a visually delayed interlude from a generation-safe, cancellable and transition-aware completion callback.
+**Goal:** distinguish an explicit confirmed reset from browser refresh and ambiguous keyboard input.
 
-- [x] Inspect completion derivation and timeout scheduling.
-- [x] Confirm the timeout handle is discarded.
-- [x] Confirm the arrow callback resolves mutable `currentScene` at fire time.
-- [x] Inspect scene transition and terminal projection.
-- [x] Confirm no transition, terminal, reset or session timer barrier exists.
+- [x] Inspect the global keydown handler.
+- [x] Confirm the predicate checks only `event.code`.
+- [x] Confirm `Ctrl+R` and `Meta+R` are not excluded.
+- [x] Confirm storage removal occurs before reload.
+- [x] Confirm no confirmation, revision or tombstone exists.
+- [x] Confirm reset effects and reload have no typed results.
 - [x] Confirm current package validation is syntax-only.
-- [x] Document required pure timer and browser fixtures.
+- [x] Document pure and browser fixture requirements.
 - [ ] Execute fixtures after implementation.
 
 ## Proven from source
 
 ```txt
-completion is derived from required clues
-completion schedules a 450 ms setTimeout callback
-timeout return value is not assigned
-callback calls showInterlude(currentScene)
-currentScene is a mutable module binding
-nextScene mutates currentScene
-nextScene hides the interlude
-nextScene replaces stage resources
-nextScene persists successor state
-nextScene does not cancel pending completion timeouts
-terminal copy has no durable terminal-state guard
-showInterlude performs no scene or proof admission
+SAVE_KEY is the sole durable progress key
+a global keydown listener is installed
+the listener checks only event.code === KeyR
+the listener does not inspect modifier keys
+the listener does not inspect repeat or isTrusted
+the listener does not inspect focus or visibility
+the listener removes SAVE_KEY synchronously
+the listener requests location.reload immediately after removal
+there is no confirmation UI or capability
+there is no expected story/storage revision
+there is no reset tombstone
+there is no typed reset, storage or reload result
 ```
 
 ## Existing checks prove
@@ -48,18 +49,18 @@ src/story-data.js parses
 ## Existing checks do not prove
 
 ```txt
-timer identity or generation
-timeout handle retention
-immutable callback context
-scene-transition cancellation
-terminal-route cancellation
-reset or stop cancellation
-stale callback rejection
-exactly-once timer retirement
-successor interlude parity
-terminal-copy stability
-event-loop ordering
-visible-frame correlation
+browser refresh preserves progress
+modifier chord classification
+trusted-event or repeat policy
+focus and visibility admission
+confirmation capability
+stale revision rejection
+reset tombstone durability
+cross-tab stale-writer rejection
+timer/runtime retirement ordering
+typed storage removal result
+reload admission
+first clean-frame provenance
 ```
 
 ## Change boundary
@@ -67,9 +68,10 @@ visible-frame correlation
 ```txt
 runtime source changed: no
 story content changed: no
+keyboard behavior changed: no
+storage behavior changed: no
 timer behavior changed: no
-modal behavior changed: no
-transition behavior changed: no
+modal or transition behavior changed: no
 render behavior changed: no
 package scripts changed: no
 dependencies changed: no
@@ -83,34 +85,36 @@ browser smoke: not run
 ## Required fixtures
 
 ```txt
-fixture:completion-schedules-one-timer
-fixture:timer-context-freezes-scene
-fixture:timer-context-cites-completion-proof
-fixture:transition-before-due-cancels-timer
-fixture:stale-callback-rejected
-fixture:cancelled-timer-zero-mutation
-fixture:successor-interlude-remains-closed
-fixture:terminal-copy-not-overwritten
-fixture:reset-cancels-live-timers
-fixture:session-stop-cancels-live-timers
-fixture:duplicate-cancel-idempotent
-fixture:fired-timer-retires-once
-fixture:timer-observation-detached
-fixture:timer-journal-bounded
-smoke:browser-transition-before-delay
-smoke:browser-terminal-before-delay
-smoke:pages-timer-order
+fixture:plain-r-requires-confirmation
+fixture:ctrl-r-rejected-as-refresh
+fixture:meta-r-rejected-as-refresh
+fixture:refresh-zero-storage-mutation
+fixture:repeat-rejected
+fixture:untrusted-event-rejected
+fixture:hidden-page-rejected
+fixture:stale-story-revision-rejected
+fixture:stale-storage-revision-rejected
+fixture:confirmed-reset-tombstone
+fixture:stale-tab-cannot-resurrect
+fixture:storage-remove-failure
+fixture:timer-retirement-before-reset
+fixture:runtime-retirement-before-reload
+fixture:first-clean-frame-reset-generation
+smoke:browser-refresh-preserves-save
+smoke:browser-confirmed-reset-clears-save
+smoke:pages-refresh-reset-parity
 ```
 
 ## Current result
 
 ```txt
-completion timer authority implemented: no
-retained timer lease proven: no
-transition cancellation proven: no
-stale callback rejection proven: no
-terminal-copy stability proven: no
-browser event-loop parity proven: no
+destructive reset authority implemented: no
+browser-refresh exclusion proven: no
+confirmation proven: no
+revision fencing proven: no
+reset tombstone proven: no
+typed effect result proven: no
+first clean-frame proof: no
 ```
 
-No delayed-interlude ordering, timer cancellation, stale-callback safety or terminal-projection stability claim is made.
+No reset safety, refresh safety, cross-tab deletion durability or post-reset frame claim is made.
