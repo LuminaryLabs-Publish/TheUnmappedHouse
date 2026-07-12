@@ -1,77 +1,79 @@
 # Known gaps: The Unmapped House
 
-**Timestamp:** `2026-07-12T04-44-36-04-00`
+**Timestamp:** `2026-07-12T06-30-34-04-00`
 
 ## Summary
 
-The newest documented gap is browser-storage commit and cross-tab convergence. The runtime writes one full mutable story aggregate without a durable revision, writer identity, compare-and-swap admission, typed result, error containment or remote-tab reconciliation.
+The newest documented gap is modal focus and Continue admission. The interlude is visually closed but remains mounted with an enabled Continue button, while the open state does not isolate keyboard focus or background commands. `nextScene()` accepts every button activation without a completion-proof or modal-state guard.
 
 ## Plan ledger
 
-**Goal:** keep durable-state, conflict, reset and existing story/render dependencies explicit.
+**Goal:** keep keyboard inertness, modal semantics, Continue proof admission and retained story/render dependencies explicit.
 
-- [x] Trace every storage read, write and reset path.
-- [x] Confirm full-state writes follow live mutation and DOM projection.
-- [x] Confirm no revision, writer identity or conflict policy exists.
-- [x] Confirm no `storage` event listener exists.
-- [x] Confirm write/reset exceptions are not contained.
+- [x] Trace the interlude DOM, closed/open CSS and native button behavior.
+- [x] Confirm Continue is never disabled, inert or removed from focus order.
+- [x] Confirm opening does not capture, move, trap or restore focus.
+- [x] Confirm background inspection controls remain keyboard reachable.
+- [x] Confirm `nextScene()` has no completion or modal-generation guard.
 - [x] Define fixture and browser proof gaps.
-- [ ] Implement and execute the storage convergence authority.
+- [ ] Implement and execute the modal focus authority.
 
-## Storage capability and effect gaps
+## Closed-state gaps
 
 ```txt
-storage capability observation: absent
-volatile-session status: absent
-write failure classification: absent
-quota/security classification: absent
-serialization result: absent
-write verification/readback: absent
-reset result: absent
-storage effect journal: absent
+interlude inert: absent
+Continue disabled while closed: absent
+Continue removed from tab order: absent
+hidden-control activation rejection: absent
+closed modal generation: absent
+closed-state observation: absent
 ```
 
-## Revision and conflict gaps
+## Open-modal gaps
 
 ```txt
-writer session id: absent
-snapshot revision: absent
-expected predecessor revision: absent
-compare-and-swap admission: absent
-stale writer rejection: absent
-manifest-aware merge policy: absent
-conflict result: absent
-reset barrier/tombstone: absent
+role=dialog: absent
+aria-modal=true: absent
+focus origin capture: absent
+focus entry: absent
+focus trap: absent
+background inertness: absent
+background command suspension: absent
+focus return: absent
+modal lease: absent
 ```
 
-## Cross-tab gaps
+## Continue admission gaps
 
 ```txt
-storage event listener: absent
-remote writer identity: absent
-remote revision validation: absent
-cross-tab reconcile result: absent
-reset propagation: absent
-stale-tab retirement: absent
-convergence fixture: absent
+Continue command id: absent
+current modal generation: absent
+scene completion proof requirement: absent
+proof consumption: absent
+stale activation rejection: absent
+duplicate activation handling: absent
+typed Continue result: absent
+modal/transition correlation: absent
 ```
 
 ## Concrete risks
 
 ```txt
-Tab B can overwrite Tab A's newer clues, inspections, route and log
-startup save can throw after StageKit and UI initialization
-inspection save can throw after visible progress has changed
-reset in one tab can be undone by a stale write from another tab
-UI/debug state can claim progress without durable success status
+hidden Continue can be keyboard-activated before any clue is collected
+repeated hidden activation can skip all authored scenes
+open interlude does not prevent background keyboard inspection commands
+screen-reader semantics can disagree with native focus reachability
+Continue can transition from stale or unproven UI state
 ```
 
 ## Retained upstream and downstream gaps
 
 ```txt
 StoryManifest and StorySnapshot authorities remain unimplemented
+storage revision and cross-tab convergence remain unimplemented
 canvas and side-panel input parity remains unimplemented
-inspection/completion and Continue transactions remain unimplemented
+inspection/completion proof remains unimplemented
+Atomic Continue transaction remains unimplemented
 narrative projection remains unrevisioned
 runtime callback and scene-resource lifecycle remains unimplemented
 render-surface and WebGL context generations remain unimplemented
@@ -81,12 +83,13 @@ committed-frame diagnostics remain unimplemented
 ## Validation gaps
 
 - `npm run check` is syntax-only.
-- No fake-storage fixture injects write or reset failure.
-- No two-tab fixture proves stale-writer rejection or convergence.
-- No reset-barrier fixture prevents snapshot resurrection.
-- No browser smoke proves volatile mode when storage is unavailable.
-- No narrative or frame observation cites a durable snapshot revision.
+- No DOM fixture proves hidden Continue is absent from sequential focus.
+- No browser keyboard smoke proves scene skip is impossible.
+- No modal fixture proves background controls are inert.
+- No assistive-technology contract verifies dialog semantics.
+- No typed result proves Continue consumed a current completion proof.
+- No frame observation cites the modal generation that authorized transition.
 
 ## Completion boundary
 
-Do not claim persistence correctness because one tab survives reload. Completion requires typed effects, revision admission, explicit conflict policy, reset propagation and multi-tab browser proof.
+Do not claim modal or Continue correctness because the overlay blocks pointer clicks. Completion requires keyboard-inert closed state, focus-isolated open state, proof-admitted Continue, typed results and browser/accessibility proof.
