@@ -1,6 +1,6 @@
 # Current audit: The Unmapped House
 
-Timestamp: `2026-07-12T00-01-25-04-00`
+Timestamp: `2026-07-12T01-41-56-04-00`
 
 ## Product read
 
@@ -8,59 +8,52 @@ A fixed-camera anime-horror point-and-click prototype with three authored scenes
 
 ## Plan ledger
 
-**Goal:** make narrative copy a typed runtime projection that stays coherent with story state, scene resources, hotspot lists, persistence and the first visible frame.
+**Goal:** give one runtime session exclusive ownership of callbacks, timers, frame submission, renderer resources and scene-resource generations.
 
-- [x] Trace boot, scene opening, hotspot inspection, completion interlude, Continue, terminal and reload copy behavior.
-- [x] Confirm `#scene-text` is used as both visual output and hidden state input.
-- [x] Confirm a successor scene can retain predecessor hotspot copy.
+- [x] Trace boot, StageKit construction, scene loading, scene replacement, input, resize, timeout and RAF paths.
+- [x] Confirm the animation request id and event callbacks are not retained for revocation.
+- [x] Confirm scene replacement detaches objects without disposing geometries, materials or hotspot resources.
 - [x] Inventory all active domains, all 24 implemented kits and their services.
-- [x] Define narrative source, projection, revision, admission, commit, persistence, DOM, accessibility, observation and fixture boundaries.
-- [ ] Implement the upstream StoryManifest, StorySnapshot, inspection, transition and narrative authorities.
-- [ ] Execute narrative transition and visible-frame parity fixtures.
+- [x] Define session identity, lifecycle state, resource ownership, ordered disposal, rollback, observation and proof boundaries.
+- [ ] Implement upstream story authorities and the runtime lifecycle authority.
+- [ ] Execute restart, stale-callback and resource-retirement fixtures.
 
 ## Interaction loop
 
 ```txt
 module evaluation
-  -> export gameTitle and scenes
-  -> load raw localStorage state
-  -> select persisted scene or visually fall back to scenes[0]
+  -> load state and choose current scene
   -> allocate StageKit
-  -> load current stage
-  -> render opening copy only when #scene-text is empty or Loading
+  -> allocate renderer, target, post quad, camera, lights and root groups
+  -> install resize, pointer and click listeners
+  -> start recursive RAF
+  -> load current scene
+  -> install Continue and keyboard listeners
 
 inspection
-  -> inspectHotspot(hotspot descriptor)
-  -> write hotspot.text directly into #scene-text
-  -> mutate inspected and clue ledgers
-  -> update log
-  -> optionally schedule completion interlude
-  -> render buttons/debug without replacing body copy
-  -> save raw state
+  -> optional unretained 450 ms completion timeout
+  -> callback can project an interlude
 
 Continue
-  -> select scenes[index + 1]
-  -> mutate currentScene, state.sceneId and route
-  -> close interlude
-  -> load successor stage
-  -> update title, hotspot buttons and debug
-  -> leave predecessor hotspot copy in #scene-text
-  -> save successor state
+  -> stage.loadScene(successor)
+  -> clear predecessor group
+  -> drop predecessor hotspot and material arrays
+  -> allocate successor meshes, materials and hotspot volumes
+  -> RAF continues through the replacement
 
-reload
-  -> DOM body starts empty
-  -> saved scene opening copy is projected
-  -> exact prior narrative projection is not restored
+page lifetime
+  -> no stop, reset, pagehide or dispose transaction
+  -> callbacks and GPU resources remain owned by ambient page lifetime
 ```
 
 ## Source ownership
 
 | Source | Current responsibilities |
 |---|---|
-| `index.html` | Fixed shell, stage mount, `aria-live` story panel, hotspot list, debug panel, interlude and Continue button. |
-| `src/story-data.js` | Authored opening, hotspot, interlude, stage, camera, material, post, requirement and clue descriptors. |
-| `src/game.js` | Raw load/save, mutable story state, direct narrative DOM writes, completion timing, array-order Continue and projection. |
-| `src/stage-kit.js` | Three.js renderer, stage resources, hotspot meshes, picking, camera parallax, resize and recursive RAF. |
+| `index.html` | Fixed shell and DOM mounts. |
+| `src/story-data.js` | Authored story, stage, camera, material and post descriptors. |
+| `src/game.js` | Module-lifetime state, StageKit allocation, DOM listeners, completion timeout, scene changes and persistence. |
+| `src/stage-kit.js` | Three.js renderer graph, scene resources, pointer/resize listeners, scene replacement and recursive RAF. |
 | `src/aspect-frame.js` | Fixed 1920×1080 composition and CSS frame fitting. |
 | `package.json` | Syntax-only source checks and local static serving. |
 
@@ -68,22 +61,19 @@ reload
 
 ```txt
 browser shell and fixed-aspect layout
-authored story and narrative descriptors
+authored story and render descriptors
 raw localStorage and mutable story state
-scene route, inspection, clues, flags and notebook log
-ambient DOM narrative state
-scene completion, interlude timing, Continue and terminal projection
-DOM, aria-live, hover, interlude and debug projection
+scene routing, inspection, clues, log and completion
+ambient DOM narrative and interlude projection
+module-lifetime runtime ownership
+unretained timeout callbacks
 Three.js CDN runtime
-WebGL renderer, scene, camera, lights, target and post composition
-live scene replacement and procedural geometry allocation
-procedural anime shader materials
-hotspot volume construction and descriptor-bearing userData
-mousemove observation, canvas click and side-panel activation
-pointer camera parallax
-resize event admission and render-surface mutation
-recursive RAF and visible frame submission
-runtime callback and resource lifecycle
+WebGL renderer, target, scene, camera, lights and post composition
+live scene replacement
+procedural geometry and shader-material allocation
+hotspot volume allocation and descriptor-bearing userData
+pointer, click, keyboard, Continue and resize callbacks
+recursive RAF and wall-clock shader time
 syntax validation and static Pages deployment
 repo-local and central audit tracking
 ```
@@ -91,15 +81,16 @@ repo-local and central audit tracking
 Missing authority domains:
 
 ```txt
-canonical StoryManifest and content provenance
-versioned StorySnapshot startup admission
-canonical pointer and inspection results
-atomic Continue transition
-narrative projection identity, source and revision
-narrative persistence policy
-narrative DOM and aria-live adapters
-story/narrative/stage/frame commit correlation
-runtime session and resource lifecycle
+canonical StoryManifest and StorySnapshot
+typed pointer, inspection, transition and narrative authority
+runtime session identity and lifecycle state
+callback generation fencing
+RAF, listener and timeout leases
+scene-resource generations and retirement receipts
+renderer, target, geometry and material ownership
+ordered idempotent stop, restart and disposal
+startup rollback and partial-construction cleanup
+detached lifecycle observation and bounded journal
 render surface and WebGL context recovery
 committed-frame diagnostics
 ```
@@ -111,7 +102,7 @@ committed-frame diagnostics
 | `static-page-shell-kit` | Stage, story panel, hotspot list, hover label, debug panel, interlude and Continue shell. |
 | `aspect-frame-kit` | Compute and apply the fixed 16:9 viewport. |
 | `story-data-kit` | Scene, opening, hotspot, clue, stage, camera, material, post and interlude descriptors. |
-| `browser-story-runtime-kit` | Load, inspection, completion, Continue, reset, projection, persistence and StageKit calls. |
+| `browser-story-runtime-kit` | Load, inspection, completion, Continue, reset-by-reload, projection, persistence and StageKit calls. |
 | `scene-route-kit` | Resolve and mutate current scene and route ids. |
 | `inspection-ledger-kit` | Track scene-keyed hotspot booleans. |
 | `clue-ledger-kit` | Grant and query global clue strings. |
@@ -121,9 +112,9 @@ committed-frame diagnostics
 | `localstorage-save-kit` | Parse, shallow-merge, write and clear raw browser state without typed results. |
 | `stage-render-kit` | Create renderer, camera, lights, target, post scene, canvas, listeners and recursive RAF. |
 | `scene-descriptor-consumer-kit` | Convert one scene descriptor into live Three.js resources. |
-| `anime-material-kit` | Build procedural shader materials. |
-| `post-process-kit` | Apply grain, vignette, chromatic offset, distortion, memory warp and scan lines. |
-| `hotspot-volume-kit` | Build invisible pick meshes and attach hotspot descriptors. |
+| `anime-material-kit` | Allocate procedural shader materials and advance time uniforms. |
+| `post-process-kit` | Allocate and render grain, vignette, chromatic, distortion, memory and scan-line effects. |
+| `hotspot-volume-kit` | Allocate invisible pick meshes and attach hotspot descriptors. |
 | `hotspot-picking-kit` | Raycast hover/click input and dispatch selected descriptors. |
 | `camera-parallax-kit` | Apply mouse-driven fixed-camera offsets. |
 | `render-target-composition-kit` | Submit stage-target and post-process passes. |
@@ -133,88 +124,90 @@ committed-frame diagnostics
 | `repo-local-agent-ledger-kit` | Maintain current pointers and timestamped audits. |
 | `central-ledger-sync-kit` | Maintain central selection and findings history. |
 
-## Main finding: DOM copy is ambient story authority
+## Main finding: page lifetime is the only owner
 
-### Opening copy depends on current DOM contents
+### RAF cannot be retired
 
-`renderUi()` sets `currentScene.openingText` only when the body is empty or equals `Loading`. Runtime behavior therefore depends on prior visual output.
+`animate()` schedules the next callback before rendering and does not retain the returned request id. There is no running flag, generation check or `cancelAnimationFrame()` path.
 
-### Inspection bypasses a narrative state model
+### Listeners cannot be revoked
 
-`inspectHotspot()` writes `hotspot.text` directly to `#scene-text`. No projection id, source kind, scene id, story revision or typed result is recorded.
+Resize, pointer, click, Continue and keyboard callbacks are installed directly. Several use anonymous closures, and no listener lease records the exact target, type and function needed for removal.
 
-### Continue can create a split frame
+### Scene replacement leaks resource ownership
 
-`nextScene()` changes the scene, route, stage, title, hotspot list and save, but does not reset the story body. The successor scene can display predecessor hotspot text until another inspection or reload.
+`loadScene()` calls `stageGroup.clear()`, then replaces `hotspots` and `materials` with empty arrays. Clearing a Three.js group detaches children but does not dispose their geometries or materials. Dropping the arrays also loses the references needed for deterministic cleanup.
 
-### Reload follows a different implicit policy
+### Root renderer resources have no disposer
 
-A reload recreates an empty DOM and displays the saved scene opening. In-session Continue may retain predecessor copy. The product therefore has two inconsistent and undocumented narrative restoration policies.
+The renderer, canvas, multisampled target, post material, post-plane geometry, scene resources and context remain live until the browser destroys the page.
 
-### Accessibility output has no commit boundary
+### Timeout work has no session fence
 
-The story panel is `aria-live="polite"`, but there is no revision or commit receipt proving which scene or result an announcement represents.
+The completion timeout is not retained and carries no session, scene or generation admission. A future reset, in-place restart or lifecycle feature would be vulnerable to stale completion work.
 
 ## Required parent domain
 
 ```txt
-the-unmapped-house-narrative-projection-authority-domain
+the-unmapped-house-runtime-session-lifecycle-authority-domain
 ```
 
 Candidate kits:
 
 ```txt
-narrative-source-kind-kit
-narrative-source-id-kit
-narrative-projection-state-kit
-narrative-projection-revision-kit
-scene-opening-projection-kit
-hotspot-copy-projection-kit
-completion-copy-projection-kit
-terminal-copy-projection-kit
-narrative-projection-admission-kit
-narrative-projection-commit-kit
-narrative-projection-result-kit
-narrative-persistence-policy-kit
-scene-transition-narrative-reset-kit
-narrative-dom-adapter-kit
-narrative-aria-live-adapter-kit
-narrative-frame-acknowledgement-kit
-narrative-observation-kit
-narrative-journal-kit
-narrative-projection-fixture-kit
-transition-copy-parity-fixture-kit
+runtime-session-id-kit
+runtime-session-generation-kit
+runtime-lifecycle-state-kit
+runtime-start-command-kit
+runtime-stop-command-kit
+callback-generation-fence-kit
+animation-frame-lease-kit
+event-listener-lease-kit
+timeout-lease-kit
+scene-resource-generation-kit
+stage-resource-registry-kit
+scene-resource-retirement-kit
+three-resource-disposer-kit
+renderer-resource-owner-kit
+render-target-resource-owner-kit
+hotspot-resource-owner-kit
+runtime-dispose-plan-kit
+runtime-dispose-result-kit
+startup-rollback-kit
+runtime-observation-kit
+runtime-lifecycle-journal-kit
+runtime-lifecycle-fixture-kit
+scene-transition-resource-leak-fixture-kit
+stale-callback-fixture-kit
+restart-idempotence-fixture-kit
 ```
 
-## Required projection shape
+## Required lifecycle flow
 
 ```txt
-NarrativeProjection
-  projectionId
-  revision
-  sceneId
-  phase
-  sourceKind
-  sourceId
-  title
-  body
-  persistencePolicy
-  committedByResultId
-  storyRevision
-  acknowledgedFrameId
-```
+RuntimeStartCommand
+  -> allocate session id and generation
+  -> create detached cleanup stack
+  -> allocate StageKit resources
+  -> register listener and timeout leases
+  -> start one retained RAF lease
+  -> commit READY session
 
-## Required authority flow
+SceneLoadCommand
+  -> build candidate scene resource generation
+  -> commit successor generation
+  -> acknowledge first successor frame
+  -> retire predecessor generation exactly once
 
-```txt
-accepted inspection, completion, transition or terminal result
-  -> resolve canonical narrative source
-  -> prepare projection candidate
-  -> validate scene, phase, source and story revision
-  -> commit with the owning story transaction
-  -> project through one DOM and aria-live adapter
-  -> submit first correlated frame
-  -> publish acknowledgement and detached observation
+RuntimeStopCommand
+  -> move to STOPPING
+  -> fence new commands and callbacks
+  -> cancel RAF
+  -> cancel timeouts
+  -> remove listeners
+  -> retire active scene generation
+  -> dispose post, target, renderer and canvas resources
+  -> publish idempotent DISPOSED result
 ```
 
 ## Ordered implementation queue
@@ -226,7 +219,7 @@ accepted inspection, completion, transition or terminal result
 4. Inspection and scene-completion proof
 5. Atomic Continue transition
 6. Narrative Projection Authority
-7. Runtime session lifecycle and scene-resource retirement
+7. Runtime Session Lifecycle and Scene Resource Retirement Authority
 8. Render Surface Resolution Authority
 9. WebGL Context Recovery Authority
 10. Committed-frame diagnostics
@@ -235,11 +228,11 @@ accepted inspection, completion, transition or terminal result
 ## Current audit ledge
 
 ```txt
-TheUnmappedHouse Narrative Projection Authority
-+ Scene Opening / Hotspot / Completion / Terminal Source Identity
-+ Transition Copy Parity / Persistence Policy / First-Frame Fixture Gate
+TheUnmappedHouse Runtime Session Lifecycle Authority
++ Callback Lease and Generation Fencing
++ Scene Resource Retirement and Restart Idempotence Fixture Gate
 ```
 
 ## Validation status
 
-The authority is not implemented. No current test proves that title, body, stage, hotspot list, saved scene and first visible frame agree after Continue.
+The authority is not implemented. No current test proves that a scene transition disposes predecessor resources, that stop prevents later frames, or that restart creates exactly one callback and resource graph.
