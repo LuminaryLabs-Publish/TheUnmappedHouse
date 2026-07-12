@@ -1,27 +1,27 @@
 # Current audit: The Unmapped House
 
-**Timestamp:** `2026-07-12T13-08-15-04-00`  
+**Timestamp:** `2026-07-12T15-08-07-04-00`  
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`
 
 ## Summary
 
-This audit isolates render-surface resolution and allocation in `src/stage-kit.js`. The runtime creates an antialiased Three.js renderer, caps device pixel ratio at `2`, allocates a multisampled offscreen target at the fixed `1920 x 1080` design size multiplied by DPR, and then immediately calls `resize()` to allocate both surfaces again from the live aspect frame.
+This audit isolates the notebook and diagnostics projection boundary in `index.html`, `src/styles.css` and `src/game.js`.
 
-No pixel budget, WebGL limit query, multisample admission, resize generation, allocation result, rollback, resource-retirement receipt or first-visible-frame acknowledgement exists.
+The visible player surface is labelled `Notebook`, but `renderUi()` fills it with a raw JSON serialization of internal game, scene, clue, route, inspection, completion and log state. The surface is always present in the public page and has no product-versus-development channel policy, build gate, capability admission, field classification, redaction profile, projection identity, stale-revision rejection or first-visible-frame acknowledgement.
 
 ## Plan ledger
 
-**Goal:** define one authoritative transaction from viewport observation through bounded renderer and offscreen-target allocation, atomic commit and visible-frame proof.
+**Goal:** define one authoritative transaction from committed story state through channel admission, field classification, redaction, notebook/diagnostic projection, visible commit and observation.
 
 - [x] Compare the full Publish inventory with central tracking.
 - [x] Exclude `TheCavalryOfRome`.
 - [x] Confirm all eligible repositories are centrally tracked and root-documented.
 - [x] Select only `TheUnmappedHouse` as the oldest eligible synchronized repository.
-- [x] Inspect `src/stage-kit.js`, `src/aspect-frame.js`, `src/game.js`, package checks and prior render/lifecycle boundaries.
-- [x] Trace constructor allocation, resize allocation and the two-pass frame loop.
-- [x] Quantify high-DPR and narrow-viewport allocation cases.
+- [x] Inspect `index.html`, `src/styles.css`, `src/game.js`, `src/story-data.js`, package checks and prior authority boundaries.
+- [x] Trace boot, inspection, Continue and notebook projection paths.
+- [x] Identify every field written to the public notebook.
 - [x] Preserve the complete 24-kit inventory and service map.
-- [x] Define render-surface planning, admission, commit, rollback, observation and fixture contracts.
+- [x] Define channel, classification, redaction, commit, observation and fixture contracts.
 - [x] Change documentation only.
 - [ ] Implement and execute the authority.
 
@@ -34,15 +34,15 @@ new eligible repositories: 0
 central-ledger-missing eligible repositories: 0
 root-.agent-missing eligible repositories: 0
 
-TheUnmappedHouse   2026-07-12T10-30-00-04-00 selected
-AetherVale         2026-07-12T10-48-19-04-00
-TheOpenAbove       2026-07-12T11-15-16-04-00
-IntoTheMeadow      2026-07-12T11-29-40-04-00
-PhantomCommand     2026-07-12T11-48-43-04-00
-PrehistoricRush    2026-07-12T12-08-05-04-00
-HorrorCorridor     2026-07-12T12-21-38-04-00
-ZombieOrchard      2026-07-12T12-39-25-04-00
-MyCozyIsland       2026-07-12T12-58-08-04-00
+TheUnmappedHouse   2026-07-12T13-08-15-04-00 selected
+AetherVale         2026-07-12T13-20-00-04-00
+TheOpenAbove       2026-07-12T13-29-56-04-00
+IntoTheMeadow      2026-07-12T13-54-00-04-00
+PhantomCommand     2026-07-12T13-59-50-04-00
+PrehistoricRush    2026-07-12T14-10-22-04-00
+HorrorCorridor     2026-07-12T14-30-36-04-00
+ZombieOrchard      2026-07-12T14-38-35-04-00
+MyCozyIsland       2026-07-12T14-59-01-04-00
 TheCavalryOfRome   excluded
 ```
 
@@ -50,42 +50,47 @@ TheCavalryOfRome   excluded
 
 ```txt
 module boot
-  -> load browser story state
+  -> parse browser save
   -> resolve current scene
-  -> construct StageKit
-  -> create WebGL renderer and offscreen target
-  -> perform fixed-design allocation
-  -> perform immediate live resize allocation
-  -> load scene, project UI and save
+  -> create StageKit
+  -> load scene
+  -> renderUi()
+  -> create hotspot buttons
+  -> serialize aggregate state into Notebook
+  -> save state
 
-inspection
-  -> canvas or side-panel activation
-  -> mutate inspection, clue and log state
-  -> derive completion and delayed interlude
-  -> render and save
+canvas or side-panel inspection
+  -> inspectHotspot(hotspot)
+  -> mutate inspected map
+  -> grant internal clue ids
+  -> prepend notebook log entry
+  -> derive exact scene-complete boolean
+  -> renderUi()
+  -> replace visible Notebook JSON
+  -> persist state
 
-window resize
-  -> sample innerWidth, innerHeight and DPR
-  -> compute fixed-aspect CSS frame
-  -> resize default drawing buffer
-  -> resize multisampled offscreen target
-  -> continue rendering without surface revision or result
+Continue
+  -> resolve next scene
+  -> mutate scene and route ids
+  -> replace stage resources
+  -> renderUi()
+  -> replace visible Notebook JSON
+  -> persist state
 
 frame
-  -> animate camera and material uniforms
-  -> render stage to offscreen target
-  -> render post-process pass to default framebuffer
+  -> render Three.js stage and post pass
+  -> publish no notebook projection or visible-frame provenance
 ```
 
 ## Source ownership
 
 | Source | Current responsibilities |
 |---|---|
-| `index.html` | Fixed shell, story panel, hotspot list, debug panel and mounted interlude. |
-| `src/styles.css` | Fixed composition, modal appearance and pointer routing. |
-| `src/game.js` | Mutable story state, persistence, inspection, completion, Continue, terminal copy and reset. |
-| `src/story-data.js` | Three scenes, nine hotspots, clue requirements and visual descriptors. |
-| `src/stage-kit.js` | Renderer, DPR, target allocation, scene replacement, pointer input, resize and recursive RAF. |
+| `index.html` | Fixed shell, story panel, hotspot list, visible Notebook `<pre>`, hover label and interlude. |
+| `src/styles.css` | Notebook and debug text visibility, panel layout, modal presentation and pointer routing. |
+| `src/game.js` | Mutable story state, persistence, inspection, completion, Continue, reset and raw JSON notebook projection. |
+| `src/story-data.js` | Three scenes, nine hotspots, internal clue ids, required clues, authored narrative and visual descriptors. |
+| `src/stage-kit.js` | Renderer, scene consumption, pointer picking, resize and recursive RAF. |
 | `src/aspect-frame.js` | Fixed `1920 x 1080` design size and aspect-frame calculation. |
 | `package.json` | Syntax-only source checks and local static serving. |
 
@@ -99,17 +104,14 @@ raw localStorage read, write and reset effects
 mutable story snapshot ownership
 scene routing, inspection, clues, flags, route and notebook log
 scene-completion derivation
-unretained 450 ms completion timeout
+unretained completion timeout
 interlude visibility, Continue and terminal projection
 global keyboard and pointer input
 native focus and button activation
+player-visible notebook shell
+raw developer-style aggregate JSON projection
 Three.js CDN runtime
-WebGL renderer and default drawing buffer
-device-pixel-ratio sampling with a fixed cap of 2
-fixed-design startup allocation
-aspect-frame viewport observation and CSS application
-multisampled offscreen WebGLRenderTarget
-stage-to-target and post-to-default-framebuffer submission
+WebGL renderer and two-pass presentation
 procedural geometry and anime materials
 hotspot volumes and raycast picking
 camera parallax
@@ -120,38 +122,39 @@ repo-local audit tracking
 central ledger synchronization
 ```
 
-Missing render-surface authority domains:
+Missing notebook-observability authority domains:
 
 ```txt
-render-surface identity and revision
-viewport-observation identity and resize generation
-DPR and render-scale policy
-product pixel and sample budgets
-WebGL texture, renderbuffer and sample capability admission
-default drawing-buffer plan
-offscreen color/depth/multisample target plan
-allocation readback and framebuffer completeness
-stale resize rejection
-atomic surface commit and rollback
-predecessor target retirement
-surface observations and bounded journal
-first-visible-surface-frame acknowledgement
-browser and Pages DPR/resize fixtures
+notebook surface identity
+projection id and revision
+story-state revision binding
+player notebook versus developer diagnostic channel policy
+build-channel and capability admission
+field classification
+redaction profile identity and revision
+player-safe notebook entry model
+developer diagnostic model
+projection plan and typed result
+stale projection rejection
+atomic DOM commit
+visible notebook frame acknowledgement
+projection observations and bounded journal
+browser and Pages notebook fixture gates
 ```
 
 ## Implemented kits and offered services
 
 | Kit | Services |
 |---|---|
-| `static-page-shell-kit` | Stage, story, hotspot, debug, hover and interlude surfaces. |
+| `static-page-shell-kit` | Stage, story, hotspot, Notebook, debug, hover and interlude surfaces. |
 | `aspect-frame-kit` | Fixed 16:9 viewport computation and CSS application. |
 | `story-data-kit` | Scene, hotspot, clue, camera, material, post and interlude descriptors. |
 | `browser-story-runtime-kit` | Load, inspect, complete, Continue, reset, project, persist and call StageKit. |
 | `scene-route-kit` | Resolve and mutate current scene and route ids. |
 | `inspection-ledger-kit` | Track scene-keyed inspected hotspot booleans. |
-| `clue-ledger-kit` | Grant and query global clue strings. |
-| `notebook-log-kit` | Prepend and cap story log rows. |
-| `interlude-timer-kit` | Schedule the current unretained 450 ms completion callback. |
+| `clue-ledger-kit` | Grant and query global internal clue strings. |
+| `notebook-log-kit` | Prepend and cap authored narrative log rows. |
+| `interlude-timer-kit` | Schedule the current unretained completion callback. |
 | `terminal-route-kit` | Project prototype-complete copy. |
 | `localstorage-save-kit` | Parse, merge, write and delete the single browser save key. |
 | `stage-render-kit` | Create renderer, camera, lights, target, canvas, listeners and RAF. |
@@ -162,7 +165,7 @@ browser and Pages DPR/resize fixtures
 | `hotspot-picking-kit` | Raycast hover/click input and dispatch selected hotspots. |
 | `camera-parallax-kit` | Apply pointer-driven camera offsets. |
 | `render-target-composition-kit` | Submit stage-target and post-process passes. |
-| `debug-json-projection-kit` | Project aggregate story state into the notebook panel. |
+| `debug-json-projection-kit` | Serialize internal aggregate fields directly into the visible Notebook `<pre>`. |
 | `package-syntax-check-kit` | Syntax-check four JavaScript sources. |
 | `static-pages-deploy-kit` | Deploy the static route from main. |
 | `repo-local-agent-ledger-kit` | Maintain current pointers and timestamped audits. |
@@ -170,109 +173,115 @@ browser and Pages DPR/resize fixtures
 
 ## Main findings
 
-### Fixed-design allocation happens before live viewport admission
+### The visible Notebook is the diagnostic surface
 
-The constructor calls:
+`index.html` mounts `#state-debug` inside a normal visible section labelled `Notebook`. CSS gives the `<pre>` normal text color, scrolling and height. There is no hidden attribute, development-only stylesheet, query gate or build-channel gate.
 
-```txt
-renderer.setPixelRatio(cappedDpr)
-renderer.setSize(1920, 1080, false)
-new WebGLRenderTarget(1920 * cappedDpr, 1080 * cappedDpr, { samples: 2 })
-resize()
-```
+### Raw aggregate fields are public UI
 
-The first live `resize()` can immediately replace those dimensions. A narrow viewport at capped DPR `2` can therefore transiently allocate a `3840 x 2160` default buffer and target before shrinking to the actual aspect frame.
-
-### DPR cap does not provide a product pixel budget
-
-For a `3840 x 2160` aspect frame at DPR `2`:
+`renderUi()` writes:
 
 ```txt
-physical width:  7680
-physical height: 4320
-pixels/surface:  33,177,600
-offscreen samples requested: 2
+game
+scene
+clues
+route
+inspected
+complete
+latest
 ```
 
-The offscreen target alone requests `66,355,200` color sample positions before depth, resolve storage, the default framebuffer and implementation overhead. No product budget can lower DPR, render scale or samples.
+The values include internal ids such as `library-blank-map` and `clue:blank-square`, exact current-scene inspection booleans and the authoritative scene-completion result.
 
-### WebGL limits are not admitted before allocation
+The current projection does not expose unacquired required-clue arrays, but it still promotes implementation identifiers and aggregate structure into the player-facing contract.
 
-The runtime does not query or validate:
+### Player notebook and developer diagnostics have different semantics
+
+The authored `state.log` already provides player-readable notebook entries. The remaining aggregate fields are developer diagnostics. Combining both in one raw JSON document prevents independent product copy, localization, accessibility, redaction and diagnostic evolution.
+
+### Projection has no identity or state provenance
+
+There is no:
 
 ```txt
-MAX_TEXTURE_SIZE
-MAX_RENDERBUFFER_SIZE
-MAX_SAMPLES
-renderer capabilities
-framebuffer completeness
-actual drawing-buffer width and height
-actual target width and height
+notebook surface id
+projection id
+projection revision
+story-state revision
+scene generation
+channel kind
+redaction profile
+field classification
+commit result
+first-visible-frame acknowledgement
 ```
 
-Unsupported or excessive plans therefore have no typed rejection or fallback tier.
+A screenshot or DOM read therefore cannot prove which committed story state and channel policy produced the visible notebook.
 
-### Resize has no generation, coalescing or rollback
+### Diagnostics cannot be independently disabled or exported
 
-Every window resize directly mutates the renderer and target. There is no resize command id, expected surface revision, stale-observation rejection, prepare phase, atomic commit, predecessor preservation or allocation failure rollback.
+The runtime cannot produce:
 
-### Visible frames have no surface provenance
+```txt
+player notebook only
+developer diagnostics only
+redacted support diagnostics
+no diagnostics in public production
+explicit authorized diagnostic export
+```
 
-The frame loop submits the offscreen and post passes but publishes no surface id, surface revision, CSS dimensions, physical dimensions, DPR, sample count, allocation result or first-visible-frame acknowledgement.
+Any change to the internal object shape can alter the public UI.
 
 ## Required parent domain
 
 ```txt
-the-unmapped-house-render-surface-resolution-authority-domain
+the-unmapped-house-notebook-observability-projection-authority-domain
 ```
 
 Candidate kits:
 
 ```txt
-render-surface-id-kit
-render-surface-revision-kit
-viewport-observation-kit
-device-pixel-ratio-policy-kit
-render-pixel-budget-kit
-webgl-capability-query-kit
-render-surface-plan-kit
-drawing-buffer-plan-kit
-offscreen-target-plan-kit
-multisample-budget-kit
-surface-dimension-admission-kit
-surface-allocation-kit
-allocation-readback-kit
-surface-commit-kit
-surface-rollback-kit
-stale-resize-rejection-kit
-surface-resource-retirement-kit
-surface-observation-kit
-visible-surface-frame-ack-kit
-render-surface-fixture-kit
-browser-dpr-resize-smoke-kit
-pages-render-surface-smoke-kit
+notebook-surface-id-kit
+notebook-projection-id-kit
+notebook-projection-revision-kit
+notebook-channel-policy-kit
+notebook-build-channel-kit
+notebook-capability-admission-kit
+notebook-field-classification-kit
+notebook-redaction-profile-kit
+player-notebook-entry-kit
+developer-diagnostic-model-kit
+notebook-projection-plan-kit
+notebook-projection-result-kit
+notebook-projection-commit-kit
+stale-notebook-projection-rejection-kit
+notebook-visible-frame-ack-kit
+notebook-observation-kit
+notebook-journal-kit
+public-notebook-fixture-kit
+developer-diagnostics-fixture-kit
+browser-notebook-smoke-kit
+pages-notebook-smoke-kit
 ```
 
 ## Required transaction
 
 ```txt
-ViewportObservation
-  -> allocate observation id and resize generation
-  -> sample CSS bounds and requested DPR
-  -> query WebGL texture, renderbuffer and sample capabilities
-  -> apply product pixel, sample and quality budgets
-  -> derive one RenderSurfacePlan
-  -> reject stale predecessor revision
-  -> prepare renderer drawing buffer and offscreen target
-  -> read back actual dimensions and framebuffer status
-  -> commit one surface revision or preserve predecessor
-  -> retire replaced target resources exactly once
-  -> submit stage and post passes against committed surface
-  -> acknowledge first visible frame
+CommittedStoryState
+  -> cite story revision, scene generation and mutation receipt
+  -> resolve build channel and requested notebook channel
+  -> admit player or developer capability
+  -> classify candidate fields
+  -> select immutable redaction profile
+  -> build player notebook entries or diagnostic model
+  -> reject stale story/projection revision
+  -> commit one NotebookProjectionResult
+  -> render only the admitted model
+  -> acknowledge the first visible notebook frame
   -> publish detached observation and bounded journal
 ```
 
-Rejected or failed surface plans must not leave the renderer and offscreen target on mixed revisions.
+Public player mode should project authored narrative entries and player-safe progress only. Developer diagnostics should require explicit admission and must not share the public Notebook contract by accident.
 
 ## Required statuses
 
@@ -280,18 +289,16 @@ Rejected or failed surface plans must not leave the renderer and offscreen targe
 Planned
 Committed
 Duplicate
-RejectedStaleRevision
-RejectedInvalidDimensions
-RejectedPixelBudget
-RejectedTextureLimit
-RejectedRenderbufferLimit
-RejectedSampleLimit
-AllocationFailed
-FramebufferIncomplete
-RolledBack
+RejectedStaleStoryRevision
+RejectedStaleProjectionRevision
+RejectedChannel
+RejectedCapability
+RejectedFieldClassification
+Redacted
 Visible
+Exported
 ```
 
 ## Completion boundary
 
-Do not claim high-DPR safety, resize safety or render-surface correctness from a fixed DPR cap or visual inspection. Completion requires bounded planning, capability admission, allocation readback, atomic commit/rollback and executable browser proof.
+Do not claim a production-safe notebook or diagnostic surface because the JSON contains only local browser state. Completion requires explicit channel policy, field classification, redaction, typed projection results, independent player/developer models and executable public-build proof.
