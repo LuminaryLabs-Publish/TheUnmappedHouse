@@ -1,29 +1,33 @@
-# START HERE: The Unmapped House Hotspot Input and Picking Authority
+# START HERE: The Unmapped House renderer-provider admission authority
 
-Last updated: `2026-07-13T01-49-49-04-00`
+**Last updated:** `2026-07-13T04-29-43-04-00`  
+**Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`  
+**Branch:** `main`  
+**Status:** `render-provider-admission-authority-audited`  
+**Retained statuses:** `hotspot-input-picking-authority-central-reconciled`, `browser-save-commit-reset-convergence-authority-audited`, `interlude-progression-admission-authority-audited`, `stage-resource-lifecycle-authority-audited`
 
 ## Summary
 
-`TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three authored scenes, nine hotspots, local browser persistence, a fixed 16:9 shell and a descriptor-driven Three.js stage.
+`TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three authored scenes, nine hotspots, browser persistence, a fixed 16:9 shell, a visible Notebook and a descriptor-driven Three.js stage.
 
-The current audit isolates canvas hotspot input and raycast admission. Canvas activation ignores the click event coordinates and raycasts using the last `mousemove` sample, or the default center sample before any movement. Touch/stylus activation can therefore inspect the wrong hotspot. Pointer-driven camera parallax is applied on RAF, so a quick click can also combine a new pointer sample with an older camera pose. No pointer, viewport, camera, hit-result or visible-frame identity connects the user's action to the accepted inspection.
+The current audit isolates renderer-provider boot admission. `src/stage-kit.js` imports Three.js `0.160.0` directly from unpkg, and `src/game.js` statically imports StageKit. A provider fetch, policy, integrity or contract failure therefore rejects the module graph before story boot can replace the static `Loading` state or publish a typed failure. The repository has no provider manifest, repository-owned artifact, content fingerprint, fallback policy, timeout result, API contract probe, provider-independent failure UI or first provider-backed visible-frame receipt.
 
 ## Plan ledger
 
-**Goal:** make every canvas or exact-control inspection one source-identified, revision-bound and frame-correlated hotspot command.
+**Goal:** make renderer-provider resolution an explicit, verified and observable boot transaction before StageKit construction or story interaction begins.
 
 - [x] Compare all ten accessible `LuminaryLabs-Publish` repositories.
 - [x] Exclude `TheCavalryOfRome`.
-- [x] Confirm all nine eligible repositories have central-ledger and root `.agent` coverage.
-- [x] Select only `TheUnmappedHouse`, the oldest eligible central entry.
-- [x] Trace pointer sampling, hover, click, camera parallax, raycast, exact buttons and inspection mutation.
-- [x] Identify the complete interaction loop, active domains, all 24 implemented kits and every offered service.
-- [x] Define event-coordinate, source, viewport, camera, hit-result and visible-frame contracts.
-- [x] Add a timestamped tracker and architecture/system audit family.
-- [x] Refresh all required root `.agent` files and the machine registry.
-- [x] Push only to `main`.
-- [x] Create no branch or pull request.
-- [ ] Runtime implementation and executable pointer/picking fixtures remain future work.
+- [x] Confirm all nine eligible repositories are centrally tracked and root-documented.
+- [x] Confirm no repo-local audit is newer than central tracking.
+- [x] Select only `TheUnmappedHouse`, the oldest eligible synchronized repository.
+- [x] Trace HTML boot, static module evaluation, remote Three.js resolution, stage construction, syntax validation and Pages deployment.
+- [x] Preserve the complete 24-kit and service inventory.
+- [x] Define provider policy, identity, integrity, contract, fallback, result and visible-frame boundaries.
+- [x] Add the timestamped tracker and architecture/system audit family.
+- [x] Refresh all required root `.agent` files and machine state.
+- [x] Push only to `main`; create no branch or pull request.
+- [ ] Implement provider admission and source/build/Pages fixtures.
 
 ## Selection
 
@@ -33,83 +37,76 @@ eligible non-Cavalry repositories: 9
 new eligible repositories: 0
 central-ledger-missing eligible repositories: 0
 root-.agent-missing eligible repositories: 0
-unsynchronized eligible repositories: 0
+repo-local-newer-than-central repositories: 0
 
-TheUnmappedHouse   2026-07-12T23-20-51-04-00 selected
-AetherVale         2026-07-12T23-40-11-04-00
-TheOpenAbove       2026-07-13T00-00-02-04-00
-IntoTheMeadow      2026-07-13T00-18-48-04-00
-PhantomCommand     2026-07-13T00-40-00-04-00
-PrehistoricRush    2026-07-13T00-58-50-04-00
-HorrorCorridor     2026-07-13T01-08-28-04-00
-ZombieOrchard      2026-07-13T01-18-20-04-00
-MyCozyIsland       2026-07-13T01-40-00-04-00
+TheUnmappedHouse   2026-07-13T01-49-49-04-00 selected
+AetherVale         2026-07-13T02-15-51-04-00
+TheOpenAbove       2026-07-13T02-18-03-04-00
+IntoTheMeadow      2026-07-13T02-39-44-04-00
+PhantomCommand     2026-07-13T02-49-07-04-00
+PrehistoricRush    2026-07-13T03-20-58-04-00
+HorrorCorridor     2026-07-13T03-38-31-04-00
+ZombieOrchard      2026-07-13T03-59-28-04-00
+MyCozyIsland       2026-07-13T04-21-10-04-00
 TheCavalryOfRome   excluded
 ```
 
-## Active input loop
+## Active boot and interaction loop
 
 ```txt
-mousemove
-  -> update cached pointer and parallax state
-  -> raycast hover
-  -> update hover label
+index.html paints shell and Loading
+  -> browser requests src/game.js
+  -> game.js imports StageKit
+  -> StageKit imports Three.js from unpkg
+  -> accepted module graph constructs stage and starts story
+  -> pointer/side-panel inspection advances clues and interludes
 
-RAF
-  -> consume parallax state
-  -> mutate camera
-  -> render stage and post pass
-
-canvas click
-  -> discard click coordinates
-  -> raycast with cached pointer and mutable camera
-  -> dispatch first intersected hotspot
-
-side-panel click
-  -> bypass picking
-  -> dispatch exact hotspot descriptor
+provider rejection
+  -> game.js never evaluates
+  -> no stage, story, Notebook or typed recovery state
+  -> static Loading shell can remain
 ```
 
-## Main findings
+## Main finding
 
-1. A first canvas click can raycast at clip-space center because `this.pointer` begins at `0,0`.
-2. Later canvas clicks can use a stale mouse location because the click event coordinates are ignored.
-3. Touch and stylus activation are not sampled through a pointer-event path, so compatibility clicks can reuse default or stale coordinates.
-4. A click before the next RAF can pair a new pointer sample with the previous camera pose.
-5. No pointer-leave handler clears hover state or the hover label.
-6. Canvas and side-panel inspection do not share one typed command/result contract.
-7. No visible frame acknowledges the accepted hotspot result.
+```txt
+repository-owned provider artifact: absent
+provider manifest and policy revision: absent
+provider identity and generation: absent
+content fingerprint/integrity admission: absent
+required Three.js contract probe: absent
+timeout/cancellation result: absent
+approved fallback: absent
+renderer boot phase/result: absent
+provider-independent failure UI: absent
+first provider-backed frame acknowledgement: absent
+source/build/Pages provider fixtures: absent
+```
+
+This is a source-derived control and proof gap. No current outage or compromised provider artifact was observed.
 
 ## Required authority
 
 ```txt
-the-unmapped-house-hotspot-input-picking-authority-domain
+the-unmapped-house-render-provider-admission-authority-domain
 ```
 
-It must own input source and command identity, event-bound coordinates, viewport/canvas-rect revision, camera and rendered-frame revision, hotspot-set revision, deterministic hit selection, stale/duplicate rejection, hover retirement, source-equivalent inspection results and first-visible inspection-frame acknowledgements.
+It must own approved provider sources, immutable manifests, version and content fingerprints, integrity and API-contract admission, bounded acquisition, fallback selection, typed boot results, stage-construction gating, provider-independent recovery projection, bounded evidence and first provider-backed visible-frame acknowledgement.
 
-## Read order
+## Read this run first
 
 1. `current-audit.md`
 2. `known-gaps.md`
-3. `trackers/2026-07-13T01-49-49-04-00/project-breakdown.md`
-4. `architecture-audit/2026-07-13T01-49-49-04-00-hotspot-input-picking-dsk-map.md`
-5. `hotspot-picking-audit/2026-07-13T01-49-49-04-00-event-coordinate-camera-hit-contract.md`
-6. `interaction-audit/2026-07-13T01-49-49-04-00-pointer-sample-raycast-command-map.md`
-7. `gameplay-audit/2026-07-13T01-49-49-04-00-canvas-button-inspection-loop.md`
-8. `render-audit/2026-07-13T01-49-49-04-00-pointer-camera-visible-frame-gap.md`
-9. `next-steps.md`
-10. `validation.md`
-
-## Retained audit boundaries
-
-```txt
-browser save commit/reset convergence
-scene progression and interlude admission
-stage resource lifecycle and WebGL recovery
-story manifest and snapshot authority
-```
+3. `trackers/2026-07-13T04-29-43-04-00/project-breakdown.md`
+4. `architecture-audit/2026-07-13T04-29-43-04-00-render-provider-admission-dsk-map.md`
+5. `render-provider-audit/2026-07-13T04-29-43-04-00-source-integrity-fallback-contract.md`
+6. `interaction-audit/2026-07-13T04-29-43-04-00-provider-boot-result-admission-map.md`
+7. `gameplay-audit/2026-07-13T04-29-43-04-00-provider-failure-before-story-loop.md`
+8. `render-audit/2026-07-13T04-29-43-04-00-external-provider-blank-boot-visible-gap.md`
+9. `deploy-audit/2026-07-13T04-29-43-04-00-render-provider-pages-fixture-gate.md`
+10. `next-steps.md`
+11. `validation.md`
 
 ## Next safe ledge
 
-Replace `mousemove` plus coordinate-less `click` with one pointer-event adapter that captures activation coordinates directly. Add the first-click, touch-tap, pointer-leave and parallax-click fixtures before changing story semantics.
+Prefer a repository-owned or build-vendored Three.js artifact with a deterministic fingerprint. Add a provider-independent bootstrap surface and typed `RenderProviderResult` before changing stage or story behavior.
