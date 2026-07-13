@@ -1,108 +1,116 @@
-# Known gaps: The Unmapped House
+# Known gaps: The Unmapped House renderer-provider admission
 
-**Timestamp:** `2026-07-13T01-49-49-04-00`
+**Timestamp:** `2026-07-13T04-29-43-04-00`
 
 ## Summary
 
-The newest documented gap is hotspot input and picking authority. Canvas activation borrows mutable hover coordinates and an unversioned camera pose instead of capturing one event-bound, source-identified inspection command.
+The newest documented gap is renderer-provider admission. The browser resolves a remote Three.js module before application code runs, but the repository owns no immutable provider artifact, integrity result, contract probe, fallback transaction or provider-independent visible failure state.
 
 ## Plan ledger
 
-**Goal:** eliminate wrong-target inspection, stale pick evidence, touch mismatch, persistent hover and source-divergent gameplay commands.
+**Goal:** eliminate indefinite or unproven renderer boot by making provider source, content, compatibility, failure and visibility explicit.
 
-- [x] Trace mousemove, canvas click, touch-compatible click, camera parallax and exact-button paths.
-- [x] Identify missing identities, revisions and typed results.
-- [x] Define candidate authority kits and fixture rows.
+- [x] Trace the static module graph and provider boundary.
+- [x] Inspect package and Pages proof surfaces.
+- [x] Identify missing identities, results and fixtures.
+- [x] Define candidate authority kits and completion criteria.
 - [ ] Implement and execute the authority.
 
-## Input identity gaps
+## Provider identity gaps
 
 ```txt
-input session ID: absent
-command ID: absent
-event sequence: absent
-pointer ID: absent
-pointer type: absent
-input source identity: absent
-activation-event coordinates: not captured
+provider policy revision: absent
+provider manifest version: absent
+provider ID: absent
+provider generation: absent
+provider attempt ID: absent
+source class: implicit remote URL
+repository-owned artifact: absent
+approved fallback list: absent
 ```
 
-## Spatial admission gaps
+## Integrity and compatibility gaps
 
 ```txt
-scene revision: absent
-hotspot-set revision: absent
-viewport revision: absent
-canvas-rect revision: absent
-camera pose revision: absent
-rendered-frame revision: absent
-outside-canvas rejection: absent
-stale sample rejection: absent
-stale camera rejection: absent
+expected content fingerprint: absent
+observed fingerprint: absent
+integrity admission result: absent
+version admission result: absent
+module-evaluation result: browser-owned only
+required export list: absent
+required capability probe: absent
+API contract result: absent
 ```
 
-## Pick result gaps
+## Lifecycle and result gaps
 
 ```txt
-immutable pick command: absent
-candidate list: absent
-candidate distances: absent
-deterministic tie policy: absent
-accepted miss result: absent
-selected hotspot result ID: absent
-pick fingerprint: absent
-bounded pick journal: absent
+renderer boot phase: absent
+bounded timeout: absent
+cancellation command/result: absent
+retry command/result: absent
+late predecessor rejection: absent
+duplicate retry rejection: absent
+stage-construction admission: absent
+typed RenderProviderResult: absent
 ```
 
-## Source and gameplay gaps
+## Presentation gaps
 
 ```txt
-canvas and side-panel source equivalence: absent
-shared HotspotInspectionCommand: absent
-shared HotspotInspectionResult: absent
-unknown/stale hotspot rejection: absent
-duplicate inspection rejection: absent
-exactly-once story side effects: absent
-inspection-result visible feedback: absent
+provider-independent failure UI: absent
+specific rejection reason projection: absent
+retry/recovery affordance: absent
+provider ID/version in diagnostics: absent
+provider fingerprint in diagnostics: absent
+first provider-backed frame acknowledgement: absent
+first visible provider-failure frame acknowledgement: absent
 ```
 
-## Hover lifecycle gaps
+## Validation and deployment gaps
 
 ```txt
-pointerenter state: implicit
-pointerleave retirement: absent
-pointercancel retirement: absent
-scene-change hover invalidation: absent
-runtime-stop hover invalidation: absent
-hover result identity: absent
-hover-frame correlation: absent
+provider manifest check: absent
+build-artifact provider fingerprint check: absent
+browser provider boot smoke: absent
+blocked-provider fixture: absent
+timeout fixture: absent
+integrity-mismatch fixture: absent
+version-mismatch fixture: absent
+API-contract-mismatch fixture: absent
+fallback fixture: absent
+late-attempt fixture: absent
+Pages provider smoke: absent
+cache-disabled deployed navigation: absent
 ```
 
-## Presentation and proof gaps
+## Reachable visible failure
 
 ```txt
-pointer/camera revision in Notebook: absent
-pick result in diagnostics: absent
-first visible inspection-frame acknowledgement: absent
-first-click browser fixture: absent
-touch/stylus fixture: absent
-parallax-click correlation fixture: absent
-pointer-leave fixture: absent
-Pages hotspot-input smoke: absent
+remote module request fails or is rejected
+  -> StageKit module does not evaluate
+  -> game.js body does not run
+  -> story state and UI are not initialized
+  -> no canvas is created
+  -> static Loading title can remain
+  -> no game-owned reason or recovery result exists
 ```
+
+This path is inferred from static ES-module semantics and source ordering. It is not evidence of a current unpkg outage or malicious artifact.
 
 ## Retained independent gaps
 
 ```txt
+hotspot input and picking authority
 browser save commit/reset convergence
 story manifest and snapshot admission
-scene-progression and interlude authority
-stage resource disposal and runtime stop
-Notebook channel separation
-render-surface budgeting and WebGL context recovery
+scene progression and interlude authority
+stage resource lifecycle and runtime stop
+modal focus and Continue admission
+Notebook channel classification
 committed-frame diagnostics
 ```
 
 ## Completion boundary
 
-Do not claim canvas hotspot reliability because a raycaster returns an intersection. Completion requires event-bound coordinates, source identity, revisioned viewport/camera/hotspot evidence, deterministic hit selection, shared gameplay results, hover retirement and visible-frame proof across mouse, touch, stylus and deployed Pages fixtures.
+Do not claim provider reliability because the version-bearing URL loads in one browser session. Completion requires approved artifact identity, deterministic fingerprint admission, required API-contract proof, typed timeout/failure/fallback behavior, provider-independent recovery UI, exactly-once StageKit construction and local/build/Pages visible-frame fixtures.
