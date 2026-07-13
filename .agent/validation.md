@@ -1,11 +1,11 @@
-# Validation: The Unmapped House renderer-provider admission
+# Validation: The Unmapped House renderer-provider central reconciliation
 
-**Timestamp:** `2026-07-13T04-29-43-04-00`  
-**Scope:** documentation-only renderer-provider admission audit
+**Timestamp:** `2026-07-13T04-47-00-04-00`  
+**Scope:** documentation-only renderer-provider audit and central reconciliation
 
 ## Summary
 
-Source, package, workflow and existing audit state were inspected. Documentation and machine-registry state were updated; runtime behavior, provider source, story content, rendering and deployment were not modified or executed.
+Source, package, workflow and existing audit state were inspected. A new reconciliation tracker and audit family were added, required root documents and machine state were refreshed, and central tracking was synchronized. Runtime behavior, provider source, story content, rendering and deployment were not modified or executed.
 
 ## Plan ledger
 
@@ -18,7 +18,10 @@ Source, package, workflow and existing audit state were inspected. Documentation
 - [x] Verify local validation is syntax-only.
 - [x] Verify Pages deployment uploads the unresolved source tree.
 - [x] Verify no manifest, fingerprint, contract result or fallback exists.
+- [x] Verify all 24 implemented kits and offered services remain cataloged.
+- [x] Verify the 25-kit proposed authority remains cataloged.
 - [x] Generate `.agent/kit-registry.json` as valid JSON.
+- [x] Reconcile the central ledger and internal change log.
 - [x] Change documentation only.
 - [ ] Run executable provider, browser and Pages fixtures after implementation.
 
@@ -49,12 +52,30 @@ index.html initially displays Loading
 no provider manifest exists
 no repository-owned provider artifact is declared
 no content fingerprint or integrity result exists
-no required Three.js API contract probe exists
+no required Three.js API-contract probe exists
 no timeout, cancellation or fallback result exists
-no provider-independent failure/retry UI exists
+no provider-independent failure and retry UI exists
 npm run check performs local syntax checks only
 Pages workflow uploads repository root without provider resolution
 no first provider-backed visible-frame acknowledgement exists
+```
+
+## Documentation changed
+
+```txt
+new tracker and turn-ledger entry
+new architecture, render, gameplay and interaction reconciliation audits
+new renderer-provider contract audit
+new deploy fixture gate
+new central-sync audit
+START_HERE.md refreshed
+current-audit.md refreshed
+next-steps.md refreshed
+known-gaps.md refreshed
+validation.md refreshed
+kit-registry.json refreshed
+central repo ledger refreshed
+central internal change log added
 ```
 
 ## Not changed
@@ -76,6 +97,8 @@ Pages workflow: no
 ```txt
 target repository: LuminaryLabs-Publish/TheUnmappedHouse
 target branch: main
+central repository: LuminaryLabs-Dev/LuminaryLabs
+central branch: main
 branch created: no
 pull request created: no
 ```
