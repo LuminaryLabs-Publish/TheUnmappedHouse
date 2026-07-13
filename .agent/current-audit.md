@@ -1,124 +1,148 @@
-# Current audit: The Unmapped House
+# Current audit: The Unmapped House renderer-provider admission
 
-**Timestamp:** `2026-07-13T01-49-49-04-00`  
+**Timestamp:** `2026-07-13T04-29-43-04-00`  
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`  
-**Status:** `hotspot-input-picking-authority-audited`
+**Status:** `render-provider-admission-authority-audited`  
+**Branch:** `main`
 
 ## Summary
 
-This documentation-only audit isolates the boundary between browser pointer events, canvas coordinate normalization, the visible camera pose, hotspot raycast selection and story inspection mutation.
+This documentation-only audit isolates the boundary between static page boot, ES-module provider resolution, Three.js API availability, StageKit construction, story startup and the first visible rendered frame.
 
-The canvas click listener discards its event coordinates. `clickHotspot()` raycasts using `this.pointer`, which is updated only by `mousemove`. The first click can therefore use the default center sample, and touch/stylus compatibility clicks can reuse default or stale coordinates. Camera parallax consumes pointer state on RAF, so pick evidence is not tied to the visible camera frame. Canvas and side-panel controls then call the story mutation directly without one typed inspection command or result.
+`src/stage-kit.js` imports Three.js directly from `https://unpkg.com/three@0.160.0/build/three.module.js`. Because `src/game.js` statically imports StageKit, the browser must fetch, parse and evaluate that remote dependency before any application boot code can run. A fetch, policy, integrity, MIME or API-contract failure can therefore leave the static `Loading` shell without a game-owned result, fallback, retry path or diagnostic projection.
 
 ## Plan ledger
 
-**Goal:** make every inspection one exact, source-identified and frame-correlated command whose target and visible result are provable.
+**Goal:** require one approved, verified and terminal renderer-provider result before allocating stage resources or beginning story interaction.
 
-- [x] Compare the full Publish inventory with central tracking.
-- [x] Verify all nine eligible repositories remain centrally tracked and root-documented.
+- [x] Compare the complete Publish inventory with central tracking.
+- [x] Confirm root `.agent` coverage for all eligible repositories.
 - [x] Exclude `TheCavalryOfRome`.
-- [x] Select only `TheUnmappedHouse` by oldest current central timestamp.
-- [x] Inspect browser input, camera, raycast, hover, exact-control and story mutation paths.
-- [x] Preserve the complete 24-kit inventory and service map.
-- [x] Define commands, revisions, results, rejection states and fixture gates.
+- [x] Select only `TheUnmappedHouse` by oldest synchronized central timestamp.
+- [x] Inspect HTML boot, static imports, Three.js use, package checks and Pages deployment.
+- [x] Preserve the complete interaction loop, domain list and 24-kit service map.
+- [x] Define provider identities, policies, results, fallback and proof gates.
 - [x] Change documentation only.
 - [ ] Implement and execute the authority.
+
+## Selection comparison
+
+```txt
+accessible Publish repositories: 10
+eligible non-Cavalry repositories: 9
+new eligible repositories: 0
+central-ledger-missing eligible repositories: 0
+root-.agent-missing eligible repositories: 0
+repo-local-newer-than-central repositories: 0
+
+TheUnmappedHouse   2026-07-13T01-49-49-04-00 selected
+AetherVale         2026-07-13T02-15-51-04-00
+TheOpenAbove       2026-07-13T02-18-03-04-00
+IntoTheMeadow      2026-07-13T02-39-44-04-00
+PhantomCommand     2026-07-13T02-49-07-04-00
+PrehistoricRush    2026-07-13T03-20-58-04-00
+HorrorCorridor     2026-07-13T03-38-31-04-00
+ZombieOrchard      2026-07-13T03-59-28-04-00
+MyCozyIsland       2026-07-13T04-21-10-04-00
+TheCavalryOfRome   excluded
+```
+
+Only `LuminaryLabs-Publish/TheUnmappedHouse` is modified in the Publish organization.
 
 ## Complete interaction loop
 
 ```txt
-boot
-  -> create default or loaded story state
+browser navigation
+  -> parse index.html
+  -> paint fixed 16:9 shell
+  -> expose scene title "Loading"
+  -> request src/game.js
+
+module graph
+  -> game.js imports StageKit
+  -> StageKit imports Three.js 0.160.0 from unpkg
+  -> browser resolves and evaluates remote provider
+
+accepted provider
+  -> create or load story state
+  -> resolve current scene
   -> construct StageKit
-  -> initialize pointer and mouse vectors at 0,0
-  -> install mousemove and click listeners on canvas
-  -> install exact side-panel inspection buttons
-  -> load scene descriptors and hotspot volumes
+  -> allocate renderer, scene, camera, lights, target and post pass
+  -> install resize/mouse/click callbacks
   -> start recursive RAF
+  -> load scene and hotspot volumes
+  -> render story controls and Notebook
+  -> persist initial snapshot
 
-mousemove
-  -> measure canvas rect
-  -> normalize event coordinates
-  -> mutate cached pointer and parallax state
-  -> raycast for hover using current camera
-  -> project hover label
+normal interaction
+  -> mousemove updates cached pointer and parallax
+  -> RAF mutates camera and renders stage/post pass
+  -> canvas click or exact side-panel button inspects hotspot
+  -> clues, log, completion and save update
+  -> completion timer opens interlude
+  -> Continue advances scene
+  -> KeyR deletes save and reloads
 
-RAF
-  -> consume cached parallax state
-  -> mutate camera pose
-  -> animate materials
-  -> render stage and post pass
-
-canvas click
-  -> ignore click coordinates
-  -> raycast with cached pointer and current camera
-  -> dispatch selected hotspot directly
-
-side-panel button
-  -> bypass pointer and raycast evidence
-  -> dispatch exact hotspot directly
-
-inspection
-  -> mutate inspected facts, clues and log
-  -> optionally schedule interlude
-  -> render UI
-  -> write story snapshot
+non-accepted provider
+  -> module graph rejects before game.js body
+  -> no state load, StageKit, UI projection or save action
+  -> no typed failure result
+  -> static Loading state can remain
 ```
 
 ## Source ownership
 
 | Source | Current responsibilities |
 |---|---|
-| `src/story-data.js` | Three scene descriptors, nine hotspots, completion requirements, interlude copy and render settings. |
-| `src/game.js` | Story aggregate, localStorage, inspection, Continue, timer, UI, reset and boot. |
-| `src/stage-kit.js` | Three.js stage, pointer cache, mouse hover, click picking, camera parallax, render target and RAF. |
-| `src/styles.css` | Fixed shell, controls, Notebook, hover label and interlude presentation. |
-| `src/aspect-frame.js` | Fixed 16:9 viewport calculation and application. |
-| `index.html` | Stage, story, Notebook, hover and interlude surfaces. |
-| `package.json` | Syntax-only validation and local serving. |
-| `.github/workflows/deploy.yml` | Static Pages deployment from `main`. |
+| `index.html` | Static shell, stage mount, story panel, Notebook, hover label, interlude and module entrypoint. |
+| `src/game.js` | Static StageKit import, story aggregate, persistence, inspection, progression, UI and reset. |
+| `src/stage-kit.js` | Remote Three.js import, renderer, scene, camera, materials, picking, parallax, post pass and RAF. |
+| `src/story-data.js` | Three scenes, nine hotspots, requirements, interlude copy and render descriptors. |
+| `src/aspect-frame.js` | Fixed 1920 × 1080 viewport calculation and application. |
+| `src/styles.css` | Shell, story panel, Notebook, hover and interlude presentation. |
+| `package.json` | Node syntax checks and local static serving. |
+| `.github/workflows/deploy.yml` | Static repository-root upload and Pages deployment from `main`. |
 
 ## Domains in use
 
 ```txt
-browser application shell
+browser document and application shell
 fixed 16:9 aspect composition
 authored story, scene, hotspot and render descriptors
 browser persistence and destructive reset
-scene routing, inspection, clues, logs and completion
-completion timeout and interlude projection
-terminal copy projection
-DOM mouse, click, keyboard and focus interaction
-Three.js CDN runtime and WebGL presentation
-scene graph and resource allocation
+inspection, clues, Notebook logging and completion
+completion timeout, interlude and terminal routing
+DOM mouse, click, keyboard, focus and modal interaction
+external ES-module provider resolution
+Three.js WebGL rendering
+scene graph and GPU resource allocation
 procedural geometry and shader materials
 hotspot volumes and raycast picking
 camera parallax and hover projection
-render target and post-processing
-resize, pointer, click, timeout and recursive RAF callbacks
-syntax validation and Pages deployment
+offscreen render target and post-processing
+browser callback and recursive RAF lifetime
+syntax validation and local serving
+GitHub Pages artifact deployment
 repo-local and central audit tracking
 ```
 
-Missing hotspot input/picking authority:
+Missing renderer-provider authority:
 
 ```txt
-input session and command identity
-pointer source, pointer ID and sample identity
-activation-event coordinate capture
-mouse/touch/stylus pointer unification
-scene and hotspot-set revision
-viewport and canvas-rect revision
-camera pose and rendered-frame revision
-immutable raycast candidate result
-deterministic hit and tie policy
-stale sample, scene, viewport and camera rejection
-outside-canvas and accepted-miss results
-canvas/button source equivalence
-duplicate inspection rejection
-hover enter/move/leave lifecycle
-first visible inspection-result frame acknowledgement
-browser and Pages pointer/picking fixtures
+provider policy and source classes
+provider manifest identity and generation
+repository-owned or build-vendored artifact
+version and content fingerprint
+integrity/provenance admission
+module timeout and cancellation
+required API contract probe
+approved fallback order
+boot phase and typed terminal result
+stage-construction admission
+provider-independent failure/retry UI
+bounded observation and journal
+first provider-backed visible-frame acknowledgement
+source/build/Pages provider fixtures
 ```
 
 ## Implemented kits and offered services
@@ -133,7 +157,7 @@ browser and Pages pointer/picking fixtures
 | `inspection-ledger-kit` | Track scene-keyed inspected hotspot booleans. |
 | `clue-ledger-kit` | Grant and query clue identifiers. |
 | `notebook-log-kit` | Prepend and cap narrative log rows. |
-| `interlude-timer-kit` | Schedule the delayed completion interlude. |
+| `interlude-timer-kit` | Schedule delayed completion interludes. |
 | `terminal-route-kit` | Project prototype-complete terminal copy. |
 | `localstorage-save-kit` | Parse, shallow-merge, replace and delete one browser save value. |
 | `stage-render-kit` | Create renderer, scene, camera, lights, target, callbacks and recursive RAF. |
@@ -145,109 +169,110 @@ browser and Pages pointer/picking fixtures
 | `camera-parallax-kit` | Apply pointer-driven fixed-camera offsets. |
 | `render-target-composition-kit` | Render stage to an offscreen target and post pass to canvas. |
 | `debug-json-projection-kit` | Serialize story fields into the visible Notebook. |
-| `package-syntax-check-kit` | Run Node syntax checks over JavaScript sources. |
+| `package-syntax-check-kit` | Run Node syntax checks over local JavaScript sources. |
 | `static-pages-deploy-kit` | Publish repository root to GitHub Pages after pushes to `main`. |
 | `repo-local-agent-ledger-kit` | Maintain root pointers and timestamped audit records. |
 | `central-ledger-sync-kit` | Mirror selection, findings and history into the central ledger. |
 
+```txt
+implemented source-backed kit surfaces: 24
+planned renderer-provider authority kits: 25
+```
+
 ## Concrete source findings
 
-### Activation coordinates are not event-bound
+### Provider resolution is a static prerequisite
 
-The canvas registers `click` with a callback that takes no event argument. `clickHotspot()` calls `pick()`, and `pick()` reads `this.pointer`. Only `handlePointer(event)` updates that vector.
+`src/game.js` imports `StageKit` at module scope. `src/stage-kit.js` imports Three.js from unpkg at module scope. Application code cannot catch a dependency-graph rejection from inside `game.js` because its body has not started evaluating.
 
-### First click can use the center sample
+### Version naming is not content admission
 
-`this.pointer` is created as a new `THREE.Vector2()`, so it begins at `0,0`. A click before any mouse movement raycasts through clip-space center regardless of where the click occurred.
+The URL contains `0.160.0`, but the repository has no provider manifest, expected artifact fingerprint, subresource-integrity equivalent, vendored bytes or recorded API-contract result.
 
-### Touch and stylus can use stale samples
+### No provider-independent failure projection exists
 
-The runtime has no `pointermove`, `pointerdown` or `pointerup` path. A compatibility click may arrive without a preceding `mousemove`, leaving the activation tied to default or previous mouse coordinates.
+`index.html` starts with a `Loading` title and depends on `game.js` to project meaningful story state. There is no bootstrap module or inline failure adapter that can report why the renderer provider was rejected.
 
-### Camera and pick frames can diverge
+### Local validation does not resolve the provider
 
-Pointer movement updates `this.mouse` immediately, but the camera consumes it during RAF. A click before the successor RAF can combine current pointer coordinates with the previous camera pose. No revision identifies the frame used for selection.
+`npm run check` uses `node --check` on local source files. It proves JavaScript syntax only and does not fetch, evaluate, fingerprint or probe the browser provider.
 
-### Hover can remain after exit
+### Pages deployment does not resolve the provider
 
-No leave/cancel handler clears `this.hovered` or hides the label. Hover state retires only when another movement produces no hit.
-
-### Story mutation has no inspection result envelope
-
-Canvas and side-panel paths call `inspectHotspot()` directly. There is no source identity, command ID, exact target admission, stale-revision rejection, duplicate result or visible-frame acknowledgement.
+The workflow uploads the repository root and deploys it. It does not vendor the provider, verify the deployed module graph, run a browser smoke or correlate a visible frame with provider identity.
 
 ## Required parent domain
 
 ```txt
-the-unmapped-house-hotspot-input-picking-authority-domain
+the-unmapped-house-render-provider-admission-authority-domain
 ```
 
 Candidate kits:
 
 ```txt
-hotspot-input-session-id-kit
-pointer-source-id-kit
-pointer-sample-id-kit
-pointer-event-normalization-kit
-canvas-rect-revision-kit
-viewport-revision-kit
-camera-pose-revision-kit
-rendered-frame-revision-kit
-hotspot-set-revision-kit
-hotspot-pick-command-kit
-hotspot-pick-admission-kit
-raycast-candidate-result-kit
-hotspot-hit-selection-kit
-hotspot-hit-tie-policy-kit
-stale-pointer-sample-rejection-kit
-stale-camera-frame-rejection-kit
-outside-canvas-rejection-kit
-hotspot-inspection-command-kit
-hotspot-inspection-result-kit
-inspection-source-equivalence-kit
-duplicate-inspection-rejection-kit
-hover-state-command-kit
-hover-state-result-kit
-pointer-leave-retirement-kit
-first-visible-inspection-frame-ack-kit
-pointer-observation-kit
-pointer-journal-kit
-mouse-first-click-fixture-kit
-touch-tap-fixture-kit
-stylus-tap-fixture-kit
-parallax-click-correlation-fixture-kit
-pointer-leave-fixture-kit
-canvas-button-equivalence-fixture-kit
-browser-hotspot-input-smoke-kit
-pages-hotspot-input-smoke-kit
+render-provider-policy-kit
+render-provider-id-kit
+render-provider-generation-kit
+render-provider-manifest-kit
+render-provider-source-kit
+render-provider-artifact-fingerprint-kit
+render-provider-integrity-admission-kit
+render-provider-version-admission-kit
+render-provider-contract-probe-kit
+render-provider-timeout-kit
+render-provider-fallback-kit
+render-provider-result-kit
+renderer-boot-phase-kit
+stage-construction-admission-kit
+provider-failure-ui-kit
+provider-observation-kit
+provider-journal-kit
+first-provider-frame-ack-kit
+local-vendor-provider-fixture-kit
+blocked-cdn-fixture-kit
+provider-timeout-fixture-kit
+integrity-mismatch-fixture-kit
+api-contract-mismatch-fixture-kit
+browser-provider-smoke-kit
+pages-provider-smoke-kit
 ```
 
 ## Required transaction
 
 ```txt
-HotspotInspectionCommand
-  -> capture the submitting event or exact-control identity
-  -> bind runtime, scene, hotspot-set, viewport and camera-frame revisions
-  -> normalize event coordinates once
-  -> produce immutable raycast candidates
-  -> apply deterministic hit selection
-  -> reject outside, stale, duplicate or unavailable commands
-  -> commit one exact hotspot inspection result
-  -> project story, hover and Notebook feedback
-  -> acknowledge the first matching visible frame
+RenderProviderBootCommand
+  -> bind runtime, build, deployment and provider-policy generations
+  -> resolve approved candidate from immutable manifest
+  -> verify source, version and content fingerprint
+  -> enforce timeout, cancellation and fallback policy
+  -> evaluate module and probe required Three.js API contract
+  -> publish one terminal RenderProviderResult
+
+Accepted or FallbackAccepted
+  -> construct StageKit exactly once
+  -> allocate stage generation
+  -> begin story boot and frame admission
+  -> acknowledge first provider-backed visible frame
+
+non-accepted result
+  -> allocate no partial stage
+  -> mutate no story state
+  -> project provider-independent failure and bounded recovery
 ```
 
 ## Retained independent gaps
 
 ```txt
+hotspot input and picking authority
 browser save commit/reset convergence
 story manifest and snapshot admission
-scene-progression and interlude authority
-stage resource disposal and runtime stop
-render-surface budgeting and WebGL context recovery
+scene progression and interlude authority
+stage resource lifecycle and runtime stop
+modal focus and Continue admission
+Notebook channel classification
 committed-frame diagnostics
 ```
 
 ## Proof boundary
 
-Source inspection proves the current pointer/camera ordering and missing authority only. It does not prove runtime target correctness, touch behavior, exact source equivalence, stale-command rejection or visible-frame parity.
+Source inspection proves the current static import ordering and missing authority only. It does not prove a current provider outage, content mismatch, fallback behavior, recovery behavior or deployed production failure.
