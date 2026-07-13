@@ -5,7 +5,7 @@
 
 ## Summary
 
-This run selected `TheUnmappedHouse` by the oldest eligible central timestamp and prepared the repo-local viewport authority audit for central publication. No other Publish repository is in scope.
+This run selected `TheUnmappedHouse` by the oldest eligible central timestamp, completed the repo-local viewport authority audit, and synchronized the central ledger and paired internal change log. No other Publish repository was modified.
 
 ## Plan ledger
 
@@ -17,8 +17,8 @@ This run selected `TheUnmappedHouse` by the oldest eligible central timestamp an
 - [x] Confirm the selected repository has root `.agent` state.
 - [x] Add the `2026-07-13T14-58-07-04-00` tracker and audit family.
 - [x] Refresh required root `.agent` files.
-- [ ] Record the final repo-local documentation head in the central ledger.
-- [ ] Add the paired internal change-log entry.
+- [x] Record the final repo-local documentation head in the central ledger.
+- [x] Add the paired internal change-log entry.
 
 ## Selection evidence
 
@@ -35,14 +35,14 @@ MyCozyIsland       2026-07-13T14-39-40-04-00
 TheCavalryOfRome  excluded
 ```
 
-## Central changes required
+## Central changes completed
 
 ```txt
-update repo-ledger/LuminaryLabs-Publish/TheUnmappedHouse.md
-add internal-change-log/2026-07-13T14-58-07-04-00-the-unmapped-house-render-surface-viewport-authority.md
+updated repo-ledger/LuminaryLabs-Publish/TheUnmappedHouse.md
+added internal-change-log/2026-07-13T14-58-07-04-00-the-unmapped-house-render-surface-viewport-authority.md
 ```
 
-## Findings to publish
+## Published findings
 
 ```txt
 CSS and JavaScript both own the fixed-aspect frame
