@@ -1,108 +1,97 @@
 # Next steps: The Unmapped House
 
-**Timestamp:** `2026-07-12T20-51-16-04-00`
+**Timestamp:** `2026-07-12T23-20-51-04-00`
 
 ## Summary
 
-The next implementation should establish progression phase and Continue admission before adding scenes or visual polish. The highest-risk defect is that hidden keyboard activation can bypass completion, while reload can lose the only visible continuation path.
+The next implementation should establish a canonical revisioned save envelope and reset tombstone before adding content or relying on multi-tab browser use. The highest-risk defects are silent lost updates, reset resurrection and visible state that can advance without durable proof.
 
 ## Plan ledger
 
-**Goal:** replace implicit DOM/timer progression with one deterministic, persisted and testable scene-transition authority.
+**Goal:** replace fire-and-forget whole-snapshot writes with one deterministic save/reset authority and executable convergence proof.
 
-- [ ] Add a pure progression reducer with explicit phases.
-- [ ] Make Continue a typed command that fails closed.
-- [ ] Own and cancel the completion timer.
-- [ ] Persist and reconcile progression phase.
-- [ ] Add modal focus and inertness.
-- [ ] Seal terminal state.
-- [ ] Correlate interlude and successor frames.
-- [ ] Add browser and Pages fixtures.
+- [ ] Define canonical save and reset envelopes.
+- [ ] Add writer, command, revision and fingerprint identity.
+- [ ] Require exact predecessor admission.
+- [ ] Verify durable write through readback.
+- [ ] Add typed storage-failure results.
+- [ ] Reconcile and deduplicate storage events.
+- [ ] Commit reset tombstones and reject stale resurrection.
+- [ ] Correlate accepted commits with visible frames.
+- [ ] Add browser and Pages fixture matrices.
 
 ## Ordered implementation
 
-### 1. Define canonical phases and revisions
+### 1. Canonicalize the story snapshot
+
+Reuse the manifest/snapshot validation boundary. Encode only known fields in deterministic order and calculate a stable snapshot fingerprint.
+
+### 2. Add save identity
 
 ```txt
-INSPECTING
-COMPLETION_PENDING
-INTERLUDE_OPEN
-TRANSITIONING
-TERMINAL
+storyRunId
+saveSessionId
+writerId
+commandId
+saveRevision
+resetGeneration
+predecessorRevision
+predecessorFingerprint
+snapshotFingerprint
 ```
 
-Add `storyRunId`, `storyRunGeneration`, `sceneRevision`, `routeRevision` and a validated `phase`.
+### 3. Introduce `StorySaveCommitCommand`
 
-### 2. Make completion a reducer result
+The command must carry an immutable candidate snapshot and exact predecessor. Reject stale, duplicate or incompatible commands before changing canonical state.
 
-Move completion detection out of direct DOM mutation. Produce a `CompletionResult` containing the exact scene ID, expected scene revision and whether completion is newly committed.
+### 4. Verify durability
 
-### 3. Own the 450 ms delay
+Write one commit envelope, read it back and verify command ID, revision, reset generation and fingerprint. Publish `COMMITTED` only after exact readback.
 
-Retain a timer handle and lease ID. The callback must carry the predecessor scene/run generations and reject itself after scene change, reset, terminal commit or duplicate delivery.
+### 5. Handle write failures explicitly
 
-### 4. Fail Continue closed
+Convert `SecurityError`, quota failure, serialization failure and readback mismatch into typed terminal results. Do not claim the visible state is durable.
 
-`ContinueCommand` must require:
+### 6. Admit storage delivery
+
+Add one `storage` listener that:
 
 ```txt
-phase == INTERLUDE_OPEN
-current scene is complete
-expected scene ID matches
-expected scene revision matches
-expected route revision matches
-command has not already committed
+accepts only the configured key
+validates commit/reset envelopes
+deduplicates by command/commit identity
+rejects older revisions
+rejects predecessor reset generations
+reconciles accepted snapshots through the domain reducer
 ```
 
-The DOM click handler should only submit the command and project its typed result.
+### 7. Replace delete-only reset
 
-### 5. Make the interlude a real interaction context
+Commit a durable `StoryResetTombstone` carrying the next reset generation. Invalidate pending commands and reject any later write from the predecessor generation.
 
-While closed:
+### 8. Order projection after acceptance
 
-```txt
-Continue disabled
-Continue removed from tab order
-overlay inert/hidden
-```
+Inspection and Continue should prepare candidates. DOM and StageKit projection should consume the accepted save result, or explicitly display a non-durable failure state.
 
-While open:
+### 9. Add visible-frame receipts
 
-```txt
-dialog semantics
-underlying story panel inert
-focus moved to Continue
-focus restoration policy recorded
-Escape policy explicit
-```
+Record `FirstVisibleSaveFrameAck` and `FirstVisibleResetFrameAck` with story run, scene, save revision, reset generation, snapshot fingerprint and render sequence.
 
-### 6. Reconcile reload
-
-Persist the phase or derive it deterministically from validated facts. A complete nonterminal scene must reopen the interlude on boot without relying on a lost timer.
-
-### 7. Seal terminal state
-
-Commit a durable `TerminalOutcomeResult` and prevent further scene advancement. Reload must reproduce the same terminal route and copy.
-
-### 8. Add visible-frame receipts
-
-Record `FirstVisibleInterludeFrameAck` and `FirstVisibleSuccessorFrameAck` with scene, phase, route and render revisions.
-
-### 9. Add fixture matrix
+### 10. Add fixture matrix
 
 ```txt
-hidden Continue cannot receive focus or activate
-incomplete scene Continue rejects
-duplicate Continue advances once
-stale completion timer rejects after transition
-reload before timer restores continuation
-reload with open interlude restores continuation
-keyboard focus moves into and out of interlude
-underlying controls are inert while open
-final Continue commits one terminal result
-reload after terminal restores terminal
+two tabs write from one predecessor
+same command delivered twice
+old/new storage events arrive out of order
+setItem throws
+readback mismatch
+reset while another tab remains open
+stale post-reset write
+reload after accepted commit
+reload after reset tombstone
+visible frame matches durable revision
 ```
 
 ## Do not combine yet
 
-Keep stage-resource disposal, save-schema migration and render-context recovery as separate parent domains. Progression authority may depend on them, but it should not absorb their implementation details.
+Keep scene-progression authority, manifest migration, stage-resource lifecycle and WebGL context recovery as separate parent domains. Save convergence coordinates their results but should not absorb their internal rules.
