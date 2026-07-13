@@ -1,10 +1,11 @@
 # Known gaps: The Unmapped House renderer-provider admission
 
-**Timestamp:** `2026-07-13T04-29-43-04-00`
+**Timestamp:** `2026-07-13T04-47-00-04-00`  
+**Status:** `central-reconciled`
 
 ## Summary
 
-The newest documented gap is renderer-provider admission. The browser resolves a remote Three.js module before application code runs, but the repository owns no immutable provider artifact, integrity result, contract probe, fallback transaction or provider-independent visible failure state.
+The newest documented gap remains renderer-provider admission. The browser resolves a remote Three.js module before application code runs, but the repository owns no immutable provider artifact, integrity result, contract probe, fallback transaction or provider-independent visible failure state. Repo-local and central records now agree on this boundary.
 
 ## Plan ledger
 
@@ -14,6 +15,7 @@ The newest documented gap is renderer-provider admission. The browser resolves a
 - [x] Inspect package and Pages proof surfaces.
 - [x] Identify missing identities, results and fixtures.
 - [x] Define candidate authority kits and completion criteria.
+- [x] Reconcile repo-local and central documentation.
 - [ ] Implement and execute the authority.
 
 ## Provider identity gaps
@@ -39,7 +41,7 @@ version admission result: absent
 module-evaluation result: browser-owned only
 required export list: absent
 required capability probe: absent
-API contract result: absent
+API-contract result: absent
 ```
 
 ## Lifecycle and result gaps
@@ -47,11 +49,11 @@ API contract result: absent
 ```txt
 renderer boot phase: absent
 bounded timeout: absent
-cancellation command/result: absent
-retry command/result: absent
+cancellation command and result: absent
+retry command and result: absent
 late predecessor rejection: absent
 duplicate retry rejection: absent
-stage-construction admission: absent
+StageKit construction admission: absent
 typed RenderProviderResult: absent
 ```
 
@@ -60,8 +62,8 @@ typed RenderProviderResult: absent
 ```txt
 provider-independent failure UI: absent
 specific rejection reason projection: absent
-retry/recovery affordance: absent
-provider ID/version in diagnostics: absent
+retry and recovery affordance: absent
+provider ID and version in diagnostics: absent
 provider fingerprint in diagnostics: absent
 first provider-backed frame acknowledgement: absent
 first visible provider-failure frame acknowledgement: absent
@@ -102,7 +104,7 @@ This path is inferred from static ES-module semantics and source ordering. It is
 
 ```txt
 hotspot input and picking authority
-browser save commit/reset convergence
+browser save commit and reset convergence
 story manifest and snapshot admission
 scene progression and interlude authority
 stage resource lifecycle and runtime stop
@@ -113,4 +115,4 @@ committed-frame diagnostics
 
 ## Completion boundary
 
-Do not claim provider reliability because the version-bearing URL loads in one browser session. Completion requires approved artifact identity, deterministic fingerprint admission, required API-contract proof, typed timeout/failure/fallback behavior, provider-independent recovery UI, exactly-once StageKit construction and local/build/Pages visible-frame fixtures.
+Do not claim provider reliability because the version-bearing URL loads in one browser session. Completion requires approved artifact identity, deterministic fingerprint admission, required API-contract proof, typed timeout, failure and fallback behavior, provider-independent recovery UI, exactly-once StageKit construction and local, build, browser and Pages visible-frame fixtures.
