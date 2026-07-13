@@ -1,97 +1,107 @@
 # Next steps: The Unmapped House
 
-**Timestamp:** `2026-07-12T23-20-51-04-00`
+**Timestamp:** `2026-07-13T01-49-49-04-00`
 
 ## Summary
 
-The next implementation should establish a canonical revisioned save envelope and reset tombstone before adding content or relying on multi-tab browser use. The highest-risk defects are silent lost updates, reset resurrection and visible state that can advance without durable proof.
+The next implementation should replace cached `mousemove` state plus coordinate-less canvas clicks with one pointer-event adapter and one shared inspection-command path. The first executable proof should cover first-click correctness, touch taps, pointer leave and camera-parallax correlation before story or rendering features are expanded.
 
 ## Plan ledger
 
-**Goal:** replace fire-and-forget whole-snapshot writes with one deterministic save/reset authority and executable convergence proof.
+**Goal:** establish exact event-bound hotspot admission and prove that canvas, touch and side-panel controls select the intended hotspot against the visible frame.
 
-- [ ] Define canonical save and reset envelopes.
-- [ ] Add writer, command, revision and fingerprint identity.
-- [ ] Require exact predecessor admission.
-- [ ] Verify durable write through readback.
-- [ ] Add typed storage-failure results.
-- [ ] Reconcile and deduplicate storage events.
-- [ ] Commit reset tombstones and reject stale resurrection.
-- [ ] Correlate accepted commits with visible frames.
-- [ ] Add browser and Pages fixture matrices.
+- [ ] Introduce pointer source, sample and command identity.
+- [ ] Capture activation coordinates from the submitting event.
+- [ ] Bind viewport, canvas rect, scene, hotspot-set and camera-frame revisions.
+- [ ] Publish typed hit, miss and rejection results.
+- [ ] Route canvas and exact controls through one inspection command.
+- [ ] Add duplicate and stale-command rejection.
+- [ ] Retire hover on leave, cancel, scene change and stop.
+- [ ] Correlate accepted inspection results with visible frames.
+- [ ] Add browser, touch-emulation and Pages fixtures.
 
 ## Ordered implementation
 
-### 1. Canonicalize the story snapshot
+### 1. Replace mouse-only sampling
 
-Reuse the manifest/snapshot validation boundary. Encode only known fields in deterministic order and calculate a stable snapshot fingerprint.
-
-### 2. Add save identity
+Use pointer events for mouse, touch and stylus. Keep hover observation separate from activation.
 
 ```txt
-storyRunId
-saveSessionId
-writerId
+pointermove -> hover sample only
+pointerup or click policy -> activation sample from that event
+pointerleave/pointercancel -> retire hover and sample state
+```
+
+### 2. Add input identity
+
+```txt
+inputSessionId
 commandId
-saveRevision
-resetGeneration
-predecessorRevision
-predecessorFingerprint
-snapshotFingerprint
+eventSequence
+pointerId
+pointerType
+sourceType
+sceneRevision
+hotspotSetRevision
+viewportRevision
+canvasRectRevision
+cameraPoseRevision
+renderFrameSequence
 ```
 
-### 3. Introduce `StorySaveCommitCommand`
+### 3. Capture event-bound coordinates
 
-The command must carry an immutable candidate snapshot and exact predecessor. Reject stale, duplicate or incompatible commands before changing canonical state.
+Do not reuse `this.pointer` for activation. Normalize `clientX/clientY` from the event that submits the command against the admitted canvas rect.
 
-### 4. Verify durability
+### 4. Define camera-frame policy
 
-Write one commit envelope, read it back and verify command ID, revision, reset generation and fingerprint. Publish `COMMITTED` only after exact readback.
-
-### 5. Handle write failures explicitly
-
-Convert `SecurityError`, quota failure, serialization failure and readback mismatch into typed terminal results. Do not claim the visible state is durable.
-
-### 6. Admit storage delivery
-
-Add one `storage` listener that:
+Choose and document one policy:
 
 ```txt
-accepts only the configured key
-validates commit/reset envelopes
-deduplicates by command/commit identity
-rejects older revisions
-rejects predecessor reset generations
-reconciles accepted snapshots through the domain reducer
+pick against last presented frame
+or
+commit a current camera pose before both pick and render
 ```
 
-### 7. Replace delete-only reset
+Do not mix a new pointer sample with an unversioned older camera pose.
 
-Commit a durable `StoryResetTombstone` carrying the next reset generation. Invalidate pending commands and reject any later write from the predecessor generation.
+### 5. Publish `HotspotPickResult`
 
-### 8. Order projection after acceptance
+Return typed terminal statuses for hit, miss, outside-canvas, stale scene, stale viewport, stale camera, duplicate and unsupported source.
 
-Inspection and Continue should prepare candidates. DOM and StageKit projection should consume the accepted save result, or explicitly display a non-durable failure state.
+### 6. Unify gameplay execution
+
+Canvas picks and side-panel controls must both create `HotspotInspectionCommand` and receive `HotspotInspectionResult`. The story reducer should not know how the target was selected beyond validated source evidence.
+
+### 7. Add exactly-once behavior
+
+Bind inspection results to command IDs. Duplicate delivery should return the previous result without repeating logs, saves, timers or future effects.
+
+### 8. Own hover lifecycle
+
+Clear hover on pointer leave, cancel, scene transition, runtime retirement and stale viewport replacement.
 
 ### 9. Add visible-frame receipts
 
-Record `FirstVisibleSaveFrameAck` and `FirstVisibleResetFrameAck` with story run, scene, save revision, reset generation, snapshot fingerprint and render sequence.
+Record `FirstVisibleInspectionFrameAck` with inspection result, scene, hotspot, story revision, camera revision, viewport revision and render frame sequence.
 
 ### 10. Add fixture matrix
 
 ```txt
-two tabs write from one predecessor
-same command delivered twice
-old/new storage events arrive out of order
-setItem throws
-readback mismatch
-reset while another tab remains open
-stale post-reset write
-reload after accepted commit
-reload after reset tombstone
-visible frame matches durable revision
+first mouse click with no prior movement
+mousemove then click elsewhere
+click before next parallax RAF
+touch tap with no mousemove
+stylus tap
+pointer leave after hover
+outside-canvas activation
+resize between sample and activation
+scene transition between sample and activation
+overlapping hit candidates
+canvas/button equivalent selection
+duplicate activation delivery
 ```
 
 ## Do not combine yet
 
-Keep scene-progression authority, manifest migration, stage-resource lifecycle and WebGL context recovery as separate parent domains. Save convergence coordinates their results but should not absorb their internal rules.
+Keep save convergence, interlude progression, story-manifest admission and stage-resource lifecycle as separate parent domains. The hotspot input authority should coordinate with them through typed commands and revisions rather than absorb their internal rules.
