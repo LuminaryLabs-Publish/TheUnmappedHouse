@@ -1,15 +1,17 @@
 # Next steps: The Unmapped House renderer-provider admission
 
-**Timestamp:** `2026-07-13T04-29-43-04-00`
+**Timestamp:** `2026-07-13T04-47-00-04-00`  
+**Status:** `central-reconciled`
 
 ## Summary
 
-The next implementation should move Three.js from an implicit remote module prerequisite into an approved provider artifact and typed boot transaction. Build provider-independent failure projection first, then gate StageKit and story startup on one accepted provider result.
+Repo-local and central documentation now agree on the renderer-provider authority. The next implementation should move Three.js from an implicit remote module prerequisite into an approved provider artifact and typed boot transaction. Build provider-independent failure projection first, then gate StageKit and story startup on one accepted provider result.
 
 ## Plan ledger
 
 **Goal:** achieve deterministic provider identity, bounded failure behavior and first-frame provenance without changing story semantics.
 
+- [x] Reconcile repo-local and central provider findings.
 - [ ] Choose the production provider policy and approved source classes.
 - [ ] Prefer a repository-owned or build-vendored Three.js artifact.
 - [ ] Add immutable provider manifest, version and content fingerprint.
@@ -112,7 +114,7 @@ Retries allocate new provider-attempt generations. A late predecessor result can
 
 ### 9. Add visible-frame receipts
 
-Record provider ID, generation, version, fingerprint, stage generation and frame sequence for the first accepted visible frame.
+Record provider ID, generation, version, fingerprint, stage generation and frame sequence for the first accepted visible frame. Record a separate failure-frame receipt when no candidate is accepted.
 
 ### 10. Execute fixture matrix
 
@@ -134,4 +136,4 @@ cache-disabled Pages navigation
 
 ## Do not combine yet
 
-Keep hotspot picking, persistence convergence, interlude progression, modal focus and stage resource retirement as separate authorities. Renderer-provider admission supplies a verified capability and boot result; it does not own those domain rules.
+Keep hotspot picking, persistence convergence, interlude progression, modal focus and stage-resource retirement as separate authorities. Renderer-provider admission supplies a verified capability and boot result; it does not own those domain rules.
