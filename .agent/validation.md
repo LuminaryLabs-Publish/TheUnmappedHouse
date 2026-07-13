@@ -1,50 +1,50 @@
 # Validation: The Unmapped House
 
-**Timestamp:** `2026-07-12T20-51-16-04-00`  
-**Scope:** documentation-only progression and interlude audit
+**Timestamp:** `2026-07-12T23-20-51-04-00`  
+**Scope:** documentation-only browser save commit and reset convergence audit
 
 ## Summary
 
-Source inspection was completed and the documentation/registry state was updated. Runtime behavior, story content, rendering and deployment were not modified or executed.
+Source inspection was completed and documentation/registry state was updated. Runtime behavior, save format, story content, rendering and deployment were not modified or executed.
 
 ## Plan ledger
 
 **Goal:** state exactly what this run proves and what remains unverified.
 
-- [x] Verify the current source paths and package scripts.
-- [x] Verify the three-scene and nine-hotspot authored topology.
-- [x] Trace hidden Continue, completion timer, reload and terminal paths.
-- [x] Validate `.agent/kit-registry.json` as JSON before publication.
+- [x] Verify the current save key, load, save and reset paths.
+- [x] Verify mutation/projection ordering for inspection and Continue.
+- [x] Verify no storage-event reconciliation exists.
+- [x] Trace two-tab lost-update and reset-resurrection paths.
+- [x] Generate `.agent/kit-registry.json` as valid JSON.
 - [x] Change documentation only.
-- [ ] Run executable browser progression fixtures after implementation.
+- [ ] Run executable browser storage-convergence fixtures after implementation.
 
 ## Source checks performed
 
 ```txt
-index.html inspected
-src/styles.css inspected
 src/game.js inspected
-src/story-data.js inspected
 src/stage-kit.js inspected
-src/aspect-frame.js inspected
-package.json inspected
-.github/workflows/deploy.yml inspected
 existing root .agent state inspected
-central repo ledger inspected
+all nine eligible central ledger entries inspected
+all nine eligible root .agent entrypoints confirmed
+full LuminaryLabs-Publish repository inventory compared
 ```
 
 ## Source facts established
 
 ```txt
-Continue button is always mounted
-closed interlude uses opacity and pointer-events only
-Continue is not disabled, hidden or made inert
-nextScene has no completion or phase check
-completion uses an unowned 450 ms setTimeout
-callback reads mutable currentScene at execution
-save state contains no progression phase or terminal result
-boot does not reopen a complete scene's interlude
-showInterlude does not transfer focus or inert underlying controls
+one localStorage save key is used
+load performs parse plus shallow merge
+save replaces the complete mutable snapshot
+no save revision or expected predecessor exists
+no writer or command identity exists
+no storage event handler exists
+inspection and Continue project state before durability is verified
+setItem failures have no typed result
+KeyR deletes the key and reloads only the current tab
+no reset tombstone or generation exists
+no stale-writer or reset-resurrection rejection exists
+no save/reset visible-frame acknowledgement exists
 ```
 
 ## Not changed
@@ -54,7 +54,7 @@ runtime JavaScript: no
 HTML or CSS: no
 story descriptors: no
 Three.js rendering: no
-browser save format: no
+browser save format or behavior: no
 package scripts: no
 dependencies: no
 Pages workflow: no
@@ -73,23 +73,24 @@ pull request created: no
 
 ```txt
 npm run check: not run
-browser keyboard/focus smoke: not run
-timer/reload smoke: not run
-GitHub Pages progression smoke: not run
-accessibility tree inspection: not run
+multi-tab browser smoke: not run
+storage write-failure fixture: unavailable
+readback-mismatch fixture: unavailable
+reset-resurrection fixture: unavailable
+GitHub Pages storage-convergence smoke: not run
 ```
 
 ## Required future proof
 
 ```txt
-hidden Continue cannot be focused or activated
-incomplete Continue returns rejected
-stale timer cannot open a successor interlude
-reload after completion restores one visible continuation path
-open interlude makes background controls inert
-duplicate Continue advances exactly once
-terminal state survives reload
-visible frame cites committed scene and phase revisions
+same-predecessor concurrent writes cannot silently lose progress
+stale or duplicate storage deliveries cannot regress state
+storage failure produces a typed non-durable result
+reset commits a generation-bound tombstone
+stale tabs cannot recreate predecessor state after reset
+all tabs converge on one accepted save/reset revision
+reload reproduces the accepted canonical snapshot
+visible scene and Notebook cite the durable revision
 ```
 
 No claim is made that these defects are repaired.
