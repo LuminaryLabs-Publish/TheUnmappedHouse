@@ -1,89 +1,102 @@
 # Known gaps: The Unmapped House
 
-**Timestamp:** `2026-07-12T23-20-51-04-00`
+**Timestamp:** `2026-07-13T01-49-49-04-00`
 
 ## Summary
 
-The newest documented gap is browser save commit and reset convergence. Tab-local story state, durable storage, cross-tab delivery, reset invalidation and visible projection can diverge.
+The newest documented gap is hotspot input and picking authority. Canvas activation borrows mutable hover coordinates and an unversioned camera pose instead of capturing one event-bound, source-identified inspection command.
 
 ## Plan ledger
 
-**Goal:** eliminate lost updates, stale-tab overwrite, reset resurrection and false durability claims while preserving the authored story aggregate.
+**Goal:** eliminate wrong-target inspection, stale pick evidence, touch mismatch, persistent hover and source-divergent gameplay commands.
 
-- [x] Trace whole-snapshot save ordering.
-- [x] Trace ignored storage delivery.
-- [x] Trace reset and stale-tab resurrection.
+- [x] Trace mousemove, canvas click, touch-compatible click, camera parallax and exact-button paths.
+- [x] Identify missing identities, revisions and typed results.
 - [x] Define candidate authority kits and fixture rows.
 - [ ] Implement and execute the authority.
 
-## Save identity and admission gaps
+## Input identity gaps
 
 ```txt
-save session ID: absent
-writer ID: absent
+input session ID: absent
 command ID: absent
-save revision: absent
-reset generation: absent
-expected predecessor revision: absent
-expected predecessor fingerprint: absent
-snapshot fingerprint: absent
-conflict admission: absent
-duplicate command result: absent
+event sequence: absent
+pointer ID: absent
+pointer type: absent
+input source identity: absent
+activation-event coordinates: not captured
 ```
 
-## Durability gaps
+## Spatial admission gaps
 
 ```txt
-canonical save envelope: absent
-immutable candidate snapshot: absent
-durable readback verification: absent
-write-failure result: absent
-readback-mismatch result: absent
-rollback/non-durable projection policy: absent
-bounded save journal: absent
+scene revision: absent
+hotspot-set revision: absent
+viewport revision: absent
+canvas-rect revision: absent
+camera pose revision: absent
+rendered-frame revision: absent
+outside-canvas rejection: absent
+stale sample rejection: absent
+stale camera rejection: absent
 ```
 
-## Cross-tab gaps
+## Pick result gaps
 
 ```txt
-storage event listener: absent
-storage payload validation: absent
-delivery envelope: absent
-deduplication: absent
-monotonic revision admission: absent
-reordered event rejection: absent
-cross-tab reconciliation result: absent
-stale writer rejection: absent
+immutable pick command: absent
+candidate list: absent
+candidate distances: absent
+deterministic tie policy: absent
+accepted miss result: absent
+selected hotspot result ID: absent
+pick fingerprint: absent
+bounded pick journal: absent
 ```
 
-## Reset gaps
+## Source and gameplay gaps
 
 ```txt
-reset command identity: absent
-reset predecessor admission: absent
-durable reset tombstone: absent
-reset generation increment: absent
-pending save invalidation: absent
-other-tab convergence: absent
-reset-resurrection rejection: absent
-reset result: absent
+canvas and side-panel source equivalence: absent
+shared HotspotInspectionCommand: absent
+shared HotspotInspectionResult: absent
+unknown/stale hotspot rejection: absent
+duplicate inspection rejection: absent
+exactly-once story side effects: absent
+inspection-result visible feedback: absent
 ```
 
-## Presentation gaps
+## Hover lifecycle gaps
 
 ```txt
-save revision in Notebook: absent
-snapshot fingerprint in Notebook: absent
-save/reset result projection: absent
-first visible durable-save frame acknowledgement: absent
-first visible reset frame acknowledgement: absent
+pointerenter state: implicit
+pointerleave retirement: absent
+pointercancel retirement: absent
+scene-change hover invalidation: absent
+runtime-stop hover invalidation: absent
+hover result identity: absent
+hover-frame correlation: absent
+```
+
+## Presentation and proof gaps
+
+```txt
+pointer/camera revision in Notebook: absent
+pick result in diagnostics: absent
+first visible inspection-frame acknowledgement: absent
+first-click browser fixture: absent
+touch/stylus fixture: absent
+parallax-click correlation fixture: absent
+pointer-leave fixture: absent
+Pages hotspot-input smoke: absent
 ```
 
 ## Retained independent gaps
 
 ```txt
-story manifest/snapshot admission implementation
-scene-progression and interlude authority implementation
+browser save commit/reset convergence
+story manifest and snapshot admission
+scene-progression and interlude authority
 stage resource disposal and runtime stop
 Notebook channel separation
 render-surface budgeting and WebGL context recovery
@@ -92,4 +105,4 @@ committed-frame diagnostics
 
 ## Completion boundary
 
-Do not claim save safety because localStorage writes one key atomically. The missing boundary is compare-and-admit across independently mutable tabs. Completion requires exact predecessor checks, typed durability results, monotonic storage delivery, reset tombstones, stale-writer rejection and visible-frame evidence.
+Do not claim canvas hotspot reliability because a raycaster returns an intersection. Completion requires event-bound coordinates, source identity, revisioned viewport/camera/hotspot evidence, deterministic hit selection, shared gameplay results, hover retirement and visible-frame proof across mouse, touch, stylus and deployed Pages fixtures.
