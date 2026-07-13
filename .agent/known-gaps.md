@@ -1,95 +1,95 @@
 # Known gaps: The Unmapped House
 
-**Timestamp:** `2026-07-12T20-51-16-04-00`
+**Timestamp:** `2026-07-12T23-20-51-04-00`
 
 ## Summary
 
-The newest documented gap is scene-progression and interlude authority. Completion facts, delayed presentation, keyboard focus, Continue admission and persisted route phase can diverge.
+The newest documented gap is browser save commit and reset convergence. Tab-local story state, durable storage, cross-tab delivery, reset invalidation and visible projection can diverge.
 
 ## Plan ledger
 
-**Goal:** eliminate scene skipping, stale interludes, reload dead ends and post-completion ambiguity while preserving exact authored story order.
+**Goal:** eliminate lost updates, stale-tab overwrite, reset resurrection and false durability claims while preserving the authored story aggregate.
 
-- [x] Trace completion and Continue from source.
-- [x] Trace modal focus and hidden-control behavior.
-- [x] Trace reload and terminal persistence.
+- [x] Trace whole-snapshot save ordering.
+- [x] Trace ignored storage delivery.
+- [x] Trace reset and stale-tab resurrection.
 - [x] Define candidate authority kits and fixture rows.
 - [ ] Implement and execute the authority.
 
-## Progression-state gaps
+## Save identity and admission gaps
 
 ```txt
-story run ID/generation: absent
-scene phase: absent
-scene revision: absent
-route revision: absent
-persisted completion-pending state: absent
-persisted open-interlude state: absent
-terminal outcome state: absent
-startup phase reconciliation: absent
+save session ID: absent
+writer ID: absent
+command ID: absent
+save revision: absent
+reset generation: absent
+expected predecessor revision: absent
+expected predecessor fingerprint: absent
+snapshot fingerprint: absent
+conflict admission: absent
+duplicate command result: absent
 ```
 
-## Timer and transition gaps
+## Durability gaps
 
 ```txt
-completion timer handle: not retained
-completion timer lease: absent
-callback predecessor scene ID: absent
-callback expected scene revision: absent
-stale callback rejection: absent
-duplicate callback result: absent
-Continue command identity: absent
-completion admission: absent
-interlude-open admission: absent
-exact-once scene advancement: absent
-typed scene-transition result: absent
+canonical save envelope: absent
+immutable candidate snapshot: absent
+durable readback verification: absent
+write-failure result: absent
+readback-mismatch result: absent
+rollback/non-durable projection policy: absent
+bounded save journal: absent
 ```
 
-## Focus and interaction gaps
+## Cross-tab gaps
 
 ```txt
-closed Continue disabled/inert: no
-closed Continue removed from tab order: no
-dialog role/aria-modal: absent
-focus transfer to interlude: absent
-focus trap or containment: absent
-underlying story-panel inertness: absent
-focus restoration result: absent
-keyboard input-context generation: absent
+storage event listener: absent
+storage payload validation: absent
+delivery envelope: absent
+deduplication: absent
+monotonic revision admission: absent
+reordered event rejection: absent
+cross-tab reconciliation result: absent
+stale writer rejection: absent
 ```
 
-## Persistence and terminal gaps
+## Reset gaps
 
 ```txt
-reload after completion recovery: absent
-reload with pending timer recovery: absent
-reload with open interlude recovery: absent
-terminal phase persistence: absent
-terminal result identity: absent
-post-terminal Continue rejection: absent
+reset command identity: absent
+reset predecessor admission: absent
+durable reset tombstone: absent
+reset generation increment: absent
+pending save invalidation: absent
+other-tab convergence: absent
+reset-resurrection rejection: absent
+reset result: absent
 ```
 
 ## Presentation gaps
 
 ```txt
-phase in Notebook projection: absent
-timer/transition result in Notebook: absent
-first visible interlude frame acknowledgement: absent
-first visible successor frame acknowledgement: absent
-terminal visible-frame acknowledgement: absent
+save revision in Notebook: absent
+snapshot fingerprint in Notebook: absent
+save/reset result projection: absent
+first visible durable-save frame acknowledgement: absent
+first visible reset frame acknowledgement: absent
 ```
 
 ## Retained independent gaps
 
 ```txt
 story manifest/snapshot admission implementation
-storage concurrency and destructive reset
+scene-progression and interlude authority implementation
 stage resource disposal and runtime stop
 Notebook channel separation
-render-surface budgeting and context recovery
+render-surface budgeting and WebGL context recovery
 committed-frame diagnostics
 ```
 
 ## Completion boundary
 
-Do not claim progression safety because pointer events are blocked by CSS or because required clues usually cause the overlay to appear. Completion requires fail-closed command admission, keyboard focus fixtures, generation-bound timer cancellation, persisted phase reconciliation, exact-once advancement and visible-frame evidence.
+Do not claim save safety because localStorage writes one key atomically. The missing boundary is compare-and-admit across independently mutable tabs. Completion requires exact predecessor checks, typed durability results, monotonic storage delivery, reset tombstones, stale-writer rejection and visible-frame evidence.
