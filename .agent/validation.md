@@ -1,71 +1,63 @@
-# Validation: The Unmapped House renderer-provider central reconciliation
+# Validation: The Unmapped House scene-transition composition audit
 
-**Timestamp:** `2026-07-13T04-47-00-04-00`  
-**Scope:** documentation-only renderer-provider audit and central reconciliation
+**Timestamp:** `2026-07-13T09-03-20-04-00`  
+**Scope:** documentation-only scene-transition audit
 
 ## Summary
 
-Source, package, workflow and existing audit state were inspected. A new reconciliation tracker and audit family were added, required root documents and machine state were refreshed, and central tracking was synchronized. Runtime behavior, provider source, story content, rendering and deployment were not modified or executed.
+Source and existing audit state were inspected. A new tracker and scene-transition audit family were added, root `.agent` routing was refreshed and the machine registry was updated. Runtime behavior and deployment were not changed or executed.
 
 ## Plan ledger
 
-**Goal:** state exactly what the audit establishes and what remains unverified.
+**Goal:** state exactly what this audit proves and what remains unverified.
 
-- [x] Verify the current static StageKit import from `src/game.js`.
-- [x] Verify the current remote Three.js import in `src/stage-kit.js`.
-- [x] Verify the static shell begins with `Loading`.
-- [x] Verify no provider-independent boot failure projection exists.
-- [x] Verify local validation is syntax-only.
-- [x] Verify Pages deployment uploads the unresolved source tree.
-- [x] Verify no manifest, fingerprint, contract result or fallback exists.
-- [x] Verify all 24 implemented kits and offered services remain cataloged.
-- [x] Verify the 25-kit proposed authority remains cataloged.
-- [x] Generate `.agent/kit-registry.json` as valid JSON.
-- [x] Reconcile the central ledger and internal change log.
+- [x] Verify `nextScene()` mutation order.
+- [x] Verify `StageKit.loadScene()` clears the predecessor before successor construction.
+- [x] Verify UI projection follows stage replacement.
+- [x] Verify persistence follows UI projection.
+- [x] Verify no transition identity, preparation receipts or rollback result exists.
+- [x] Verify no first matching visible-frame acknowledgement exists.
+- [x] Preserve all 24 implemented kit surfaces and services.
+- [x] Generate valid machine audit state.
 - [x] Change documentation only.
-- [ ] Run executable provider, browser and Pages fixtures after implementation.
+- [ ] Run executable transition fixtures after implementation.
 
 ## Source checks performed
 
 ```txt
 full LuminaryLabs-Publish repository inventory compared
-all nine eligible central ledger entries inspected
-all nine eligible root .agent entrypoints confirmed
-index.html inspected
+all nine eligible central ledger entries reviewed
+root .agent state confirmed for the selected repository
 src/game.js inspected
 src/stage-kit.js inspected
 src/story-data.js inspected
-src/aspect-frame.js inspected
-src/styles.css inspected
-package.json inspected
-.github/workflows/deploy.yml inspected
-existing root .agent state inspected
+existing root .agent files inspected
 ```
 
 ## Source facts established
 
 ```txt
-game.js statically imports StageKit
-stage-kit.js statically imports Three.js 0.160.0 from unpkg
-remote provider evaluation precedes game.js body execution
-index.html initially displays Loading
-no provider manifest exists
-no repository-owned provider artifact is declared
-no content fingerprint or integrity result exists
-no required Three.js API-contract probe exists
-no timeout, cancellation or fallback result exists
-no provider-independent failure and retry UI exists
-npm run check performs local syntax checks only
-Pages workflow uploads repository root without provider resolution
-no first provider-backed visible-frame acknowledgement exists
+nextScene advances currentScene, sceneId, route and log before stage load
+nextScene closes interlude before stage load
+loadScene clears live stageGroup before successor construction
+loadScene resets live hotspot and material collections
+renderUi follows stage replacement
+saveState follows UI projection
+localStorage write has no typed result
+no detached participant candidates exist
+no atomic commit or rollback exists
+no scene transition result or first scene frame acknowledgement exists
 ```
 
 ## Documentation changed
 
 ```txt
 new tracker and turn-ledger entry
-new architecture, render, gameplay and interaction reconciliation audits
-new renderer-provider contract audit
+new architecture audit
+new render audit
+new gameplay audit
+new interaction audit
+new scene-transition contract audit
 new deploy fixture gate
 new central-sync audit
 START_HERE.md refreshed
@@ -74,8 +66,6 @@ next-steps.md refreshed
 known-gaps.md refreshed
 validation.md refreshed
 kit-registry.json refreshed
-central repo ledger refreshed
-central internal change log added
 ```
 
 ## Not changed
@@ -84,54 +74,40 @@ central internal change log added
 runtime JavaScript: no
 HTML or CSS: no
 story descriptors: no
-Three.js provider URL or artifact: no
+Three.js provider: no
 WebGL rendering: no
-browser persistence: no
+browser persistence behavior: no
 package scripts: no
 dependencies: no
 Pages workflow: no
-```
-
-## Git policy
-
-```txt
-target repository: LuminaryLabs-Publish/TheUnmappedHouse
-target branch: main
-central repository: LuminaryLabs-Dev/LuminaryLabs
-central branch: main
-branch created: no
-pull request created: no
 ```
 
 ## Not executed
 
 ```txt
 npm run check: not run
-browser provider smoke: not run
-provider fetch or download: not performed
-blocked-provider fixture: unavailable
-provider-timeout fixture: unavailable
-integrity-mismatch fixture: unavailable
-version-mismatch fixture: unavailable
-API-contract-mismatch fixture: unavailable
-approved-fallback fixture: unavailable
-late-attempt fixture: unavailable
-GitHub Pages provider smoke: not run
+browser scene-transition smoke: not run
+stage failure fixture: unavailable
+DOM failure fixture: unavailable
+storage failure fixture: unavailable
+stale/duplicate fixture: unavailable
+rollback fixture: unavailable
+built-output smoke: not run
+Pages scene-transition smoke: not run
 ```
 
 ## Required future proof
 
 ```txt
-provider manifest and approved source policy are machine-checkable
-production artifact fingerprint matches the manifest
-required Three.js API contract passes before stage allocation
-unavailable, timeout, integrity and contract failures return typed results
-approved fallback is bounded and provenance-checked
-late and duplicate attempts cannot construct a stage
-provider-independent failure and retry UI remains functional
-StageKit is constructed exactly once per accepted generation
-first visible stage frame cites provider and stage provenance
-source, build, browser and Pages matrices pass
+all participants prepare before live mutation
+failed preparation preserves complete predecessor state
+accepted transition commits all participants together
+adoption failure rolls back all participants
+stale and duplicate commands mutate nothing
+predecessor resources retire after successor adoption
+save revision matches story and stage revision
+first visible frame cites accepted transition provenance
+browser, build and Pages matrices pass
 ```
 
-No claim is made that provider availability, integrity, provenance, compatibility, fallback, recovery or production readiness is implemented.
+No claim is made that atomic scene transition, rollback safety, durable parity or visible-frame coherence is implemented.

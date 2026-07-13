@@ -1,118 +1,115 @@
-# Known gaps: The Unmapped House renderer-provider admission
+# Known gaps: The Unmapped House scene-transition composition
 
-**Timestamp:** `2026-07-13T04-47-00-04-00`  
-**Status:** `central-reconciled`
+**Timestamp:** `2026-07-13T09-03-20-04-00`  
+**Status:** `audited`
 
 ## Summary
 
-The newest documented gap remains renderer-provider admission. The browser resolves a remote Three.js module before application code runs, but the repository owns no immutable provider artifact, integrity result, contract probe, fallback transaction or provider-independent visible failure state. Repo-local and central records now agree on this boundary.
+Scene advancement currently has no shared identity, preparation barrier, atomic commit, rollback result or visible-frame receipt. The story aggregate can advance before the stage, UI and save participants are known to be valid.
 
 ## Plan ledger
 
-**Goal:** eliminate indefinite or unproven renderer boot by making provider source, content, compatibility, failure and visibility explicit.
+**Goal:** make every cross-participant divergence explicit and testable.
 
-- [x] Trace the static module graph and provider boundary.
-- [x] Inspect package and Pages proof surfaces.
-- [x] Identify missing identities, results and fixtures.
-- [x] Define candidate authority kits and completion criteria.
-- [x] Reconcile repo-local and central documentation.
-- [ ] Implement and execute the authority.
+- [x] Trace the scene transition order.
+- [x] Identify participant mutation boundaries.
+- [x] Identify failure windows and missing proof.
+- [x] Define the authority and result contract.
+- [ ] Implement and execute it.
 
-## Provider identity gaps
+## Identity gaps
 
 ```txt
-provider policy revision: absent
-provider manifest version: absent
-provider ID: absent
-provider generation: absent
-provider attempt ID: absent
-source class: implicit remote URL
-repository-owned artifact: absent
-approved fallback list: absent
+TransitionId: absent
+TransitionGeneration: absent
+StoryRevision: absent
+StageGeneration: absent
+UiRevision: absent
+SaveRevision: absent
+expected predecessor revisions: absent
 ```
 
-## Integrity and compatibility gaps
+## Preparation gaps
 
 ```txt
-expected content fingerprint: absent
-observed fingerprint: absent
-integrity admission result: absent
-version admission result: absent
-module-evaluation result: browser-owned only
-required export list: absent
-required capability probe: absent
-API-contract result: absent
+authored successor validation result: absent
+scene descriptor validation result: absent
+detached story candidate: absent
+detached stage candidate: absent
+interlude candidate: absent
+UI candidate: absent
+save candidate: absent
+participant preparation receipts: absent
 ```
 
-## Lifecycle and result gaps
+## Commit and recovery gaps
 
 ```txt
-renderer boot phase: absent
-bounded timeout: absent
-cancellation command and result: absent
-retry command and result: absent
-late predecessor rejection: absent
-duplicate retry rejection: absent
-StageKit construction admission: absent
-typed RenderProviderResult: absent
+atomic participant adoption: absent
+zero-mutation rejection: absent
+rollback result: absent
+stale transition rejection: absent
+duplicate Continue rejection: absent
+predecessor resource retirement receipt: absent
+terminal SceneTransitionResult: absent
+```
+
+## Reachable divergence windows
+
+```txt
+stage construction failure
+  -> story and route already advanced
+  -> interlude already closed
+  -> predecessor stage already cleared or partially replaced
+  -> UI and save may still cite predecessor
+
+DOM projection failure
+  -> story and stage can cite successor
+  -> visible controls can cite predecessor
+  -> save can remain predecessor
+
+localStorage rejection
+  -> story, stage and UI can cite successor
+  -> durable save remains predecessor
+  -> reload returns to older scene
 ```
 
 ## Presentation gaps
 
 ```txt
-provider-independent failure UI: absent
-specific rejection reason projection: absent
-retry and recovery affordance: absent
-provider ID and version in diagnostics: absent
-provider fingerprint in diagnostics: absent
-first provider-backed frame acknowledgement: absent
-first visible provider-failure frame acknowledgement: absent
+scene transition provenance in frame: absent
+story/stage/UI coherent frame envelope: absent
+first successor frame acknowledgement: absent
+last complete scene-frame recovery: absent
+visible diagnostics parity: absent
 ```
 
-## Validation and deployment gaps
+## Validation gaps
 
 ```txt
-provider manifest check: absent
-build-artifact provider fingerprint check: absent
-browser provider boot smoke: absent
-blocked-provider fixture: absent
-timeout fixture: absent
-integrity-mismatch fixture: absent
-version-mismatch fixture: absent
-API-contract-mismatch fixture: absent
-fallback fixture: absent
-late-attempt fixture: absent
-Pages provider smoke: absent
-cache-disabled deployed navigation: absent
+scene transition unit fixtures: absent
+stage preparation failure fixture: absent
+DOM projection failure fixture: absent
+storage rejection fixture: absent
+stale and duplicate command fixtures: absent
+rollback fixture: absent
+browser visible-frame fixture: absent
+built-output smoke: absent
+Pages transition smoke: absent
 ```
-
-## Reachable visible failure
-
-```txt
-remote module request fails or is rejected
-  -> StageKit module does not evaluate
-  -> game.js body does not run
-  -> story state and UI are not initialized
-  -> no canvas is created
-  -> static Loading title can remain
-  -> no game-owned reason or recovery result exists
-```
-
-This path is inferred from static ES-module semantics and source ordering. It is not evidence of a current unpkg outage or malicious artifact.
 
 ## Retained independent gaps
 
 ```txt
-hotspot input and picking authority
+renderer-provider admission
+hotspot input and raycast picking
 browser save commit and reset convergence
-story manifest and snapshot admission
-scene progression and interlude authority
+interlude progression and modal focus
 stage resource lifecycle and runtime stop
-modal focus and Continue admission
 Notebook channel classification
 committed-frame diagnostics
 ```
 
 ## Completion boundary
 
-Do not claim provider reliability because the version-bearing URL loads in one browser session. Completion requires approved artifact identity, deterministic fingerprint admission, required API-contract proof, typed timeout, failure and fallback behavior, provider-independent recovery UI, exactly-once StageKit construction and local, build, browser and Pages visible-frame fixtures.
+Do not claim scene-transition reliability because the three authored scenes advance in a normal browser run. Completion requires detached participant preparation, explicit receipts, atomic adoption or rollback, stale and duplicate rejection, safe predecessor retirement, durable save parity and a first visible frame tied to the accepted transition.

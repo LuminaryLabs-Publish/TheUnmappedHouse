@@ -1,139 +1,93 @@
-# Next steps: The Unmapped House renderer-provider admission
+# Next steps: The Unmapped House scene-transition composition
 
-**Timestamp:** `2026-07-13T04-47-00-04-00`  
-**Status:** `central-reconciled`
+**Timestamp:** `2026-07-13T09-03-20-04-00`  
+**Status:** `audited`
 
 ## Summary
 
-Repo-local and central documentation now agree on the renderer-provider authority. The next implementation should move Three.js from an implicit remote module prerequisite into an approved provider artifact and typed boot transaction. Build provider-independent failure projection first, then gate StageKit and story startup on one accepted provider result.
+Build a detached preparation path before changing live story or stage ownership. The first implementation slice should validate the successor descriptor, prepare a successor stage generation off the live stage, prepare the story/UI/save candidates, then atomically adopt or reject the complete set.
 
 ## Plan ledger
 
-**Goal:** achieve deterministic provider identity, bounded failure behavior and first-frame provenance without changing story semantics.
+**Goal:** eliminate cross-participant partial scene transitions without changing authored story semantics.
 
-- [x] Reconcile repo-local and central provider findings.
-- [ ] Choose the production provider policy and approved source classes.
-- [ ] Prefer a repository-owned or build-vendored Three.js artifact.
-- [ ] Add immutable provider manifest, version and content fingerprint.
-- [ ] Add provider attempt, result and boot-phase identities.
-- [ ] Verify required Three.js API contract before StageKit construction.
-- [ ] Add timeout, cancellation and approved fallback policy.
-- [ ] Add provider-independent visible failure and retry surface.
-- [ ] Gate StageKit and story boot on `Accepted` or `FallbackAccepted`.
-- [ ] Reject late, stale and duplicate provider results.
-- [ ] Correlate accepted provider and stage generation with the first visible frame.
-- [ ] Add source, build, browser and Pages fixture matrices.
+- [ ] Add `TransitionId`, `StoryRevision` and `StageGeneration`.
+- [ ] Add `SceneTransitionCommand` with expected predecessor revisions.
+- [ ] Validate completion phase and authored successor before mutation.
+- [ ] Validate scene descriptors before allocating live resources.
+- [ ] Build detached story, stage, interlude, UI and save candidates.
+- [ ] Collect explicit participant preparation receipts.
+- [ ] Commit all participants together or retain all predecessors.
+- [ ] Add rollback for adoption-time failures.
+- [ ] Release predecessor stage resources only after accepted adoption.
+- [ ] Reject stale and duplicate commands with zero mutation.
+- [ ] Publish terminal `SceneTransitionResult` statuses.
+- [ ] Correlate the first visible successor frame with the accepted result.
+- [ ] Add source, browser, built-output and Pages fixture matrices.
 
 ## Ordered implementation
 
-### 1. Establish provider policy
-
-Document whether production permits:
+### 1. Define identities
 
 ```txt
-repository-vendored artifact
-same-origin build artifact
-pinned remote fallback
-no remote fallback
+TransitionId
+TransitionGeneration
+StoryRevision
+StageGeneration
+UiRevision
+SaveRevision
+FrameSequence
 ```
 
-Do not accept arbitrary runtime URLs.
+### 2. Validate route and descriptor
 
-### 2. Create `RenderProviderManifest`
+The command must identify the expected predecessor scene and successor. Reject missing completion evidence, invalid authored order, absent descriptors and terminal-route misuse before any participant changes.
+
+### 3. Prepare detached participants
 
 ```txt
-manifestVersion
-providerId
-packageName
-expectedVersion
-sourceClass
-approvedLocations
-expectedContentFingerprint
-requiredExports
-requiredCapabilities
-timeoutMs
-fallbackOrder
-policyRevision
+StoryTransitionCandidate
+StageTransitionCandidate
+InterludeTransitionCandidate
+UiTransitionCandidate
+SaveTransitionCandidate
 ```
 
-### 3. Own the artifact
+Stage preparation must not clear or mutate the live predecessor stage.
 
-Prefer vendoring or producing the exact Three.js ES module during a deterministic build. Verify the output fingerprint against the manifest.
+### 4. Commit or reject
 
-### 4. Add provider-independent bootstrap
+Only a fully prepared participant set may adopt. A failed participant must preserve the complete predecessor set and return one terminal result.
 
-A small same-origin bootstrap must own:
+### 5. Retire safely
 
-```txt
-ResolvingProvider
-ProviderAccepted
-ProviderRejected
-ProviderTimedOut
-Retrying
-StageReady
-```
+Dispose predecessor geometry, materials, hotspot volumes and render resources only after the successor stage generation is adopted and visible eligibility is established.
 
-It must remain functional when Three.js cannot load.
+### 6. Prove the visible frame
 
-### 5. Add typed commands and results
+`FirstSceneFrameAck` must carry transition ID, scene ID, story revision, stage generation, UI revision and frame sequence.
+
+### 7. Execute fixtures
 
 ```txt
-RenderProviderBootCommand
-RetryProviderCommand
-CancelProviderCommand
-RenderProviderResult
-StageConstructionResult
-```
-
-Terminal provider statuses:
-
-```txt
-Accepted
-FallbackAccepted
-Unavailable
-TimedOut
-IntegrityRejected
-VersionRejected
-ContractRejected
-Cancelled
-Duplicate
-Stale
-```
-
-### 6. Probe the required API
-
-Validate every constructor and constant currently used by StageKit before allocating renderer resources.
-
-### 7. Gate stage and story boot
-
-Only accepted results may create a StageKit. Non-accepted results must create no story runtime generation and must not persist story state.
-
-### 8. Add exactly-once and stale-result policy
-
-Retries allocate new provider-attempt generations. A late predecessor result cannot construct or replace a stage.
-
-### 9. Add visible-frame receipts
-
-Record provider ID, generation, version, fingerprint, stage generation and frame sequence for the first accepted visible frame. Record a separate failure-frame receipt when no candidate is accepted.
-
-### 10. Execute fixture matrix
-
-```txt
-local vendored provider accepted
-remote primary blocked
-provider timeout
-integrity mismatch
-version mismatch
-API contract mismatch
-approved fallback accepted
-all candidates exhausted
-retry double-click
-late predecessor success
-page retirement during attempt
-fresh Pages navigation
-cache-disabled Pages navigation
+normal scene one to scene two
+normal scene two to scene three
+terminal completion
+invalid successor
+incomplete-scene Continue
+malformed camera descriptor
+geometry allocation failure
+shader/material failure
+DOM projection failure
+localStorage rejection
+stale predecessor revision
+duplicate Continue
+rollback after partial adoption
+first visible successor frame
+fresh built-output navigation
+GitHub Pages navigation
 ```
 
 ## Do not combine yet
 
-Keep hotspot picking, persistence convergence, interlude progression, modal focus and stage-resource retirement as separate authorities. Renderer-provider admission supplies a verified capability and boot result; it does not own those domain rules.
+Keep renderer-provider admission, hotspot picking, input focus, persistence convergence, interlude timing and stage-resource lifetime as bounded authorities. Scene-transition composition coordinates their accepted results; it does not absorb their internal rules.
