@@ -1,26 +1,26 @@
-# Validation: The Unmapped House scene-transition composition audit
+# Validation: The Unmapped House render-surface viewport audit
 
-**Timestamp:** `2026-07-13T09-03-20-04-00`  
-**Scope:** documentation-only scene-transition audit
+**Timestamp:** `2026-07-13T14-58-07-04-00`  
+**Scope:** documentation-only viewport audit
 
 ## Summary
 
-Source and existing audit state were inspected. A new tracker and scene-transition audit family were added, root `.agent` routing was refreshed and the machine registry was updated. Runtime behavior and deployment were not changed or executed.
+Source and existing audit state were inspected. A new tracker and viewport audit family were added, root `.agent` routing was refreshed and the machine registry was updated. Runtime behavior and deployment were not changed or executed.
 
 ## Plan ledger
 
 **Goal:** state exactly what this audit proves and what remains unverified.
 
-- [x] Verify `nextScene()` mutation order.
-- [x] Verify `StageKit.loadScene()` clears the predecessor before successor construction.
-- [x] Verify UI projection follows stage replacement.
-- [x] Verify persistence follows UI projection.
-- [x] Verify no transition identity, preparation receipts or rollback result exists.
-- [x] Verify no first matching visible-frame acknowledgement exists.
+- [x] Verify CSS and JavaScript both write the fixed-aspect frame.
+- [x] Verify JavaScript measures global window dimensions rather than the actual host.
+- [x] Verify zero dimensions clamp to one.
+- [x] Verify DPR is capped but total pixel and GPU dimension policies are absent.
+- [x] Verify DOM, renderer, render target and camera mutate sequentially.
+- [x] Verify no viewport identity, participant receipts, rollback result or first-frame acknowledgement exists.
 - [x] Preserve all 24 implemented kit surfaces and services.
 - [x] Generate valid machine audit state.
 - [x] Change documentation only.
-- [ ] Run executable transition fixtures after implementation.
+- [ ] Run executable viewport fixtures after implementation.
 
 ## Source checks performed
 
@@ -28,25 +28,31 @@ Source and existing audit state were inspected. A new tracker and scene-transiti
 full LuminaryLabs-Publish repository inventory compared
 all nine eligible central ledger entries reviewed
 root .agent state confirmed for the selected repository
+index.html inspected
+src/styles.css inspected
+src/aspect-frame.js inspected
 src/game.js inspected
 src/stage-kit.js inspected
 src/story-data.js inspected
+package.json inspected
+Pages workflow inspected
 existing root .agent files inspected
 ```
 
 ## Source facts established
 
 ```txt
-nextScene advances currentScene, sceneId, route and log before stage load
-nextScene closes interlude before stage load
-loadScene clears live stageGroup before successor construction
-loadScene resets live hotspot and material collections
-renderUi follows stage replacement
-saveState follows UI projection
-localStorage write has no typed result
-no detached participant candidates exist
-no atomic commit or rollback exists
-no scene transition result or first scene frame acknowledgement exists
+CSS owns a vw/vh fixed-aspect policy
+JavaScript overwrites frame left top width and height
+resize samples innerWidth innerHeight and devicePixelRatio
+computeAspectFrame clamps each dimension to at least one
+renderer size and target size update sequentially
+camera projection updates without a viewport revision
+no total-pixel budget or GPU dimension admission exists
+no detached participant preparation or atomic adoption exists
+no rollback result exists
+pointer picks carry no committed viewport revision
+no first viewport frame acknowledgement exists
 ```
 
 ## Documentation changed
@@ -57,7 +63,7 @@ new architecture audit
 new render audit
 new gameplay audit
 new interaction audit
-new scene-transition contract audit
+new viewport contract audit
 new deploy fixture gate
 new central-sync audit
 START_HERE.md refreshed
@@ -86,28 +92,30 @@ Pages workflow: no
 
 ```txt
 npm run check: not run
-browser scene-transition smoke: not run
-stage failure fixture: unavailable
-DOM failure fixture: unavailable
-storage failure fixture: unavailable
-stale/duplicate fixture: unavailable
+browser viewport smoke: not run
+zero-size fixture: unavailable
+DPR and pixel-budget fixtures: unavailable
+allocation failure fixture: unavailable
 rollback fixture: unavailable
+pointer-correlation fixture: unavailable
 built-output smoke: not run
-Pages scene-transition smoke: not run
+Pages viewport smoke: not run
 ```
 
 ## Required future proof
 
 ```txt
+actual host box is the measurement authority
+zero-size surfaces defer without allocation
+DPR and GPU allocation stay within explicit budgets
 all participants prepare before live mutation
-failed preparation preserves complete predecessor state
-accepted transition commits all participants together
-adoption failure rolls back all participants
-stale and duplicate commands mutate nothing
-predecessor resources retire after successor adoption
-save revision matches story and stage revision
-first visible frame cites accepted transition provenance
-browser, build and Pages matrices pass
+failed preparation preserves the complete predecessor set
+accepted transition commits every participant together
+adoption failure rolls back every participant
+stale and superseded commands mutate nothing
+pointer picks cite the committed viewport revision
+first visible frame cites accepted viewport provenance
+browser build and Pages matrices pass
 ```
 
-No claim is made that atomic scene transition, rollback safety, durable parity or visible-frame coherence is implemented.
+No claim is made that bounded allocation, atomic viewport adoption, rollback, pointer correlation or visible-frame proof is implemented.
