@@ -1,69 +1,95 @@
-# Validation: The Unmapped House Stage Resource Lifecycle Audit
+# Validation: The Unmapped House
 
-**Timestamp:** `2026-07-12T19-11-01-04-00`
+**Timestamp:** `2026-07-12T20-51-16-04-00`  
+**Scope:** documentation-only progression and interlude audit
 
 ## Summary
 
-This run validated the documentation against current source. It did not change or execute runtime behavior.
+Source inspection was completed and the documentation/registry state was updated. Runtime behavior, story content, rendering and deployment were not modified or executed.
 
 ## Plan ledger
 
-**Goal:** distinguish source-backed lifecycle findings from unexecuted browser and GPU claims.
+**Goal:** state exactly what this run proves and what remains unverified.
 
-- [x] Read current `main` source and root audit state.
-- [x] Confirm `stageGroup.clear()` is followed by tracking-array replacement.
-- [x] Confirm no `.dispose()`, `cancelAnimationFrame()` or listener removal exists in `StageKit`.
-- [x] Count scene layers, props and hotspots from authored data.
-- [x] Confirm the package check is syntax-only.
-- [x] Confirm Pages deploys the static repository from `main`.
-- [x] Validate the new machine registry as JSON before publication.
-- [ ] Execute runtime lifecycle fixtures.
+- [x] Verify the current source paths and package scripts.
+- [x] Verify the three-scene and nine-hotspot authored topology.
+- [x] Trace hidden Continue, completion timer, reload and terminal paths.
+- [x] Validate `.agent/kit-registry.json` as JSON before publication.
+- [x] Change documentation only.
+- [ ] Run executable browser progression fixtures after implementation.
 
-## Source-backed observations
+## Source checks performed
 
 ```txt
-three authored scenes
-6 total layers
-13 total props
-9 total hotspots
-28 total scene meshes allocated across all scenes
-19 meshes retired during normal progression before final scene
-no explicit scene geometry/material disposal
-no stage stop/dispose method
-no retained RAF ID
-no listener removal
-no first-visible-scene-frame receipt
+index.html inspected
+src/styles.css inspected
+src/game.js inspected
+src/story-data.js inspected
+src/stage-kit.js inspected
+src/aspect-frame.js inspected
+package.json inspected
+.github/workflows/deploy.yml inspected
+existing root .agent state inspected
+central repo ledger inspected
 ```
 
-## Changed by this run
+## Source facts established
 
 ```txt
-runtime source: no
-story content: no
-render behavior: no
+Continue button is always mounted
+closed interlude uses opacity and pointer-events only
+Continue is not disabled, hidden or made inert
+nextScene has no completion or phase check
+completion uses an unowned 450 ms setTimeout
+callback reads mutable currentScene at execution
+save state contains no progression phase or terminal result
+boot does not reopen a complete scene's interlude
+showInterlude does not transfer focus or inert underlying controls
+```
+
+## Not changed
+
+```txt
+runtime JavaScript: no
+HTML or CSS: no
+story descriptors: no
+Three.js rendering: no
+browser save format: no
 package scripts: no
 dependencies: no
-deployment workflow: no
-branch: no
-pull request: no
-agent documentation: yes
-central ledger: yes
+Pages workflow: no
+```
+
+## Git policy
+
+```txt
+target repository: LuminaryLabs-Publish/TheUnmappedHouse
+target branch: main
+branch created: no
+pull request created: no
 ```
 
 ## Not executed
 
 ```txt
-npm run check
-browser transition smoke
-renderer.info sampling
-WebGL allocation profiling
-disposal-spy fixtures
-candidate rollback fixture
-repeated load fixture
-stage stop fixture
-Pages lifecycle smoke
+npm run check: not run
+browser keyboard/focus smoke: not run
+timer/reload smoke: not run
+GitHub Pages progression smoke: not run
+accessibility tree inspection: not run
 ```
 
-## Claim boundary
+## Required future proof
 
-The audit proves that explicit lifecycle operations and receipts are absent in source. It does not prove a particular GPU-memory increase, context loss, frame hitch or deployed failure.
+```txt
+hidden Continue cannot be focused or activated
+incomplete Continue returns rejected
+stale timer cannot open a successor interlude
+reload after completion restores one visible continuation path
+open interlude makes background controls inert
+duplicate Continue advances exactly once
+terminal state survives reload
+visible frame cites committed scene and phase revisions
+```
+
+No claim is made that these defects are repaired.

@@ -1,77 +1,90 @@
 # Known gaps: The Unmapped House
 
-**Timestamp:** `2026-07-12T19-11-01-04-00`
+**Timestamp:** `2026-07-12T20-51-16-04-00`
 
 ## Summary
 
-The newest documented gap is stage resource lifecycle authority. Scene replacement detaches previous Three.js objects but does not explicitly dispose their geometries or materials, and the stage has no stop path for RAF, listeners, renderer or render targets.
+The newest documented gap is scene-progression and interlude authority. Completion facts, delayed presentation, keyboard focus, Continue admission and persisted route phase can diverge.
 
 ## Plan ledger
 
-**Goal:** eliminate unowned scene and callback lifetime while preserving rollback and visible-frame correctness.
+**Goal:** eliminate scene skipping, stale interludes, reload dead ends and post-completion ambiguity while preserving exact authored story order.
 
-- [x] Trace every StageKit allocation and retained callback.
-- [x] Trace scene replacement and terminal lifetime.
-- [x] Quantify normal-progression resource retirement.
+- [x] Trace completion and Continue from source.
+- [x] Trace modal focus and hidden-control behavior.
+- [x] Trace reload and terminal persistence.
 - [x] Define candidate authority kits and fixture rows.
 - [ ] Implement and execute the authority.
 
-## Scene-resource gaps
+## Progression-state gaps
 
 ```txt
-stage session ID: absent
-scene resource-set ID/revision: absent
-detached candidate group: absent
-atomic commit: absent
-rollback: absent
-geometry ownership: implicit
-material ownership: partial
-hotspot material tracking: absent
-exact-once disposal result: absent
-stale load rejection: absent
+story run ID/generation: absent
+scene phase: absent
+scene revision: absent
+route revision: absent
+persisted completion-pending state: absent
+persisted open-interlude state: absent
+terminal outcome state: absent
+startup phase reconciliation: absent
 ```
 
-## Runtime-lifecycle gaps
+## Timer and transition gaps
 
 ```txt
-RAF handle: not retained
-RAF cancellation: absent
-listener identities: not retained
-listener removal: absent
-stage stop state: absent
-idempotent stop result: absent
-render target disposal: absent
-post geometry/material disposal: absent
-renderer disposal: absent
+completion timer handle: not retained
+completion timer lease: absent
+callback predecessor scene ID: absent
+callback expected scene revision: absent
+stale callback rejection: absent
+duplicate callback result: absent
+Continue command identity: absent
+completion admission: absent
+interlude-open admission: absent
+exact-once scene advancement: absent
+typed scene-transition result: absent
+```
+
+## Focus and interaction gaps
+
+```txt
+closed Continue disabled/inert: no
+closed Continue removed from tab order: no
+dialog role/aria-modal: absent
+focus transfer to interlude: absent
+focus trap or containment: absent
+underlying story-panel inertness: absent
+focus restoration result: absent
+keyboard input-context generation: absent
+```
+
+## Persistence and terminal gaps
+
+```txt
+reload after completion recovery: absent
+reload with pending timer recovery: absent
+reload with open interlude recovery: absent
+terminal phase persistence: absent
+terminal result identity: absent
+post-terminal Continue rejection: absent
 ```
 
 ## Presentation gaps
 
 ```txt
-hovered descriptor reset on scene load: absent
-hover label clear on scene load: absent
-scene-resource revision in diagnostics: absent
-first visible scene-frame acknowledgement: absent
-candidate-frame failure rollback: absent
+phase in Notebook projection: absent
+timer/transition result in Notebook: absent
+first visible interlude frame acknowledgement: absent
+first visible successor frame acknowledgement: absent
+terminal visible-frame acknowledgement: absent
 ```
 
-## Quantified source boundary
+## Retained independent gaps
 
 ```txt
-scene 1 retirement: 10 geometries + 10 materials
-scene 2 retirement: 9 geometries + 9 materials
-normal full progression: 19 geometries + 19 materials detached without explicit dispose
-```
-
-This is a source-level count, not a measured GPU-memory claim.
-
-## Retained gaps
-
-```txt
-story manifest/snapshot admission
+story manifest/snapshot admission implementation
 storage concurrency and destructive reset
-completion timer generation
-modal focus and Continue admission
+stage resource disposal and runtime stop
 Notebook channel separation
 render-surface budgeting and context recovery
 committed-frame diagnostics
@@ -79,4 +92,4 @@ committed-frame diagnostics
 
 ## Completion boundary
 
-Do not claim lifecycle safety because objects are removed from the scene graph or become garbage-collectable. Completion requires explicit ownership, exact-once disposal receipts, cancellable callbacks, idempotent stop behavior, rollback tests and visible-frame correlation.
+Do not claim progression safety because pointer events are blocked by CSS or because required clues usually cause the overlay to appear. Completion requires fail-closed command admission, keyboard focus fixtures, generation-bound timer cancellation, persisted phase reconciliation, exact-once advancement and visible-frame evidence.

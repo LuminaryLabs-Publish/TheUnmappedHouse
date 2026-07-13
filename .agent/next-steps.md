@@ -1,80 +1,108 @@
 # Next steps: The Unmapped House
 
-**Timestamp:** `2026-07-12T19-11-01-04-00`
+**Timestamp:** `2026-07-12T20-51-16-04-00`
 
-## Goal
+## Summary
 
-Preserve the authored scenes and visual output while making scene replacement and stage shutdown deterministic, reversible and resource-safe.
+The next implementation should establish progression phase and Continue admission before adding scenes or visual polish. The highest-risk defect is that hidden keyboard activation can bypass completion, while reload can lose the only visible continuation path.
 
 ## Plan ledger
 
-### 1. Resource ownership
-- [ ] Add stage-session, scene-resource-set and scene-resource-revision identities.
-- [ ] Track every geometry, material, hotspot volume, post geometry, render target, listener and RAF handle through one owner.
-- [ ] Make lease ownership and transfer explicit.
+**Goal:** replace implicit DOM/timer progression with one deterministic, persisted and testable scene-transition authority.
 
-### 2. Detached preparation and commit
-- [ ] Build successor scene resources in a detached group.
-- [ ] Validate the complete candidate before changing the live group.
-- [ ] Return typed prepare, commit and rollback results.
-- [ ] Reset hover and pointer-derived scene state during commit.
-- [ ] Reject stale scene-load commands.
+- [ ] Add a pure progression reducer with explicit phases.
+- [ ] Make Continue a typed command that fails closed.
+- [ ] Own and cancel the completion timer.
+- [ ] Persist and reconcile progression phase.
+- [ ] Add modal focus and inertness.
+- [ ] Seal terminal state.
+- [ ] Correlate interlude and successor frames.
+- [ ] Add browser and Pages fixtures.
 
-### 3. Retirement and shutdown
-- [ ] Traverse predecessor resources and dispose each unique geometry and material exactly once.
-- [ ] Retain named listener callbacks and remove them on stop.
-- [ ] Retain the RAF ID and cancel it on stop.
-- [ ] Dispose post resources, render target and renderer.
-- [ ] Make repeated `stop()` idempotent.
+## Ordered implementation
 
-### 4. Presentation proof
-- [ ] Publish active scene-resource revision in diagnostics.
-- [ ] Acknowledge the first visible frame after commit.
-- [ ] Retire the predecessor only after candidate-frame success, or define a tested earlier-retirement policy.
-
-### 5. Fixtures
-- [ ] Mock geometry/material disposal counters.
-- [ ] Test scene 1 to 2 to 3 replacement.
-- [ ] Test candidate allocation failure and rollback.
-- [ ] Test repeated load of the same scene.
-- [ ] Test stale load rejection.
-- [ ] Test hover-label reset.
-- [ ] Test stop before first frame and stop after terminal copy.
-- [ ] Test repeated stop.
-- [ ] Run local browser and Pages lifecycle smoke.
-
-## Implementation order
+### 1. Define canonical phases and revisions
 
 ```txt
-1. ResourceSet and lease types
-2. Detached scene builder
-3. Atomic swap and rollback
-4. Exact-once disposer
-5. Hover reset
-6. RAF/listener stop ownership
-7. Visible-frame receipt
-8. Browser and Pages fixtures
+INSPECTING
+COMPLETION_PENDING
+INTERLUDE_OPEN
+TRANSITIONING
+TERMINAL
 ```
 
-## Retained downstream work
+Add `storyRunId`, `storyRunGeneration`, `sceneRevision`, `routeRevision` and a validated `phase`.
+
+### 2. Make completion a reducer result
+
+Move completion detection out of direct DOM mutation. Produce a `CompletionResult` containing the exact scene ID, expected scene revision and whether completion is newly committed.
+
+### 3. Own the 450 ms delay
+
+Retain a timer handle and lease ID. The callback must carry the predecessor scene/run generations and reject itself after scene change, reset, terminal commit or duplicate delivery.
+
+### 4. Fail Continue closed
+
+`ContinueCommand` must require:
 
 ```txt
-story manifest and snapshot admission
-storage revision and cross-tab convergence
-completion timer and modal admission
-Notebook/player diagnostics separation
-render-surface pixel budgeting and context recovery
-committed-frame diagnostics
+phase == INTERLUDE_OPEN
+current scene is complete
+expected scene ID matches
+expected scene revision matches
+expected route revision matches
+command has not already committed
 ```
 
-## Do not do first
+The DOM click handler should only submit the command and project its typed result.
+
+### 5. Make the interlude a real interaction context
+
+While closed:
 
 ```txt
-new scenes
-shader redesign
-camera retuning
-new interactions
-audio
-inventory
-visual polish
+Continue disabled
+Continue removed from tab order
+overlay inert/hidden
 ```
+
+While open:
+
+```txt
+dialog semantics
+underlying story panel inert
+focus moved to Continue
+focus restoration policy recorded
+Escape policy explicit
+```
+
+### 6. Reconcile reload
+
+Persist the phase or derive it deterministically from validated facts. A complete nonterminal scene must reopen the interlude on boot without relying on a lost timer.
+
+### 7. Seal terminal state
+
+Commit a durable `TerminalOutcomeResult` and prevent further scene advancement. Reload must reproduce the same terminal route and copy.
+
+### 8. Add visible-frame receipts
+
+Record `FirstVisibleInterludeFrameAck` and `FirstVisibleSuccessorFrameAck` with scene, phase, route and render revisions.
+
+### 9. Add fixture matrix
+
+```txt
+hidden Continue cannot receive focus or activate
+incomplete scene Continue rejects
+duplicate Continue advances once
+stale completion timer rejects after transition
+reload before timer restores continuation
+reload with open interlude restores continuation
+keyboard focus moves into and out of interlude
+underlying controls are inert while open
+final Continue commits one terminal result
+reload after terminal restores terminal
+```
+
+## Do not combine yet
+
+Keep stage-resource disposal, save-schema migration and render-context recovery as separate parent domains. Progression authority may depend on them, but it should not absorb their implementation details.
