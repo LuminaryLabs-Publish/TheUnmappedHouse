@@ -1,107 +1,137 @@
-# Next steps: The Unmapped House
+# Next steps: The Unmapped House renderer-provider admission
 
-**Timestamp:** `2026-07-13T01-49-49-04-00`
+**Timestamp:** `2026-07-13T04-29-43-04-00`
 
 ## Summary
 
-The next implementation should replace cached `mousemove` state plus coordinate-less canvas clicks with one pointer-event adapter and one shared inspection-command path. The first executable proof should cover first-click correctness, touch taps, pointer leave and camera-parallax correlation before story or rendering features are expanded.
+The next implementation should move Three.js from an implicit remote module prerequisite into an approved provider artifact and typed boot transaction. Build provider-independent failure projection first, then gate StageKit and story startup on one accepted provider result.
 
 ## Plan ledger
 
-**Goal:** establish exact event-bound hotspot admission and prove that canvas, touch and side-panel controls select the intended hotspot against the visible frame.
+**Goal:** achieve deterministic provider identity, bounded failure behavior and first-frame provenance without changing story semantics.
 
-- [ ] Introduce pointer source, sample and command identity.
-- [ ] Capture activation coordinates from the submitting event.
-- [ ] Bind viewport, canvas rect, scene, hotspot-set and camera-frame revisions.
-- [ ] Publish typed hit, miss and rejection results.
-- [ ] Route canvas and exact controls through one inspection command.
-- [ ] Add duplicate and stale-command rejection.
-- [ ] Retire hover on leave, cancel, scene change and stop.
-- [ ] Correlate accepted inspection results with visible frames.
-- [ ] Add browser, touch-emulation and Pages fixtures.
+- [ ] Choose the production provider policy and approved source classes.
+- [ ] Prefer a repository-owned or build-vendored Three.js artifact.
+- [ ] Add immutable provider manifest, version and content fingerprint.
+- [ ] Add provider attempt, result and boot-phase identities.
+- [ ] Verify required Three.js API contract before StageKit construction.
+- [ ] Add timeout, cancellation and approved fallback policy.
+- [ ] Add provider-independent visible failure and retry surface.
+- [ ] Gate StageKit and story boot on `Accepted` or `FallbackAccepted`.
+- [ ] Reject late, stale and duplicate provider results.
+- [ ] Correlate accepted provider and stage generation with the first visible frame.
+- [ ] Add source, build, browser and Pages fixture matrices.
 
 ## Ordered implementation
 
-### 1. Replace mouse-only sampling
+### 1. Establish provider policy
 
-Use pointer events for mouse, touch and stylus. Keep hover observation separate from activation.
-
-```txt
-pointermove -> hover sample only
-pointerup or click policy -> activation sample from that event
-pointerleave/pointercancel -> retire hover and sample state
-```
-
-### 2. Add input identity
+Document whether production permits:
 
 ```txt
-inputSessionId
-commandId
-eventSequence
-pointerId
-pointerType
-sourceType
-sceneRevision
-hotspotSetRevision
-viewportRevision
-canvasRectRevision
-cameraPoseRevision
-renderFrameSequence
+repository-vendored artifact
+same-origin build artifact
+pinned remote fallback
+no remote fallback
 ```
 
-### 3. Capture event-bound coordinates
+Do not accept arbitrary runtime URLs.
 
-Do not reuse `this.pointer` for activation. Normalize `clientX/clientY` from the event that submits the command against the admitted canvas rect.
-
-### 4. Define camera-frame policy
-
-Choose and document one policy:
+### 2. Create `RenderProviderManifest`
 
 ```txt
-pick against last presented frame
-or
-commit a current camera pose before both pick and render
+manifestVersion
+providerId
+packageName
+expectedVersion
+sourceClass
+approvedLocations
+expectedContentFingerprint
+requiredExports
+requiredCapabilities
+timeoutMs
+fallbackOrder
+policyRevision
 ```
 
-Do not mix a new pointer sample with an unversioned older camera pose.
+### 3. Own the artifact
 
-### 5. Publish `HotspotPickResult`
+Prefer vendoring or producing the exact Three.js ES module during a deterministic build. Verify the output fingerprint against the manifest.
 
-Return typed terminal statuses for hit, miss, outside-canvas, stale scene, stale viewport, stale camera, duplicate and unsupported source.
+### 4. Add provider-independent bootstrap
 
-### 6. Unify gameplay execution
+A small same-origin bootstrap must own:
 
-Canvas picks and side-panel controls must both create `HotspotInspectionCommand` and receive `HotspotInspectionResult`. The story reducer should not know how the target was selected beyond validated source evidence.
+```txt
+ResolvingProvider
+ProviderAccepted
+ProviderRejected
+ProviderTimedOut
+Retrying
+StageReady
+```
 
-### 7. Add exactly-once behavior
+It must remain functional when Three.js cannot load.
 
-Bind inspection results to command IDs. Duplicate delivery should return the previous result without repeating logs, saves, timers or future effects.
+### 5. Add typed commands and results
 
-### 8. Own hover lifecycle
+```txt
+RenderProviderBootCommand
+RetryProviderCommand
+CancelProviderCommand
+RenderProviderResult
+StageConstructionResult
+```
 
-Clear hover on pointer leave, cancel, scene transition, runtime retirement and stale viewport replacement.
+Terminal provider statuses:
+
+```txt
+Accepted
+FallbackAccepted
+Unavailable
+TimedOut
+IntegrityRejected
+VersionRejected
+ContractRejected
+Cancelled
+Duplicate
+Stale
+```
+
+### 6. Probe the required API
+
+Validate every constructor and constant currently used by StageKit before allocating renderer resources.
+
+### 7. Gate stage and story boot
+
+Only accepted results may create a StageKit. Non-accepted results must create no story runtime generation and must not persist story state.
+
+### 8. Add exactly-once and stale-result policy
+
+Retries allocate new provider-attempt generations. A late predecessor result cannot construct or replace a stage.
 
 ### 9. Add visible-frame receipts
 
-Record `FirstVisibleInspectionFrameAck` with inspection result, scene, hotspot, story revision, camera revision, viewport revision and render frame sequence.
+Record provider ID, generation, version, fingerprint, stage generation and frame sequence for the first accepted visible frame.
 
-### 10. Add fixture matrix
+### 10. Execute fixture matrix
 
 ```txt
-first mouse click with no prior movement
-mousemove then click elsewhere
-click before next parallax RAF
-touch tap with no mousemove
-stylus tap
-pointer leave after hover
-outside-canvas activation
-resize between sample and activation
-scene transition between sample and activation
-overlapping hit candidates
-canvas/button equivalent selection
-duplicate activation delivery
+local vendored provider accepted
+remote primary blocked
+provider timeout
+integrity mismatch
+version mismatch
+API contract mismatch
+approved fallback accepted
+all candidates exhausted
+retry double-click
+late predecessor success
+page retirement during attempt
+fresh Pages navigation
+cache-disabled Pages navigation
 ```
 
 ## Do not combine yet
 
-Keep save convergence, interlude progression, story-manifest admission and stage-resource lifecycle as separate parent domains. The hotspot input authority should coordinate with them through typed commands and revisions rather than absorb their internal rules.
+Keep hotspot picking, persistence convergence, interlude progression, modal focus and stage resource retirement as separate authorities. Renderer-provider admission supplies a verified capability and boot result; it does not own those domain rules.
