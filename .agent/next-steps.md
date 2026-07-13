@@ -1,28 +1,30 @@
-# Next steps: The Unmapped House scene-transition composition
+# Next steps: The Unmapped House render-surface viewport authority
 
-**Timestamp:** `2026-07-13T09-03-20-04-00`  
+**Timestamp:** `2026-07-13T14-58-07-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-Build a detached preparation path before changing live story or stage ownership. The first implementation slice should validate the successor descriptor, prepare a successor stage generation off the live stage, prepare the story/UI/save candidates, then atomically adopt or reject the complete set.
+Build a pure viewport preparation path before changing live DOM or GPU state. The first implementation slice should measure the actual render host, classify zero-size and hidden states, apply an explicit DPR and pixel budget, prepare every participant candidate and adopt the complete set only after validation.
 
 ## Plan ledger
 
-**Goal:** eliminate cross-participant partial scene transitions without changing authored story semantics.
+**Goal:** eliminate unversioned and partially applied viewport transitions without changing the fixed 16:9 art direction.
 
-- [ ] Add `TransitionId`, `StoryRevision` and `StageGeneration`.
-- [ ] Add `SceneTransitionCommand` with expected predecessor revisions.
-- [ ] Validate completion phase and authored successor before mutation.
-- [ ] Validate scene descriptors before allocating live resources.
-- [ ] Build detached story, stage, interlude, UI and save candidates.
-- [ ] Collect explicit participant preparation receipts.
-- [ ] Commit all participants together or retain all predecessors.
-- [ ] Add rollback for adoption-time failures.
-- [ ] Release predecessor stage resources only after accepted adoption.
-- [ ] Reject stale and duplicate commands with zero mutation.
-- [ ] Publish terminal `SceneTransitionResult` statuses.
-- [ ] Correlate the first visible successor frame with the accepted result.
+- [ ] Add `SurfaceId`, `LifecycleGeneration` and `ViewportRevision`.
+- [ ] Measure the actual host box instead of global window dimensions.
+- [ ] Add `ResizeObserver` as the primary size source with bounded window fallback.
+- [ ] Return `ZeroSizeDeferred` for hidden or zero-area hosts.
+- [ ] Add explicit DPR cap, total-pixel budget and GPU maximum-dimension checks.
+- [ ] Prepare DOM frame, renderer buffer, render target, camera and pointer-transform candidates.
+- [ ] Collect participant preparation receipts.
+- [ ] Atomically adopt all participants or retain all predecessors.
+- [ ] Add rollback for allocation or adoption failures.
+- [ ] Reject stale, duplicate and superseded commands with zero mutation.
+- [ ] Publish terminal `ViewportCommitResult` statuses.
+- [ ] Expose committed viewport readback to diagnostics.
+- [ ] Correlate hotspot picks with the committed viewport revision.
+- [ ] Publish `FirstViewportFrameAck`.
 - [ ] Add source, browser, built-output and Pages fixture matrices.
 
 ## Ordered implementation
@@ -30,64 +32,69 @@ Build a detached preparation path before changing live story or stage ownership.
 ### 1. Define identities
 
 ```txt
-TransitionId
-TransitionGeneration
-StoryRevision
-StageGeneration
-UiRevision
-SaveRevision
+SurfaceId
+LifecycleGeneration
+ViewportRevision
+MeasurementSequence
 FrameSequence
 ```
 
-### 2. Validate route and descriptor
+### 2. Measure and classify
 
-The command must identify the expected predecessor scene and successor. Reject missing completion evidence, invalid authored order, absent descriptors and terminal-route misuse before any participant changes.
+Measure `#app` or the declared render host. Preserve zero as zero. Classify hidden, detached, invalid, unchanged and valid candidates before allocation.
 
-### 3. Prepare detached participants
+### 3. Apply policy
 
 ```txt
-StoryTransitionCandidate
-StageTransitionCandidate
-InterludeTransitionCandidate
-UiTransitionCandidate
-SaveTransitionCandidate
+host CSS box
+  -> fixed 16:9 fit
+  -> DPR policy
+  -> GPU maximum dimensions
+  -> total-pixel budget
+  -> quality fallback or rejection
 ```
 
-Stage preparation must not clear or mutate the live predecessor stage.
+### 4. Prepare participants
 
-### 4. Commit or reject
+```txt
+DomFrameCandidate
+RendererBufferCandidate
+RenderTargetCandidate
+CameraProjectionCandidate
+PointerTransformCandidate
+```
 
-Only a fully prepared participant set may adopt. A failed participant must preserve the complete predecessor set and return one terminal result.
+No live participant mutates during preparation.
 
-### 5. Retire safely
+### 5. Commit or reject
 
-Dispose predecessor geometry, materials, hotspot volumes and render resources only after the successor stage generation is adopted and visible eligibility is established.
+Only a fully prepared participant set may adopt. A failed participant preserves the complete predecessor set and returns one terminal result.
 
-### 6. Prove the visible frame
+### 6. Prove the frame
 
-`FirstSceneFrameAck` must carry transition ID, scene ID, story revision, stage generation, UI revision and frame sequence.
+`FirstViewportFrameAck` must carry surface ID, viewport revision, CSS dimensions, drawing-buffer dimensions, render-target dimensions, DPR and frame sequence.
 
 ### 7. Execute fixtures
 
 ```txt
-normal scene one to scene two
-normal scene two to scene three
-terminal completion
-invalid successor
-incomplete-scene Continue
-malformed camera descriptor
-geometry allocation failure
-shader/material failure
-DOM projection failure
-localStorage rejection
-stale predecessor revision
-duplicate Continue
+initial 1920x1080-equivalent boot
+portrait and landscape resizes
+very small host
+zero-size host then restoration
+hidden tab or detached host
+DPR 1 to 2 transition
+DPR above cap
+pixel-budget fallback
+GPU maximum-dimension rejection
+rapid resize supersession
+render-target allocation failure
 rollback after partial adoption
-first visible successor frame
-fresh built-output navigation
-GitHub Pages navigation
+pointer pick during resize
+first visible viewport frame
+fresh built-output load
+GitHub Pages load and resize
 ```
 
 ## Do not combine yet
 
-Keep renderer-provider admission, hotspot picking, input focus, persistence convergence, interlude timing and stage-resource lifetime as bounded authorities. Scene-transition composition coordinates their accepted results; it does not absorb their internal rules.
+Keep scene transition, provider admission, hotspot picking, persistence, interlude timing and stage-resource lifetime as bounded authorities. Viewport coordination consumes their accepted surfaces but does not absorb their internal rules.
