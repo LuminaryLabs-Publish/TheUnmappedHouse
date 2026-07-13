@@ -1,26 +1,26 @@
 # Current audit: The Unmapped House
 
-**Timestamp:** `2026-07-12T23-20-51-04-00`  
+**Timestamp:** `2026-07-13T01-49-49-04-00`  
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`  
-**Status:** `browser-save-commit-reset-convergence-authority-audited`
+**Status:** `hotspot-input-picking-authority-audited`
 
 ## Summary
 
-This documentation-only audit isolates the boundary between tab-local story mutation, whole-document localStorage writes, cross-tab delivery, destructive reset, visible projection and durable evidence.
+This documentation-only audit isolates the boundary between browser pointer events, canvas coordinate normalization, the visible camera pose, hotspot raycast selection and story inspection mutation.
 
-The runtime has no save revision, writer identity, command identity, expected predecessor, conflict result, storage-event reconciliation, reset tombstone or verified readback. Concurrent tabs can silently overwrite valid progress, a stale tab can recreate state after reset, and storage failure can leave visible state ahead of the durable snapshot.
+The canvas click listener discards its event coordinates. `clickHotspot()` raycasts using `this.pointer`, which is updated only by `mousemove`. The first click can therefore use the default center sample, and touch/stylus compatibility clicks can reuse default or stale coordinates. Camera parallax consumes pointer state on RAF, so pick evidence is not tied to the visible camera frame. Canvas and side-panel controls then call the story mutation directly without one typed inspection command or result.
 
 ## Plan ledger
 
-**Goal:** make every story save and reset one admitted, durable and cross-tab-convergent transaction with visible-frame provenance.
+**Goal:** make every inspection one exact, source-identified and frame-correlated command whose target and visible result are provable.
 
 - [x] Compare the full Publish inventory with central tracking.
 - [x] Verify all nine eligible repositories remain centrally tracked and root-documented.
 - [x] Exclude `TheCavalryOfRome`.
 - [x] Select only `TheUnmappedHouse` by oldest current central timestamp.
-- [x] Inspect the browser save, mutation, reset, reload and stage projection paths.
+- [x] Inspect browser input, camera, raycast, hover, exact-control and story mutation paths.
 - [x] Preserve the complete 24-kit inventory and service map.
-- [x] Define commands, revisions, results, delivery, reset invalidation and fixture gates.
+- [x] Define commands, revisions, results, rejection states and fixture gates.
 - [x] Change documentation only.
 - [ ] Implement and execute the authority.
 
@@ -28,35 +28,41 @@ The runtime has no save revision, writer identity, command identity, expected pr
 
 ```txt
 boot
-  -> create default story state
-  -> parse arbitrary localStorage JSON
-  -> shallow-merge parsed fields
-  -> resolve currentScene
-  -> construct StageKit and load scene resources
-  -> render controls and Notebook
-  -> replace the whole stored snapshot
+  -> create default or loaded story state
+  -> construct StageKit
+  -> initialize pointer and mouse vectors at 0,0
+  -> install mousemove and click listeners on canvas
+  -> install exact side-panel inspection buttons
+  -> load scene descriptors and hotspot volumes
+  -> start recursive RAF
+
+mousemove
+  -> measure canvas rect
+  -> normalize event coordinates
+  -> mutate cached pointer and parallax state
+  -> raycast for hover using current camera
+  -> project hover label
+
+RAF
+  -> consume cached parallax state
+  -> mutate camera pose
+  -> animate materials
+  -> render stage and post pass
+
+canvas click
+  -> ignore click coordinates
+  -> raycast with cached pointer and current camera
+  -> dispatch selected hotspot directly
+
+side-panel button
+  -> bypass pointer and raycast evidence
+  -> dispatch exact hotspot directly
 
 inspection
-  -> mutate inspected facts, clues and log in memory
-  -> optionally schedule completion interlude
-  -> render updated UI
-  -> replace the whole stored snapshot
-
-Continue
-  -> mutate sceneId, route and log
-  -> load the successor stage
-  -> render updated UI
-  -> replace the whole stored snapshot
-
-KeyR reset
-  -> remove the save key
-  -> reload the current tab
-  -> provide no reset identity or cross-tab invalidation
-
-other live tabs
-  -> keep independent mutable snapshots
-  -> receive no admitted storage updates
-  -> may overwrite newer state or resurrect reset state
+  -> mutate inspected facts, clues and log
+  -> optionally schedule interlude
+  -> render UI
+  -> write story snapshot
 ```
 
 ## Source ownership
@@ -64,9 +70,9 @@ other live tabs
 | Source | Current responsibilities |
 |---|---|
 | `src/story-data.js` | Three scene descriptors, nine hotspots, completion requirements, interlude copy and render settings. |
-| `src/game.js` | Browser story aggregate, localStorage parse/write/delete, inspection, Continue, timer, UI, reset and boot. |
-| `src/stage-kit.js` | Three.js stage, scene replacement, raycast, hover, camera parallax, render target and RAF. |
-| `src/styles.css` | Fixed shell, controls, Notebook and interlude presentation. |
+| `src/game.js` | Story aggregate, localStorage, inspection, Continue, timer, UI, reset and boot. |
+| `src/stage-kit.js` | Three.js stage, pointer cache, mouse hover, click picking, camera parallax, render target and RAF. |
+| `src/styles.css` | Fixed shell, controls, Notebook, hover label and interlude presentation. |
 | `src/aspect-frame.js` | Fixed 16:9 viewport calculation and application. |
 | `index.html` | Stage, story, Notebook, hover and interlude surfaces. |
 | `package.json` | Syntax-only validation and local serving. |
@@ -82,8 +88,7 @@ browser persistence and destructive reset
 scene routing, inspection, clues, logs and completion
 completion timeout and interlude projection
 terminal copy projection
-DOM keyboard and pointer interaction
-modal visibility and focus behavior
+DOM mouse, click, keyboard and focus interaction
 Three.js CDN runtime and WebGL presentation
 scene graph and resource allocation
 procedural geometry and shader materials
@@ -95,23 +100,25 @@ syntax validation and Pages deployment
 repo-local and central audit tracking
 ```
 
-Missing save convergence authority:
+Missing hotspot input/picking authority:
 
 ```txt
-save session, writer and command identity
-canonical snapshot revision and fingerprint
-expected-predecessor admission
-one terminal result per save/reset command
-durable write and readback verification
-storage-write failure and readback-mismatch results
-storage-event envelope and schema validation
-duplicate and reordered delivery rejection
-monotonic cross-tab reconciliation
-reset generation and durable tombstone
-stale-writer and reset-resurrection rejection
-save/reset observations and bounded journal
-first visible save/reset frame acknowledgement
-browser and Pages convergence fixtures
+input session and command identity
+pointer source, pointer ID and sample identity
+activation-event coordinate capture
+mouse/touch/stylus pointer unification
+scene and hotspot-set revision
+viewport and canvas-rect revision
+camera pose and rendered-frame revision
+immutable raycast candidate result
+deterministic hit and tie policy
+stale sample, scene, viewport and camera rejection
+outside-canvas and accepted-miss results
+canvas/button source equivalence
+duplicate inspection rejection
+hover enter/move/leave lifecycle
+first visible inspection-result frame acknowledgement
+browser and Pages pointer/picking fixtures
 ```
 
 ## Implemented kits and offered services
@@ -134,7 +141,7 @@ browser and Pages convergence fixtures
 | `anime-material-kit` | Allocate procedural shader materials and update time uniforms. |
 | `post-process-kit` | Apply grain, vignette, chromatic shift, distortion and scan-line effects. |
 | `hotspot-volume-kit` | Allocate invisible raycast volumes and attach hotspot descriptors. |
-| `hotspot-picking-kit` | Normalize pointer input, raycast and dispatch a hotspot. |
+| `hotspot-picking-kit` | Normalize cached mouse coordinates, raycast and dispatch a hotspot. |
 | `camera-parallax-kit` | Apply pointer-driven fixed-camera offsets. |
 | `render-target-composition-kit` | Render stage to an offscreen target and post pass to canvas. |
 | `debug-json-projection-kit` | Serialize story fields into the visible Notebook. |
@@ -145,106 +152,102 @@ browser and Pages convergence fixtures
 
 ## Concrete source findings
 
-### Whole-snapshot last writer wins
+### Activation coordinates are not event-bound
 
-`saveState()` serializes the mutable aggregate and calls `localStorage.setItem()` with no revision or predecessor check. Two tabs that began from the same saved value can each produce a complete successor and silently overwrite each other.
+The canvas registers `click` with a callback that takes no event argument. `clickHotspot()` calls `pick()`, and `pick()` reads `this.pointer`. Only `handlePointer(event)` updates that vector.
 
-```txt
-Tab A grants clue A and writes successor A
-Tab B grants clue B from the same predecessor and writes successor B
-last writer wins
-one valid clue/inspection/log branch disappears
-```
+### First click can use the center sample
 
-### Storage changes are not admitted
+`this.pointer` is created as a new `THREE.Vector2()`, so it begins at `0,0`. A click before any mouse movement raycasts through clip-space center regardless of where the click occurred.
 
-No `storage` event handler exists. A tab does not learn that another tab committed a newer scene, clue set, route or reset. It retains and later republishes its own predecessor snapshot.
+### Touch and stylus can use stale samples
 
-### Reset has no durable identity
+The runtime has no `pointermove`, `pointerdown` or `pointerup` path. A compatibility click may arrive without a preceding `mousemove`, leaving the activation tied to default or previous mouse coordinates.
 
-`KeyR` calls `removeItem(SAVE_KEY)` and reloads one tab. Key absence carries no reset generation, command ID or predecessor fingerprint. Another live tab can recreate the removed snapshot on its next save.
+### Camera and pick frames can diverge
 
-### Mutation and projection precede durable proof
+Pointer movement updates `this.mouse` immediately, but the camera consumes it during RAF. A click before the successor RAF can combine current pointer coordinates with the previous camera pose. No revision identifies the frame used for selection.
 
-Inspection and Continue mutate memory and visible output before `saveState()`. `setItem()` exceptions are not caught or represented by a typed result. The visible scene can advance while reload returns to an older durable snapshot.
+### Hover can remain after exit
 
-### Boot can rewrite without commit provenance
+No leave/cancel handler clears `this.hovered` or hides the label. Hover state retires only when another movement produces no hit.
 
-Boot reads, shallow-merges, renders and immediately writes the whole state. The write has no commit identity or readback verification, and the Notebook exposes no save revision or fingerprint.
+### Story mutation has no inspection result envelope
 
-### No cross-tab or frame convergence result
-
-There is no accepted/rejected save result, conflict receipt, reset result, delivery result or first-visible frame acknowledgement tied to the durable commit.
+Canvas and side-panel paths call `inspectHotspot()` directly. There is no source identity, command ID, exact target admission, stale-revision rejection, duplicate result or visible-frame acknowledgement.
 
 ## Required parent domain
 
 ```txt
-the-unmapped-house-browser-save-commit-reset-convergence-authority-domain
+the-unmapped-house-hotspot-input-picking-authority-domain
 ```
 
 Candidate kits:
 
 ```txt
-browser-save-session-id-kit
-browser-save-writer-id-kit
-browser-save-command-id-kit
-browser-save-revision-kit
-browser-save-expected-predecessor-kit
-browser-save-fingerprint-kit
-canonical-story-snapshot-kit
-story-save-commit-command-kit
-story-save-commit-admission-kit
-story-save-commit-result-kit
-durable-save-readback-kit
-save-write-failure-kit
-storage-event-envelope-kit
-storage-event-deduplication-kit
-monotonic-save-admission-kit
-cross-tab-reconciliation-kit
-story-reset-command-kit
-story-reset-generation-kit
-story-reset-tombstone-kit
-story-reset-admission-kit
-story-reset-result-kit
-stale-writer-rejection-kit
-reset-resurrection-rejection-kit
-save-observation-kit
-save-journal-kit
-first-visible-save-frame-ack-kit
-first-visible-reset-frame-ack-kit
-two-tab-lost-update-fixture-kit
-reset-resurrection-fixture-kit
-storage-write-failure-fixture-kit
-browser-storage-convergence-smoke-kit
-pages-storage-convergence-smoke-kit
+hotspot-input-session-id-kit
+pointer-source-id-kit
+pointer-sample-id-kit
+pointer-event-normalization-kit
+canvas-rect-revision-kit
+viewport-revision-kit
+camera-pose-revision-kit
+rendered-frame-revision-kit
+hotspot-set-revision-kit
+hotspot-pick-command-kit
+hotspot-pick-admission-kit
+raycast-candidate-result-kit
+hotspot-hit-selection-kit
+hotspot-hit-tie-policy-kit
+stale-pointer-sample-rejection-kit
+stale-camera-frame-rejection-kit
+outside-canvas-rejection-kit
+hotspot-inspection-command-kit
+hotspot-inspection-result-kit
+inspection-source-equivalence-kit
+duplicate-inspection-rejection-kit
+hover-state-command-kit
+hover-state-result-kit
+pointer-leave-retirement-kit
+first-visible-inspection-frame-ack-kit
+pointer-observation-kit
+pointer-journal-kit
+mouse-first-click-fixture-kit
+touch-tap-fixture-kit
+stylus-tap-fixture-kit
+parallax-click-correlation-fixture-kit
+pointer-leave-fixture-kit
+canvas-button-equivalence-fixture-kit
+browser-hotspot-input-smoke-kit
+pages-hotspot-input-smoke-kit
 ```
 
-## Required transactions
+## Required transaction
 
 ```txt
-StorySaveCommitCommand
-  -> validate schema, manifest, writer, command and run identity
-  -> require exact predecessor revision and fingerprint
-  -> normalize and freeze one successor candidate
-  -> allocate one monotonic save revision and fingerprint
-  -> write durable bytes
-  -> read back and verify the exact envelope
-  -> publish one terminal StorySaveCommitResult
-  -> deliver immutable commit envelope to other tabs
-  -> deduplicate and admit delivery monotonically
-  -> project the accepted snapshot
+HotspotInspectionCommand
+  -> capture the submitting event or exact-control identity
+  -> bind runtime, scene, hotspot-set, viewport and camera-frame revisions
+  -> normalize event coordinates once
+  -> produce immutable raycast candidates
+  -> apply deterministic hit selection
+  -> reject outside, stale, duplicate or unavailable commands
+  -> commit one exact hotspot inspection result
+  -> project story, hover and Notebook feedback
   -> acknowledge the first matching visible frame
+```
 
-StoryResetCommand
-  -> require exact predecessor and reset generation
-  -> commit a durable reset tombstone
-  -> invalidate predecessor writers and pending save work
-  -> reconcile every tab to the reset snapshot
-  -> reject any stale post-reset write
-  -> publish StoryResetResult
-  -> acknowledge the first reset frame
+## Retained independent gaps
+
+```txt
+browser save commit/reset convergence
+story manifest and snapshot admission
+scene-progression and interlude authority
+stage resource disposal and runtime stop
+render-surface budgeting and WebGL context recovery
+committed-frame diagnostics
 ```
 
 ## Proof boundary
 
-Source inspection proves the current ordering and missing authority only. It does not prove runtime convergence, atomic compare-and-swap, conflict recovery, reset invalidation, storage-failure handling or visible-frame parity.
+Source inspection proves the current pointer/camera ordering and missing authority only. It does not prove runtime target correctness, touch behavior, exact source equivalence, stale-command rejection or visible-frame parity.
