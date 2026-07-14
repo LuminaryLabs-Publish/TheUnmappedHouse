@@ -1,70 +1,78 @@
-# START HERE: The Unmapped House story-save schema and manifest admission
+# START HERE: The Unmapped House WebGL context and stage recovery
 
-**Last updated:** `2026-07-13T19-58-19-04-00`  
+**Last updated:** `2026-07-14T01-00-28-04-00`  
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`  
 **Branch:** `main`  
-**Status:** `story-save-schema-manifest-admission-authority-audited`  
-**Retained statuses:** `render-surface-viewport-authority-central-reconciled`, `scene-transition-composition-authority-central-reconciled`, `render-provider-admission-authority-central-reconciled`, `hotspot-input-picking-authority-central-reconciled`, `browser-save-commit-reset-convergence-authority-audited`, `interlude-progression-admission-authority-audited`, `stage-resource-lifecycle-authority-audited`
+**Status:** `webgl-context-stage-recovery-authority-audited`  
+**Retained statuses:** `story-save-schema-manifest-admission-authority-central-reconciled`, `render-surface-viewport-authority-central-reconciled`, `scene-transition-composition-authority-central-reconciled`, `render-provider-admission-authority-central-reconciled`, `hotspot-input-picking-authority-central-reconciled`, `browser-save-commit-reset-convergence-authority-audited`, `interlude-progression-admission-authority-audited`, `stage-resource-lifecycle-authority-audited`
 
 ## Summary
 
 `TheUnmappedHouse` is a fixed-camera anime-horror point-and-click prototype with three scenes, nine hotspots, clue-led progression, browser persistence, a fixed 16:9 shell, a visible Notebook and a descriptor-driven Three.js stage.
 
-The active audit isolates startup save admission. Parseable localStorage values are shallow-merged into live state without type, identifier or story-manifest validation. Unknown scene IDs can remain durable while the first scene is shown, and malformed collection fields can crash or distort later progression.
+The active audit isolates WebGL context and stage recovery. `StageKit` owns one application-lifetime renderer, render target, post graph, scene resource graph and recursive RAF, but the application has no context-loss/restoration handlers, readiness downgrade, fallback, interaction suspension, recovery manifest, atomic adoption or first recovered visible-frame acknowledgement.
 
 ## Plan ledger
 
-**Goal:** admit one canonical, current-manifest-compatible story state before stage, UI, Notebook or interaction participants become live.
+**Goal:** preserve story truth during presentation failure, suspend stage-dependent commands, rebuild one complete WebGL stage generation and prove the first recovered frame before normal interaction resumes.
 
 - [x] Compare the full Publish inventory with central tracking.
 - [x] Exclude `TheCavalryOfRome`.
 - [x] Confirm all nine eligible repositories are tracked, root-documented and synchronized.
 - [x] Select only `TheUnmappedHouse` by the oldest eligible timestamp.
-- [x] Trace localStorage read, parse, shallow merge, state consumption, scene fallback, writeback and validation.
+- [x] Trace WebGL construction, resource ownership, frame submission, context-event gaps and interaction liveness.
 - [x] Preserve all 24 implemented kits and offered services.
-- [x] Define schema, manifest, migration, quarantine, adoption and visible-proof boundaries.
+- [x] Define context identity, fallback, recovery preparation, probe, adoption, rollback and visible-proof boundaries.
 - [x] Add the timestamped tracker and audit family.
 - [ ] Implement and execute the authority.
 
 ## Active loop
 
 ```txt
-raw localStorage value
-  -> JSON.parse
-  -> shallow merge over initial state
-  -> currentScene fallback independent from state repair
-  -> stage/UI/Notebook projection
-  -> immediate rewrite of the admitted object
-  -> later reducers assume array/record shapes
+StageKit construction
+  -> WebGLRenderer, Scene, Camera and lights
+  -> WebGLRenderTarget and post graph
+  -> scene geometry, shader materials and hotspot volumes
+  -> pointer listeners and recursive RAF
+
+context loss
+  -> no application event route
+  -> no readiness or interaction transition
+  -> no fallback or submission retirement
+
+context restoration
+  -> no application recovery transaction
+  -> no resource-generation adoption
+  -> no first recovered visible-frame proof
 ```
 
 ## Required authority
 
 ```txt
-the-unmapped-house-story-save-schema-manifest-admission-authority-domain
+the-unmapped-house-webgl-context-stage-recovery-authority-domain
 ```
 
-It coordinates raw document classification, schema and authored-ID validation, migration, quarantine, canonical normalization, startup adoption and first-visible-scene proof. Storage I/O, story authoring, progression reducers and renderer implementation remain bounded services.
+It coordinates context identity, render-submission retirement, presentation readiness, fallback, stage-dependent interaction admission, complete resource reconstruction, probe, atomic adoption or rollback and first recovered-frame proof. Story truth, save admission, scene authoring, viewport policy and renderer implementation remain bounded services.
 
 ## Read this run first
 
 1. `current-audit.md`
 2. `known-gaps.md`
-3. `trackers/2026-07-13T19-58-19-04-00/project-breakdown.md`
-4. `architecture-audit/2026-07-13T19-58-19-04-00-story-save-schema-manifest-admission-dsk-map.md`
-5. `save-admission-audit/2026-07-13T19-58-19-04-00-schema-manifest-migration-quarantine-contract.md`
-6. `interaction-audit/2026-07-13T19-58-19-04-00-save-document-admission-result-map.md`
-7. `gameplay-audit/2026-07-13T19-58-19-04-00-malformed-save-progression-loop.md`
-8. `render-audit/2026-07-13T19-58-19-04-00-admitted-state-visible-scene-coherence-gap.md`
-9. `deploy-audit/2026-07-13T19-58-19-04-00-save-admission-fixture-gate.md`
-10. `central-sync-audit/2026-07-13T19-58-19-04-00-repo-ledger-save-admission-reconciliation.md`
+3. `trackers/2026-07-14T01-00-28-04-00/project-breakdown.md`
+4. `architecture-audit/2026-07-14T01-00-28-04-00-webgl-context-stage-recovery-dsk-map.md`
+5. `webgl-lifecycle-audit/2026-07-14T01-00-28-04-00-context-generation-resource-recovery-contract.md`
+6. `interaction-audit/2026-07-14T01-00-28-04-00-context-event-recovery-result-map.md`
+7. `gameplay-audit/2026-07-14T01-00-28-04-00-presentation-loss-interaction-liveness-loop.md`
+8. `render-audit/2026-07-14T01-00-28-04-00-context-loss-visible-stage-recovery-gap.md`
+9. `deploy-audit/2026-07-14T01-00-28-04-00-webgl-context-recovery-fixture-gate.md`
+10. `central-sync-audit/2026-07-14T01-00-28-04-00-repo-ledger-webgl-recovery-reconciliation.md`
 11. `next-steps.md`
 12. `validation.md`
 
 ## Retained audits
 
-The prior viewport, scene-transition, provider, hotspot-picking, durable-save, progression and stage-lifecycle audits remain valid bounded authorities and are preserved in `kit-registry.json`.
+The prior save admission, viewport, scene-transition, provider, hotspot-picking, durable-save, progression and normal stage-lifecycle audits remain valid bounded authorities and are preserved in `kit-registry.json`.
 
 ## Next safe ledge
 
-Add pure `parseStorySave()`, `validateStoryState()` and `fingerprintStoryManifest()` functions, then prove malformed and unknown-manifest documents never reach live state.
+Add a small application-owned context-lifecycle adapter around `StageKit` that publishes readiness and fallback state before attempting any reconstruction. Then prove loss and restoration in a real browser before expanding recovery behavior.
