@@ -1,104 +1,120 @@
-# Next steps: The Unmapped House story-save schema and manifest admission
+# Next steps: The Unmapped House WebGL context and stage recovery
 
-**Timestamp:** `2026-07-13T19-58-19-04-00`  
+**Timestamp:** `2026-07-14T01-00-28-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-Build pure schema and manifest-admission functions before changing storage or live reducers. The first implementation slice should classify raw documents, normalize a canonical current state and keep malformed or incompatible values outside the live save key.
+Add an application-owned context lifecycle around `StageKit` before attempting broad renderer refactoring. The first implementation slice should expose presentation readiness, stop unsafe frame and interaction work on loss, show a DOM fallback, and recover one complete stage generation behind a typed result.
 
 ## Plan ledger
 
-**Goal:** prevent raw persistence values from entering live story state while preserving valid saves and explicit migrations.
+**Goal:** make WebGL loss recoverable without corrupting story truth, mixing resource generations or resuming interaction before a valid frame is visible.
 
-- [ ] Define `STORY_SCHEMA_VERSION`.
-- [ ] Derive a stable state-relevant story manifest and fingerprint.
-- [ ] Add a strict `StorySaveEnvelope`.
-- [ ] Implement `parseStorySave(raw)` with typed parse results.
-- [ ] Implement `validateStoryState(candidate, manifest)`.
-- [ ] Validate scene, clue, route and inspected hotspot identifiers.
-- [ ] Normalize duplicates and bounded collections only through explicit policy.
-- [ ] Add versioned pure migrations.
-- [ ] Add incompatible and malformed quarantine storage.
-- [ ] Return one terminal `StorySaveAdmissionResult`.
-- [ ] Adopt state and current scene together.
-- [ ] Persist only the canonical admitted envelope.
-- [ ] Gate interactions until admission and first projection complete.
-- [ ] Publish `FirstAdmittedStoryFrameAck`.
-- [ ] Add source, browser, built-output and Pages fixtures.
+- [ ] Add stable `SurfaceId`, `ContextGeneration`, `StageResourceGeneration` and `RecoveryAttemptId` values.
+- [ ] Add `webglcontextlost` and `webglcontextrestored` listeners owned by a lifecycle adapter.
+- [ ] Normalize browser events into typed lifecycle events.
+- [ ] Retain and retire one RAF/render-submission lease.
+- [ ] Publish presentation readiness independently from story readiness.
+- [ ] Add a DOM-only fallback that does not depend on WebGL.
+- [ ] Suspend canvas and DOM stage-dependent commands during loss and recovery.
+- [ ] Preserve current story state and scene identity without advancing progression.
+- [ ] Define a complete stage-resource manifest.
+- [ ] Extract candidate construction from live adoption.
+- [ ] Prepare renderer, target, shader, geometry, hotspot, camera, light and viewport candidates.
+- [ ] Compile, allocate and submit one recovery probe.
+- [ ] Atomically adopt all successor resources or dispose every candidate.
+- [ ] Publish `WebGLStageRecoveryResult`.
+- [ ] Resume exactly one render-submission generation.
+- [ ] Publish `FirstRecoveredStageFrameAck` before retiring the fallback.
+- [ ] Add source, production-artifact and Pages browser fixtures.
 
 ## Ordered implementation
 
-### 1. Build the manifest
+### 1. Own the browser events
+
+Attach listeners to the renderer canvas through one disposable lifecycle adapter. Record the current surface and context generation. Reject duplicate and stale events.
+
+### 2. Retire unsafe work on loss
 
 ```txt
-state-relevant manifest
-  ordered scene IDs
-  hotspot IDs per scene
-  clue grant IDs
-  completion requirements
-  scene progression order
+accepted context loss
+  -> prevent default when restoration is intended
+  -> retire current render-submission lease
+  -> set presentation readiness to Lost
+  -> suspend stage-dependent input
+  -> show DOM fallback
+  -> retain story truth and current scene
 ```
 
-### 2. Parse without trust
+### 3. Declare the resource graph
 
-Return `Empty`, `Parsed`, `Malformed` or `UnsupportedTopLevel` without mutating state or storage.
-
-### 3. Validate shape and identity
+The manifest must include:
 
 ```txt
-sceneId: current scene ID
-clues: unique current clue IDs
-flags: explicit plain-record policy
-inspected: current scene/hotspot boolean records
-route: bounded current scene ID array
-log: maximum eight strings
+renderer and canvas
+context capabilities
+main scene and stage group
+camera and lights
+scene background and fog
+layer and prop geometry
+stage shader materials
+hotspot geometry, materials and bindings
+offscreen render target
+post scene, camera, plane and material
+viewport and DPR
+render-submission ownership
 ```
 
-### 4. Classify compatibility
+### 4. Prepare detached successors
 
-```txt
-Current
-Migratable
-Incompatible
-Malformed
-Empty
-```
+Move scene resource construction into pure or detached builders that return preparation receipts and disposal closures. Do not mutate the live graph during preparation.
 
-### 5. Migrate or quarantine
+### 5. Probe before adoption
 
-Migrations must be pure, version-to-version and revalidated. Quarantine must retain raw evidence separately and prevent unchanged invalid data from re-entering startup.
+The probe must validate renderer submission, target completeness, shader compilation, current scene rendering, post sampling and viewport compatibility.
 
-### 6. Adopt atomically
+### 6. Adopt or roll back atomically
 
-Story state, `currentScene`, stage scene, UI and Notebook must derive from the same canonical candidate and startup generation.
+Adopt only when every required participant and the probe succeed against the current scene and viewport revisions. On failure, dispose candidates, keep fallback visible and keep interaction suspended.
 
 ### 7. Prove the first frame
 
-`FirstAdmittedStoryFrameAck` must cite schema version, manifest fingerprint, state fingerprint, scene ID, stage generation, UI revision and frame sequence.
+`FirstRecoveredStageFrameAck` must cite:
+
+```txt
+surface ID
+context generation
+stage resource generation
+scene ID and descriptor revision
+viewport revision
+render-submission generation
+frame sequence
+fallback-retirement receipt
+```
 
 ## Required fixtures
 
 ```txt
-empty save
-malformed JSON
-primitive and array top-level values
-wrong-type collection fields
-unknown scene, clue and hotspot IDs
-orphan IDs after content revision
-current valid save
-known schema migration
-known identifier remap
-unknown schema or manifest
-migration and quarantine failures
-canonical initial fallback
-first inspection after fallback
-next scene after migration
-reload after canonical writeback
-first visible admitted scene
-built artifact and Pages origin
+loss before first frame
+loss after first frame
+loss in each scene
+loss while interlude is open
+loss during resize and DPR change
+loss while hovering or clicking a hotspot
+DOM inspection attempted during loss
+canvas inspection attempted during loss
+continue attempted during loss
+repeated and stale context events
+shader, target and geometry preparation failure
+probe failure
+successful recovery
+failed recovery with stable fallback
+bounded retry
+pagehide during recovery
+source, production artifact and Pages origins
 ```
 
 ## Do not combine yet
 
-Keep durable commit/reset concurrency, scene-transition composition, viewport, provider admission, hotspot picking and stage-resource lifetime as bounded authorities. Save admission produces a canonical state candidate consumed by those systems.
+Keep save admission, durable save commit/reset, scene-transition composition, viewport policy, provider admission, hotspot semantics and normal stage disposal as bounded authorities. Recovery consumes their accepted identities and receipts but does not replace their policies.
