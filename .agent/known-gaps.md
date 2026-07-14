@@ -1,106 +1,115 @@
-# Known gaps: The Unmapped House terminal completion settlement and resume
+# Known gaps: The Unmapped House page lifecycle suspension and resume
 
-**Timestamp:** `2026-07-14T06-00-41-04-00`  
+**Timestamp:** `2026-07-14T11-59-13-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-Final completion has no canonical outcome state, durable settlement result, resume path or visible-frame proof. The player can reload into an already-complete final scene with no way to recover the terminal interlude.
+The runtime has no explicit ownership or proof for browser suspension and restoration. Frame submission, elapsed visual time, pending interlude timers, interaction and rendering resources can cross lifecycle boundaries without typed results.
 
 ## Plan ledger
 
-**Goal:** make every terminal identity, settlement participant, storage result, control route and visible outcome explicit and testable.
+**Goal:** make every lifecycle identity, participant, result and resumed-frame dependency explicit and testable.
 
-- [x] Trace final completion and reload.
-- [x] Confirm terminal DOM copy is not saved.
-- [x] Confirm boot does not reconstruct terminal presentation.
+- [x] Trace rendering and story behavior across suspension.
+- [x] Confirm lifecycle listeners and results are absent.
+- [x] Confirm RAF, clock and raw timers lack lifecycle ownership.
 - [x] Define the missing authority and proof.
 - [ ] Implement and execute it.
 
 ## Identity gaps
 
 ```txt
-StoryManifestRevision: absent
-TerminalOutcomeId: absent
-TerminalOutcomeSchemaVersion: absent
-TerminalOutcomeRevision: absent
-SettlementCommandId: absent
-DurableSaveGeneration: absent
-TerminalProjectionRevision: absent
-TerminalControlManifestRevision: absent
-FirstTerminalOutcomeFrameId: absent
+DocumentGeneration: absent
+LifecycleAttemptId: absent
+LifecycleEventSequence: absent
+StageGeneration: absent
+RenderLeaseId: absent
+ClockRevision: absent
+InterludeTimerId: absent
+WebGLContextGeneration: absent
+ViewportRevision on restore: absent
+FirstResumedFrameId: absent
 ```
 
-## Settlement gaps
+## Suspension gaps
 
 ```txt
-final completion command: absent
-expected story-state revision: absent
-premature completion rejection: absent
-duplicate completion result: absent
-immutable outcome candidate: absent
-atomic outcome/route/Notebook/control adoption: absent
-terminal settlement result: absent
+visibilitychange admission: absent
+pagehide admission: absent
+freeze admission: absent
+RAF request retention and cancellation: absent
+render lease retirement: absent
+visual clock policy: absent
+pending timer checkpoint: absent
+interaction suspension state: absent
+story checkpoint receipt: absent
 ```
 
-## Persistence and resume gaps
+## Restoration gaps
 
 ```txt
-terminal outcome in saved state: absent
-staged durable write: absent
-readback fingerprint verification: absent
-storage failure classification: absent
-terminal outcome admission on boot: absent
-terminal route reconstruction: absent
-terminal resume result: absent
+pageshow persisted classification: absent
+resume attempt identity: absent
+renderer and context probe: absent
+render-target probe: absent
+scene and material validation: absent
+viewport revalidation result: absent
+listener ownership check: absent
+duplicate RAF prevention: absent
+stale timer rejection: absent
+atomic restored-participant adoption: absent
+resume rollback result: absent
+```
+
+## Current split-brain path
+
+```txt
+scene becomes complete
+  -> story state mutates
+  -> localStorage write occurs
+  -> raw interlude timeout is scheduled
+  -> page hides or freezes
+  -> browser decides callback and RAF behavior
+  -> page restores
+  -> existing stage and listeners continue implicitly
+  -> interlude timing and shader time may have moved independently
+  -> no result correlates story, presentation and first visible frame
 ```
 
 ## Interaction gaps
 
 ```txt
-route-specific terminal controls: absent
-generic Continue retirement: absent
-repeated terminal command handling: absent
-terminal reset command result: absent
-terminal exit command result: absent
-focus restoration on terminal resume: absent
-```
-
-## Reachable dead end
-
-```txt
-complete final scene
-  -> open interlude
-  -> press Continue
-  -> terminal copy appears
-  -> no terminal save
-  -> reload
-  -> final scene remains complete
-  -> interlude hidden
-  -> every hotspot already inspected
-  -> re-read branch returns before completion scheduling
-  -> terminal UI cannot be recovered
+canvas picking lifecycle gate: absent
+DOM inspection lifecycle gate: absent
+safe fallback controls: absent
+resume focus policy: absent
+resume interaction admission result: absent
 ```
 
 ## Visible proof gaps
 
 ```txt
-terminal projection receipt: absent
-outcome-to-save correlation: absent
-outcome-to-final-scene correlation: absent
-terminal control revision correlation: absent
-first terminal visible-frame acknowledgement: absent
-reloaded terminal visible-frame acknowledgement: absent
+suspension receipt: absent
+clock checkpoint receipt: absent
+timer checkpoint receipt: absent
+resource revalidation receipt: absent
+restored viewport receipt: absent
+first resumed source-frame acknowledgement: absent
+first resumed post-process-frame acknowledgement: absent
+fallback retirement acknowledgement: absent
 ```
 
 ## Validation gaps
 
 ```txt
-final completion model fixture: absent
-duplicate and stale command fixtures: absent
-storage failure and readback fixtures: absent
-browser completion/reload fixture: absent
-terminal control fixture: absent
+hidden-page browser fixture: absent
+freeze/resume fixture: absent
+BFCache fixture: absent
+duplicate RAF fixture: absent
+clock rebase fixture: absent
+pending timer fixture: absent
+context-survival and context-loss restore fixtures: absent
 production-artifact fixture: absent
 Pages-origin fixture: absent
 ```
@@ -108,6 +117,8 @@ Pages-origin fixture: absent
 ## Retained independent gaps
 
 ```txt
+terminal completion settlement and resume
+WebGL context recovery
 story-save schema and manifest admission
 viewport authority
 scene-transition composition
@@ -115,9 +126,9 @@ renderer-provider admission
 hotspot input and picking
 save commit/reset convergence
 ordinary interlude progression and focus
-stage resource lifecycle and WebGL recovery
+stage resource lifecycle
 ```
 
 ## Completion boundary
 
-Do not claim terminal completion is implemented because prototype-complete copy appears. Completion requires one accepted outcome identity, idempotent settlement, durable readback or explicit degraded status, reload reconstruction, route-specific terminal controls and a first visible frame tied to the accepted outcome revision.
+Do not claim lifecycle safety because the page appears to resume. Completion requires one accepted document and stage generation, explicit render and clock ownership, identified timer handling, validated resources and viewport, duplicate-loop prevention, admitted interaction and a first resumed frame tied to all accepted revisions.
