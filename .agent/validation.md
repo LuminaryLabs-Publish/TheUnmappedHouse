@@ -1,58 +1,57 @@
-# Validation: The Unmapped House render-surface viewport audit
+# Validation: The Unmapped House story-save schema and manifest-admission audit
 
-**Timestamp:** `2026-07-13T14-58-07-04-00`  
-**Scope:** documentation-only viewport audit
+**Timestamp:** `2026-07-13T19-58-19-04-00`  
+**Scope:** documentation-only save-admission audit
 
 ## Summary
 
-Source and existing audit state were inspected. A new tracker and viewport audit family were added, root `.agent` routing was refreshed and the machine registry was updated. Runtime behavior and deployment were not changed or executed.
+Source and retained audit state were inspected. The audit documents raw-save parsing, shape assumptions, authored-identifier compatibility, startup scene divergence, canonical admission requirements and missing proof. Runtime behavior and deployment were not changed or executed.
 
 ## Plan ledger
 
 **Goal:** state exactly what this audit proves and what remains unverified.
 
-- [x] Verify CSS and JavaScript both write the fixed-aspect frame.
-- [x] Verify JavaScript measures global window dimensions rather than the actual host.
-- [x] Verify zero dimensions clamp to one.
-- [x] Verify DPR is capped but total pixel and GPU dimension policies are absent.
-- [x] Verify DOM, renderer, render target and camera mutate sequentially.
-- [x] Verify no viewport identity, participant receipts, rollback result or first-frame acknowledgement exists.
+- [x] Verify successfully parsed values are shallow-merged without schema validation.
+- [x] Verify unknown scene IDs fall back visually without repairing `state.sceneId`.
+- [x] Verify reducers assume array and nested-record shapes.
+- [x] Verify no schema version or story-manifest fingerprint exists.
+- [x] Verify no migration, quarantine or typed admission result exists.
+- [x] Verify startup immediately rewrites the admitted object.
+- [x] Verify package validation is syntax-only.
 - [x] Preserve all 24 implemented kit surfaces and services.
-- [x] Generate valid machine audit state.
+- [x] Refresh machine audit state as valid JSON.
 - [x] Change documentation only.
-- [ ] Run executable viewport fixtures after implementation.
+- [ ] Run executable save-admission fixtures after implementation.
 
 ## Source checks performed
 
 ```txt
 full LuminaryLabs-Publish repository inventory compared
 all nine eligible central ledger entries reviewed
-root .agent state confirmed for the selected repository
-index.html inspected
-src/styles.css inspected
-src/aspect-frame.js inspected
+all nine eligible repository heads compared with recorded documentation heads
 src/game.js inspected
-src/stage-kit.js inspected
 src/story-data.js inspected
+src/stage-kit.js inspected
+src/aspect-frame.js inspected
 package.json inspected
-Pages workflow inspected
-existing root .agent files inspected
+retained persistence and viewport audits inspected
+root .agent state inspected
 ```
 
 ## Source facts established
 
 ```txt
-CSS owns a vw/vh fixed-aspect policy
-JavaScript overwrites frame left top width and height
-resize samples innerWidth innerHeight and devicePixelRatio
-computeAspectFrame clamps each dimension to at least one
-renderer size and target size update sequentially
-camera projection updates without a viewport revision
-no total-pixel budget or GPU dimension admission exists
-no detached participant preparation or atomic adoption exists
-no rollback result exists
-pointer picks carry no committed viewport revision
-no first viewport frame acknowledgement exists
+JSON parsing failure falls back, but parsed shape failure does not
+parsed fields overwrite initial fields through shallow merge
+unknown state.sceneId falls back only for currentScene
+state.sceneId is not normalized before immediate writeback
+clues consumers require includes and push
+inspected consumers require nested object lookup and assignment
+route consumers require includes and push
+log consumers require unshift and slice
+saved identifiers are not checked against current story-data
+no schema version, manifest fingerprint, migration or quarantine exists
+npm run check performs syntax checks only
 ```
 
 ## Documentation changed
@@ -63,7 +62,7 @@ new architecture audit
 new render audit
 new gameplay audit
 new interaction audit
-new viewport contract audit
+new save-admission contract audit
 new deploy fixture gate
 new central-sync audit
 START_HERE.md refreshed
@@ -86,36 +85,37 @@ browser persistence behavior: no
 package scripts: no
 dependencies: no
 Pages workflow: no
+branch: main only
+pull request: none
 ```
 
 ## Not executed
 
 ```txt
 npm run check: not run
-browser viewport smoke: not run
-zero-size fixture: unavailable
-DPR and pixel-budget fixtures: unavailable
-allocation failure fixture: unavailable
-rollback fixture: unavailable
-pointer-correlation fixture: unavailable
+pure parser/validator fixtures: unavailable
+malformed-save browser fixture: unavailable
+manifest-mismatch fixture: unavailable
+migration fixture: unavailable
+quarantine fixture: unavailable
+canonical writeback fixture: unavailable
+first admitted-frame fixture: unavailable
 built-output smoke: not run
-Pages viewport smoke: not run
+Pages save-admission smoke: not run
 ```
 
 ## Required future proof
 
 ```txt
-actual host box is the measurement authority
-zero-size surfaces defer without allocation
-DPR and GPU allocation stay within explicit budgets
-all participants prepare before live mutation
-failed preparation preserves the complete predecessor set
-accepted transition commits every participant together
-adoption failure rolls back every participant
-stale and superseded commands mutate nothing
-pointer picks cite the committed viewport revision
-first visible frame cites accepted viewport provenance
-browser build and Pages matrices pass
+every raw document receives one typed classification
+only validated current identifiers reach live state
+known predecessor saves migrate deterministically
+malformed and incompatible saves are quarantined without partial adoption
+canonical admitted state and currentScene commit together
+writeback contains only the canonical current envelope
+interactions wait for admission and projection readiness
+first visible stage, UI and Notebook cite the admitted state revision
+source, browser, build and Pages matrices pass
 ```
 
-No claim is made that bounded allocation, atomic viewport adoption, rollback, pointer correlation or visible-frame proof is implemented.
+No claim is made that schema compatibility, migration, quarantine, canonical writeback, interaction gating or visible-frame proof is implemented.
