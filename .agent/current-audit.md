@@ -1,60 +1,52 @@
-# Current audit: The Unmapped House WebGL context and stage recovery
+# Current audit: The Unmapped House terminal completion settlement and resume
 
-**Timestamp:** `2026-07-14T01-00-28-04-00`  
+**Timestamp:** `2026-07-14T06-00-41-04-00`  
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`  
-**Status:** `webgl-context-stage-recovery-authority-audited`  
+**Status:** `terminal-completion-settlement-resume-authority-audited`  
 **Branch:** `main`
 
 ## Summary
 
-The browser application creates one application-lifetime Three.js presentation graph and starts a recursive RAF immediately. It has no application-owned `webglcontextlost` or `webglcontextrestored` flow, no readiness downgrade, no stage-independent fallback, no interaction suspension, no complete recovery manifest and no first recovered visible-frame acknowledgement.
+Final completion is not represented in story state. `nextScene()` finds no successor and changes only terminal interlude text. No outcome is saved, and boot does not reconstruct terminal presentation from a completed final scene.
 
 ## Plan ledger
 
-**Goal:** convert context loss and restoration into one typed presentation transaction while keeping story truth stable and stage-dependent interaction safe.
+**Goal:** turn final completion into one idempotent, durable and resumable story outcome with matching visible proof.
 
 - [x] Compare the complete Publish inventory and central ledger.
 - [x] Select only `TheUnmappedHouse` under the oldest eligible rule.
-- [x] Inspect renderer construction, scene loading, pointer input, RAF ownership, render targets and validation.
-- [x] Identify the complete interaction loop, domains, kits and services.
-- [x] Define the parent authority, participant receipts and terminal results.
-- [x] Add timestamped architecture, render, gameplay, interaction, WebGL-lifecycle, deploy and central-sync audits.
+- [x] Inspect final completion, terminal interlude, persistence and reload.
+- [x] Identify the interaction loop, domains, kits and services.
+- [x] Define the parent authority, commands, results and proof.
+- [x] Add timestamped architecture, render, gameplay, interaction, terminal-outcome, deploy and central-sync audits.
 - [x] Change documentation only.
-- [ ] Implement and run executable context-recovery fixtures.
+- [ ] Implement and run executable terminal-outcome fixtures.
 
 ## Complete interaction loop
 
 ```txt
 boot
-  -> StageKit creates WebGLRenderer
-  -> create scene, camera and lights
-  -> create offscreen target and post graph
-  -> install resize, mousemove and click listeners
-  -> start recursive RAF
-  -> load current scene resources
-  -> enable DOM story controls
+  -> load state
+  -> resolve current scene
+  -> load stage
+  -> render controls
 
-frame
-  -> update camera parallax
-  -> update stage and post uniforms
-  -> render current scene to offscreen target
-  -> render post scene to the canvas
-
-interaction
-  -> canvas raycast or DOM button
+inspection
   -> inspect hotspot
-  -> mutate story state and persistence
+  -> update inspected, clues and Notebook
+  -> if complete, schedule interlude
+  -> save ordinary story state
 
-context loss
-  -> no application-owned event admission
-  -> no render-submission retirement
-  -> no readiness downgrade or fallback
-  -> no stage-dependent interaction suspension
+final Continue
+  -> no successor scene
+  -> replace interlude title and text
+  -> return without state mutation or save
 
-restoration
-  -> no declared resource reconstruction
-  -> no recovery probe or atomic adoption
-  -> no first recovered visible-frame acknowledgement
+reload
+  -> final scene, clues and inspected state restore
+  -> interlude remains hidden
+  -> inspected-hotspot re-read exits before completion handling
+  -> terminal presentation is not recoverable
 ```
 
 ## Source ownership
@@ -62,115 +54,97 @@ restoration
 | Source | Current responsibilities |
 |---|---|
 | `index.html` | Stage shell, story controls, Notebook, hover label and interlude. |
-| `src/game.js` | Story state, progression, UI, save, reset and hotspot callback. |
-| `src/story-data.js` | Scene, hotspot, camera, material and post descriptors. |
-| `src/stage-kit.js` | Three.js provider, WebGL renderer, GPU resources, scene loading, picking, resize and RAF. |
-| `src/aspect-frame.js` | Fixed-aspect viewport calculation and DOM placement. |
-| `package.json` | Syntax-only checks. |
+| `src/game.js` | Story state, completion, interlude, scene advancement, terminal copy, save and reset. |
+| `src/story-data.js` | Three scenes, nine hotspots, clue requirements and interlude copy. |
+| `src/stage-kit.js` | Three.js stage, picking, viewport and RAF. |
+| `src/styles.css` | Interlude visibility, controls and shell presentation. |
+| `package.json` | Syntax-only validation. |
 
 ## Domains in use
 
 ```txt
-browser document, fixed shell and lifecycle
-story manifest, state, progression and persistence
+browser document and lifecycle
+fixed-aspect shell
+story manifest and scene order
+story state, clues, inspections, route and Notebook
+scene completion predicates
+interlude scheduling and presentation
+terminal outcome identity, settlement and resume
+localStorage persistence and reset
 DOM and canvas interaction
-Three.js provider and WebGL renderer
-WebGL context lifecycle and generation identity
-scene, camera, lighting and descriptor consumption
-procedural shader materials
-render-target and post-processing composition
-hotspot volumes, raycasting and dispatch
-camera parallax
-recursive RAF and render-submission ownership
-presentation readiness and fallback
-stage-dependent interaction admission
-GPU resource reconstruction, probe, adoption and rollback
-first recovered visible-frame evidence
-syntax validation, static serving and Pages deployment
-repo-local and central audit tracking
+Three.js stage and post-processing
+hotspot picking and camera parallax
+terminal control admission
+first terminal visible-frame evidence
+syntax validation and Pages deployment
+repo-local and central tracking
 ```
 
-## Implemented kits and offered services
+## Implemented kits and services
 
-| Kit | Offered services |
-|---|---|
-| `static-page-shell-kit` | Stage mount, story panel, hotspot list, Notebook, hover label and interlude. |
-| `aspect-frame-kit` | Fixed design aspect, window-fit calculation and DOM frame placement. |
-| `story-data-kit` | Scene descriptors, hotspots, clue grants, completion, camera, materials and post descriptors. |
-| `browser-story-runtime-kit` | State boot, scene resolution, inspection, continue, reset, UI and persistence calls. |
-| `scene-route-kit` | Scene resolution and authored-order advancement. |
-| `inspection-ledger-kit` | Scene-keyed inspected-hotspot state. |
-| `clue-ledger-kit` | Clue grant and query. |
-| `notebook-log-kit` | Narrative log mutation and bounded retention. |
-| `interlude-timer-kit` | Delayed completion interlude. |
-| `terminal-route-kit` | Prototype-complete projection. |
-| `localstorage-save-kit` | Parse, shallow merge, replace and delete save. |
-| `stage-render-kit` | WebGL renderer, scene, camera, lights, target, callbacks and recursive RAF. |
-| `scene-descriptor-consumer-kit` | Camera, geometry, material, hotspot and post construction. |
-| `anime-material-kit` | Procedural shader materials and time updates. |
-| `post-process-kit` | Grain, vignette, chromatic shift, distortion and scan lines. |
-| `hotspot-volume-kit` | Invisible raycast volumes and descriptor attachment. |
-| `hotspot-picking-kit` | Coordinate normalization, raycast and dispatch. |
-| `camera-parallax-kit` | Pointer-driven fixed-camera offsets. |
-| `render-target-composition-kit` | Offscreen stage pass, post pass and target sizing. |
-| `debug-json-projection-kit` | Story-field serialization and Notebook projection. |
-| `package-syntax-check-kit` | Node syntax checks. |
-| `static-pages-deploy-kit` | Static Pages delivery from `main`. |
-| `repo-local-agent-ledger-kit` | Root and timestamped audit records. |
-| `central-ledger-sync-kit` | Central selection and findings mirror. |
+```txt
+static-page-shell-kit: stage, story panel, hotspot list, Notebook, hover label, interlude
+aspect-frame-kit: design aspect, window fitting, DOM placement
+story-data-kit: scenes, hotspots, clue grants, completion, camera, materials, post
+browser-story-runtime-kit: state boot, inspection, continue, reset, UI, save calls
+scene-route-kit: scene resolution and authored-order advancement
+inspection-ledger-kit: scene-keyed inspected state
+clue-ledger-kit: clue grant and query
+notebook-log-kit: bounded narrative history
+interlude-timer-kit: delayed completion interlude
+terminal-route-kit: prototype-complete DOM projection
+localstorage-save-kit: parse, shallow merge, write and delete
+stage-render-kit: renderer, scene, camera, lights, target, callbacks and RAF
+scene-descriptor-consumer-kit: camera, geometry, material, hotspot and post construction
+anime-material-kit: procedural shaders and time updates
+post-process-kit: grain, vignette, chromatic shift, distortion and scan lines
+hotspot-volume-kit: raycast volumes and descriptors
+hotspot-picking-kit: coordinates, raycast and dispatch
+camera-parallax-kit: pointer-driven camera offsets
+render-target-composition-kit: offscreen and post passes
+ debug-json-projection-kit: story serialization and Notebook projection
+package-syntax-check-kit: Node syntax checks
+static-pages-deploy-kit: static Pages delivery
+repo-local-agent-ledger-kit: root and timestamped audit records
+central-ledger-sync-kit: central selection and findings mirror
+```
 
 ```txt
 implemented source-backed kits: 24
-planned WebGL recovery coordinating kits: 22
+planned terminal outcome coordinating kits: 20
 ```
 
-## Concrete findings
+## Main findings
 
-### Context events are not routed
-
-No `webglcontextlost` or `webglcontextrestored` handler exists in `StageKit` or `game.js`.
-
-### Frame submission has no lease
-
-`animate()` schedules its successor recursively. No accepted generation, cancellation result or stale-callback rejection exists for loss and recovery.
-
-### Presentation readiness is absent
-
-Story controls and persistence remain active independently from the renderer and last proven visible frame.
-
-### Recovery participants are implicit
-
-Renderer, target, post graph, shaders, geometry, hotspots, camera, lights, viewport and RAF have no complete resource manifest or candidate receipts.
-
-### Visible recovery is unproven
-
-No probe, atomic adoption, rollback result or first recovered frame ties the current scene to a successor context generation.
-
-### Validation is syntax-only
-
-The package check cannot create, lose or restore a WebGL context.
+- Final completion has no outcome identity, schema or revision.
+- The final Continue branch changes DOM only and returns no result.
+- No durable commit or readback follows terminal projection.
+- Boot does not classify or restore terminal outcome state.
+- Re-reading an inspected hotspot cannot reopen completion.
+- Generic Continue remains active after terminal copy.
+- No first terminal frame acknowledgement exists.
+- Validation is syntax-only.
 
 ## Required authority
 
 ```txt
-the-unmapped-house-webgl-context-stage-recovery-authority-domain
+the-unmapped-house-terminal-completion-settlement-resume-authority-domain
 ```
 
 ```txt
-WebGLContextLifecycleEvent
-  -> bind surface, context and stage generations
-  -> retire the predecessor render-submission lease
-  -> mark presentation lost and suspend stage-dependent commands
-  -> show a WebGL-independent fallback
-  -> prepare the complete successor resource graph
-  -> validate capabilities, scene descriptor and viewport
-  -> execute one recovery probe
-  -> atomically adopt all participants or dispose all candidates
-  -> publish WebGLStageRecoveryResult
-  -> resume one accepted render-submission generation
-  -> publish FirstRecoveredStageFrameAck
+TerminalCompletionCommand
+  -> bind manifest, story and final-scene revisions
+  -> validate completion evidence
+  -> reject premature, stale or duplicate work
+  -> prepare one immutable TerminalOutcomeCandidate
+  -> settle outcome, route, Notebook and terminal controls atomically
+  -> stage, read back and promote a durable save generation
+  -> publish TerminalOutcomeSettlementResult
+  -> project terminal presentation from accepted outcome state
+  -> resume the same outcome after reload
+  -> publish FirstTerminalOutcomeFrameAck
 ```
 
 ## Validation boundary
 
-Documentation and machine audit state changed. Runtime JavaScript, HTML, CSS, story descriptors, persistence, rendering behavior, package scripts, dependencies and deployment did not change. No source, browser, build or Pages recovery fixture was executed.
+Documentation and machine audit state changed. Runtime JavaScript, HTML, CSS, story content, persistence behavior, rendering, dependencies, scripts and deployment did not change. No browser, build or Pages terminal fixture was executed.
