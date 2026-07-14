@@ -1,87 +1,78 @@
-# Next steps: The Unmapped House terminal completion settlement and resume
+# Next steps: The Unmapped House page lifecycle suspension and resume
 
-**Timestamp:** `2026-07-14T06-00-41-04-00`  
+**Timestamp:** `2026-07-14T11-59-13-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-The smallest safe implementation is to add terminal outcome state and a pure settlement reducer before changing interlude rendering. Terminal presentation should then become a projection of accepted state and be restorable after reload.
+The smallest safe implementation is to place RAF, lifecycle listeners, visual time and pending interlude timers behind one controller. Do not change story progression first.
 
 ## Plan ledger
 
-**Goal:** make final completion durable, idempotent, resumable and visibly provable without broad runtime restructuring.
+**Goal:** add deterministic suspension and restoration through targeted ownership changes rather than a broad renderer or story rewrite.
 
-- [ ] Add `storyManifestRevision` and terminal outcome schema version.
-- [ ] Add stable `TerminalOutcomeId`, `OutcomeRevision` and `SettlementCommandId`.
-- [ ] Add `TerminalCompletionCommand` with expected story-state revision.
-- [ ] Validate final scene and all required clue evidence.
-- [ ] Return `AlreadySettled` for duplicate completion.
-- [ ] Prepare outcome, route, Notebook and terminal controls as one candidate.
-- [ ] Commit the candidate atomically to in-memory story state.
-- [ ] Stage, read back and promote the durable save generation.
-- [ ] Publish `TerminalOutcomeSettlementResult`.
-- [ ] Derive interlude title, text and controls from accepted outcome state.
-- [ ] Replace generic Continue with authored terminal commands.
-- [ ] Admit and reconstruct the terminal route during boot.
-- [ ] Publish `TerminalResumeResult`.
-- [ ] Publish `FirstTerminalOutcomeFrameAck`.
+- [ ] Add `DocumentGeneration` and `LifecycleAttemptId`.
+- [ ] Normalize `visibilitychange`, `pagehide`, `pageshow`, `freeze` and `resume` into `PageLifecycleEvent`.
+- [ ] Retain the active RAF request ID and issue one `RenderLeaseId`.
+- [ ] Add idempotent `suspend()` and `resume()` methods to the stage host.
+- [ ] Choose and implement `PauseVisualTime` as the default clock policy.
+- [ ] Give every pending completion interlude one timer identity and remaining-delay checkpoint.
+- [ ] Suspend stage-dependent canvas and DOM inspection admission.
+- [ ] Checkpoint accepted story truth without granting clues or advancing scenes.
+- [ ] Revalidate renderer, context, target, scene and viewport on restore.
+- [ ] Prevent duplicate listener installation and duplicate RAF loops.
+- [ ] Rebuild only invalid rendering participants.
+- [ ] Publish `PageLifecycleResult` and participant receipts.
+- [ ] Render one guarded resumed frame.
+- [ ] Publish `FirstResumedStageFrameAck` before interaction resumes.
 - [ ] Add source, browser, production-artifact and Pages fixtures.
 
 ## Ordered implementation
 
-### 1. Extend canonical state
+### 1. Own the frame loop
 
-Add a nullable terminal outcome document to the canonical story state. Keep the outcome small, versioned and derived only from accepted final-scene completion.
+Change `animate()` into a start/stop loop with a retained request ID and generation token. Stale callbacks must exit without scheduling another frame.
 
-### 2. Make settlement pure
+### 2. Normalize browser lifecycle
 
-Implement a reducer that receives the current story state, manifest and command, then returns either a rejected result or a detached settlement candidate. Do not touch DOM or storage inside the reducer.
+Install one listener group that turns platform events into typed lifecycle inputs. Track `pagehide/pageshow` persistence and event ordering.
 
-### 3. Commit once
+### 3. Make time explicit
 
-Adopt the outcome, terminal route, Notebook entry and control manifest together. Duplicate commands must return the accepted outcome without another mutation.
+Pause visual elapsed time while suspended. Resume from the same shader-time position unless a later authored policy selects wall-time carry.
 
-### 4. Verify durability
+### 4. Checkpoint pending interludes
 
-Write a staged save document, read it back, compare its fingerprint and only then report `DurableCommitted`. Preserve a degraded but visible completion result when storage is unavailable.
+Replace anonymous completion timeouts with identified timers. Store scene ID, story revision, due time and remaining delay. Ignore callbacks from superseded scene or document generations.
 
-### 5. Project from state
+### 5. Revalidate before reuse
 
-Render the terminal interlude from the outcome document on both live completion and boot resume. Generic scene Continue must not remain active when no successor exists.
+On restoration, verify the WebGL context, renderer, render target, current scene graph, viewport and listener ownership. Rebuild only failed participants.
 
-### 6. Prove the first frame
+### 6. Admit interaction after proof
 
-The acknowledgement must cite:
-
-```txt
-outcome ID and revision
-story state revision
-story manifest revision
-final scene ID
-save generation and durability status
-terminal projection revision
-terminal control manifest revision
-viewport revision
-frame sequence
-```
+Keep stage-dependent interactions disabled until one frame cites the accepted document, stage, context, scene, story, viewport, clock and render-lease revisions.
 
 ## Required fixtures
 
 ```txt
-premature completion
-valid final completion
-duplicate completion
-stale command
-storage denied
-readback mismatch
-reload before first terminal frame
-reload after durable completion
-malformed and incompatible outcome documents
-repeated terminal controls
-reset from terminal route
+hide before first frame
+hide during normal play
+hide before and after interlude scheduling
+freeze/resume
+pagehide persisted false
+BFCache pagehide/pageshow persisted true
+repeated hide/show cycles
+context survives restore
+context fails restore
+viewport changes while hidden
+stale timer after scene change
+duplicate lifecycle events
+superseded restore attempt
+first-frame timeout
 source, production artifact and Pages origins
 ```
 
 ## Do not combine yet
 
-Keep save admission, scene-transition composition, viewport, provider admission, hotspot picking, WebGL recovery and ordinary interlude timing as bounded authorities. Terminal settlement consumes their accepted identities and results.
+Keep terminal outcome settlement, WebGL context recovery, save admission, scene transition, viewport, provider admission, hotspot picking and stage resource lifecycle as retained authorities. Lifecycle coordination consumes their identities and receipts.
