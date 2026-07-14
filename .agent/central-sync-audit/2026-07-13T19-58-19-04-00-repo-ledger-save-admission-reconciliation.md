@@ -4,7 +4,7 @@
 
 ## Summary
 
-This run selected `TheUnmappedHouse` by the oldest eligible central timestamp and added a documentation-only story-save schema and manifest-admission audit. No other Publish repository is in scope.
+This run selected `TheUnmappedHouse` by the oldest eligible central timestamp, completed a documentation-only story-save schema and manifest-admission audit, and synchronized the central ledger and internal change log. No other Publish repository was modified.
 
 ## Plan ledger
 
@@ -16,17 +16,17 @@ This run selected `TheUnmappedHouse` by the oldest eligible central timestamp an
 - [x] Verify repository heads match recorded documentation heads.
 - [x] Add the timestamped repo-local tracker and audit family.
 - [x] Refresh root `.agent` state.
-- [ ] Record the final repo-local documentation head in `LuminaryLabs-Dev/LuminaryLabs`.
-- [ ] Add the paired central internal change log.
+- [x] Record the final repo-local documentation head in `LuminaryLabs-Dev/LuminaryLabs`.
+- [x] Add the paired central internal change log.
 
-## Central files
+## Central files completed
 
 ```txt
-update repo-ledger/LuminaryLabs-Publish/TheUnmappedHouse.md
-add internal-change-log/2026-07-13T19-58-19-04-00-the-unmapped-house-story-save-schema-manifest-admission.md
+updated repo-ledger/LuminaryLabs-Publish/TheUnmappedHouse.md
+added internal-change-log/2026-07-13T19-58-19-04-00-the-unmapped-house-story-save-schema-manifest-admission.md
 ```
 
-## Findings to publish
+## Published findings
 
 ```txt
 successfully parsed localStorage data is shallow-merged without shape validation
@@ -40,4 +40,4 @@ syntax checks do not execute save admission
 
 ## Boundary
 
-Central tracking must record this as documentation-only and must not claim runtime remediation, migration safety, quarantine, first-frame proof or deployment readiness.
+Central tracking records this as documentation-only and makes no runtime remediation, migration safety, quarantine, first-frame proof or deployment-readiness claim.
