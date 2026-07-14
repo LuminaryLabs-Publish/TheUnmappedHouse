@@ -1,123 +1,128 @@
-# Known gaps: The Unmapped House render-surface viewport authority
+# Known gaps: The Unmapped House story-save schema and manifest admission
 
-**Timestamp:** `2026-07-13T14-58-07-04-00`  
+**Timestamp:** `2026-07-13T19-58-19-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-The render surface has no shared viewport identity, preparation barrier, atomic commit, rollback result or visible-frame receipt. CSS, DOM, renderer, target, camera and pointer consumers can observe different size generations.
+Raw localStorage content has no schema, manifest or identifier admission boundary. Parseable values can become live state and durable writeback even when their shapes or authored references are invalid.
 
 ## Plan ledger
 
-**Goal:** make every viewport divergence explicit and testable.
+**Goal:** make every save classification, migration, quarantine, adoption and visible-state mismatch explicit and testable.
 
-- [x] Trace CSS and JavaScript frame ownership.
-- [x] Trace drawing-buffer, render-target and camera mutation order.
-- [x] Identify allocation, zero-size and pointer-correlation gaps.
+- [x] Trace raw read, parse, merge, scene resolution and writeback.
+- [x] Trace every persisted field to its consumers.
+- [x] Identify manifest compatibility and visible-scene gaps.
 - [x] Define the authority and result contract.
 - [ ] Implement and execute it.
 
-## Identity gaps
+## Identity and compatibility gaps
 
 ```txt
-SurfaceId: absent
-LifecycleGeneration: absent
-ViewportRevision: absent
-MeasurementSequence: absent
-FrameSequence correlation: absent
-expected predecessor revision: absent
+StorySchemaVersion: absent
+StoryManifestFingerprint: absent
+StoryRunId: absent
+SaveRevision at admission: absent
+raw document fingerprint: absent
+canonical state fingerprint: absent
+startup generation: absent
+admitted scene generation: absent
 ```
 
-## Measurement and policy gaps
+## Shape gaps
 
 ```txt
-actual host-box measurement: absent
-ResizeObserver authority: absent
-zero-size deferral: absent
-visibility classification: absent
-explicit DPR policy revision: absent
-total-pixel budget: absent
-GPU maximum-dimension admission: absent
-quality fallback result: absent
+top-level object admission: absent
+sceneId validation: absent
+clues array and ID validation: absent
+flags plain-record policy: absent
+inspected nested-record and hotspot validation: absent
+route array and scene validation: absent
+log array, string and bound validation: absent
+unknown-field policy: absent
 ```
 
-## Preparation and commit gaps
+## Migration and containment gaps
 
 ```txt
-detached DOM frame candidate: absent
-detached renderer-buffer candidate: absent
-detached render-target candidate: absent
-detached camera candidate: absent
-detached pointer-transform candidate: absent
-participant preparation receipts: absent
-atomic participant adoption: absent
-zero-mutation rejection: absent
-rollback result: absent
-stale or superseded rejection: absent
-terminal ViewportCommitResult: absent
+save classification: absent
+explicit version migration graph: absent
+identifier remap/drop/fail policy: absent
+migration receipts: absent
+incompatible-save quarantine: absent
+malformed-save quarantine: absent
+quarantine retry policy: absent
+canonical fallback result: absent
 ```
 
-## Reachable divergence windows
+## Reachable failures and divergence
 
 ```txt
-render-target resize failure
-  -> DOM frame and renderer may already use successor dimensions
-  -> target may remain predecessor or fail
-  -> no rollback result
+unknown scene ID
+  -> currentScene falls back to scenes[0]
+  -> state.sceneId remains unknown
+  -> first scene is visible
+  -> invalid ID is rewritten
 
-rapid resize
-  -> anonymous callbacks mutate shared participants
-  -> no revision rejects stale or superseded work
+wrong-type clues
+  -> string can use substring includes semantics
+  -> object/null can fail includes or push
 
-hidden or zero-sized host
-  -> dimensions clamp to one pixel
-  -> surface is treated as valid instead of deferred
+wrong-type inspected
+  -> nested lookup or assignment can fail on interaction
 
-pointer event during transition
-  -> canvas rectangle can cite one size
-  -> camera or target can cite another size
-  -> no viewport revision ties the pick to a committed frame
+wrong-type route
+  -> nextScene can fail at includes or push
+
+wrong-type log
+  -> inspection can fail at unshift or slice
+
+story-data revision
+  -> orphan scene/hotspot/clue IDs remain admitted
+  -> no migration or incompatibility result
 ```
 
-## Presentation gaps
+## Commit and presentation gaps
 
 ```txt
-committed viewport readback: absent
-drawing-buffer and target parity diagnostics: absent
-viewport provenance in frame: absent
-first viewport frame acknowledgement: absent
-last complete viewport recovery: absent
-visible Notebook viewport diagnostics: absent
+canonical startup candidate: absent
+atomic state/currentScene adoption: absent
+terminal StorySaveAdmissionResult: absent
+canonical-only writeback: absent
+admission diagnostics: absent
+stage/UI/Notebook state envelope: absent
+first admitted-story frame acknowledgement: absent
+interaction readiness lease: absent
 ```
 
 ## Validation gaps
 
 ```txt
-host measurement fixtures: absent
-zero-size restoration fixture: absent
-DPR transition fixture: absent
-pixel-budget fixture: absent
-GPU-limit fixture: absent
-rapid-resize supersession fixture: absent
-allocation failure and rollback fixture: absent
-pointer correlation fixture: absent
-browser visible-frame fixture: absent
-built-output smoke: absent
-Pages viewport smoke: absent
+pure parser fixtures: absent
+field-shape fixtures: absent
+authored-ID fixtures: absent
+manifest fingerprint fixtures: absent
+migration fixtures: absent
+quarantine fixtures: absent
+canonical writeback fixture: absent
+first interaction after fallback fixture: absent
+first visible admitted-scene fixture: absent
+built-output and Pages fixtures: absent
 ```
 
 ## Retained independent gaps
 
 ```txt
+viewport authority
 scene-transition composition
 renderer-provider admission
 hotspot input and raycast picking
-browser save commit and reset convergence
+durable save commit/reset convergence
 interlude progression and modal focus
 stage resource lifecycle and runtime stop
-Notebook channel classification
 ```
 
 ## Completion boundary
 
-Do not claim viewport reliability because normal desktop resizing appears correct. Completion requires actual host measurement, zero-size deferral, bounded allocation, participant preparation, atomic adoption or rollback, stale-work rejection, pointer correlation, committed diagnostics and a first visible frame tied to the accepted viewport revision.
+Do not claim persistence compatibility because malformed JSON falls back safely. Completion requires strict shape and identifier validation, a state-relevant manifest fingerprint, explicit migrations, quarantine, canonical adoption/writeback, interaction gating and a first visible scene tied to the admitted state.
