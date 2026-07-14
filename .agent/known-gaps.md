@@ -1,129 +1,106 @@
-# Known gaps: The Unmapped House WebGL context and stage recovery
+# Known gaps: The Unmapped House terminal completion settlement and resume
 
-**Timestamp:** `2026-07-14T01-00-28-04-00`  
+**Timestamp:** `2026-07-14T06-00-41-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-The application has no explicit lifecycle boundary joining WebGL context events, render submission, stage resources, story interaction, fallback presentation and recovered-frame evidence. Context loss can therefore leave presentation truth unknown while story commands remain available.
+Final completion has no canonical outcome state, durable settlement result, resume path or visible-frame proof. The player can reload into an already-complete final scene with no way to recover the terminal interlude.
 
 ## Plan ledger
 
-**Goal:** make every context event, readiness change, interaction lease, resource candidate, adoption result and visible recovery outcome explicit and testable.
+**Goal:** make every terminal identity, settlement participant, storage result, control route and visible outcome explicit and testable.
 
-- [x] Trace renderer construction, stage loading, pointer input and RAF submission.
-- [x] Confirm context-loss and restoration handlers are absent.
-- [x] Identify interaction and visible-state divergence.
-- [x] Define the authority, resources, results and proof.
+- [x] Trace final completion and reload.
+- [x] Confirm terminal DOM copy is not saved.
+- [x] Confirm boot does not reconstruct terminal presentation.
+- [x] Define the missing authority and proof.
 - [ ] Implement and execute it.
 
 ## Identity gaps
 
 ```txt
-SurfaceId: absent
-WebGLContextGeneration: absent
-StageResourceGeneration: absent
-RenderSubmissionGeneration: absent
-RecoveryAttemptId: absent
-RecoveryProbeFrameId: absent
-RecoveredFrameSequence: absent
+StoryManifestRevision: absent
+TerminalOutcomeId: absent
+TerminalOutcomeSchemaVersion: absent
+TerminalOutcomeRevision: absent
+SettlementCommandId: absent
+DurableSaveGeneration: absent
+TerminalProjectionRevision: absent
+TerminalControlManifestRevision: absent
+FirstTerminalOutcomeFrameId: absent
 ```
 
-## Lifecycle and admission gaps
+## Settlement gaps
 
 ```txt
-webglcontextlost event admission: absent
-webglcontextrestored event admission: absent
-duplicate event rejection: absent
-stale generation rejection: absent
-render-submission retirement receipt: absent
-presentation readiness state: absent
-stage-interaction lease: absent
-bounded retry policy: absent
-terminal WebGLStageRecoveryResult: absent
+final completion command: absent
+expected story-state revision: absent
+premature completion rejection: absent
+duplicate completion result: absent
+immutable outcome candidate: absent
+atomic outcome/route/Notebook/control adoption: absent
+terminal settlement result: absent
 ```
 
-## Fallback and interaction gaps
+## Persistence and resume gaps
 
 ```txt
-WebGL-independent fallback: absent
-fallback visibility result: absent
-DOM hotspot button suspension: absent
-canvas hotspot suspension: absent
-continue-command suspension: absent
-scene-dependent persistence gate: absent
-fallback retirement receipt: absent
+terminal outcome in saved state: absent
+staged durable write: absent
+readback fingerprint verification: absent
+storage failure classification: absent
+terminal outcome admission on boot: absent
+terminal route reconstruction: absent
+terminal resume result: absent
 ```
 
-## Resource reconstruction gaps
+## Interaction gaps
 
 ```txt
-complete stage-resource manifest: absent
-renderer recovery candidate: absent
-render-target recovery candidate: absent
-stage shader preparation receipt: absent
-post shader preparation receipt: absent
-scene geometry reconstruction receipt: absent
-hotspot volume reconstruction receipt: absent
-camera and light reconstruction receipt: absent
-viewport recovery receipt: absent
-candidate disposal closures: absent
+route-specific terminal controls: absent
+generic Continue retirement: absent
+repeated terminal command handling: absent
+terminal reset command result: absent
+terminal exit command result: absent
+focus restoration on terminal resume: absent
 ```
 
-## Adoption and rollback gaps
+## Reachable dead end
 
 ```txt
-recovery preparation barrier: absent
-recovery probe: absent
-atomic successor adoption: absent
-partial-adoption prevention: absent
-candidate rollback result: absent
-predecessor failed-state preservation: absent
-single resumed RAF lease: absent
-```
-
-## Reachable divergence
-
-```txt
-context lost
-  -> renderer visibility becomes unavailable or unknown
-  -> DOM hotspot buttons remain enabled
-  -> inspectHotspot can grant clues and save progress
-  -> Notebook can advance beyond the last proven stage frame
-
-context restored
-  -> browser/Three.js may perform internal work
-  -> application publishes no context or stage generation
-  -> no evidence joins current scene, viewport and visible canvas
-
-recovery preparation fails
-  -> no typed failure or candidate cleanup result
-  -> no stable fallback policy
+complete final scene
+  -> open interlude
+  -> press Continue
+  -> terminal copy appears
+  -> no terminal save
+  -> reload
+  -> final scene remains complete
+  -> interlude hidden
+  -> every hotspot already inspected
+  -> re-read branch returns before completion scheduling
+  -> terminal UI cannot be recovered
 ```
 
 ## Visible proof gaps
 
 ```txt
-recovery probe result: absent
-accepted recovered-stage envelope: absent
-first recovered visible-frame acknowledgement: absent
-scene-revision correlation: absent
-viewport-revision correlation: absent
-fallback-to-frame correlation: absent
-interaction-resume correlation: absent
+terminal projection receipt: absent
+outcome-to-save correlation: absent
+outcome-to-final-scene correlation: absent
+terminal control revision correlation: absent
+first terminal visible-frame acknowledgement: absent
+reloaded terminal visible-frame acknowledgement: absent
 ```
 
 ## Validation gaps
 
 ```txt
-browser context-loss fixture: absent
-loss-before-first-frame fixture: absent
-loss-during-scene fixture: absent
-loss-during-interlude fixture: absent
-interaction-suspension fixture: absent
-resource-preparation failure fixtures: absent
-probe and rollback fixtures: absent
-first recovered-frame fixture: absent
+final completion model fixture: absent
+duplicate and stale command fixtures: absent
+storage failure and readback fixtures: absent
+browser completion/reload fixture: absent
+terminal control fixture: absent
 production-artifact fixture: absent
 Pages-origin fixture: absent
 ```
@@ -137,10 +114,10 @@ scene-transition composition
 renderer-provider admission
 hotspot input and picking
 save commit/reset convergence
-interlude progression and focus
-normal stage resource lifecycle and shutdown
+ordinary interlude progression and focus
+stage resource lifecycle and WebGL recovery
 ```
 
 ## Completion boundary
 
-Do not claim WebGL recovery because a restored browser event occurs or Three.js may rebuild internal state. Completion requires application-owned context identity, render-submission retirement, visible fallback, interaction suspension, complete resource preparation, probe, atomic adoption or rollback and a first visible frame tied to the accepted scene and viewport revisions.
+Do not claim terminal completion is implemented because prototype-complete copy appears. Completion requires one accepted outcome identity, idempotent settlement, durable readback or explicit degraded status, reload reconstruction, route-specific terminal controls and a first visible frame tied to the accepted outcome revision.
