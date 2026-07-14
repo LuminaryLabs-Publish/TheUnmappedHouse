@@ -1,91 +1,80 @@
-# Current audit: The Unmapped House render-surface viewport authority
+# Current audit: The Unmapped House story-save schema and manifest admission
 
-**Timestamp:** `2026-07-13T14-58-07-04-00`  
+**Timestamp:** `2026-07-13T19-58-19-04-00`  
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`  
-**Status:** `render-surface-viewport-authority-audited`  
+**Status:** `story-save-schema-manifest-admission-authority-audited`  
 **Branch:** `main`
 
 ## Summary
 
-The current audit isolates render-surface viewport ownership. The page has two aspect-frame authorities, CSS and imperative JavaScript, while `StageKit.resize()` samples `innerWidth`, `innerHeight`, and DPR and then mutates the DOM frame, WebGL drawing buffer, offscreen target, and camera sequentially without a shared revision or terminal result.
+Startup trusts any successfully parsed localStorage value. The parsed value is shallow-merged over initial state, used by story reducers and immediately rewritten without schema version, field-shape validation, authored-identifier validation, manifest fingerprint, migration or quarantine.
 
 ## Plan ledger
 
-**Goal:** make every host-size or DPR transition explicit, bounded, atomic and correlated with the first visible frame that uses it.
+**Goal:** convert raw browser persistence into one canonical story state before interaction or visible projection begins.
 
-- [x] Compare the complete Publish inventory with the central ledger.
-- [x] Confirm no higher-priority new or undocumented repository exists.
-- [x] Select only `TheUnmappedHouse` by the oldest documented timestamp.
-- [x] Inspect layout, viewport, renderer, target, camera, pointer and frame paths.
-- [x] Identify the interaction loop, domains, kits and services.
-- [x] Define the required parent authority and participant contract.
-- [x] Add timestamped architecture, render, gameplay, interaction, viewport and deploy audits.
+- [x] Compare the complete Publish inventory and central ledger.
+- [x] Select only `TheUnmappedHouse` under the oldest eligible rule.
+- [x] Inspect state boot, scene resolution, clue/inspection reducers, route/log reducers, writeback and validation.
+- [x] Identify the complete interaction loop, domains, kits and services.
+- [x] Define the parent authority, candidate and terminal results.
+- [x] Add timestamped architecture, render, gameplay, interaction, save-admission, deploy and central-sync audits.
 - [x] Change documentation only.
-- [ ] Implement and run executable viewport fixtures.
+- [ ] Implement and run executable save-admission fixtures.
 
 ## Complete interaction loop
 
 ```txt
 boot
-  -> index.html creates #app, #aspect-frame, #stage, story UI and interlude
-  -> game.js constructs StageKit
-  -> StageKit creates WebGL renderer, scene, camera and offscreen target
-  -> resize() samples window dimensions and DPR
-  -> applyAspectFrame() mutates the DOM frame
-  -> renderer and render target sizes mutate independently
-  -> loadScene() builds the authored scene
-  -> recursive RAF renders stage then post pass
+  -> localStorage.getItem(SAVE_KEY)
+  -> JSON.parse(raw || "{}")
+  -> shallow merge parsed fields over createInitialState()
+  -> resolve currentScene by saved sceneId or scenes[0] fallback
+  -> construct and load StageKit scene
+  -> render UI and Notebook
+  -> saveState() rewrites the admitted object
 
-window resize
-  -> anonymous window listener calls resize()
-  -> computeAspectFrame(innerWidth, innerHeight)
-  -> clamp dimensions to at least 1
-  -> write left, top, width and height to #aspect-frame
-  -> update renderer pixel ratio and drawing buffer
-  -> resize offscreen target
-  -> update camera projection
-  -> publish no ViewportCommitResult
+inspection
+  -> state.inspected[currentScene.id]
+  -> state.clues.includes()/push()
+  -> state.log.unshift()/slice()
+  -> completion check
+  -> render and save
 
-pointer interaction
-  -> read canvas.getBoundingClientRect()
-  -> normalize pointer against whichever canvas box is currently visible
-  -> raycast with current camera
-  -> dispatch hotspot or hover label
+continue
+  -> route.includes()/push()
+  -> scene and UI transition
+  -> save
 
-observation
-  -> Notebook reports story state only
-  -> no viewport revision, drawing-buffer size, render-target size, measurement source or first matching frame acknowledgement
+content revision
+  -> authored IDs can change
+  -> old save has no schema or manifest evidence
+  -> stale IDs are accepted or fail later
 ```
 
 ## Source ownership
 
 | Source | Current responsibilities |
 |---|---|
-| `src/styles.css` | CSS window-fit policy and responsive story overlay. |
-| `src/aspect-frame.js` | JavaScript window-fit policy and frame style mutation. |
-| `src/stage-kit.js` | DPR, renderer size, render-target size, camera projection, pointer mapping and RAF. |
-| `src/game.js` | Story and visible Notebook state, without viewport diagnostics. |
-| `index.html` | Fixed surface mounts and visible UI. |
+| `src/game.js` | initial state, raw save parse/merge, story reducers, scene fallback, UI, writeback and reset. |
+| `src/story-data.js` | current scene, hotspot, clue, completion and presentation manifest. |
+| `src/stage-kit.js` | visible stage and hotspot projection for the resolved scene. |
+| `package.json` | syntax-only checks. |
 
 ## Domains in use
 
 ```txt
-browser document, fixed shell and CSS layout
-authored story, scene, hotspot and render descriptors
+browser document, shell and lifecycle
+story manifest and descriptor identity
+story-state schema and canonical normalization
+scene route and current-scene resolution
 inspection, clue, route and Notebook ledgers
-completion, interlude and terminal progression
-browser persistence and destructive reset
-DOM pointer, click, keyboard, focus and modal interaction
-external ES-module provider resolution
-host-box measurement and fixed 16:9 fitting
-DPR sampling, drawing-buffer sizing and pixel allocation
-Three.js WebGL rendering and scene graph resources
-camera, fog, shader materials and procedural geometry
-offscreen render target and post-processing
-hotspot volumes, raycast picking, hover and camera parallax
-recursive RAF and callback lifetime
-viewport preparation, atomic adoption, rollback and visible proof
-syntax validation, local serving and GitHub Pages deployment
+interlude and terminal progression
+localStorage read, parse, write, reset and quarantine
+schema version, manifest fingerprint and migration
+DOM pointer, click and keyboard interaction
+Three.js scene, hotspot and visible-frame projection
+syntax validation, local serving and Pages deployment
 repo-local and central audit tracking
 ```
 
@@ -93,83 +82,79 @@ repo-local and central audit tracking
 
 | Kit | Offered services |
 |---|---|
-| `static-page-shell-kit` | stage mount, story panel, hotspot list, Notebook, hover label, interlude. |
-| `aspect-frame-kit` | fixed 1920x1080 design aspect, window-fit calculation, DOM frame placement. |
-| `story-data-kit` | three scene descriptors, nine hotspots, clue grants, completion rules, camera descriptors, material descriptors, post descriptors. |
-| `browser-story-runtime-kit` | state boot, scene resolution, inspection, continue, reset, UI projection, persistence. |
-| `scene-route-kit` | scene ID resolution, authored-order advancement. |
-| `inspection-ledger-kit` | scene-keyed inspected hotspot state. |
-| `clue-ledger-kit` | clue grant, clue query. |
-| `notebook-log-kit` | prepend narrative log, bounded log retention. |
-| `interlude-timer-kit` | delayed completion interlude scheduling. |
-| `terminal-route-kit` | prototype-complete copy projection. |
-| `localstorage-save-kit` | parse, shallow merge, replace, delete save. |
-| `stage-render-kit` | WebGL renderer, scene, camera, lights, offscreen target, callbacks, recursive RAF. |
-| `scene-descriptor-consumer-kit` | camera construction, geometry construction, material construction, hotspot construction, post configuration. |
-| `anime-material-kit` | procedural shader materials, time uniform updates. |
-| `post-process-kit` | grain, vignette, chromatic shift, distortion, scan lines. |
-| `hotspot-volume-kit` | invisible raycast volumes, hotspot descriptor attachment. |
-| `hotspot-picking-kit` | canvas coordinate normalization, raycast, hotspot dispatch. |
-| `camera-parallax-kit` | pointer-driven fixed-camera offsets. |
-| `render-target-composition-kit` | offscreen stage pass, post pass to canvas, render target resizing. |
-| `debug-json-projection-kit` | story-field serialization, visible Notebook projection. |
-| `package-syntax-check-kit` | Node syntax checks over local JavaScript. |
-| `static-pages-deploy-kit` | repository-root artifact upload, Pages deployment on main. |
-| `repo-local-agent-ledger-kit` | root pointers, timestamped audit records. |
-| `central-ledger-sync-kit` | central selection mirror, central findings history. |
+| `static-page-shell-kit` | stage mount, story panel, hotspot list, Notebook, hover label and interlude. |
+| `aspect-frame-kit` | fixed design aspect, frame calculation and DOM placement. |
+| `story-data-kit` | scenes, hotspots, clue grants, completion, camera, materials and post descriptors. |
+| `browser-story-runtime-kit` | state boot, scene resolution, inspection, continue, reset, UI and persistence calls. |
+| `scene-route-kit` | scene resolution and authored-order advancement. |
+| `inspection-ledger-kit` | scene-keyed inspected-hotspot state. |
+| `clue-ledger-kit` | clue grant and query. |
+| `notebook-log-kit` | narrative log mutation and bounded retention. |
+| `interlude-timer-kit` | delayed completion interlude. |
+| `terminal-route-kit` | prototype-complete projection. |
+| `localstorage-save-kit` | parse, shallow merge, replace and delete save. |
+| `stage-render-kit` | WebGL renderer, scene, camera, target, callbacks and RAF. |
+| `scene-descriptor-consumer-kit` | camera, geometry, material, hotspot and post construction. |
+| `anime-material-kit` | procedural shader materials and time updates. |
+| `post-process-kit` | grain, vignette, chromatic shift, distortion and scan lines. |
+| `hotspot-volume-kit` | invisible raycast volumes and descriptors. |
+| `hotspot-picking-kit` | coordinate normalization, raycast and dispatch. |
+| `camera-parallax-kit` | pointer-driven camera offsets. |
+| `render-target-composition-kit` | offscreen stage pass and post pass. |
+| `debug-json-projection-kit` | story-state serialization and Notebook projection. |
+| `package-syntax-check-kit` | Node syntax checks. |
+| `static-pages-deploy-kit` | static Pages delivery from `main`. |
+| `repo-local-agent-ledger-kit` | root and timestamped audit records. |
+| `central-ledger-sync-kit` | central selection and findings mirror. |
 
 ```txt
 implemented source-backed kits: 24
-planned viewport authority kits: 26
+planned schema-admission coordinating kits: 22
 ```
 
 ## Concrete findings
 
-### CSS and JavaScript both own the frame
+### Shape validation is absent
 
-`src/styles.css` defines the 16:9 frame using `vw` and `vh`. `applyAspectFrame()` then overwrites the same left, top, width and height fields from `innerWidth` and `innerHeight`. The two policies are mathematically similar but have no shared revision, source identity or convergence result.
+`JSON.parse` success is treated as sufficient. Wrong-type `clues`, `inspected`, `route` and `log` values can fail later at `includes`, `push`, `unshift`, `slice` or nested assignment.
 
-### The actual host box is not measured
+### Scene fallback is split from state repair
 
-`StageKit.resize()` fits against global window dimensions rather than measuring `#app` or the render host. Embedding, browser UI changes, transformed ancestors, split panes or future editor hosts have no authoritative measurement path.
+An unknown `state.sceneId` falls back only for `currentScene`. The visible first scene and debug projection can disagree with the state object that is immediately rewritten.
 
-### Zero size becomes a one-pixel surface
+### Manifest compatibility is absent
 
-`computeAspectFrame()` clamps each dimension to at least `1`. A hidden, detached or genuinely zero-sized host is therefore treated as a valid one-pixel viewport instead of being deferred with a typed zero-size result.
+No current authored scene, hotspot or clue identifier set is fingerprinted. Orphan IDs and prior content layouts have no explicit acceptance, remap, drop or rejection policy.
 
-### Allocation is capped by DPR only
+### Migration and quarantine are absent
 
-DPR is capped at `2`, but there is no total-pixel budget, maximum texture-size admission or quality fallback. The renderer drawing buffer and offscreen render target can both allocate large surfaces.
+There is no schema version, migration graph, incompatible-save quarantine, malformed-state classification or typed startup result.
 
-### Participants mutate sequentially
+### Proof is absent
 
-DOM frame styles, renderer pixel ratio, renderer size, render-target size and camera projection update one after another. There is no detached candidate, participant receipt, atomic adoption or rollback if a later participant fails.
-
-### Pointer and visible-frame provenance are absent
-
-Pointer normalization reads the current canvas rectangle while camera and target state may have been changed by a resize. Frames, hotspot picks and Notebook diagnostics carry no viewport revision or first-visible-frame acknowledgement.
+Syntax checks do not execute parsing, validation, migration, fallback, first interaction or first visible scene behavior.
 
 ## Required authority
 
 ```txt
-the-unmapped-house-render-surface-viewport-authority-domain
+the-unmapped-house-story-save-schema-manifest-admission-authority-domain
 ```
 
 ```txt
-ViewportChangeCommand
-  -> bind SurfaceId, LifecycleGeneration and expected ViewportRevision
-  -> measure the actual host CSS box
-  -> sample DPR, visibility and GPU limits
-  -> apply the fixed 16:9 policy and total-pixel budget
-  -> reject invalid, zero, stale, duplicate or superseded candidates
-  -> prepare DOM frame, drawing buffer, render target, camera and pointer-transform candidates
-  -> collect participant preparation receipts
-  -> atomically adopt every participant or preserve every predecessor
-  -> publish one terminal ViewportCommitResult
-  -> render a FrameViewportEnvelope
-  -> publish revisioned readback and FirstViewportFrameAck
+StorySaveAdmissionCommand
+  -> bind schema version and current manifest fingerprint
+  -> read and fingerprint raw storage evidence
+  -> parse an untrusted candidate
+  -> validate shape and authored identifiers
+  -> classify current, migratable, incompatible, malformed or empty
+  -> migrate or quarantine without live mutation
+  -> normalize one canonical StoryStateCandidate
+  -> atomically adopt state and scene identity
+  -> publish StorySaveAdmissionResult
+  -> project matching stage, UI and Notebook revisions
+  -> publish FirstAdmittedStoryFrameAck
 ```
 
 ## Validation boundary
 
-Documentation and machine audit state changed. Runtime JavaScript, HTML, CSS, story descriptors, provider source, WebGL behavior, persistence, package scripts, dependencies and deployment did not change. No browser or Pages viewport fixture was executed.
+Documentation and machine audit state changed. Runtime JavaScript, HTML, CSS, story descriptors, persistence behavior, rendering, package scripts, dependencies and deployment did not change. No source, browser, build or Pages save-admission fixture was executed.
