@@ -1,100 +1,104 @@
-# Next steps: The Unmapped House render-surface viewport authority
+# Next steps: The Unmapped House story-save schema and manifest admission
 
-**Timestamp:** `2026-07-13T14-58-07-04-00`  
+**Timestamp:** `2026-07-13T19-58-19-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-Build a pure viewport preparation path before changing live DOM or GPU state. The first implementation slice should measure the actual render host, classify zero-size and hidden states, apply an explicit DPR and pixel budget, prepare every participant candidate and adopt the complete set only after validation.
+Build pure schema and manifest-admission functions before changing storage or live reducers. The first implementation slice should classify raw documents, normalize a canonical current state and keep malformed or incompatible values outside the live save key.
 
 ## Plan ledger
 
-**Goal:** eliminate unversioned and partially applied viewport transitions without changing the fixed 16:9 art direction.
+**Goal:** prevent raw persistence values from entering live story state while preserving valid saves and explicit migrations.
 
-- [ ] Add `SurfaceId`, `LifecycleGeneration` and `ViewportRevision`.
-- [ ] Measure the actual host box instead of global window dimensions.
-- [ ] Add `ResizeObserver` as the primary size source with bounded window fallback.
-- [ ] Return `ZeroSizeDeferred` for hidden or zero-area hosts.
-- [ ] Add explicit DPR cap, total-pixel budget and GPU maximum-dimension checks.
-- [ ] Prepare DOM frame, renderer buffer, render target, camera and pointer-transform candidates.
-- [ ] Collect participant preparation receipts.
-- [ ] Atomically adopt all participants or retain all predecessors.
-- [ ] Add rollback for allocation or adoption failures.
-- [ ] Reject stale, duplicate and superseded commands with zero mutation.
-- [ ] Publish terminal `ViewportCommitResult` statuses.
-- [ ] Expose committed viewport readback to diagnostics.
-- [ ] Correlate hotspot picks with the committed viewport revision.
-- [ ] Publish `FirstViewportFrameAck`.
-- [ ] Add source, browser, built-output and Pages fixture matrices.
+- [ ] Define `STORY_SCHEMA_VERSION`.
+- [ ] Derive a stable state-relevant story manifest and fingerprint.
+- [ ] Add a strict `StorySaveEnvelope`.
+- [ ] Implement `parseStorySave(raw)` with typed parse results.
+- [ ] Implement `validateStoryState(candidate, manifest)`.
+- [ ] Validate scene, clue, route and inspected hotspot identifiers.
+- [ ] Normalize duplicates and bounded collections only through explicit policy.
+- [ ] Add versioned pure migrations.
+- [ ] Add incompatible and malformed quarantine storage.
+- [ ] Return one terminal `StorySaveAdmissionResult`.
+- [ ] Adopt state and current scene together.
+- [ ] Persist only the canonical admitted envelope.
+- [ ] Gate interactions until admission and first projection complete.
+- [ ] Publish `FirstAdmittedStoryFrameAck`.
+- [ ] Add source, browser, built-output and Pages fixtures.
 
 ## Ordered implementation
 
-### 1. Define identities
+### 1. Build the manifest
 
 ```txt
-SurfaceId
-LifecycleGeneration
-ViewportRevision
-MeasurementSequence
-FrameSequence
+state-relevant manifest
+  ordered scene IDs
+  hotspot IDs per scene
+  clue grant IDs
+  completion requirements
+  scene progression order
 ```
 
-### 2. Measure and classify
+### 2. Parse without trust
 
-Measure `#app` or the declared render host. Preserve zero as zero. Classify hidden, detached, invalid, unchanged and valid candidates before allocation.
+Return `Empty`, `Parsed`, `Malformed` or `UnsupportedTopLevel` without mutating state or storage.
 
-### 3. Apply policy
+### 3. Validate shape and identity
 
 ```txt
-host CSS box
-  -> fixed 16:9 fit
-  -> DPR policy
-  -> GPU maximum dimensions
-  -> total-pixel budget
-  -> quality fallback or rejection
+sceneId: current scene ID
+clues: unique current clue IDs
+flags: explicit plain-record policy
+inspected: current scene/hotspot boolean records
+route: bounded current scene ID array
+log: maximum eight strings
 ```
 
-### 4. Prepare participants
+### 4. Classify compatibility
 
 ```txt
-DomFrameCandidate
-RendererBufferCandidate
-RenderTargetCandidate
-CameraProjectionCandidate
-PointerTransformCandidate
+Current
+Migratable
+Incompatible
+Malformed
+Empty
 ```
 
-No live participant mutates during preparation.
+### 5. Migrate or quarantine
 
-### 5. Commit or reject
+Migrations must be pure, version-to-version and revalidated. Quarantine must retain raw evidence separately and prevent unchanged invalid data from re-entering startup.
 
-Only a fully prepared participant set may adopt. A failed participant preserves the complete predecessor set and returns one terminal result.
+### 6. Adopt atomically
 
-### 6. Prove the frame
+Story state, `currentScene`, stage scene, UI and Notebook must derive from the same canonical candidate and startup generation.
 
-`FirstViewportFrameAck` must carry surface ID, viewport revision, CSS dimensions, drawing-buffer dimensions, render-target dimensions, DPR and frame sequence.
+### 7. Prove the first frame
 
-### 7. Execute fixtures
+`FirstAdmittedStoryFrameAck` must cite schema version, manifest fingerprint, state fingerprint, scene ID, stage generation, UI revision and frame sequence.
+
+## Required fixtures
 
 ```txt
-initial 1920x1080-equivalent boot
-portrait and landscape resizes
-very small host
-zero-size host then restoration
-hidden tab or detached host
-DPR 1 to 2 transition
-DPR above cap
-pixel-budget fallback
-GPU maximum-dimension rejection
-rapid resize supersession
-render-target allocation failure
-rollback after partial adoption
-pointer pick during resize
-first visible viewport frame
-fresh built-output load
-GitHub Pages load and resize
+empty save
+malformed JSON
+primitive and array top-level values
+wrong-type collection fields
+unknown scene, clue and hotspot IDs
+orphan IDs after content revision
+current valid save
+known schema migration
+known identifier remap
+unknown schema or manifest
+migration and quarantine failures
+canonical initial fallback
+first inspection after fallback
+next scene after migration
+reload after canonical writeback
+first visible admitted scene
+built artifact and Pages origin
 ```
 
 ## Do not combine yet
 
-Keep scene transition, provider admission, hotspot picking, persistence, interlude timing and stage-resource lifetime as bounded authorities. Viewport coordination consumes their accepted surfaces but does not absorb their internal rules.
+Keep durable commit/reset concurrency, scene-transition composition, viewport, provider admission, hotspot picking and stage-resource lifetime as bounded authorities. Save admission produces a canonical state candidate consumed by those systems.
