@@ -1,80 +1,92 @@
-# Current audit: The Unmapped House story-save schema and manifest admission
+# Current audit: The Unmapped House WebGL context and stage recovery
 
-**Timestamp:** `2026-07-13T19-58-19-04-00`  
+**Timestamp:** `2026-07-14T01-00-28-04-00`  
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`  
-**Status:** `story-save-schema-manifest-admission-authority-audited`  
+**Status:** `webgl-context-stage-recovery-authority-audited`  
 **Branch:** `main`
 
 ## Summary
 
-Startup trusts any successfully parsed localStorage value. The parsed value is shallow-merged over initial state, used by story reducers and immediately rewritten without schema version, field-shape validation, authored-identifier validation, manifest fingerprint, migration or quarantine.
+The browser application creates one application-lifetime Three.js presentation graph and starts a recursive RAF immediately. It has no application-owned `webglcontextlost` or `webglcontextrestored` flow, no readiness downgrade, no stage-independent fallback, no interaction suspension, no complete recovery manifest and no first recovered visible-frame acknowledgement.
 
 ## Plan ledger
 
-**Goal:** convert raw browser persistence into one canonical story state before interaction or visible projection begins.
+**Goal:** convert context loss and restoration into one typed presentation transaction while keeping story truth stable and stage-dependent interaction safe.
 
 - [x] Compare the complete Publish inventory and central ledger.
 - [x] Select only `TheUnmappedHouse` under the oldest eligible rule.
-- [x] Inspect state boot, scene resolution, clue/inspection reducers, route/log reducers, writeback and validation.
+- [x] Inspect renderer construction, scene loading, pointer input, RAF ownership, render targets and validation.
 - [x] Identify the complete interaction loop, domains, kits and services.
-- [x] Define the parent authority, candidate and terminal results.
-- [x] Add timestamped architecture, render, gameplay, interaction, save-admission, deploy and central-sync audits.
+- [x] Define the parent authority, participant receipts and terminal results.
+- [x] Add timestamped architecture, render, gameplay, interaction, WebGL-lifecycle, deploy and central-sync audits.
 - [x] Change documentation only.
-- [ ] Implement and run executable save-admission fixtures.
+- [ ] Implement and run executable context-recovery fixtures.
 
 ## Complete interaction loop
 
 ```txt
 boot
-  -> localStorage.getItem(SAVE_KEY)
-  -> JSON.parse(raw || "{}")
-  -> shallow merge parsed fields over createInitialState()
-  -> resolve currentScene by saved sceneId or scenes[0] fallback
-  -> construct and load StageKit scene
-  -> render UI and Notebook
-  -> saveState() rewrites the admitted object
+  -> StageKit creates WebGLRenderer
+  -> create scene, camera and lights
+  -> create offscreen target and post graph
+  -> install resize, mousemove and click listeners
+  -> start recursive RAF
+  -> load current scene resources
+  -> enable DOM story controls
 
-inspection
-  -> state.inspected[currentScene.id]
-  -> state.clues.includes()/push()
-  -> state.log.unshift()/slice()
-  -> completion check
-  -> render and save
+frame
+  -> update camera parallax
+  -> update stage and post uniforms
+  -> render current scene to offscreen target
+  -> render post scene to the canvas
 
-continue
-  -> route.includes()/push()
-  -> scene and UI transition
-  -> save
+interaction
+  -> canvas raycast or DOM button
+  -> inspect hotspot
+  -> mutate story state and persistence
 
-content revision
-  -> authored IDs can change
-  -> old save has no schema or manifest evidence
-  -> stale IDs are accepted or fail later
+context loss
+  -> no application-owned event admission
+  -> no render-submission retirement
+  -> no readiness downgrade or fallback
+  -> no stage-dependent interaction suspension
+
+restoration
+  -> no declared resource reconstruction
+  -> no recovery probe or atomic adoption
+  -> no first recovered visible-frame acknowledgement
 ```
 
 ## Source ownership
 
 | Source | Current responsibilities |
 |---|---|
-| `src/game.js` | initial state, raw save parse/merge, story reducers, scene fallback, UI, writeback and reset. |
-| `src/story-data.js` | current scene, hotspot, clue, completion and presentation manifest. |
-| `src/stage-kit.js` | visible stage and hotspot projection for the resolved scene. |
-| `package.json` | syntax-only checks. |
+| `index.html` | Stage shell, story controls, Notebook, hover label and interlude. |
+| `src/game.js` | Story state, progression, UI, save, reset and hotspot callback. |
+| `src/story-data.js` | Scene, hotspot, camera, material and post descriptors. |
+| `src/stage-kit.js` | Three.js provider, WebGL renderer, GPU resources, scene loading, picking, resize and RAF. |
+| `src/aspect-frame.js` | Fixed-aspect viewport calculation and DOM placement. |
+| `package.json` | Syntax-only checks. |
 
 ## Domains in use
 
 ```txt
-browser document, shell and lifecycle
-story manifest and descriptor identity
-story-state schema and canonical normalization
-scene route and current-scene resolution
-inspection, clue, route and Notebook ledgers
-interlude and terminal progression
-localStorage read, parse, write, reset and quarantine
-schema version, manifest fingerprint and migration
-DOM pointer, click and keyboard interaction
-Three.js scene, hotspot and visible-frame projection
-syntax validation, local serving and Pages deployment
+browser document, fixed shell and lifecycle
+story manifest, state, progression and persistence
+DOM and canvas interaction
+Three.js provider and WebGL renderer
+WebGL context lifecycle and generation identity
+scene, camera, lighting and descriptor consumption
+procedural shader materials
+render-target and post-processing composition
+hotspot volumes, raycasting and dispatch
+camera parallax
+recursive RAF and render-submission ownership
+presentation readiness and fallback
+stage-dependent interaction admission
+GPU resource reconstruction, probe, adoption and rollback
+first recovered visible-frame evidence
+syntax validation, static serving and Pages deployment
 repo-local and central audit tracking
 ```
 
@@ -82,79 +94,83 @@ repo-local and central audit tracking
 
 | Kit | Offered services |
 |---|---|
-| `static-page-shell-kit` | stage mount, story panel, hotspot list, Notebook, hover label and interlude. |
-| `aspect-frame-kit` | fixed design aspect, frame calculation and DOM placement. |
-| `story-data-kit` | scenes, hotspots, clue grants, completion, camera, materials and post descriptors. |
-| `browser-story-runtime-kit` | state boot, scene resolution, inspection, continue, reset, UI and persistence calls. |
-| `scene-route-kit` | scene resolution and authored-order advancement. |
-| `inspection-ledger-kit` | scene-keyed inspected-hotspot state. |
-| `clue-ledger-kit` | clue grant and query. |
-| `notebook-log-kit` | narrative log mutation and bounded retention. |
-| `interlude-timer-kit` | delayed completion interlude. |
-| `terminal-route-kit` | prototype-complete projection. |
-| `localstorage-save-kit` | parse, shallow merge, replace and delete save. |
-| `stage-render-kit` | WebGL renderer, scene, camera, target, callbacks and RAF. |
-| `scene-descriptor-consumer-kit` | camera, geometry, material, hotspot and post construction. |
-| `anime-material-kit` | procedural shader materials and time updates. |
-| `post-process-kit` | grain, vignette, chromatic shift, distortion and scan lines. |
-| `hotspot-volume-kit` | invisible raycast volumes and descriptors. |
-| `hotspot-picking-kit` | coordinate normalization, raycast and dispatch. |
-| `camera-parallax-kit` | pointer-driven camera offsets. |
-| `render-target-composition-kit` | offscreen stage pass and post pass. |
-| `debug-json-projection-kit` | story-state serialization and Notebook projection. |
+| `static-page-shell-kit` | Stage mount, story panel, hotspot list, Notebook, hover label and interlude. |
+| `aspect-frame-kit` | Fixed design aspect, window-fit calculation and DOM frame placement. |
+| `story-data-kit` | Scene descriptors, hotspots, clue grants, completion, camera, materials and post descriptors. |
+| `browser-story-runtime-kit` | State boot, scene resolution, inspection, continue, reset, UI and persistence calls. |
+| `scene-route-kit` | Scene resolution and authored-order advancement. |
+| `inspection-ledger-kit` | Scene-keyed inspected-hotspot state. |
+| `clue-ledger-kit` | Clue grant and query. |
+| `notebook-log-kit` | Narrative log mutation and bounded retention. |
+| `interlude-timer-kit` | Delayed completion interlude. |
+| `terminal-route-kit` | Prototype-complete projection. |
+| `localstorage-save-kit` | Parse, shallow merge, replace and delete save. |
+| `stage-render-kit` | WebGL renderer, scene, camera, lights, target, callbacks and recursive RAF. |
+| `scene-descriptor-consumer-kit` | Camera, geometry, material, hotspot and post construction. |
+| `anime-material-kit` | Procedural shader materials and time updates. |
+| `post-process-kit` | Grain, vignette, chromatic shift, distortion and scan lines. |
+| `hotspot-volume-kit` | Invisible raycast volumes and descriptor attachment. |
+| `hotspot-picking-kit` | Coordinate normalization, raycast and dispatch. |
+| `camera-parallax-kit` | Pointer-driven fixed-camera offsets. |
+| `render-target-composition-kit` | Offscreen stage pass, post pass and target sizing. |
+| `debug-json-projection-kit` | Story-field serialization and Notebook projection. |
 | `package-syntax-check-kit` | Node syntax checks. |
-| `static-pages-deploy-kit` | static Pages delivery from `main`. |
-| `repo-local-agent-ledger-kit` | root and timestamped audit records. |
-| `central-ledger-sync-kit` | central selection and findings mirror. |
+| `static-pages-deploy-kit` | Static Pages delivery from `main`. |
+| `repo-local-agent-ledger-kit` | Root and timestamped audit records. |
+| `central-ledger-sync-kit` | Central selection and findings mirror. |
 
 ```txt
 implemented source-backed kits: 24
-planned schema-admission coordinating kits: 22
+planned WebGL recovery coordinating kits: 22
 ```
 
 ## Concrete findings
 
-### Shape validation is absent
+### Context events are not routed
 
-`JSON.parse` success is treated as sufficient. Wrong-type `clues`, `inspected`, `route` and `log` values can fail later at `includes`, `push`, `unshift`, `slice` or nested assignment.
+No `webglcontextlost` or `webglcontextrestored` handler exists in `StageKit` or `game.js`.
 
-### Scene fallback is split from state repair
+### Frame submission has no lease
 
-An unknown `state.sceneId` falls back only for `currentScene`. The visible first scene and debug projection can disagree with the state object that is immediately rewritten.
+`animate()` schedules its successor recursively. No accepted generation, cancellation result or stale-callback rejection exists for loss and recovery.
 
-### Manifest compatibility is absent
+### Presentation readiness is absent
 
-No current authored scene, hotspot or clue identifier set is fingerprinted. Orphan IDs and prior content layouts have no explicit acceptance, remap, drop or rejection policy.
+Story controls and persistence remain active independently from the renderer and last proven visible frame.
 
-### Migration and quarantine are absent
+### Recovery participants are implicit
 
-There is no schema version, migration graph, incompatible-save quarantine, malformed-state classification or typed startup result.
+Renderer, target, post graph, shaders, geometry, hotspots, camera, lights, viewport and RAF have no complete resource manifest or candidate receipts.
 
-### Proof is absent
+### Visible recovery is unproven
 
-Syntax checks do not execute parsing, validation, migration, fallback, first interaction or first visible scene behavior.
+No probe, atomic adoption, rollback result or first recovered frame ties the current scene to a successor context generation.
+
+### Validation is syntax-only
+
+The package check cannot create, lose or restore a WebGL context.
 
 ## Required authority
 
 ```txt
-the-unmapped-house-story-save-schema-manifest-admission-authority-domain
+the-unmapped-house-webgl-context-stage-recovery-authority-domain
 ```
 
 ```txt
-StorySaveAdmissionCommand
-  -> bind schema version and current manifest fingerprint
-  -> read and fingerprint raw storage evidence
-  -> parse an untrusted candidate
-  -> validate shape and authored identifiers
-  -> classify current, migratable, incompatible, malformed or empty
-  -> migrate or quarantine without live mutation
-  -> normalize one canonical StoryStateCandidate
-  -> atomically adopt state and scene identity
-  -> publish StorySaveAdmissionResult
-  -> project matching stage, UI and Notebook revisions
-  -> publish FirstAdmittedStoryFrameAck
+WebGLContextLifecycleEvent
+  -> bind surface, context and stage generations
+  -> retire the predecessor render-submission lease
+  -> mark presentation lost and suspend stage-dependent commands
+  -> show a WebGL-independent fallback
+  -> prepare the complete successor resource graph
+  -> validate capabilities, scene descriptor and viewport
+  -> execute one recovery probe
+  -> atomically adopt all participants or dispose all candidates
+  -> publish WebGLStageRecoveryResult
+  -> resume one accepted render-submission generation
+  -> publish FirstRecoveredStageFrameAck
 ```
 
 ## Validation boundary
 
-Documentation and machine audit state changed. Runtime JavaScript, HTML, CSS, story descriptors, persistence behavior, rendering, package scripts, dependencies and deployment did not change. No source, browser, build or Pages save-admission fixture was executed.
+Documentation and machine audit state changed. Runtime JavaScript, HTML, CSS, story descriptors, persistence, rendering behavior, package scripts, dependencies and deployment did not change. No source, browser, build or Pages recovery fixture was executed.
