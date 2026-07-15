@@ -1,11 +1,11 @@
-# Validation: The Unmapped House motion preference audit
+# Validation: The Unmapped House inspection control focus audit
 
-**Timestamp:** `2026-07-15T02-59-31-04-00`  
-**Scope:** documentation-only accessibility, interaction and render-policy audit
+**Timestamp:** `2026-07-15T08-28-25-04-00`  
+**Scope:** documentation-only interaction, accessibility and UI-projection audit
 
 ## Summary
 
-Source and retained audit state were inspected. The audit proves that full visual motion is always active through shader time, post-processing, camera parallax and interlude transitions, and that no product or system preference selects a reduced-motion profile. Runtime behavior and deployment were not changed or executed.
+Source and retained audit state were inspected. The audit proves that every first-time or repeated DOM hotspot inspection calls `renderUi()`, which removes the focused control by clearing the complete hotspot list and creates replacement buttons without stable identity or focus settlement. Runtime behavior and deployment were not changed or executed.
 
 ## Plan ledger
 
@@ -14,15 +14,14 @@ Source and retained audit state were inspected. The audit proves that full visua
 - [x] Compare all 11 accessible Publish repositories.
 - [x] Review ten eligible central ledger timestamps.
 - [x] Confirm TheUnmappedHouse is the oldest synchronized eligible entry.
-- [x] Verify `THREE.Clock` and recursive RAF ownership.
-- [x] Verify stage and post material time updates.
-- [x] Verify animated warp, grain and scan lines.
-- [x] Verify pointer-driven camera parallax.
-- [x] Verify the 550 ms interlude transition.
-- [x] Verify no reduced-motion query, setting or profile result exists.
+- [x] Verify the root `.agent` state exists and matches the documented head.
+- [x] Verify DOM and canvas inspection converge on `inspectHotspot()`.
+- [x] Verify first-time and repeated paths call `renderUi()`.
+- [x] Verify `renderUi()` clears and recreates all hotspot buttons.
+- [x] Verify no stable control-list or focus result exists.
 - [x] Preserve all 24 implemented kit surfaces and services.
 - [x] Change documentation only.
-- [ ] Run executable browser and Pages fixtures after implementation.
+- [ ] Run executable keyboard, artifact and Pages fixtures after implementation.
 
 ## Source checks performed
 
@@ -32,34 +31,28 @@ ten eligible central ledger records reviewed
 chosen repository head compared with documented head
 root .agent state inspected
 index.html inspected
-src/styles.css inspected
 src/game.js inspected
-src/story-data.js inspected
 src/stage-kit.js inspected
 package.json inspected
-.github/workflows/deploy.yml inspected
-combined commit statuses inspected
+retained kit registry inspected
 ```
 
 ## Source facts established
 
 ```txt
-THREE.Clock created during StageKit construction: yes
-recursive RAF starts during StageKit construction: yes
-stage material time updated each frame: yes
-post-process time updated each frame: yes
-animated post warp uses time: yes
-animated grain uses time: yes
-animated scan lines use time: yes
-pointer-driven camera parallax: yes
-interlude opacity transition: 0.55 seconds
-prefers-reduced-motion CSS policy: absent
-matchMedia motion query: absent
-explicit motion setting: absent
-motion profile revision: absent
-FirstMotionMatchedFrameAck: absent
+semantic hotspot button list exists: yes
+DOM button activation dispatches inspectHotspot: yes
+canvas raycast dispatches inspectHotspot: yes
+first inspection calls renderUi: yes
+repeated inspection calls renderUi: yes
+renderUi clears hotspotList.textContent: yes
+renderUi creates new button elements: yes
+stable DOM HotspotControlId: absent
+control-list revision: absent
+active-control capture: absent
+focus retention or fallback: absent
+FirstFocusStableInspectionFrameAck: absent
 validation command: syntax-only
-combined commit statuses before audit: none
 ```
 
 ## Documentation changed
@@ -70,7 +63,7 @@ new architecture audit
 new render audit
 new gameplay audit
 new interaction audit
-new motion-preference contract audit
+new inspection-control contract audit
 new deploy fixture gate
 new central-sync audit
 START_HERE.md refreshed
@@ -101,12 +94,12 @@ pull request: none
 
 ```txt
 npm run check: not run
-reduced-motion browser fixture: unavailable
-live system-preference fixture: unavailable
-explicit-override fixture: unavailable
-first motion-matched frame fixture: unavailable
+keyboard-only browser fixture: unavailable
+repeat-inspection focus fixture: unavailable
+scene-transition focus fixture: unavailable
+first focus-stable frame fixture: unavailable
 production-artifact smoke: not run
-Pages reduced-motion smoke: not run
+Pages keyboard-focus smoke: not run
 ```
 
-No motion-profile implementation, reduced-motion behavior, participant convergence, browser-frame acknowledgement, artifact parity or production readiness is claimed.
+No stable control projection, focus continuity, scene-transfer correctness, browser-frame acknowledgement, artifact parity or production readiness is claimed.
