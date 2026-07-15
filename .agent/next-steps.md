@@ -1,51 +1,54 @@
-# Next steps: The Unmapped House story announcement semantic projection
+# Next steps: The Unmapped House motion preference and visual-effect admission
 
-**Timestamp:** `2026-07-14T22-01-31-04-00`  
+**Timestamp:** `2026-07-15T02-59-31-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-The smallest safe change is to remove live-region ownership from the entire story panel and introduce one dedicated status projection driven by accepted story results.
+The smallest safe change is one motion-profile resolver that controls shader animation, post-process motion, camera parallax and interlude transitions without changing story progression.
 
 ## Plan ledger
 
-**Goal:** produce concise, deterministic and non-duplicated screen-reader feedback without changing the visual game loop.
+**Goal:** provide a coherent reduced-motion projection while retaining the authored scene composition and interaction loop.
 
-- [ ] Remove `aria-live` from `#story-panel`.
-- [ ] Add one dedicated status element outside the interactive control subtree.
-- [ ] Define `StoryAnnouncementRevision` and command identity.
-- [ ] Define semantic message kinds for scene, inspection, clue, completion, interlude, route and terminal results.
-- [ ] Exclude hotspot controls and Notebook/debug JSON from live announcements.
-- [ ] Add priority, coalescing and duplicate suppression.
-- [ ] Reject stale and superseded announcement work.
-- [ ] Keep focus management under the retained interlude focus authority.
-- [ ] Publish `StoryAnnouncementResult`.
-- [ ] Publish `FirstSemanticAnnouncementAck`.
-- [ ] Correlate the acknowledgement with the visible story revision.
-- [ ] Add browser, screen-reader, artifact and Pages fixtures.
+- [ ] Define `MotionPreferenceProfile` with `FullMotion` and `ReducedMotion`.
+- [ ] Resolve an explicit user override before falling back to `prefers-reduced-motion`.
+- [ ] Persist only the explicit override, not the system-derived value.
+- [ ] Listen for system-preference changes when no explicit override is active.
+- [ ] Define `MotionProfileRevision` and command identity.
+- [ ] Register stage materials, post material, camera parallax and CSS transition as motion participants.
+- [ ] In reduced motion, freeze or remove time-driven stage drift.
+- [ ] In reduced motion, remove animated warp, grain and scan-line movement.
+- [ ] In reduced motion, disable pointer-driven camera displacement.
+- [ ] In reduced motion, remove or substantially shorten interlude transition motion.
+- [ ] Preserve static vignette, color grading and scene readability where safe.
+- [ ] Reject stale and superseded profile work.
+- [ ] Publish `MotionPreferenceAdmissionResult`.
+- [ ] Publish `FirstMotionMatchedFrameAck`.
+- [ ] Add browser, artifact and Pages parity fixtures.
 
 ## Ordered implementation
 
-### 1. Separate semantic regions
+### 1. Resolve preference
 
-Keep headings, narrative text, controls and debug output stable and directly navigable. Do not make their container live.
+Create one resolver that combines explicit product preference and `matchMedia("(prefers-reduced-motion: reduce)")`.
 
-### 2. Define authored messages
+### 2. Describe participants
 
-Create concise messages from accepted domain results rather than serializing arbitrary UI state.
+Give each time-driven or transition-driven surface a stable identity and a full/reduced policy.
 
-### 3. Add revision and deduplication
+### 3. Adopt atomically
 
-Bind each message to story, scene and source-result identities. Coalesce clue and completion messages where appropriate.
+Prepare all values first, then commit shader, post, parallax and transition policy together. Preserve the prior profile if any participant cannot adopt.
 
-### 4. Project through one adapter
+### 4. Observe changes safely
 
-The DOM adapter writes only the accepted message into the dedicated status node and returns a typed projection result.
+Use one media-query listener generation. Remove or supersede it during lifecycle retirement and explicit-setting changes.
 
 ### 5. Prove behavior
 
-Capture accessibility-tree and announcement events for boot, inspection, re-read, completion, route transition and terminal state.
+Test initial full motion, initial reduced motion, live system changes, explicit override, scene transition, page restore and deployed Pages output.
 
 ## Do not combine yet
 
-Keep focus/route admission, page lifecycle, persistence, WebGL recovery, viewport, provider admission, hotspot picking and resource lifecycle as retained independent authorities.
+Keep story announcements, focus/route admission, page lifecycle, save schema, WebGL recovery, viewport, hotspot picking and resource lifecycle as retained independent authorities.
