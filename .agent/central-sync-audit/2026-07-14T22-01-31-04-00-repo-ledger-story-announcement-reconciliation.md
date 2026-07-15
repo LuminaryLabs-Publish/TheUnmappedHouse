@@ -2,7 +2,7 @@
 
 **Timestamp:** `2026-07-14T22-01-31-04-00`  
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`  
-**Status:** `repo-local-ready-for-central-reconciliation`
+**Status:** `central-reconciled`
 
 ## Plan ledger
 
@@ -14,7 +14,10 @@
 - [x] Preserve the 24-kit census and services.
 - [x] Record the new announcement authority and audit paths.
 - [x] Record documentation-only validation.
-- [ ] Central ledger commit is completed after the final repo-local documentation head is known.
+- [x] Update the central repository ledger.
+- [x] Add the central internal change-log entry.
+- [x] Push both repositories only to `main`.
+- [x] Create no branch or pull request.
 
 ## Central files
 
