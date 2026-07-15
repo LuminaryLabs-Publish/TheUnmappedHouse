@@ -1,103 +1,114 @@
-# Known gaps: The Unmapped House story audio event projection
+# Known gaps: The Unmapped House story save writer revision authority
 
-**Timestamp:** `2026-07-15T12-59-24-04-00`  
+**Timestamp:** `2026-07-15T18-02-58-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-Accepted story state has visible DOM and WebGL projection but no owned semantic audio projection, preferences, lifecycle or proof.
+One fixed localStorage slot is shared by every same-origin document, but save writers have no identity, ordering, lease, conflict handling or durable reset epoch. Whole-state last-writer-wins replacement can regress progress or resurrect state after reset.
 
 ## Plan ledger
 
-**Goal:** make browser-audio identity, policy, lifecycle and evidence explicit.
+**Goal:** make save-slot identity, writer ownership, monotonic revision, conflict settlement and proof explicit.
 
-- [x] Trace accepted story and visual projection paths.
-- [x] Confirm no active audio owner or cue registry exists.
+- [x] Trace save and reset call sites.
+- [x] Confirm no cross-document ordering protocol exists.
 - [x] Define missing identities, policies and results.
 - [ ] Implement and execute them.
 
 ## Identity gaps
 
 ```txt
-AudioContextGeneration: absent
-AudioPolicyRevision: absent
-SemanticAudioEventId: absent
-CueDescriptorId: absent
-AudioBusId: absent
-AmbienceGeneration: absent
-ListenerRevision: absent
-SourceRevision: absent
-FirstAudibleCueAck: absent
-FirstAudioVisualConvergenceAck: absent
+StorySaveSlotId: implicit string only
+DocumentId: absent
+SaveWriterId: absent
+SaveWriterGeneration: absent
+SaveWriterLeaseId: absent
+StorySaveCommitId: absent
+StorySaveRevision: absent
+StorySaveBaseRevision: absent
+StorySaveFingerprint: absent
+ResetEpoch: absent
+SaveConflictId: absent
+FirstDurableStorySaveAck: absent
+FirstDurableStorySaveFrameAck: absent
 ```
 
-## Capability and admission gaps
+## Admission gaps
 
 ```txt
-Web Audio capability observation: absent
-accepted user-gesture unlock: absent
-unsupported fallback result: absent
-deferred unlock queue: absent
-context resume/replacement policy: absent
+active writer admission: absent
+read-only document mode: absent
+writer lease acquisition: absent
+lease heartbeat and expiry: absent
+writer takeover policy: absent
+base-revision comparison: absent
+compare-and-swap serialization: absent
+post-write read-back verification: absent
+stale-base rejection: absent
+reset-epoch rejection: absent
+duplicate commit rejection: absent
+retired writer rejection: absent
 ```
 
-## Cue and ambience gaps
+## Cross-document gaps
 
 ```txt
-inspection cue policy: absent
-repeated-inspection cue policy: absent
-clue-grant cue policy: absent
-interlude cue policy: absent
-scene-transition cue policy: absent
-terminal cue policy: absent
-scene ambience ownership: absent
-explicit authored silence: absent
+storage event listener: absent
+BroadcastChannel: absent
+external head observation: absent
+pending stale commit cancellation: absent
+same-origin head broadcast: absent
+cross-tab conflict result: absent
+cross-tab read-only projection: absent
+cross-tab reset settlement: absent
 ```
 
-## Preference and budget gaps
+## Envelope and recovery gaps
 
 ```txt
-master volume: absent
-ambience volume: absent
-story-effects volume: absent
-UI volume: absent
-mute: absent
-preference persistence: absent
-cue pooling: absent
-priority policy: absent
-voice budget: absent
+versioned durable envelope: absent
+monotonic save revision: absent
+base revision: absent
+writer metadata: absent
+payload fingerprint: absent
+durable reset tombstone: absent
+verified predecessor: absent
+bounded recovery history: absent
+corrupt-head recovery policy: absent
+quota/storage failure result: absent
 ```
 
-## Lifecycle and consistency gaps
+## Interaction and projection gaps
 
 ```txt
-semantic-result cue deduplication: absent
-stale cue rejection: absent
-superseded cue rejection: absent
-visibility suspension: absent
-resume without one-shot replay: absent
-pagehide retirement: absent
-route replacement retirement: absent
-audio/visual story revision convergence: absent
+saveState return result: absent
+save pending state: absent
+save conflict state: absent
+save read-only state: absent
+durable-head debug projection: absent
+visible/durable revision convergence: absent
+explicit reload/recover/export conflict action: absent
 ```
 
 ## Proof gaps
 
 ```txt
-supported-browser unlock fixture: absent
-unsupported fallback fixture: absent
-muted full-playthrough fixture: absent
-first/repeated inspection cue fixture: absent
-clue dedupe fixture: absent
-ambience replacement fixture: absent
-visibility/pagehide fixture: absent
-voice-budget fixture: absent
+two-tab stale writer fixture: absent
+three-tab lease contention fixture: absent
+writer crash/expiry fixture: absent
+storage-event reconciliation fixture: absent
+BroadcastChannel fallback fixture: absent
+reset resurrection fixture: absent
+corrupt-head predecessor fixture: absent
+quota/storage failure fixture: absent
 source/artifact/Pages parity: absent
 ```
 
 ## Retained independent gaps
 
 ```txt
+story audio event projection
 inspection control focus continuity
 motion preference visual-effect admission
 story announcement semantic projection
@@ -110,11 +121,11 @@ viewport authority
 scene-transition composition
 renderer-provider admission
 hotspot picking
-save commit/reset convergence
+same-document save commit/reset convergence
 interlude progression timing
 stage resource lifecycle
 ```
 
 ## Completion boundary
 
-Do not claim audible story readiness until accepted semantic results drive stable cue IDs, unlock and lifecycle behavior are explicit, duplicates cannot replay one-shot cues and browser proof captures the first audible and audiovisual acknowledgements.
+Do not claim durable story persistence until stale writers are rejected, reset advances a durable epoch, external heads reconcile before later writes, conflicts are explicit and browser proof captures matching visible and durable revisions across source, artifact and Pages.
