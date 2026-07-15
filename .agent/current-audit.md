@@ -1,137 +1,136 @@
-# Current audit: The Unmapped House interlude focus and route admission
+# Current audit: The Unmapped House story announcement semantic projection
 
-**Timestamp:** `2026-07-14T17-00-55-04-00`  
+**Timestamp:** `2026-07-14T22-01-31-04-00`  
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`  
-**Status:** `interlude-focus-route-admission-authority-audited`  
+**Status:** `story-announcement-semantic-projection-authority-audited`  
 **Branch:** `main`
 
 ## Summary
 
-The interlude is visually hidden or shown, but visual state is not the authority for keyboard focus or route progression. The hidden Continue button remains focusable, `nextScene()` lacks a completion guard, and background hotspot controls remain active while the overlay is open.
+The application currently treats broad DOM mutation as story announcement. `#story-panel` is a polite live region containing controls and debug JSON, and `renderUi()` rebuilds those participants after nearly every accepted interaction.
 
 ## Plan ledger
 
-**Goal:** require one accepted modal and route transaction before any scene advancement or background interaction.
+**Goal:** require one concise semantic message per accepted story result.
 
 - [x] Compare all Publish repositories and central ledgers.
 - [x] Select only TheUnmappedHouse by the oldest synchronized timestamp.
-- [x] Inspect HTML, CSS, story runtime, scene data and stage interaction.
-- [x] Identify the interaction loop, domains, kits and offered services.
-- [x] Define result types and visible/focus proof.
+- [x] Inspect shell, story runtime, descriptors, renderer, CSS, package and deployment.
+- [x] Identify the interaction loop, domains, kits and services.
+- [x] Define result types and screen-reader proof.
 - [x] Add timestamped audit documents.
 - [x] Change documentation only.
-- [ ] Implement and run focus/route fixtures.
+- [ ] Implement and run accessibility fixtures.
 
 ## Complete interaction loop
 
 ```txt
 boot
-  -> load state and current scene
-  -> construct stage and render UI
-  -> visually hide interlude with opacity and pointer-events
-  -> leave Continue in sequential focus order
+  -> load browser state and resolve the current scene
+  -> construct the Three.js stage and recursive RAF
+  -> render title, narrative text, hotspot buttons and Notebook JSON
+  -> expose the complete story panel as aria-live="polite"
 
 inspection
-  -> canvas or hotspot button calls inspectHotspot
-  -> mutate inspected/clues/log
-  -> save state
-  -> schedule interlude after completion
+  -> canvas raycast or DOM button calls inspectHotspot
+  -> mutate inspected, clues and log
+  -> call renderUi
+  -> clear and rebuild every hotspot button
+  -> replace the complete debug JSON projection
+  -> keep all mutations inside the polite live region
+  -> save browser state
 
-continue
-  -> any Continue click calls nextScene
-  -> no active-interlude or scene-complete assertion
-  -> route, stage and save advance
-
-open overlay
-  -> pointer input is blocked by overlay
-  -> keyboard focus can remain on background controls
-  -> no modal owner, inert background or focus transfer result exists
+completion and route
+  -> schedule or open the interlude
+  -> continue to the next scene
+  -> rebuild title, controls and debug projection again
+  -> no dedicated semantic announcement result or acknowledgement exists
 ```
 
 ## Domains in use
 
 ```txt
-browser shell and document semantics
-keyboard, focus, pointer and canvas input
-modal and background command admission
+static browser shell and document semantics
+assistive-technology announcement and live-region policy
 story state, clues, inspections, route and Notebook
-interlude timing and terminal presentation
-localStorage persistence and reset
+scene, inspection, completion, interlude and terminal messages
+keyboard, pointer, canvas and DOM interaction
+browser persistence and reset
 fixed-aspect viewport
 Three.js stage, shaders and post-processing
 hotspot raycasting and camera parallax
-accessibility semantics and focus restoration
-visible-frame proof
-validation, Pages deployment and audit governance
+render-target composition and visible-frame evidence
+screen-reader projection, deduplication and coalescing
+syntax validation and static Pages deployment
+repo-local and central audit governance
 ```
 
 ## Implemented kits and services
 
-```txt
-static-page-shell-kit: stage, panel, hotspot list, Notebook, hover label, interlude
-aspect-frame-kit: fixed aspect, window fit, DOM placement
-story-data-kit: scenes, hotspots, clues, completion, camera, materials, post
-browser-story-runtime-kit: boot, inspection, continue, reset, UI, persistence calls
-scene-route-kit: scene resolution and authored advancement
-inspection-ledger-kit: inspected state
-clue-ledger-kit: clue grant/query
-notebook-log-kit: bounded narrative history
-interlude-timer-kit: delayed interlude
-terminal-route-kit: prototype-complete projection
-localstorage-save-kit: parse, merge, write, delete
-stage-render-kit: renderer, scene, camera, lights, target, callbacks, RAF
-scene-descriptor-consumer-kit: camera, geometry, materials, hotspots, post
-anime-material-kit: procedural shaders and time
-post-process-kit: grain, vignette, chromatic, distortion, scan lines
-hotspot-volume-kit: raycast volumes and descriptors
-hotspot-picking-kit: coordinates, raycast, dispatch
-camera-parallax-kit: pointer camera offsets
-render-target-composition-kit: offscreen and post passes
-debug-json-projection-kit: story and Notebook projection
-package-syntax-check-kit: syntax checks
-static-pages-deploy-kit: static Pages delivery
-repo-local-agent-ledger-kit: root and timestamped audit state
-central-ledger-sync-kit: central selection and findings mirror
-```
+- `static-page-shell-kit`: stage mount, story panel, hotspot list, Notebook, hover label, interlude.
+- `aspect-frame-kit`: fixed design aspect, window-fit calculation, DOM frame placement.
+- `story-data-kit`: scene descriptors, hotspots, clue grants, completion rules, camera, materials, post descriptors.
+- `browser-story-runtime-kit`: state boot, scene resolution, inspection, continue, reset, UI projection, persistence calls.
+- `scene-route-kit`: scene ID resolution, authored-order advancement.
+- `inspection-ledger-kit`: scene-keyed inspected hotspot state.
+- `clue-ledger-kit`: clue grant, clue query.
+- `notebook-log-kit`: prepend narrative log, bounded retention.
+- `interlude-timer-kit`: delayed completion interlude.
+- `terminal-route-kit`: prototype-complete DOM projection.
+- `localstorage-save-kit`: parse, shallow merge, replace, delete save.
+- `stage-render-kit`: WebGL renderer, scene, camera, lights, offscreen target, callbacks, recursive RAF.
+- `scene-descriptor-consumer-kit`: camera construction, geometry construction, material construction, hotspot construction, post configuration.
+- `anime-material-kit`: procedural shader materials, elapsed-time updates.
+- `post-process-kit`: grain, vignette, chromatic shift, distortion, scan lines.
+- `hotspot-volume-kit`: invisible raycast volumes, descriptor attachment.
+- `hotspot-picking-kit`: coordinate normalization, raycast, hotspot dispatch.
+- `camera-parallax-kit`: pointer-driven fixed-camera offsets.
+- `render-target-composition-kit`: offscreen stage pass, post pass, target sizing.
+- `debug-json-projection-kit`: story-field serialization, Notebook projection.
+- `package-syntax-check-kit`: Node syntax checks.
+- `static-pages-deploy-kit`: static Pages delivery.
+- `repo-local-agent-ledger-kit`: root pointers, timestamped audit records.
+- `central-ledger-sync-kit`: central selection mirror, central findings history.
 
 ```txt
 implemented kits: 24
-planned focus/route surfaces: 20
+planned announcement surfaces: 20
 ```
 
 ## Main findings
 
-- Hidden Continue is excluded from pointer input but not keyboard focus.
-- `nextScene()` does not validate `sceneComplete(currentScene)`.
-- Hidden keyboard activation can bypass all required clues.
-- The open interlude has no dialog role or `aria-modal` state.
-- Background hotspot buttons are not inert while the overlay is open.
-- Focus is not moved to Continue or restored after route advancement.
-- Global reset remains admitted without modal policy.
-- No command identity, rejection result or focus-stable frame acknowledgement exists.
-- Validation is syntax-only.
+- `aria-live="polite"` is attached to the complete `aside`.
+- The region includes scene heading, narrative text, hotspot controls and debug JSON.
+- `renderUi()` clears and recreates every hotspot button.
+- `renderUi()` replaces the complete JSON projection.
+- Boot, inspection, re-read and route changes can all trigger broad live-region mutation.
+- No dedicated status node, atomic/relevant policy, message identity or coalescing exists.
+- No screen-reader or Pages accessibility fixture exists.
 
 ## Required authority
 
 ```txt
-the-unmapped-house-interlude-focus-route-admission-authority-domain
+the-unmapped-house-story-announcement-semantic-projection-authority-domain
 ```
 
 ```txt
-InterludeOpenCommand
-  -> require accepted scene-completion evidence
-  -> bind story, scene, route and focus revisions
-  -> atomically admit semantic modal state and inert background
-  -> transfer focus and publish InterludeOpenResult
+StoryAnnouncementCommand
+  -> bind StoryRevision, SceneRevision, command identity and message kind
+  -> resolve one concise authored SemanticMessageDescriptor
+  -> exclude interactive controls and debug JSON from live-region ownership
+  -> validate priority, duplicate, stale and superseded announcements
+  -> coalesce related inspection, clue and completion updates
+  -> atomically publish one dedicated status-region projection
+  -> publish StoryAnnouncementResult
+  -> publish FirstSemanticAnnouncementAck
 
-InterludeContinueCommand
-  -> require matching active interlude and completed scene
-  -> reject hidden, premature, stale or duplicate activation
-  -> atomically adopt successor route, stage and focus
-  -> publish InterludeContinueResult
-  -> publish FirstFocusStableSceneFrameAck
+route and interlude transitions
+  -> require accepted scene and interlude results
+  -> publish one scene-arrival or terminal message
+  -> preserve keyboard focus and control semantics independently
+  -> expose deterministic screen-reader fixture evidence
 ```
 
 ## Validation boundary
 
-Documentation changed. Runtime JavaScript, HTML, CSS, story data, persistence, rendering, dependencies, scripts, workflows and deployment did not change. No browser or accessibility fixture was executed.
+Documentation changed. Runtime JavaScript, HTML, CSS, story data, persistence, rendering, dependencies, scripts, workflow and deployment did not change. No executable browser or screen-reader fixture was run.
