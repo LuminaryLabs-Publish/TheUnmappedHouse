@@ -1,54 +1,54 @@
-# Next steps: The Unmapped House inspection control focus continuity
+# Next steps: The Unmapped House story audio event projection
 
-**Timestamp:** `2026-07-15T08-28-25-04-00`  
+**Timestamp:** `2026-07-15T12-59-24-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-The smallest safe change is keyed hotspot-button projection based on authored scene and hotspot IDs, followed by explicit focus retention or fallback after the accepted inspection result.
+The smallest safe implementation is a procedural Web Audio adapter that unlocks from an accepted user gesture, consumes accepted semantic story results and retires all owned nodes on lifecycle replacement.
 
 ## Plan ledger
 
-**Goal:** preserve keyboard position through inspection without changing story progression or canvas picking.
+**Goal:** add useful horror-story audio without coupling story success to raw input or render callbacks.
 
-- [ ] Define `HotspotControlId = sceneId:hotspotId`.
-- [ ] Track one `HotspotControlListRevision` per scene projection.
-- [ ] Replace `hotspotList.textContent = ""` with keyed create, update and retire operations.
-- [ ] Keep unchanged button nodes connected.
-- [ ] Update label and inspected state in place.
-- [ ] Capture activation origin and the pre-command active control.
-- [ ] Retain focus on the accepted control when it remains eligible.
-- [ ] Define a scene-heading or first-hotspot fallback for retired controls.
-- [ ] Keep canvas inspections from stealing semantic focus.
-- [ ] Delegate interlude opening and closing to the retained modal-focus authority.
-- [ ] Reject stale and duplicate control projections.
-- [ ] Publish `InspectionControlProjectionResult`.
-- [ ] Publish `FirstFocusStableInspectionFrameAck`.
-- [ ] Add keyboard-only first, repeated and final-hotspot fixtures.
-- [ ] Add source, artifact and Pages parity fixtures.
+- [ ] Define stable `SemanticAudioEventId` values for inspection, clue, interlude, route, terminal and UI results.
+- [ ] Add an authored `CueDescriptor` registry with explicit silence support.
+- [ ] Observe browser audio capability without creating audible nodes.
+- [ ] Admit one `AudioContextGeneration` from an existing accepted gesture.
+- [ ] Add master, ambience, story-effects and UI buses.
+- [ ] Add mute and volume preferences with revisioned persistence.
+- [ ] Project first and repeated inspections through distinct cue policies.
+- [ ] Deduplicate clue, completion and transition cues by event ID.
+- [ ] Adopt one scene ambience generation with the accepted scene revision.
+- [ ] Use the fixed camera as the listener descriptor when spatial cues are enabled.
+- [ ] Enforce pooling, priority and voice budgets.
+- [ ] Suspend or attenuate on visibility loss without replaying one-shots on resume.
+- [ ] Retire loops and nodes on pagehide, route replacement and context replacement.
+- [ ] Publish `AudioProjectionResult`, `FirstAudibleCueAck` and `FirstAudioVisualConvergenceAck`.
+- [ ] Add source, artifact and Pages browser fixtures.
 
 ## Ordered implementation
 
-### 1. Key controls
+### 1. Semantic events
 
-Create a `Map<HotspotControlId, HTMLButtonElement>` and derive keys from the stable authored hotspot descriptors.
+Publish accepted story-result descriptors after inspection, clue, interlude, scene and terminal settlement. Raw click and raycast handlers must not play success cues directly.
 
-### 2. Reconcile instead of replace
+### 2. Browser admission
 
-Create missing controls, update existing labels and retire only controls no longer present in the current scene. Preserve authored order using append or `insertBefore` without replacing surviving nodes.
+Create or resume one Web Audio context only from an accepted gesture. Unsupported or muted operation must preserve complete playability.
 
-### 3. Settle focus
+### 3. Procedural cues and ambience
 
-Capture `document.activeElement` and the active control ID before mutation. After adoption, focus the surviving accepted control or one explicit fallback. Do not move focus for canvas-origin inspections unless a policy requests it.
+Use small oscillator/noise envelopes so the static site remains asset-free. Keep cue descriptions data-driven and permit authored silence.
 
-### 4. Bind revisions
+### 4. Lifecycle and deduplication
 
-Publish the story inspection revision and control-list revision together. Preserve the predecessor DOM and focus state if projection fails.
+Key one-shot playback by semantic event ID and audio generation. Replace scene ambience atomically and disconnect every owned node during retirement.
 
 ### 5. Prove behavior
 
-Test boot order, first inspection, repeated inspection, adjacent traversal, final scene hotspot, interlude handoff, scene replacement, canvas inspection and projection failure.
+Test unlock, unsupported fallback, muted playthrough, first/repeated inspection, clue dedupe, scene transition, terminal completion, visibility resume, pagehide cleanup, voice budget and source/artifact/Pages parity.
 
 ## Do not combine yet
 
-Keep story announcements, interlude modal focus, motion preference, page lifecycle, save schema, WebGL recovery, viewport, hotspot picking and resource lifecycle as retained independent authorities.
+Keep inspection-focus continuity, story announcements, interlude modal focus, motion preference, page lifecycle, save schema, WebGL recovery, viewport, hotspot picking and resource lifecycle as retained independent authorities.
