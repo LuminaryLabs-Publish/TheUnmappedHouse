@@ -1,67 +1,74 @@
-# Current audit: The Unmapped House story announcement semantic projection
+# Current audit: The Unmapped House motion preference and visual-effect admission
 
-**Timestamp:** `2026-07-14T22-01-31-04-00`  
+**Timestamp:** `2026-07-15T02-59-31-04-00`  
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`  
-**Status:** `story-announcement-semantic-projection-authority-audited`  
+**Status:** `motion-preference-visual-effect-admission-authority-audited`  
 **Branch:** `main`
 
 ## Summary
 
-The application currently treats broad DOM mutation as story announcement. `#story-panel` is a polite live region containing controls and debug JSON, and `renderUi()` rebuilds those participants after nearly every accepted interaction.
+The application always projects its complete animated presentation. `StageKit` starts an autonomous RAF, advances procedural shader time, drives animated post-processing and applies pointer parallax. The interlude adds a 550 ms opacity transition. No browser or product preference selects a reduced-motion alternative.
 
 ## Plan ledger
 
-**Goal:** require one concise semantic message per accepted story result.
+**Goal:** require one revisioned motion profile to govern every continuous or transitional visual-motion participant.
 
 - [x] Compare all Publish repositories and central ledgers.
 - [x] Select only TheUnmappedHouse by the oldest synchronized timestamp.
-- [x] Inspect shell, story runtime, descriptors, renderer, CSS, package and deployment.
-- [x] Identify the interaction loop, domains, kits and services.
-- [x] Define result types and screen-reader proof.
+- [x] Inspect shell, story runtime, renderer, shaders, CSS, package and deployment.
+- [x] Identify the interaction loop, domains, all kits and all offered services.
+- [x] Define motion-profile identities, policies, results and visible-frame proof.
 - [x] Add timestamped audit documents.
 - [x] Change documentation only.
-- [ ] Implement and run accessibility fixtures.
+- [ ] Implement and execute reduced-motion fixtures.
 
 ## Complete interaction loop
 
 ```txt
 boot
-  -> load browser state and resolve the current scene
-  -> construct the Three.js stage and recursive RAF
-  -> render title, narrative text, hotspot buttons and Notebook JSON
-  -> expose the complete story panel as aria-live="polite"
+  -> restore story state
+  -> construct StageKit and THREE.Clock
+  -> start one recursive requestAnimationFrame loop
+  -> load scene camera, materials, hotspots and post descriptors
 
-inspection
-  -> canvas raycast or DOM button calls inspectHotspot
-  -> mutate inspected, clues and log
-  -> call renderUi
-  -> clear and rebuild every hotspot button
-  -> replace the complete debug JSON projection
-  -> keep all mutations inside the polite live region
-  -> save browser state
+every frame
+  -> read elapsed clock time
+  -> animate stage material noise
+  -> animate post warp, grain and scan lines
+  -> apply pointer-derived camera parallax
+  -> render the scene into the offscreen target
+  -> render the animated post-process pass to the canvas
 
-completion and route
-  -> schedule or open the interlude
-  -> continue to the next scene
-  -> rebuild title, controls and debug projection again
-  -> no dedicated semantic announcement result or acknowledgement exists
+scene completion
+  -> open the interlude
+  -> animate opacity for 550 ms
+  -> continue into the next scene
+
+motion preference
+  -> no explicit setting exists
+  -> no prefers-reduced-motion query exists
+  -> no system-preference change listener exists
+  -> full shader, parallax and transition motion remains active
 ```
 
 ## Domains in use
 
 ```txt
-static browser shell and document semantics
-assistive-technology announcement and live-region policy
-story state, clues, inspections, route and Notebook
-scene, inspection, completion, interlude and terminal messages
+static browser shell and document lifecycle
+browser accessibility and user motion preference
+explicit settings and localStorage persistence
+system prefers-reduced-motion observation
+story state, clues, inspections, route and interlude
 keyboard, pointer, canvas and DOM interaction
-browser persistence and reset
 fixed-aspect viewport
-Three.js stage, shaders and post-processing
-hotspot raycasting and camera parallax
-render-target composition and visible-frame evidence
-screen-reader projection, deduplication and coalescing
-syntax validation and static Pages deployment
+Three.js scene, camera, shaders and WebGL rendering
+procedural material-time animation
+post-process warp, grain, scan-line and chromatic effects
+pointer-driven camera parallax
+CSS transition timing
+motion-profile admission, replacement and stale-result rejection
+first preference-matched visible-frame evidence
+syntax validation, static artifact and Pages deployment
 repo-local and central audit governance
 ```
 
@@ -79,58 +86,63 @@ repo-local and central audit governance
 - `terminal-route-kit`: prototype-complete DOM projection.
 - `localstorage-save-kit`: parse, shallow merge, replace, delete save.
 - `stage-render-kit`: WebGL renderer, scene, camera, lights, offscreen target, callbacks, recursive RAF.
-- `scene-descriptor-consumer-kit`: camera construction, geometry construction, material construction, hotspot construction, post configuration.
-- `anime-material-kit`: procedural shader materials, elapsed-time updates.
-- `post-process-kit`: grain, vignette, chromatic shift, distortion, scan lines.
+- `scene-descriptor-consumer-kit`: camera, geometry, material, hotspot and post configuration.
+- `anime-material-kit`: procedural shader materials, elapsed-time animation.
+- `post-process-kit`: animated grain, vignette, chromatic shift, distortion and scan lines.
 - `hotspot-volume-kit`: invisible raycast volumes, descriptor attachment.
-- `hotspot-picking-kit`: coordinate normalization, raycast, hotspot dispatch.
+- `hotspot-picking-kit`: coordinate normalization, raycast and hotspot dispatch.
 - `camera-parallax-kit`: pointer-driven fixed-camera offsets.
-- `render-target-composition-kit`: offscreen stage pass, post pass, target sizing.
-- `debug-json-projection-kit`: story-field serialization, Notebook projection.
+- `render-target-composition-kit`: offscreen stage pass, post pass and target sizing.
+- `debug-json-projection-kit`: story-field serialization and Notebook projection.
 - `package-syntax-check-kit`: Node syntax checks.
 - `static-pages-deploy-kit`: static Pages delivery.
-- `repo-local-agent-ledger-kit`: root pointers, timestamped audit records.
-- `central-ledger-sync-kit`: central selection mirror, central findings history.
+- `repo-local-agent-ledger-kit`: root pointers and timestamped audit records.
+- `central-ledger-sync-kit`: central selection mirror and findings history.
 
 ```txt
 implemented kits: 24
-planned announcement surfaces: 20
+planned motion-preference surfaces: 21
 ```
 
 ## Main findings
 
-- `aria-live="polite"` is attached to the complete `aside`.
-- The region includes scene heading, narrative text, hotspot controls and debug JSON.
-- `renderUi()` clears and recreates every hotspot button.
-- `renderUi()` replaces the complete JSON projection.
-- Boot, inspection, re-read and route changes can all trigger broad live-region mutation.
-- No dedicated status node, atomic/relevant policy, message identity or coalescing exists.
-- No screen-reader or Pages accessibility fixture exists.
+- `StageKit` constructs `THREE.Clock` and immediately starts one recursive RAF.
+- Every frame writes elapsed time into all active stage materials and the post material.
+- Stage shader noise drifts with time.
+- Post-processing animates horizontal warp, grain and scan lines with time.
+- Pointer movement offsets the fixed camera every rendered frame.
+- The interlude uses a 550 ms opacity transition.
+- No `prefers-reduced-motion` query or media rule exists.
+- No explicit or persisted motion setting exists.
+- No participant registry proves that all motion surfaces adopted the same profile.
+- No first frame acknowledgement binds visible presentation to the accepted preference.
 
 ## Required authority
 
 ```txt
-the-unmapped-house-story-announcement-semantic-projection-authority-domain
+the-unmapped-house-motion-preference-visual-effect-admission-authority-domain
 ```
 
 ```txt
-StoryAnnouncementCommand
-  -> bind StoryRevision, SceneRevision, command identity and message kind
-  -> resolve one concise authored SemanticMessageDescriptor
-  -> exclude interactive controls and debug JSON from live-region ownership
-  -> validate priority, duplicate, stale and superseded announcements
-  -> coalesce related inspection, clue and completion updates
-  -> atomically publish one dedicated status-region projection
-  -> publish StoryAnnouncementResult
-  -> publish FirstSemanticAnnouncementAck
+MotionPreferenceAdmissionCommand
+  -> bind document, story, scene, renderer and preference revisions
+  -> resolve an explicit user setting or the current system preference
+  -> classify FullMotion or ReducedMotion
+  -> prepare shader-time, post-process, parallax and transition candidates
+  -> preserve all story, hotspot and route semantics
+  -> reject stale, duplicate and superseded profile work
+  -> atomically adopt one coherent motion profile
+  -> publish MotionPreferenceAdmissionResult
+  -> render the accepted profile
+  -> publish FirstMotionMatchedFrameAck
 
-route and interlude transitions
-  -> require accepted scene and interlude results
-  -> publish one scene-arrival or terminal message
-  -> preserve keyboard focus and control semantics independently
-  -> expose deterministic screen-reader fixture evidence
+system preference changes
+  -> issue a new command generation
+  -> retire the predecessor profile
+  -> adopt the replacement without duplicating RAF or listeners
+  -> preserve the current story and scene revisions
 ```
 
 ## Validation boundary
 
-Documentation changed. Runtime JavaScript, HTML, CSS, story data, persistence, rendering, dependencies, scripts, workflow and deployment did not change. No executable browser or screen-reader fixture was run.
+Documentation changed. Runtime JavaScript, HTML, CSS, story data, persistence, rendering, dependencies, scripts, workflow and deployment did not change. No executable browser, motion-preference or Pages fixture was run.
