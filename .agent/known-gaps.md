@@ -1,114 +1,83 @@
-# Known gaps: The Unmapped House interlude focus and route admission
+# Known gaps: The Unmapped House story announcement semantic projection
 
-**Timestamp:** `2026-07-14T17-00-55-04-00`  
+**Timestamp:** `2026-07-14T22-01-31-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-Visual interlude state, semantic modal state, keyboard focus and route-command admission are not correlated. Hidden controls can remain executable and visible modal presentation does not suspend background commands.
+Interactive controls, diagnostics and narrative output share one broad live-region owner. The source contains no intentional announcement transaction.
 
 ## Plan ledger
 
-**Goal:** make every modal, focus, route and frame dependency explicit and testable.
+**Goal:** make message identity, projection and proof explicit.
 
-- [x] Trace hidden and open interlude interaction states.
-- [x] Confirm the route boundary lacks completion validation.
-- [x] Confirm focus transfer, inertness and restoration are absent.
-- [x] Define missing identities, results and proof.
+- [x] Trace live-region ownership.
+- [x] Trace every broad subtree rebuild.
+- [x] Define missing identities, policies and results.
 - [ ] Implement and execute them.
 
 ## Identity gaps
 
 ```txt
-InterludeGeneration: absent
-InterludeCommandId: absent
-StoryRevision: absent
-SceneRevision: absent
-RouteRevision: absent
-CompletionEvidenceId: absent
-FocusOwnerRevision: absent
-BackgroundInertRevision: absent
-FirstFocusStableFrameId: absent
+StoryAnnouncementCommandId: absent
+StoryAnnouncementRevision: absent
+SemanticMessageDescriptorId: absent
+SourceResultId binding: absent
+AnnouncementPriority: absent
+FirstSemanticAnnouncementAck: absent
 ```
 
-## Closed-interlude gaps
+## Semantic-region gaps
 
 ```txt
-hidden attribute or inert state: absent
-Continue disabled while hidden: no
-Continue removed from tab order: no
-hidden Continue command rejection: absent
-premature route advancement guard: absent
+dedicated status element: absent
+control-tree exclusion: absent
+debug-tree exclusion: absent
+aria-atomic policy: absent
+aria-relevant policy: absent
+message coalescing: absent
+duplicate suppression: absent
+stale rejection: absent
 ```
 
-## Open-interlude gaps
+## Current mutation path
 
 ```txt
-dialog role: absent
-aria-modal: absent
-accessible dialog name binding: absent
-prior focus capture: absent
-focus transfer to Continue: absent
-focus containment: absent
-background inertness: absent
-canvas command suspension: absent
-hotspot-button command suspension: absent
-reset-shortcut modal policy: absent
+renderUi
+  -> replace scene title and narrative where applicable
+  -> clear hotspot list
+  -> create and attach every button
+  -> replace full JSON projection
+  -> all changes occur inside aria-live="polite"
 ```
 
-## Route-settlement gaps
+## Message gaps
 
 ```txt
-active interlude assertion: absent
-scene completion assertion inside nextScene: absent
-expected scene and route revisions: absent
-stale Continue rejection: absent
-duplicate Continue rejection: absent
-atomic route/stage/UI/focus settlement: absent
-successor focus policy: absent
-focus restoration receipt: absent
+scene-arrival message: implicit
+inspection result message: implicit
+clue acquisition message: implicit
+scene completion message: implicit
+interlude message: implicit
+route transition message: implicit
+terminal message: implicit
 ```
 
-## Current bypass path
+## Proof gaps
 
 ```txt
-page boots
-  -> interlude opacity is zero
-  -> aria-hidden is true
-  -> Continue remains focusable
-  -> keyboard activates Continue
-  -> nextScene does not check completion
-  -> route and save advance before required clues
-```
-
-## Visible proof gaps
-
-```txt
-first semantic-modal frame acknowledgement: absent
-active focus owner in frame evidence: absent
-background inert state in frame evidence: absent
-first successor focus-stable frame acknowledgement: absent
-source/artifact/Pages focus parity: absent
-```
-
-## Validation gaps
-
-```txt
-keyboard-only fixture: absent
-hidden-control tab-order fixture: absent
-premature route-bypass fixture: absent
-modal focus containment fixture: absent
-screen-reader dialog fixture: absent
-background-command rejection fixture: absent
-focus restoration fixture: absent
-terminal focus fixture: absent
-production-artifact fixture: absent
-Pages-origin fixture: absent
+screen-reader announcement capture: absent
+accessibility-tree diff fixture: absent
+duplicate-announcement fixture: absent
+re-read coalescing fixture: absent
+source/artifact/Pages parity: absent
+visible-story to semantic-message acknowledgement: absent
 ```
 
 ## Retained independent gaps
 
 ```txt
+interlude focus and route admission
 page lifecycle suspension and resume
 terminal completion settlement and resume
 WebGL context recovery
@@ -124,4 +93,4 @@ stage resource lifecycle
 
 ## Completion boundary
 
-Do not claim accessible or progression-safe interludes because the overlay looks modal. Completion requires a route guard, non-interactive hidden state, semantic modal admission, inert background controls, deterministic focus transfer/restoration, typed command results and a first focus-stable frame bound to the accepted revisions.
+Do not claim screen-reader-ready story presentation until controls and diagnostics are excluded from live-region ownership, messages are authored and revisioned, duplicates and stale work are rejected, and browser proof captures the first accepted semantic announcement.
