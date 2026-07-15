@@ -1,54 +1,58 @@
-# Next steps: The Unmapped House story audio event projection
+# Next steps: The Unmapped House story save writer revision authority
 
-**Timestamp:** `2026-07-15T12-59-24-04-00`  
+**Timestamp:** `2026-07-15T18-02-58-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-The smallest safe implementation is a procedural Web Audio adapter that unlocks from an accepted user gesture, consumes accepted semantic story results and retires all owned nodes on lifecycle replacement.
+The smallest safe implementation is a revisioned save envelope around the existing story payload, plus one browser-native writer authority that rejects stale bases and makes reset a durable epoch change rather than a key deletion.
 
 ## Plan ledger
 
-**Goal:** add useful horror-story audio without coupling story success to raw input or render callbacks.
+**Goal:** add cross-document save ordering without restructuring story, rendering or authored content.
 
-- [ ] Define stable `SemanticAudioEventId` values for inspection, clue, interlude, route, terminal and UI results.
-- [ ] Add an authored `CueDescriptor` registry with explicit silence support.
-- [ ] Observe browser audio capability without creating audible nodes.
-- [ ] Admit one `AudioContextGeneration` from an existing accepted gesture.
-- [ ] Add master, ambience, story-effects and UI buses.
-- [ ] Add mute and volume preferences with revisioned persistence.
-- [ ] Project first and repeated inspections through distinct cue policies.
-- [ ] Deduplicate clue, completion and transition cues by event ID.
-- [ ] Adopt one scene ambience generation with the accepted scene revision.
-- [ ] Use the fixed camera as the listener descriptor when spatial cues are enabled.
-- [ ] Enforce pooling, priority and voice budgets.
-- [ ] Suspend or attenuate on visibility loss without replaying one-shots on resume.
-- [ ] Retire loops and nodes on pagehide, route replacement and context replacement.
-- [ ] Publish `AudioProjectionResult`, `FirstAudibleCueAck` and `FirstAudioVisualConvergenceAck`.
-- [ ] Add source, artifact and Pages browser fixtures.
+- [ ] Define `StorySaveSlotId`, `SaveWriterId`, `SaveWriterGeneration`, `SaveWriterLeaseId`, `StorySaveRevision`, `StorySaveCommitId` and `ResetEpoch`.
+- [ ] Wrap the existing payload in a versioned `StorySaveEnvelope`.
+- [ ] Include the candidate base revision and payload fingerprint in every save command.
+- [ ] Add one origin-scoped writer lock using `navigator.locks` when available.
+- [ ] Add a revisioned lease with expiry and post-write verification as the fallback.
+- [ ] Replace void `saveState()` calls with `StorySaveCommitCommand` and typed results.
+- [ ] Read and verify the durable head before every commit.
+- [ ] Reject stale-base, expired-lease, duplicate and reset-invalidated candidates.
+- [ ] Convert reset into an initial-state commit at a new reset epoch.
+- [ ] Add `storage` event reconciliation for external durable-head changes.
+- [ ] Add BroadcastChannel messages for low-latency head, lease, conflict and reset events.
+- [ ] Move stale documents to explicit reconcile or read-only state before their next write.
+- [ ] Retain one verified predecessor for recovery.
+- [ ] Publish `FirstDurableStorySaveAck` and `FirstDurableStorySaveFrameAck`.
+- [ ] Add two-tab, three-tab, crash, reset, conflict, recovery, artifact and Pages fixtures.
 
 ## Ordered implementation
 
-### 1. Semantic events
+### 1. Envelope and identities
 
-Publish accepted story-result descriptors after inspection, clue, interlude, scene and terminal settlement. Raw click and raycast handlers must not play success cues directly.
+Add schema version, slot ID, save revision, base revision, reset epoch, commit ID, writer ID, writer generation, written timestamp and payload fingerprint around the existing story payload. Preserve the current payload fields and migration boundary.
 
-### 2. Browser admission
+### 2. Writer admission
 
-Create or resume one Web Audio context only from an accepted gesture. Unsupported or muted operation must preserve complete playability.
+Use a named `navigator.locks` lock when available. The fallback must use a revisioned lease record with expiry, heartbeat and read-back verification. Only one active writer generation may commit.
 
-### 3. Procedural cues and ambience
+### 3. Compare-and-swap save
 
-Use small oscillator/noise envelopes so the static site remains asset-free. Keep cue descriptions data-driven and permit authored silence.
+Read the current head, compare the candidate base revision and reset epoch, assign the next revision, retain the predecessor, write once and verify the accepted revision and fingerprint. Do not silently merge stale whole-state objects.
 
-### 4. Lifecycle and deduplication
+### 4. Cross-document settlement
 
-Key one-shot playback by semantic event ID and audio generation. Replace scene ambience atomically and disconnect every owned node during retirement.
+Observe storage events and BroadcastChannel messages. Cancel pending stale commits, update the known head, and enter reconcile/read-only mode when local state diverges.
 
-### 5. Prove behavior
+### 5. Durable reset
 
-Test unlock, unsupported fallback, muted playthrough, first/repeated inspection, clue dedupe, scene transition, terminal completion, visibility resume, pagehide cleanup, voice budget and source/artifact/Pages parity.
+Commit initial state at a new reset epoch. Reject all candidates based on older reset epochs so an open stale tab cannot resurrect prior progress.
+
+### 6. Prove behavior
+
+Run source, built artifact and Pages fixtures for stale-write rejection, lease contention, writer retirement, reset resurrection, storage-event reconciliation, BroadcastChannel fallback, corrupt-head recovery and visible/durable convergence.
 
 ## Do not combine yet
 
-Keep inspection-focus continuity, story announcements, interlude modal focus, motion preference, page lifecycle, save schema, WebGL recovery, viewport, hotspot picking and resource lifecycle as retained independent authorities.
+Keep story audio, inspection-focus continuity, story announcements, interlude modal focus, motion preference, page lifecycle, save schema, WebGL recovery, viewport, hotspot picking and resource lifecycle as retained independent authorities.
