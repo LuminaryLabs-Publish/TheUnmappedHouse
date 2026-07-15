@@ -1,70 +1,66 @@
-# Current audit: The Unmapped House inspection control focus continuity
+# Current audit: The Unmapped House story audio event projection
 
-**Timestamp:** `2026-07-15T08-28-25-04-00`  
+**Timestamp:** `2026-07-15T12-59-24-04-00`  
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`  
-**Status:** `inspection-control-focus-continuity-authority-audited`  
+**Status:** `story-audio-event-projection-authority-audited`  
 **Branch:** `main`
 
 ## Summary
 
-The DOM inspection path deletes its own active control. `renderUi()` clears `#hotspot-list` and creates new buttons after every first-time or repeated inspection. The story state and visible labels update, but keyboard focus is not represented, retained, transferred or acknowledged.
+The story runtime accepts inspections, grants clues, opens interludes, advances scenes and reaches terminal completion. DOM and Three.js surfaces project those results visually, but the repository contains no owned browser-audio context, semantic cue registry, ambience lifecycle, preferences, deduplication or audible-result evidence.
 
 ## Plan ledger
 
-**Goal:** require stable control identity and explicit focus settlement for every accepted inspection projection.
+**Goal:** require one semantic audio projection result for each accepted story revision while keeping story truth independent of the audio adapter.
 
 - [x] Compare all Publish repositories and central ledgers.
 - [x] Select only TheUnmappedHouse by the oldest synchronized timestamp.
-- [x] Inspect shell, story runtime, stage input, package and retained audit state.
-- [x] Identify the interaction loop, domains, all 24 kits and all offered services.
-- [x] Define stable control identity, keyed projection, typed results and focus-frame proof.
+- [x] Inspect shell, story runtime, story descriptors, StageKit, package and retained audit state.
+- [x] Identify the interaction loop, domains, all 24 implemented kits and all offered services.
+- [x] Define capability, unlock, cue, ambience, preference, lifecycle and proof surfaces.
 - [x] Add timestamped audit documents.
 - [x] Change documentation only.
-- [ ] Implement and execute keyboard-focus fixtures.
+- [ ] Implement and execute browser-audio fixtures.
 
 ## Complete interaction loop
 
 ```txt
 boot
-  -> load local story state
+  -> restore local story state
   -> resolve current scene
   -> create Three.js stage and hotspot volumes
   -> render scene title text hotspot buttons and Notebook
+  -> begin recursive visual RAF
 
-DOM inspection
-  -> focus hotspot button
-  -> click from Enter Space or pointer
-  -> inspectHotspot updates inspected clues text and log
-  -> renderUi clears hotspotList.textContent
-  -> focused button is disconnected
-  -> all scene buttons are recreated
-  -> save state
+inspection
+  -> DOM or canvas input resolves hotspot
+  -> inspectHotspot accepts first or repeated inspection
+  -> mutate inspected clues text and log
+  -> render and persist accepted state
+  -> no semantic audio event or cue result
 
-canvas inspection
-  -> raycast resolves hotspot
-  -> same inspectHotspot and renderUi path
-
-scene completion
-  -> delayed interlude opens
-  -> Continue advances scene
-  -> StageKit loads successor scene
-  -> all hotspot controls are rebuilt again
+completion and route
+  -> schedule and open interlude
+  -> Continue advances scene or terminal copy
+  -> load successor visible stage when present
+  -> no transition ambience or terminal audio result
 ```
 
 ## Domains in use
 
 ```txt
 static browser shell and document lifecycle
-story state scenes clues inspections route and interlude
+story state scenes clues inspections route interlude and terminal state
 DOM keyboard pointer and canvas interaction
-stable semantic control identity
-keyed control projection and list revision
-focus capture retention transfer and fallback
-accessibility status and focus evidence
 localStorage persistence
-fixed-aspect viewport
+fixed-aspect viewport and semantic UI projection
 Three.js scene camera materials shaders raycasting and WebGL rendering
 post-processing and camera parallax
+browser audio capability and user-gesture admission
+semantic story audio events and cue descriptors
+inspection clue interlude terminal UI and ambience projection
+listener/source transforms buses preferences dedupe pooling and voice budgets
+audio lifecycle settlement and audiovisual proof
 syntax validation static artifact and Pages deployment
 repo-local and central audit governance
 ```
@@ -98,41 +94,40 @@ repo-local and central audit governance
 
 ```txt
 implemented kits: 24
-planned inspection-control surfaces: 20
+planned story-audio surfaces: 22
 ```
 
 ## Main findings
 
-- `#hotspot-list` is one generic container with no control-list revision.
-- Every `renderUi()` call sets `hotspotList.textContent = ""`.
-- Every scene hotspot then receives a newly created button node.
-- First-time inspections call `renderUi()` after state mutation.
-- Repeated inspections also call `renderUi()`.
-- Keyboard activation therefore removes the active element during its own command.
-- Hotspot descriptor IDs are stable but are not used as stable DOM identities.
-- No focus capture, retention, fallback or scene-transfer policy exists.
-- No typed projection result or first focus-stable UI frame acknowledgement exists.
+- No `AudioContext`, `Audio`, `<audio>` element or audio node owner is present in the active shell and runtime.
+- No stable semantic audio event ID or cue descriptor registry exists.
+- Inspection, clue, interlude, scene and terminal results have no audio projection adapter.
+- No scene ambience generation or listener/source revision exists.
+- No master/category volume, mute state or persistence exists.
+- No duplicate, stale or superseded cue rejection exists.
+- No visibility, pagehide or route audio settlement exists.
+- No `FirstAudibleCueAck` or `FirstAudioVisualConvergenceAck` exists.
 
 ## Required authority
 
 ```txt
-the-unmapped-house-inspection-control-focus-continuity-authority-domain
+the-unmapped-house-story-audio-event-projection-authority-domain
 ```
 
 ```txt
-InspectionControlProjectionCommand
-  -> bind document scene inspection and control-list revisions
-  -> resolve stable HotspotControlId values
-  -> prepare keyed control state and labels
-  -> capture active control and activation origin
-  -> commit story and control revisions together
-  -> retain focus on a surviving control
-  -> transfer focus through an authored fallback when retired
-  -> reject stale duplicate and superseded projections
-  -> publish InspectionControlProjectionResult
-  -> publish FirstFocusStableInspectionFrameAck
+AudioProjectionAdmissionCommand
+  -> bind document runtime story scene and audio-policy revisions
+  -> observe browser capability and accepted user-gesture unlock
+  -> consume accepted semantic story results
+  -> resolve stable cues and scene ambience
+  -> reject stale duplicate muted and superseded work
+  -> enforce buses preferences pooling priority and voice budgets
+  -> settle visibility pagehide route and audio-generation lifecycle
+  -> publish AudioProjectionResult
+  -> publish FirstAudibleCueAck
+  -> publish FirstAudioVisualConvergenceAck
 ```
 
 ## Validation boundary
 
-Documentation changed. Runtime JavaScript, HTML, CSS, story data, persistence, rendering, dependencies, scripts, workflow and deployment did not change. No executable keyboard, browser-artifact or Pages fixture was run.
+Documentation changed. Runtime JavaScript, HTML, CSS, story data, persistence, rendering, audio behavior, dependencies, scripts, workflow and deployment did not change. No executable audio, browser-artifact or Pages fixture was run.
