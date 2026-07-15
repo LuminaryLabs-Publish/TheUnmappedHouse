@@ -1,92 +1,90 @@
-# Known gaps: The Unmapped House motion preference and visual-effect admission
+# Known gaps: The Unmapped House inspection control focus continuity
 
-**Timestamp:** `2026-07-15T02-59-31-04-00`  
+**Timestamp:** `2026-07-15T08-28-25-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-Continuous shader, post-process and camera motion plus transitional interlude motion are always active. The source has no preference identity, profile settlement or reduced-motion proof.
+The story exposes semantic hotspot buttons, but every inspection replaces the whole button tree. Stable DOM identity, control-list revisions and focus settlement are absent.
 
 ## Plan ledger
 
-**Goal:** make motion preference, participant adoption and visible-frame evidence explicit.
+**Goal:** make inspection projection identity, focus behavior and browser proof explicit.
 
-- [x] Trace continuous and transitional motion participants.
-- [x] Trace preference and settings surfaces.
+- [x] Trace DOM and canvas inspection producers.
+- [x] Trace destructive list reconstruction.
 - [x] Define missing identities, policies and results.
 - [ ] Implement and execute them.
 
 ## Identity gaps
 
 ```txt
-MotionPreferenceCommandId: absent
-MotionProfileRevision: absent
-MotionParticipantId: absent
-ExplicitMotionSettingRevision: absent
-SystemMotionPreferenceRevision: absent
-FirstMotionMatchedFrameAck: absent
+InspectionCommandId: absent
+HotspotControlId: absent from DOM projection
+HotspotControlListRevision: absent
+FocusAnchorId: absent
+FocusRevision: absent
+InspectionActivationOrigin: implicit
+FirstFocusStableInspectionFrameAck: absent
 ```
 
-## Preference gaps
+## Projection gaps
 
 ```txt
-prefers-reduced-motion media query: absent
-matchMedia listener: absent
-explicit motion setting: absent
-persisted override policy: absent
-system-versus-explicit precedence: absent
-live preference replacement: absent
+keyed control map: absent
+in-place label update: absent
+surviving-node retention: absent
+explicit removed-control retirement: absent
+stale projection rejection: absent
+duplicate projection rejection: absent
+atomic story/control adoption: absent
+projection rollback: absent
 ```
 
-## Participant gaps
+## Focus gaps
 
 ```txt
-stage shader time policy: always animated
-post warp policy: always animated
-post grain policy: always animated
-post scan-line policy: always animated
-camera parallax policy: always active
-interlude transition policy: always 550 ms
-participant registry: absent
-atomic profile adoption: absent
-stale-profile rejection: absent
+active control capture: absent
+accepted-control focus retention: absent
+removed-control fallback: absent
+scene-heading transfer: absent
+canvas-origin focus policy: absent
+scene replacement focus policy: absent
+interlude handoff receipt: absent
 ```
 
-## Current motion path
+## Current path
 
 ```txt
-StageKit constructor
-  -> create THREE.Clock
-  -> start recursive RAF
-
-each frame
-  -> clock.getElapsedTime
-  -> update stage material time
-  -> update post material time
-  -> apply pointer camera offsets
-  -> submit stage and post frames
-
-scene completion
-  -> open interlude
-  -> CSS opacity transition for 0.55 seconds
+focused button click
+  -> inspectHotspot
+  -> story mutation
+  -> renderUi
+  -> hotspotList.textContent = ""
+  -> active node disconnected
+  -> new buttons appended
+  -> save state
 ```
 
 ## Proof gaps
 
 ```txt
-initial reduced-motion fixture: absent
-live preference-change fixture: absent
-explicit override fixture: absent
-shader-time freeze fixture: absent
-parallax-disable fixture: absent
-transition-disable fixture: absent
-first matching frame acknowledgement: absent
+keyboard-only scene traversal fixture: absent
+first inspection focus fixture: absent
+repeat inspection focus fixture: absent
+neighbor Tab-order fixture: absent
+final-hotspot/interlude fixture: absent
+scene replacement focus fixture: absent
+canvas no-focus-steal fixture: absent
+projection rollback fixture: absent
+first focus-stable frame acknowledgement: absent
 source/artifact/Pages parity: absent
 ```
 
 ## Retained independent gaps
 
 ```txt
+motion preference visual-effect admission
 story announcement semantic projection
 interlude focus and route admission
 page lifecycle suspension and resume
@@ -104,4 +102,4 @@ stage resource lifecycle
 
 ## Completion boundary
 
-Do not claim reduced-motion support until one accepted profile governs every continuous and transitional participant, live preference changes cannot create mixed generations, and browser proof captures the first frame matching the accepted profile.
+Do not claim keyboard inspection continuity until surviving controls retain stable identity, every accepted projection settles focus through an explicit policy, and browser proof captures the first UI frame matching the accepted inspection and control-list revisions.
