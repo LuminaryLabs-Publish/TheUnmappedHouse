@@ -1,58 +1,65 @@
-# Validation: The Unmapped House story announcement audit
+# Validation: The Unmapped House motion preference audit
 
-**Timestamp:** `2026-07-14T22-01-31-04-00`  
-**Scope:** documentation-only accessibility, interaction and semantic-projection audit
+**Timestamp:** `2026-07-15T02-59-31-04-00`  
+**Scope:** documentation-only accessibility, interaction and render-policy audit
 
 ## Summary
 
-Source and retained audit state were inspected. The audit proves that the complete interactive story panel is a polite live region and that controls plus debug JSON are repeatedly rebuilt inside it. Runtime behavior and deployment were not changed or executed.
+Source and retained audit state were inspected. The audit proves that full visual motion is always active through shader time, post-processing, camera parallax and interlude transitions, and that no product or system preference selects a reduced-motion profile. Runtime behavior and deployment were not changed or executed.
 
 ## Plan ledger
 
 **Goal:** state exactly what this audit proves and what remains unverified.
 
 - [x] Compare all 11 accessible Publish repositories.
-- [x] Review ten eligible central ledger timestamps and documentation heads.
-- [x] Confirm every eligible current head matches its recorded documentation head.
-- [x] Select only TheUnmappedHouse by the oldest synchronized timestamp.
-- [x] Verify `aria-live="polite"` owns the complete story-panel subtree.
-- [x] Verify the subtree includes controls and debug JSON.
-- [x] Verify `renderUi()` rebuilds the controls and JSON.
-- [x] Verify no dedicated status region or semantic result exists.
+- [x] Review ten eligible central ledger timestamps.
+- [x] Confirm TheUnmappedHouse is the oldest synchronized eligible entry.
+- [x] Verify `THREE.Clock` and recursive RAF ownership.
+- [x] Verify stage and post material time updates.
+- [x] Verify animated warp, grain and scan lines.
+- [x] Verify pointer-driven camera parallax.
+- [x] Verify the 550 ms interlude transition.
+- [x] Verify no reduced-motion query, setting or profile result exists.
 - [x] Preserve all 24 implemented kit surfaces and services.
 - [x] Change documentation only.
-- [ ] Run executable browser and screen-reader fixtures after implementation.
+- [ ] Run executable browser and Pages fixtures after implementation.
 
 ## Source checks performed
 
 ```txt
 full 11-repository LuminaryLabs-Publish inventory compared
 ten eligible central ledger records reviewed
-ten eligible repository heads compared with documentation heads
-.agent root state inspected
+chosen repository head compared with documented head
+root .agent state inspected
 index.html inspected
 src/styles.css inspected
 src/game.js inspected
 src/story-data.js inspected
 src/stage-kit.js inspected
-src/aspect-frame.js inspected
 package.json inspected
 .github/workflows/deploy.yml inspected
+combined commit statuses inspected
 ```
 
 ## Source facts established
 
 ```txt
-story-panel aria-live policy: polite
-interactive controls inside live region: yes
-debug JSON inside live region: yes
-hotspot controls rebuilt by renderUi: yes
-debug JSON replaced by renderUi: yes
-dedicated semantic status element: absent
-message identity and revision: absent
-deduplication and coalescing: absent
-screen-reader fixture: absent
+THREE.Clock created during StageKit construction: yes
+recursive RAF starts during StageKit construction: yes
+stage material time updated each frame: yes
+post-process time updated each frame: yes
+animated post warp uses time: yes
+animated grain uses time: yes
+animated scan lines use time: yes
+pointer-driven camera parallax: yes
+interlude opacity transition: 0.55 seconds
+prefers-reduced-motion CSS policy: absent
+matchMedia motion query: absent
+explicit motion setting: absent
+motion profile revision: absent
+FirstMotionMatchedFrameAck: absent
 validation command: syntax-only
+combined commit statuses before audit: none
 ```
 
 ## Documentation changed
@@ -63,7 +70,7 @@ new architecture audit
 new render audit
 new gameplay audit
 new interaction audit
-new accessibility contract audit
+new motion-preference contract audit
 new deploy fixture gate
 new central-sync audit
 START_HERE.md refreshed
@@ -94,12 +101,12 @@ pull request: none
 
 ```txt
 npm run check: not run
-screen-reader fixture: unavailable
-accessibility-tree fixture: unavailable
-announcement-deduplication fixture: unavailable
-visible/semantic coherence fixture: unavailable
+reduced-motion browser fixture: unavailable
+live system-preference fixture: unavailable
+explicit-override fixture: unavailable
+first motion-matched frame fixture: unavailable
 production-artifact smoke: not run
-Pages accessibility smoke: not run
+Pages reduced-motion smoke: not run
 ```
 
-No semantic announcement authority, control/debug exclusion, deduplication, screen-reader convergence, artifact parity or production readiness is claimed.
+No motion-profile implementation, reduced-motion behavior, participant convergence, browser-frame acknowledgement, artifact parity or production readiness is claimed.
