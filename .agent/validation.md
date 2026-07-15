@@ -1,11 +1,11 @@
-# Validation: The Unmapped House inspection control focus audit
+# Validation: The Unmapped House story audio audit
 
-**Timestamp:** `2026-07-15T08-28-25-04-00`  
-**Scope:** documentation-only interaction, accessibility and UI-projection audit
+**Timestamp:** `2026-07-15T12-59-24-04-00`  
+**Scope:** documentation-only architecture, interaction, render and deployment audit
 
 ## Summary
 
-Source and retained audit state were inspected. The audit proves that every first-time or repeated DOM hotspot inspection calls `renderUi()`, which removes the focused control by clearing the complete hotspot list and creates replacement buttons without stable identity or focus settlement. Runtime behavior and deployment were not changed or executed.
+Source and retained audit state were inspected. The audit establishes that accepted inspection, clue, interlude, route and terminal results receive visual projection but no owned browser-audio projection. Runtime behavior and deployment were not changed or executed.
 
 ## Plan ledger
 
@@ -15,13 +15,12 @@ Source and retained audit state were inspected. The audit proves that every firs
 - [x] Review ten eligible central ledger timestamps.
 - [x] Confirm TheUnmappedHouse is the oldest synchronized eligible entry.
 - [x] Verify the root `.agent` state exists and matches the documented head.
-- [x] Verify DOM and canvas inspection converge on `inspectHotspot()`.
-- [x] Verify first-time and repeated paths call `renderUi()`.
-- [x] Verify `renderUi()` clears and recreates all hotspot buttons.
-- [x] Verify no stable control-list or focus result exists.
+- [x] Inspect `index.html`, `src/game.js`, `src/story-data.js`, `src/stage-kit.js` and `package.json`.
+- [x] Confirm accepted story results have DOM and Three.js visual projection.
+- [x] Confirm no active audio context, audio element, cue registry, preference or audible acknowledgement exists.
 - [x] Preserve all 24 implemented kit surfaces and services.
 - [x] Change documentation only.
-- [ ] Run executable keyboard, artifact and Pages fixtures after implementation.
+- [ ] Run executable audio, artifact and Pages fixtures after implementation.
 
 ## Source checks performed
 
@@ -32,26 +31,30 @@ chosen repository head compared with documented head
 root .agent state inspected
 index.html inspected
 src/game.js inspected
+src/story-data.js inspected
 src/stage-kit.js inspected
 package.json inspected
 retained kit registry inspected
+repository code search for browser audio surfaces returned no result
 ```
 
 ## Source facts established
 
 ```txt
-semantic hotspot button list exists: yes
-DOM button activation dispatches inspectHotspot: yes
-canvas raycast dispatches inspectHotspot: yes
-first inspection calls renderUi: yes
-repeated inspection calls renderUi: yes
-renderUi clears hotspotList.textContent: yes
-renderUi creates new button elements: yes
-stable DOM HotspotControlId: absent
-control-list revision: absent
-active-control capture: absent
-focus retention or fallback: absent
-FirstFocusStableInspectionFrameAck: absent
+DOM story projection: implemented
+Three.js visible stage projection: implemented
+accepted inspection and clue state: implemented
+interlude and terminal visual projection: implemented
+AudioContext owner: absent
+HTML audio element or new Audio owner: absent
+semantic audio event ID: absent
+cue descriptor registry: absent
+scene ambience lifecycle: absent
+master/category volume and mute: absent
+cue deduplication: absent
+audio lifecycle settlement: absent
+FirstAudibleCueAck: absent
+FirstAudioVisualConvergenceAck: absent
 validation command: syntax-only
 ```
 
@@ -63,7 +66,7 @@ new architecture audit
 new render audit
 new gameplay audit
 new interaction audit
-new inspection-control contract audit
+new audio contract audit
 new deploy fixture gate
 new central-sync audit
 START_HERE.md refreshed
@@ -83,6 +86,7 @@ story descriptors: no
 Three.js provider: no
 persistence behavior: no
 render behavior: no
+audio behavior: no
 package scripts: no
 dependencies: no
 workflow or deployment: no
@@ -94,12 +98,13 @@ pull request: none
 
 ```txt
 npm run check: not run
-keyboard-only browser fixture: unavailable
-repeat-inspection focus fixture: unavailable
-scene-transition focus fixture: unavailable
-first focus-stable frame fixture: unavailable
+browser audio unlock fixture: unavailable
+inspection/clue cue fixture: unavailable
+ambience lifecycle fixture: unavailable
+visibility/pagehide fixture: unavailable
+first audiovisual convergence fixture: unavailable
 production-artifact smoke: not run
-Pages keyboard-focus smoke: not run
+Pages audio smoke: not run
 ```
 
-No stable control projection, focus continuity, scene-transfer correctness, browser-frame acknowledgement, artifact parity or production readiness is claimed.
+No audible gameplay, browser-unlock reliability, cue correctness, preference persistence, lifecycle settlement, audiovisual convergence, artifact parity or production readiness is claimed.
