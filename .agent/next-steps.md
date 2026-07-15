@@ -1,75 +1,51 @@
-# Next steps: The Unmapped House interlude focus and route admission
+# Next steps: The Unmapped House story announcement semantic projection
 
-**Timestamp:** `2026-07-14T17-00-55-04-00`  
+**Timestamp:** `2026-07-14T22-01-31-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-The smallest safe implementation is to guard route advancement first, then make interlude semantics, background inertness and focus ownership explicit.
+The smallest safe change is to remove live-region ownership from the entire story panel and introduce one dedicated status projection driven by accepted story results.
 
 ## Plan ledger
 
-**Goal:** close the keyboard route bypass without restructuring story or rendering.
+**Goal:** produce concise, deterministic and non-duplicated screen-reader feedback without changing the visual game loop.
 
-- [ ] Reject Continue unless the current scene is complete and the matching interlude generation is active.
-- [ ] Remove hidden Continue from sequential focus and command admission.
-- [ ] Add `InterludeGeneration`, `StoryRevision`, `SceneRevision`, `RouteRevision` and `FocusOwnerRevision`.
-- [ ] Add semantic dialog naming and `aria-modal` state.
-- [ ] Make stage, story panel and hotspot controls inert while the interlude is active.
-- [ ] Capture prior focus and move focus to Continue only after modal admission.
-- [ ] Reject canvas and DOM inspection commands while modal state is active.
-- [ ] Define the global reset policy during modal state.
-- [ ] Validate active scene and expected route revision on Continue.
-- [ ] Restore focus to the successor scene heading or first authored hotspot.
-- [ ] Publish `InterludeOpenResult`, `InterludeContinueResult` and rejection receipts.
-- [ ] Publish `FirstFocusStableSceneFrameAck`.
-- [ ] Add keyboard-only, screen-reader, source, artifact and Pages fixtures.
+- [ ] Remove `aria-live` from `#story-panel`.
+- [ ] Add one dedicated status element outside the interactive control subtree.
+- [ ] Define `StoryAnnouncementRevision` and command identity.
+- [ ] Define semantic message kinds for scene, inspection, clue, completion, interlude, route and terminal results.
+- [ ] Exclude hotspot controls and Notebook/debug JSON from live announcements.
+- [ ] Add priority, coalescing and duplicate suppression.
+- [ ] Reject stale and superseded announcement work.
+- [ ] Keep focus management under the retained interlude focus authority.
+- [ ] Publish `StoryAnnouncementResult`.
+- [ ] Publish `FirstSemanticAnnouncementAck`.
+- [ ] Correlate the acknowledgement with the visible story revision.
+- [ ] Add browser, screen-reader, artifact and Pages fixtures.
 
 ## Ordered implementation
 
-### 1. Guard the route boundary
+### 1. Separate semantic regions
 
-Add a completion and active-interlude assertion inside the route command itself. Presentation state must not be trusted as proof.
+Keep headings, narrative text, controls and debug output stable and directly navigable. Do not make their container live.
 
-### 2. Make hidden controls non-interactive
+### 2. Define authored messages
 
-Use an explicit hidden/inert/disabled policy so the closed interlude and its Continue control are absent from focus order and command admission.
+Create concise messages from accepted domain results rather than serializing arbitrary UI state.
 
-### 3. Admit modal state atomically
+### 3. Add revision and deduplication
 
-Open the overlay, apply semantic dialog state, inert the background, capture prior focus and focus Continue as one accepted transition.
+Bind each message to story, scene and source-result identities. Coalesce clue and completion messages where appropriate.
 
-### 4. Gate all background commands
+### 4. Project through one adapter
 
-Canvas clicks, hotspot buttons and reset shortcuts must consult the active modal generation and return typed rejection results when disallowed.
+The DOM adapter writes only the accepted message into the dedicated status node and returns a typed projection result.
 
-### 5. Restore focus with the successor scene
+### 5. Prove behavior
 
-Scene advancement, stage loading, UI projection, modal retirement and focus restoration must settle against one route revision.
-
-### 6. Prove the result
-
-Run keyboard and screen-reader fixtures and acknowledge the first frame where the successor scene, closed modal and focus owner all match.
-
-## Required fixtures
-
-```txt
-hidden Continue absent from tab order
-premature synthetic click rejected
-premature keyboard activation rejected
-completed scene opens one semantic modal
-focus moves to Continue
-Tab and Shift+Tab remain in modal
-background hotspot button rejected
-canvas hotspot rejected
-reset shortcut follows modal policy
-Continue advances only matching completed scene
-stale and duplicate Continue rejected
-focus restored after successor scene
-terminal scene focus policy
-source, production artifact and Pages parity
-```
+Capture accessibility-tree and announcement events for boot, inspection, re-read, completion, route transition and terminal state.
 
 ## Do not combine yet
 
-Keep page lifecycle, terminal completion, WebGL recovery, persistence, viewport, provider admission, hotspot picking and stage-resource lifecycle as retained authorities. The new parent consumes their identities and receipts.
+Keep focus/route admission, page lifecycle, persistence, WebGL recovery, viewport, provider admission, hotspot picking and resource lifecycle as retained independent authorities.
