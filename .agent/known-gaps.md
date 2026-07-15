@@ -1,89 +1,104 @@
-# Known gaps: The Unmapped House inspection control focus continuity
+# Known gaps: The Unmapped House story audio event projection
 
-**Timestamp:** `2026-07-15T08-28-25-04-00`  
+**Timestamp:** `2026-07-15T12-59-24-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-The story exposes semantic hotspot buttons, but every inspection replaces the whole button tree. Stable DOM identity, control-list revisions and focus settlement are absent.
+Accepted story state has visible DOM and WebGL projection but no owned semantic audio projection, preferences, lifecycle or proof.
 
 ## Plan ledger
 
-**Goal:** make inspection projection identity, focus behavior and browser proof explicit.
+**Goal:** make browser-audio identity, policy, lifecycle and evidence explicit.
 
-- [x] Trace DOM and canvas inspection producers.
-- [x] Trace destructive list reconstruction.
+- [x] Trace accepted story and visual projection paths.
+- [x] Confirm no active audio owner or cue registry exists.
 - [x] Define missing identities, policies and results.
 - [ ] Implement and execute them.
 
 ## Identity gaps
 
 ```txt
-InspectionCommandId: absent
-HotspotControlId: absent from DOM projection
-HotspotControlListRevision: absent
-FocusAnchorId: absent
-FocusRevision: absent
-InspectionActivationOrigin: implicit
-FirstFocusStableInspectionFrameAck: absent
+AudioContextGeneration: absent
+AudioPolicyRevision: absent
+SemanticAudioEventId: absent
+CueDescriptorId: absent
+AudioBusId: absent
+AmbienceGeneration: absent
+ListenerRevision: absent
+SourceRevision: absent
+FirstAudibleCueAck: absent
+FirstAudioVisualConvergenceAck: absent
 ```
 
-## Projection gaps
+## Capability and admission gaps
 
 ```txt
-keyed control map: absent
-in-place label update: absent
-surviving-node retention: absent
-explicit removed-control retirement: absent
-stale projection rejection: absent
-duplicate projection rejection: absent
-atomic story/control adoption: absent
-projection rollback: absent
+Web Audio capability observation: absent
+accepted user-gesture unlock: absent
+unsupported fallback result: absent
+deferred unlock queue: absent
+context resume/replacement policy: absent
 ```
 
-## Focus gaps
+## Cue and ambience gaps
 
 ```txt
-active control capture: absent
-accepted-control focus retention: absent
-removed-control fallback: absent
-scene-heading transfer: absent
-canvas-origin focus policy: absent
-scene replacement focus policy: absent
-interlude handoff receipt: absent
+inspection cue policy: absent
+repeated-inspection cue policy: absent
+clue-grant cue policy: absent
+interlude cue policy: absent
+scene-transition cue policy: absent
+terminal cue policy: absent
+scene ambience ownership: absent
+explicit authored silence: absent
 ```
 
-## Current path
+## Preference and budget gaps
 
 ```txt
-focused button click
-  -> inspectHotspot
-  -> story mutation
-  -> renderUi
-  -> hotspotList.textContent = ""
-  -> active node disconnected
-  -> new buttons appended
-  -> save state
+master volume: absent
+ambience volume: absent
+story-effects volume: absent
+UI volume: absent
+mute: absent
+preference persistence: absent
+cue pooling: absent
+priority policy: absent
+voice budget: absent
+```
+
+## Lifecycle and consistency gaps
+
+```txt
+semantic-result cue deduplication: absent
+stale cue rejection: absent
+superseded cue rejection: absent
+visibility suspension: absent
+resume without one-shot replay: absent
+pagehide retirement: absent
+route replacement retirement: absent
+audio/visual story revision convergence: absent
 ```
 
 ## Proof gaps
 
 ```txt
-keyboard-only scene traversal fixture: absent
-first inspection focus fixture: absent
-repeat inspection focus fixture: absent
-neighbor Tab-order fixture: absent
-final-hotspot/interlude fixture: absent
-scene replacement focus fixture: absent
-canvas no-focus-steal fixture: absent
-projection rollback fixture: absent
-first focus-stable frame acknowledgement: absent
+supported-browser unlock fixture: absent
+unsupported fallback fixture: absent
+muted full-playthrough fixture: absent
+first/repeated inspection cue fixture: absent
+clue dedupe fixture: absent
+ambience replacement fixture: absent
+visibility/pagehide fixture: absent
+voice-budget fixture: absent
 source/artifact/Pages parity: absent
 ```
 
 ## Retained independent gaps
 
 ```txt
+inspection control focus continuity
 motion preference visual-effect admission
 story announcement semantic projection
 interlude focus and route admission
@@ -102,4 +117,4 @@ stage resource lifecycle
 
 ## Completion boundary
 
-Do not claim keyboard inspection continuity until surviving controls retain stable identity, every accepted projection settles focus through an explicit policy, and browser proof captures the first UI frame matching the accepted inspection and control-list revisions.
+Do not claim audible story readiness until accepted semantic results drive stable cue IDs, unlock and lifecycle behavior are explicit, duplicates cannot replay one-shot cues and browser proof captures the first audible and audiovisual acknowledgements.
