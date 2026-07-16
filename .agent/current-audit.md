@@ -1,59 +1,52 @@
-# Current audit: The Unmapped House hotspot availability and discovery projection
+# Current audit: The Unmapped House scene-entry narrative projection
 
-**Timestamp:** `2026-07-16T09-58-49-04-00`  
+**Timestamp:** `2026-07-16T16-58-39-04-00`  
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`  
-**Status:** `hotspot-availability-discovery-projection-authority-audited`  
+**Status:** `scene-entry-narrative-projection-authority-audited`  
 **Branch:** `main`
 
 ## Summary
 
-The product has parallel DOM and canvas hotspot projections but no owned availability boundary. Authored membership in `currentScene.hotspots` currently means listed, enabled, hoverable and pickable. This prevents the runtime from expressing hidden, clue-gated, occluded, list-only, canvas-only, disabled or modal-suspended interactions through one deterministic result.
+The product advances scene identity, stage, title, hotspot list, route and save state without deliberately selecting the successor's opening narrative. Because `renderUi()` preserves any non-empty story paragraph, the last hotspot text from the predecessor can remain visible in the first successor frame.
 
 ## Plan ledger
 
-**Goal:** make every hotspot representation and interaction consume one accepted scene-specific availability generation.
+**Goal:** make every accepted scene entry produce and project one explicit narrative result for the accepted scene generation.
 
 - [x] Compare all current Publish repositories, central ledgers, root `.agent` states and documentation heads.
 - [x] Select only TheUnmappedHouse by the oldest synchronized timestamp.
-- [x] Inspect `index.html`, `src/game.js`, `src/stage-kit.js`, `src/story-data.js`, `src/styles.css`, `package.json` and retained audit state.
+- [x] Inspect `index.html`, `src/game.js`, `src/stage-kit.js`, `src/story-data.js`, `src/aspect-frame.js`, `package.json` and retained audit state.
 - [x] Identify the full interaction loop, all active domains, all 24 kits and every offered service.
-- [x] Trace list, hover, pick, inspect, modal and scene-transition boundaries.
-- [x] Define 18 hotspot-availability authority surfaces.
+- [x] Trace opening copy, inspection copy, completion, interlude, transition and first successor frame.
+- [x] Define 18 scene-entry narrative authority surfaces.
 - [x] Add timestamped audit documents.
 - [x] Change documentation only.
-- [ ] Implement and run deterministic parity fixtures.
+- [ ] Implement and run deterministic narrative-convergence fixtures.
 
 ## Complete interaction loop
 
 ```txt
-page boot
-  -> load state and current scene
-  -> create StageKit
-  -> create visible stage geometry
-  -> create one invisible volume per scene hotspot
-  -> create one DOM button per scene hotspot
+boot
+  -> load story state
+  -> resolve scene
+  -> load stage
+  -> render title, openingText, hotspots and Notebook
 
-canvas interaction
-  -> mousemove updates pointer and hover
-  -> pick raycasts only hotspot volumes
-  -> click dispatches picked hotspot
-
-DOM interaction
-  -> enabled button dispatches the same hotspot
-
-inspection
-  -> update inspected ledger
-  -> grant clues
-  -> update story copy and Notebook
-  -> rebuild hotspot buttons
-  -> save state
+inspect
+  -> scene-text = hotspot.text
+  -> mutate inspected and clues
+  -> render and save
   -> schedule interlude when complete
 
-scene transition
-  -> replace current scene
-  -> clear/recreate stage and hotspot volumes
-  -> rebuild DOM list
-  -> prior hover evidence has no explicit retirement result
+Continue
+  -> currentScene = successor
+  -> update route and sceneId
+  -> close interlude
+  -> load successor stage
+  -> render successor title and hotspot list
+  -> preserve predecessor scene-text because it is non-empty
+  -> save successor state
+  -> RAF presents mixed scene semantics
 ```
 
 ## Domains in use
@@ -63,17 +56,17 @@ static browser shell and document lifecycle
 fixed-aspect viewport
 authored story content and descriptor data
 story state, scenes, clues, inspections, route, interlude, terminal and save
+scene-entry narrative policy, story-panel projection and visible-frame convergence
 DOM, keyboard, pointer, canvas, hover, focus and semantic projection
 Three.js scene, camera, geometry, materials, shaders, raycasting, render targets and RAF
-hotspot availability, discovery, visibility, occlusion, interaction modes, modal suspension and parity
 syntax validation, static artifact, Pages deployment and audit governance
 ```
 
 ## Implemented kits and services
 
-- `static-page-shell-kit`: stage mount, story panel, hotspot list, Notebook, hover label, interlude, Loading copy.
-- `aspect-frame-kit`: fixed aspect, window-fit calculation, DOM frame placement.
-- `story-data-kit`: scene descriptors, hotspots, clue grants, completion, camera, materials and post.
+- `static-page-shell-kit`: stage mount, story panel, hotspot list, Notebook, hover label, interlude and Loading copy.
+- `aspect-frame-kit`: fixed aspect, window-fit calculation and DOM frame placement.
+- `story-data-kit`: scene descriptors, opening copy, hotspots, clue grants, completion, camera, materials and post.
 - `browser-story-runtime-kit`: state boot, scene resolution, inspection, Continue, reset, UI and persistence calls.
 - `scene-route-kit`: scene ID resolution and authored-order advancement.
 - `inspection-ledger-kit`: scene-keyed inspected state.
@@ -98,42 +91,36 @@ syntax validation, static artifact, Pages deployment and audit governance
 
 ```txt
 implemented kits: 24
-planned hotspot-availability surfaces: 18
+planned scene-entry narrative surfaces: 18
 ```
 
 ## Source-backed findings
 
-- `renderUi()` creates an enabled button for every `currentScene.hotspots` entry.
-- `StageKit.loadScene()` creates a raycast volume for every entry.
-- `pick()` intersects only hotspot volumes, so visible scene geometry does not define occlusion.
-- DOM and canvas selection share no availability revision or parity result.
-- `loadScene()` does not explicitly clear `hovered` or hide the old hover label.
-- The syntax-only package check cannot prove hidden, conditional, occlusion, stale or parity behavior.
-
-No current content defect was reproduced. The gap is absence of a reusable authority for future conditional interactions.
+- `inspectHotspot()` writes the selected hotspot's text directly into `scene-text`.
+- A completed scene therefore normally enters its interlude with non-empty predecessor inspection copy.
+- `nextScene()` adopts the successor scene and stage before `renderUi()`.
+- `renderUi()` applies `currentScene.openingText` only when `scene-text` is empty or exactly `Loading`.
+- The successor title and hotspot list can therefore coexist with predecessor story copy.
+- A reload can display the correct opening copy because the DOM paragraph starts empty, making uninterrupted progression and reload semantically inconsistent.
+- The syntax-only package check proves none of these convergence rules.
 
 ## Required authority
 
-`the-unmapped-house-hotspot-availability-discovery-projection-authority-domain`
+`the-unmapped-house-scene-entry-narrative-projection-authority-domain`
 
 ```txt
-HotspotAvailabilityCommand
-  -> bind content, scene, story, clue, inspection, modal, camera and frame revisions
-  -> resolve discovery, visibility, occlusion, enablement and interaction mode
-  -> publish HotspotAvailabilityResult
+SceneEntryCommand
+  -> bind content, route, story, stage, UI and save revisions
+  -> select an explicit entry-copy policy
+  -> publish SceneEntryNarrativeResult
 
-HotspotProjectionCommand
-  -> derive DOM and canvas candidate sets from the same result
-  -> retire stale hover and focus evidence
-  -> publish HotspotParityResult
-
-HotspotInteractionCommand
-  -> validate identity and expected revisions
-  -> reject unavailable, hidden, occluded, modal or stale work
-  -> publish HotspotInteractionResult
-  -> publish FirstAvailableHotspotFrameAck
+SceneEntryProjectionCommand
+  -> bind title, opening copy, stage and hotspot list to one scene-entry generation
+  -> reject stale predecessor narrative work
+  -> publish SceneEntryProjectionResult
+  -> publish FirstSceneEntryFrameAck
 ```
 
 ## Validation boundary
 
-Documentation changed. Runtime JavaScript, HTML, CSS, story data, hotspot geometry, picking behavior, focus behavior, persistence, package scripts, workflows and deployment did not change. No browser or deployment fixture was executed.
+Documentation changed. Runtime JavaScript, HTML, CSS, story data, stage rendering, interaction behavior, persistence, package scripts, workflows and deployment did not change. No browser or deployment fixture was executed.
