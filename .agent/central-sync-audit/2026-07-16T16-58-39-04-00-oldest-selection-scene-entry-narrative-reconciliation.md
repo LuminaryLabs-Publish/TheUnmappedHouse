@@ -1,7 +1,7 @@
 # Central sync audit: oldest selection and scene-entry narrative reconciliation
 
 **Timestamp:** `2026-07-16T16-58-39-04-00`  
-**Status:** `audited`
+**Status:** `central-reconciled`
 
 ## Summary
 
@@ -9,14 +9,14 @@ The full accessible `LuminaryLabs-Publish` inventory contains 11 repositories. `
 
 ## Plan ledger
 
-**Goal:** preserve deterministic repository selection and prepare one central record for the scene-entry narrative finding.
+**Goal:** preserve deterministic repository selection and reconcile one central record for the scene-entry narrative finding.
 
 - [x] Compare the full Publish inventory.
 - [x] Exclude TheCavalryOfRome.
 - [x] Confirm ten eligible ledgers and root `.agent` states.
 - [x] Select TheUnmappedHouse only.
 - [x] Add timestamped repo-local documentation on `main`.
-- [ ] Bind the final repo-local documentation head in the central ledger and add the central change log.
+- [x] Bind the final repo-local documentation head in the central ledger and add the central change log.
 
 ## Selection snapshot
 
@@ -39,8 +39,15 @@ SceneEntryNarrativeResult: absent
 FirstSceneEntryFrameAck: absent
 ```
 
-## Expected central result
+## Central result
 
-Expected status: `scene-entry-narrative-projection-authority-central-reconciled`.
+Central status: `scene-entry-narrative-projection-authority-central-reconciled`.
 
-No branch or pull request was created.
+Central outputs:
+
+```txt
+repo-ledger/LuminaryLabs-Publish/TheUnmappedHouse.md
+internal-change-log/2026-07-16T16-58-39-04-00-the-unmapped-house-scene-entry-narrative-projection.md
+```
+
+Only `main` was used. No branch or pull request was created.
