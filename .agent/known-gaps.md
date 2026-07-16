@@ -1,113 +1,106 @@
-# Known gaps: The Unmapped House story save writer revision authority
+# Known gaps: The Unmapped House browser startup readiness authority
 
-**Timestamp:** `2026-07-15T18-02-58-04-00`  
+**Timestamp:** `2026-07-15T23-00-03-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-One fixed localStorage slot is shared by every same-origin document, but save writers have no identity, ordering, lease, conflict handling or durable reset epoch. Whole-state last-writer-wins replacement can regress progress or resurrect state after reset.
+The public shell exposes `Loading`, but startup has no owned attempt, phases, deadline, failure taxonomy, fallback, retry, retirement, or first-frame proof. Failure before or during StageKit construction can leave the document indefinitely pending or partially projected.
 
 ## Plan ledger
 
-**Goal:** make save-slot identity, writer ownership, monotonic revision, conflict settlement and proof explicit.
+**Goal:** make startup identity, readiness, terminal failure, recovery, and proof explicit.
 
-- [x] Trace save and reset call sites.
-- [x] Confirm no cross-document ordering protocol exists.
-- [x] Define missing identities, policies and results.
+- [x] Trace startup from HTML parse through first frame.
+- [x] Confirm missing startup results and fallback.
+- [x] Define missing identities, policies, and acknowledgements.
 - [ ] Implement and execute them.
 
 ## Identity gaps
 
 ```txt
-StorySaveSlotId: implicit string only
-DocumentId: absent
-SaveWriterId: absent
-SaveWriterGeneration: absent
-SaveWriterLeaseId: absent
-StorySaveCommitId: absent
-StorySaveRevision: absent
-StorySaveBaseRevision: absent
-StorySaveFingerprint: absent
-ResetEpoch: absent
-SaveConflictId: absent
-FirstDurableStorySaveAck: absent
-FirstDurableStorySaveFrameAck: absent
+StartupAttemptId: absent
+DocumentGeneration: absent
+ModuleGraphRevision: absent
+ProviderRevision: absent
+GraphicsCapabilityRevision: absent
+StoryBootstrapRevision: absent
+StagePreparationRevision: absent
+FirstSceneRevision: absent
+RenderGeneration: absent
+StartupDeadline: absent
+FirstReadyUiAck: absent
+FirstPresentedStoryFrameAck: absent
+StartupFallbackFrameAck: absent
 ```
 
-## Admission gaps
+## Phase and admission gaps
 
 ```txt
-active writer admission: absent
-read-only document mode: absent
-writer lease acquisition: absent
-lease heartbeat and expiry: absent
-writer takeover policy: absent
-base-revision comparison: absent
-compare-and-swap serialization: absent
-post-write read-back verification: absent
-stale-base rejection: absent
-reset-epoch rejection: absent
-duplicate commit rejection: absent
-retired writer rejection: absent
+explicit startup phase model: absent
+module graph admission result: absent
+provider identity/version result: absent
+provider integrity/policy result: absent
+WebGL capability result: absent
+renderer preparation result: absent
+render-target preparation result: absent
+story bootstrap result: absent
+first-scene preparation result: absent
+startup deadline/timeout: absent
+stale-attempt rejection: absent
+duplicate retry rejection: absent
 ```
 
-## Cross-document gaps
+## Failure and recovery gaps
 
 ```txt
-storage event listener: absent
-BroadcastChannel: absent
-external head observation: absent
-pending stale commit cancellation: absent
-same-origin head broadcast: absent
-cross-tab conflict result: absent
-cross-tab read-only projection: absent
-cross-tab reset settlement: absent
+module network failure class: absent
+CSP/provider policy failure class: absent
+provider contract failure class: absent
+WebGL unavailable class: absent
+shader/program failure class: absent
+render-target allocation failure class: absent
+story restore failure class: absent
+scene descriptor failure class: absent
+first-frame timeout class: absent
+semantic fallback projection: absent
+retry command/result: absent
+save-preservation receipt: absent
+failed-attempt resource retirement: absent
 ```
 
-## Envelope and recovery gaps
+## Render convergence gaps
 
 ```txt
-versioned durable envelope: absent
-monotonic save revision: absent
-base revision: absent
-writer metadata: absent
-payload fingerprint: absent
-durable reset tombstone: absent
-verified predecessor: absent
-bounded recovery history: absent
-corrupt-head recovery policy: absent
-quota/storage failure result: absent
-```
-
-## Interaction and projection gaps
-
-```txt
-saveState return result: absent
-save pending state: absent
-save conflict state: absent
-save read-only state: absent
-durable-head debug projection: absent
-visible/durable revision convergence: absent
-explicit reload/recover/export conflict action: absent
+prepared startup frame: absent
+DOM/story/stage revision binding: absent
+first render submission result: absent
+first public frame acknowledgement: absent
+fallback frame acknowledgement: absent
+late RAF/callback rejection by generation: absent
 ```
 
 ## Proof gaps
 
 ```txt
-two-tab stale writer fixture: absent
-three-tab lease contention fixture: absent
-writer crash/expiry fixture: absent
-storage-event reconciliation fixture: absent
-BroadcastChannel fallback fixture: absent
-reset resurrection fixture: absent
-corrupt-head predecessor fixture: absent
-quota/storage failure fixture: absent
+normal browser startup fixture: absent
+provider rejection fixture: absent
+CSP/policy rejection fixture: absent
+WebGL unavailable fixture: absent
+shader failure fixture: absent
+render-target failure fixture: absent
+first-scene failure fixture: absent
+first-frame timeout fixture: absent
+retry success fixture: absent
+stale attempt after retry fixture: absent
+pagehide during startup fixture: absent
 source/artifact/Pages parity: absent
 ```
 
 ## Retained independent gaps
 
 ```txt
+story save writer lease and revision
 story audio event projection
 inspection control focus continuity
 motion preference visual-effect admission
@@ -128,4 +121,4 @@ stage resource lifecycle
 
 ## Completion boundary
 
-Do not claim durable story persistence until stale writers are rejected, reset advances a durable epoch, external heads reconcile before later writes, conflicts are explicit and browser proof captures matching visible and durable revisions across source, artifact and Pages.
+Do not claim public startup readiness until every document generation produces one terminal startup result, recoverable failures expose Retry without losing save state, stale attempts cannot mutate the shell, and source, artifact, and Pages prove matching ready or fallback frames.
