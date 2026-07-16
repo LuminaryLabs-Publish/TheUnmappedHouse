@@ -1,39 +1,38 @@
-# Validation: The Unmapped House story save writer revision audit
+# Validation: The Unmapped House browser startup readiness audit
 
-**Timestamp:** `2026-07-15T18-02-58-04-00`  
-**Scope:** documentation-only architecture, interaction, gameplay, render, persistence and deployment audit
+**Timestamp:** `2026-07-15T23-00-03-04-00`  
+**Scope:** documentation-only architecture, interaction, gameplay, render, startup, and deployment audit
 
 ## Summary
 
-Source and retained audit state were inspected. The audit establishes that the shared localStorage slot has no cross-document writer identity, monotonic revision, base-revision comparison, lease, reset tombstone or conflict result. Runtime behavior and deployment were not changed or executed.
+Source and retained audit state were inspected. The audit establishes that the public startup path has no attempt identity, phase model, deadline, typed failure result, semantic fallback, retry command, failed-attempt retirement, or first-frame acknowledgement. Runtime behavior and deployment were not changed or executed.
 
 ## Plan ledger
 
 **Goal:** state exactly what this audit proves and what remains unverified.
 
 - [x] Compare all 11 accessible Publish repositories.
-- [x] Review the freshest ten-repository eligible comparison.
+- [x] Account for ten eligible central ledgers and current heads.
 - [x] Confirm TheUnmappedHouse is the oldest synchronized eligible entry.
-- [x] Verify the root `.agent` state exists and the selected repository head matched the documented head before writing.
-- [x] Inspect `index.html`, `src/game.js`, `src/styles.css`, `src/aspect-frame.js`, `src/story-data.js`, `src/stage-kit.js` and `package.json`.
-- [x] Confirm one fixed save key is loaded once and replaced as a whole after accepted actions.
-- [x] Confirm reset deletes the shared key without a durable reset epoch.
-- [x] Confirm no storage listener, BroadcastChannel, writer lease, save revision, base revision or conflict result exists.
+- [x] Verify the selected root `.agent` state and documented head before writing.
+- [x] Inspect `index.html`, `src/game.js`, `src/story-data.js`, `src/stage-kit.js`, `package.json`, and retained registry state.
+- [x] Confirm the shell begins at `Loading`.
+- [x] Confirm Three.js is a static external module dependency.
+- [x] Confirm StageKit and the first scene construct without a typed startup boundary.
+- [x] Confirm no fallback, retry, deadline, failure taxonomy, or first-frame acknowledgement exists.
 - [x] Preserve all 24 implemented kit surfaces and services.
 - [x] Change documentation only.
-- [ ] Run executable multi-tab, reset, conflict, artifact and Pages fixtures after implementation.
+- [ ] Run executable startup and deployment fixtures after implementation.
 
 ## Source checks performed
 
 ```txt
-full 11-repository LuminaryLabs-Publish inventory compared
-ten eligible central ledger records accounted for through the freshest completed comparison
-chosen repository head compared with documented head
-root .agent state inspected
+full 11-repository Publish inventory compared
+ten eligible central ledger records compared
+current eligible heads compared with documented heads
+selected root .agent state inspected
 index.html inspected
 src/game.js inspected
-src/styles.css inspected
-src/aspect-frame.js inspected
 src/story-data.js inspected
 src/stage-kit.js inspected
 package.json inspected
@@ -43,24 +42,23 @@ retained kit registry inspected
 ## Source facts established
 
 ```txt
-save key: the-unmapped-house.stage-prototype.v1
-load during module boot: yes
-whole-state localStorage replacement: yes
-save after first inspection: yes
-save after repeated inspection: yes
-save after scene transition: yes
-save during initial boot: yes
-reset through removeItem + reload: yes
-storage event listener: absent
-BroadcastChannel: absent
-writer identity/generation: absent
-writer lease: absent
-save/base revision: absent
-compare-and-swap: absent
-reset epoch/tombstone: absent
-conflict result: absent
-FirstDurableStorySaveAck: absent
-FirstDurableStorySaveFrameAck: absent
+initial scene title: Loading
+entry mode: static module script
+game module imports StageKit and story data: yes
+StageKit imports Three.js from unpkg: yes
+Three.js version: 0.160.0
+shell-owned dynamic import boundary: absent
+startup attempt identity: absent
+startup phase state: absent
+startup deadline: absent
+provider failure result: absent
+WebGL capability result: absent
+stage preparation result: absent
+semantic failure fallback: absent
+retry command: absent
+stale attempt rejection: absent
+FirstReadyUiAck: absent
+FirstPresentedStoryFrameAck: absent
 validation command: syntax-only
 ```
 
@@ -72,7 +70,7 @@ new architecture audit
 new render audit
 new gameplay audit
 new interaction audit
-new save-concurrency contract audit
+new startup contract audit
 new deploy fixture gate
 new central-sync audit
 START_HERE.md refreshed
@@ -89,10 +87,9 @@ kit-registry.json refreshed
 runtime JavaScript: no
 HTML or CSS: no
 story descriptors: no
-Three.js provider: no
+Three.js provider URL: no
 persistence behavior: no
 render behavior: no
-audio behavior: no
 package scripts: no
 dependencies: no
 workflow or deployment: no
@@ -104,14 +101,15 @@ pull request: none
 
 ```txt
 npm run check: not run
-two-tab stale-writer fixture: unavailable
-three-tab lease fixture: unavailable
-reset-resurrection fixture: unavailable
-storage/BroadcastChannel fixture: unavailable
-writer retirement fixture: unavailable
-predecessor recovery fixture: unavailable
-production-artifact smoke: not run
-Pages save-concurrency smoke: not run
+browser startup smoke: not run
+provider failure injection: unavailable
+WebGL unavailable fixture: unavailable
+shader/render-target fixture: unavailable
+first-scene construction failure fixture: unavailable
+first-frame timeout fixture: unavailable
+retry and stale-attempt fixture: unavailable
+production-artifact startup smoke: not run
+Pages startup smoke: not run
 ```
 
-No multi-document safety, stale-write rejection, writer lease correctness, reset durability, conflict recovery, visible/durable convergence, artifact parity or production readiness is claimed.
+No public-startup resilience, failure classification, retry correctness, resource retirement, first-frame convergence, artifact parity, Pages parity, or production readiness is claimed.
