@@ -1,63 +1,58 @@
-# Next steps: The Unmapped House browser startup readiness authority
+# Next steps: The Unmapped House story content graph validation
 
-**Timestamp:** `2026-07-15T23-00-03-04-00`  
+**Timestamp:** `2026-07-16T04-02-40-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-The smallest safe implementation is a shell-owned dynamic bootstrap that can catch module/provider failure before `game.js` runs, followed by one typed runtime startup transaction that prepares story, scene, renderer, UI, and first-frame state under a shared attempt identity.
+The smallest safe implementation is one pure validator that can run in Node and the browser, followed by a bootstrap admission gate that only exposes the validated story graph to the runtime and StageKit.
 
 ## Plan ledger
 
-**Goal:** add bounded startup readiness and recovery without changing authored scenes or the active story loop.
+**Goal:** add deterministic content admission without changing the current three scenes or player-facing story loop.
 
-- [ ] Replace the static module entry with a minimal shell bootstrap that dynamically imports the runtime.
-- [ ] Define `StartupAttemptId`, `DocumentGeneration`, `ProviderRevision`, `StagePreparationRevision`, and `RenderGeneration`.
-- [ ] Publish monotonic startup phases.
-- [ ] Add an explicit startup deadline.
-- [ ] Admit and verify the expected Three.js provider identity.
-- [ ] Observe WebGL/context/render-target capability before adopting the stage.
-- [ ] Prepare the restored story snapshot and first scene before enabling controls.
-- [ ] Convert StageKit construction into a typed preparation result.
-- [ ] Define stable failure classes for module, policy, provider, graphics, shader, target, story, scene, and first-frame failures.
-- [ ] Project a semantic fallback that does not depend on Three.js.
-- [ ] Add Retry as a new attempt rather than reusing failed mutable state.
-- [ ] Reject stale and duplicate callbacks from older attempts.
-- [ ] Retire renderer, target, material, geometry, listener, and RAF resources from failed attempts.
-- [ ] Publish `FirstReadyUiAck` and `FirstPresentedStoryFrameAck`.
-- [ ] Preserve valid save state across startup failure and retry.
-- [ ] Add source, artifact, and Pages fixtures for success, failure, retry, timeout, retirement, and parity.
+- [ ] Add a versioned story manifest containing `schemaVersion` and `contentRevision`.
+- [ ] Define stable scene, hotspot, clue, route, and validation-result identities.
+- [ ] Require unique scene IDs across the story.
+- [ ] Require unique hotspot IDs within each scene.
+- [ ] Build a clue-grant index from all reachable hotspots.
+- [ ] Reject unknown, duplicate, or ungrantable completion references.
+- [ ] Prove every scene can complete before its authored transition.
+- [ ] Validate route order, initial scene, and exactly one terminal boundary.
+- [ ] Validate camera vectors, FOV, fog, stage layers, props, hotspots, materials, and post descriptors.
+- [ ] Reject missing arrays, invalid tuple lengths, unsupported prop kinds, empty color lists, and non-finite numbers.
+- [ ] Publish a typed `StoryContentValidationResult`.
+- [ ] Gate `browser-story-runtime-kit` and `scene-descriptor-consumer-kit` on accepted content.
+- [ ] Project a semantic invalid-content fallback without constructing StageKit.
+- [ ] Publish `FirstValidatedStoryFrameAck`.
+- [ ] Add source, built-artifact, and Pages fixtures for valid and invalid manifests.
 
 ## Ordered implementation
 
-### 1. Shell bootstrap
+### 1. Pure schema and identity validator
 
-Keep the static HTML and CSS usable without Three.js. Dynamically import the game entry from a bootstrap module, catch rejection, enforce a deadline, and render a stable fallback with Retry.
+Create a dependency-free module that accepts a story manifest and returns immutable issues plus normalized indexes. Do not mutate the authored objects while validating.
 
-### 2. Attempt and phase model
+### 2. Reference and reachability analysis
 
-Allocate a new attempt and document generation on navigation or retry. Permit only monotonic transitions from shell parsed through first frame. Reject all late work from superseded generations.
+Walk scenes in authored order. Track clues grantable before each transition and prove every `requiresToComplete` item is reachable. Report exact scene, hotspot, and clue paths for every failure.
 
-### 3. Provider and graphics admission
+### 3. Descriptor validation
 
-Resolve the expected Three.js provider, record the version/source, observe WebGL capability, and prepare renderer and render-target resources without exposing ready state.
+Validate arrays, tuple lengths, finite values, supported geometry kinds, material color cardinality, camera ranges, hotspot bounds, and post-process ranges before Three.js receives a descriptor.
 
-### 4. Story and first-scene preparation
+### 4. Runtime admission
 
-Restore and validate the story snapshot, resolve the current scene, and build the complete stage candidate. Do not enable hotspot controls until the candidate and semantic UI agree.
+Validate before restore adoption and StageKit construction. Expose only the accepted manifest and indexes. Reject stale results whose content revision no longer matches.
 
-### 5. First-frame settlement
+### 5. Failure projection
 
-Present the stage and post passes, then publish the first-frame acknowledgement. Only then transition the shell to ready.
+Keep the HTML shell usable when content is invalid. Show a semantic error result and disable inspection/Continue instead of partially constructing a scene.
 
-### 6. Failure and retry
+### 6. Proof
 
-Publish one stable terminal result, preserve save data, retire partial resources, expose authored failure copy, and admit Retry as a new attempt.
-
-### 7. Proof
-
-Inject module, provider, WebGL, shader, target, descriptor, and first-frame failures. Capture matching results, DOM snapshots, screenshots, provider identity, and commit/artifact correlation for source, artifact, and Pages.
+Add deterministic fixtures for duplicate IDs, unknown clues, impossible completion, invalid route order, malformed camera/stage descriptors, non-finite values, stale content results, and valid source/artifact/Pages parity.
 
 ## Do not combine yet
 
-Keep save concurrency, story audio, focus continuity, motion preference, announcements, interlude routing, page lifecycle, terminal settlement, WebGL recovery, save schema, viewport, scene-transition composition, provider admission, hotspot picking, and resource lifecycle as retained independent authorities.
+Keep browser startup, save concurrency, audio, focus, motion preference, announcements, page lifecycle, terminal settlement, WebGL recovery, save schema, viewport, scene transitions, provider admission, hotspot picking, and resource lifecycle as independent retained authorities.
