@@ -1,11 +1,11 @@
-# Validation: The Unmapped House story content graph audit
+# Validation: The Unmapped House hotspot availability audit
 
-**Timestamp:** `2026-07-16T04-02-40-04-00`  
-**Scope:** documentation-only architecture, interaction, gameplay, render, story-content, and deployment audit
+**Timestamp:** `2026-07-16T09-58-49-04-00`  
+**Scope:** documentation-only architecture, interaction, gameplay, render, hotspot-availability and deployment audit
 
 ## Summary
 
-Source and retained audit state were inspected. The audit establishes that story content is consumed without schema, identity, reference, reachability, descriptor, or adoption validation. The current authored content appears coherent by manual inspection, but no executable validator or deployment proof exists.
+Source and retained audit state were inspected. The audit establishes that DOM and canvas hotspot surfaces are derived directly from authored membership without one availability, discovery, visibility, occlusion, modal, parity or stale-generation result. No runtime interaction defect was reproduced and no executable proof was run.
 
 ## Plan ledger
 
@@ -13,52 +13,36 @@ Source and retained audit state were inspected. The audit establishes that story
 
 - [x] Compare all 11 accessible Publish repositories.
 - [x] Exclude TheCavalryOfRome and account for ten eligible repositories.
-- [x] Confirm all ten eligible repositories have central ledgers, root `.agent` state, and synchronized documentation heads.
+- [x] Confirm all ten eligible repositories have central ledgers and root `.agent` state.
 - [x] Confirm TheUnmappedHouse is the oldest synchronized eligible entry.
-- [x] Verify the selected root `.agent` state and current head before writing.
-- [x] Inspect `src/game.js`, `src/story-data.js`, `src/stage-kit.js`, `package.json`, and the retained kit registry.
-- [x] Confirm scene/hotspot/clue identities and descriptors are trusted directly.
-- [x] Confirm completion and route advancement have no semantic validation result.
-- [x] Confirm the package command checks syntax only.
+- [x] Verify the selected repository documentation head before writing.
+- [x] Inspect `index.html`, `src/game.js`, `src/stage-kit.js`, `src/story-data.js`, `src/styles.css`, `package.json` and the kit registry.
+- [x] Confirm every authored hotspot is directly listed and installed as a pick volume.
+- [x] Confirm picking intersects hotspot volumes without scene-geometry occlusion.
+- [x] Confirm no DOM/canvas parity result or hover-retirement result exists.
 - [x] Preserve all 24 implemented kit surfaces and services.
 - [x] Change documentation only.
-- [ ] Run executable content and deployment fixtures after implementation.
-
-## Source checks performed
-
-```txt
-full 11-repository Publish inventory compared
-ten eligible central ledger records compared
-ten root .agent entry files confirmed
-current eligible documentation heads compared
-selected repository head confirmed
-src/game.js inspected
-src/story-data.js inspected
-src/stage-kit.js inspected
-package.json inspected
-retained kit registry inspected
-```
+- [ ] Run executable interaction and deployment fixtures after implementation.
 
 ## Source facts established
 
 ```txt
 scene count: 3
 hotspot count: 9
-story storage: plain exported JavaScript array
-story schema version: absent
-content revision/fingerprint: absent
-scene-ID validation: absent
-hotspot-ID validation: absent
-clue-reference validation: absent
-completion satisfiability analysis: absent
-route reachability result: absent
-descriptor shape validation: absent
-non-finite numeric rejection: absent
-content adoption result: absent
-invalid-content fallback: absent
-FirstValidatedStoryFrameAck: absent
+DOM list source: currentScene.hotspots
+canvas volume source: sceneData.hotspots
+raycast candidate set: this.hotspots only
+discovery state: absent
+visibility result: absent
+occlusion policy/result: absent
+interaction mode: absent
+modal suspension result: absent
+DOM/canvas parity result: absent
+stale availability rejection: absent
+scene-transition hover retirement: absent
+FirstAvailableHotspotFrameAck: absent
 package validation: syntax-only
-current content defect reproduced: no
+current runtime defect reproduced: no
 ```
 
 ## Documentation changed
@@ -69,7 +53,7 @@ new architecture audit
 new render audit
 new gameplay audit
 new interaction audit
-new story-content contract audit
+new hotspot-availability contract audit
 new deploy fixture gate
 new central-sync audit
 START_HERE.md refreshed
@@ -86,9 +70,9 @@ kit-registry.json refreshed
 runtime JavaScript: no
 HTML or CSS: no
 authored story content: no
-scene/hotspot/clue values: no
+hotspot geometry or picking: no
+focus behavior: no
 persistence behavior: no
-render behavior: no
 package scripts: no
 dependencies: no
 workflow or deployment: no
@@ -100,12 +84,14 @@ pull request: none
 
 ```txt
 npm run check: not run
-content validator: not implemented
-valid/invalid story fixtures: unavailable
-browser invalid-content fallback fixture: unavailable
-first validated frame fixture: unavailable
-production-artifact content smoke: not run
-Pages content smoke: not run
+browser list/pick parity fixture: unavailable
+hidden/clue-gated hotspot fixture: unavailable
+occlusion fixture: unavailable
+modal suspension fixture: unavailable
+stale-hover fixture: unavailable
+stale availability fixture: unavailable
+production-artifact smoke: not run
+Pages smoke: not run
 ```
 
-No content-schema correctness, identity uniqueness, reference integrity, route reachability, completion satisfiability, descriptor safety, fallback correctness, artifact parity, Pages parity, or production readiness is claimed.
+No hotspot discovery correctness, occlusion correctness, interaction parity, modal safety, stale-generation safety, artifact parity, Pages parity or production readiness is claimed.
