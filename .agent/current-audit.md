@@ -1,143 +1,135 @@
-# Current audit: The Unmapped House story save writer revision authority
+# Current audit: The Unmapped House browser startup readiness authority
 
-**Timestamp:** `2026-07-15T18-02-58-04-00`  
+**Timestamp:** `2026-07-15T23-00-03-04-00`  
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`  
-**Status:** `story-save-writer-lease-revision-authority-audited`  
+**Status:** `browser-startup-readiness-failure-authority-audited`  
 **Branch:** `main`
 
 ## Summary
 
-The story runtime loads one fixed localStorage slot into a document-local mutable object and replaces the entire slot after inspections, route changes and initial boot. The repository has no cross-document writer identity, durable save revision, base-revision compare-and-swap, writer lease, reset tombstone, conflict result or head synchronization. A stale open tab can therefore regress newer progress or recreate pre-reset progress.
+The document renders an initial `Loading` title and then depends on a static module graph, an external Three.js provider, WebGL resource construction, story restoration, first-scene construction, DOM projection, and recursive RAF. These phases publish no product-level readiness or failure result. A provider, policy, graphics, shader, render-target, descriptor, or first-frame failure can leave the shell indefinitely non-interactive with no fallback or retry.
 
 ## Plan ledger
 
-**Goal:** require one typed durable result for each story save or reset while keeping story truth independent of the localStorage adapter.
+**Goal:** require one terminal startup result and one first-frame acknowledgement for every document generation.
 
-- [x] Compare all Publish repositories and central ledgers.
+- [x] Compare all Publish repositories, ledgers, and current heads.
 - [x] Select only TheUnmappedHouse by the oldest synchronized timestamp.
-- [x] Inspect shell, runtime, story descriptors, StageKit, package and retained audit state.
-- [x] Identify the interaction loop, domains, all 24 implemented kits and all offered services.
-- [x] Trace every save-producing action and the reset path.
-- [x] Define slot, writer, lease, revision, reset, conflict and proof surfaces.
+- [x] Inspect shell, runtime, story data, StageKit, package, and retained audit state.
+- [x] Identify the full interaction loop, domains, all 24 kits, and offered services.
+- [x] Trace startup before module execution through first public frame.
+- [x] Define attempt, phase, deadline, failure, fallback, retry, retirement, and proof surfaces.
 - [x] Add timestamped audit documents.
 - [x] Change documentation only.
-- [ ] Implement and execute multi-document save fixtures.
+- [ ] Implement and execute browser startup fixtures.
 
 ## Complete interaction loop
 
 ```txt
-boot
-  -> load the fixed save key once
-  -> shallow-merge parsed fields onto initial state
+page parse
+  -> fixed aspect shell mounts
+  -> scene title reads Loading
+  -> browser requests src/game.js
+
+module graph
+  -> game.js imports StageKit and story data
+  -> StageKit imports Three.js 0.160.0 from unpkg
+
+startup construction
+  -> load localStorage state
   -> resolve current scene
-  -> create Three.js stage and hotspot volumes
-  -> render scene title text hotspot buttons and Notebook
-  -> replace the save key with the document-local state
+  -> construct StageKit and WebGLRenderer
+  -> allocate scene camera lights render target and shader resources
+  -> consume the first scene descriptor
+  -> create stage geometry materials and hotspot volumes
+  -> project title text buttons and Notebook
+  -> save current state
+  -> enter recursive RAF and present stage/post passes
 
-inspection
-  -> DOM or canvas input resolves hotspot
-  -> inspectHotspot accepts first or repeated inspection
-  -> mutate inspected clues text and log
-  -> render accepted document-local state
-  -> replace the entire save key
-
-completion and route
-  -> schedule and open interlude
-  -> Continue advances scene or terminal copy
-  -> load successor visible stage when present
-  -> replace the entire save key
-
-reset
-  -> KeyR removes the shared key
-  -> reload creates and writes initial state
-
-multi-document conflict
-  -> another open document still holds an older state
-  -> its next accepted action writes the older whole-state base
-  -> newer durable route clues or reset can be lost
+story loop
+  -> DOM or canvas inspection
+  -> clue and log mutation
+  -> interlude and Continue
+  -> scene transition and save
 ```
 
 ## Domains in use
 
 ```txt
 static browser shell and document lifecycle
-story state scenes clues inspections route interlude and terminal state
-DOM keyboard pointer and canvas interaction
-localStorage persistence and same-origin cross-document visibility
-save slot writer generation lease revision conflict reset and recovery admission
-fixed-aspect viewport and semantic UI projection
-Three.js scene camera materials shaders raycasting and WebGL rendering
-post-processing and camera parallax
-syntax validation static artifact and Pages deployment
-repo-local and central audit governance
+ES module graph and external provider resolution
+browser graphics capability and WebGL construction
+story state scenes clues inspections route interlude terminal and save
+DOM keyboard pointer canvas focus and semantic projection
+fixed-aspect viewport
+Three.js scene camera lights geometry materials shaders raycasting render targets and RAF
+startup attempt phase deadline failure fallback retry retirement and first-frame proof
+syntax validation static artifact Pages deployment and audit governance
 ```
 
 ## Implemented kits and services
 
-- `static-page-shell-kit`: stage mount, story panel, hotspot list, Notebook, hover label and interlude.
-- `aspect-frame-kit`: fixed design aspect, window-fit calculation and DOM frame placement.
-- `story-data-kit`: scene descriptors, hotspots, clue grants, completion rules, camera, materials and post descriptors.
-- `browser-story-runtime-kit`: state boot, scene resolution, inspection, continue, reset, UI projection and persistence calls.
+- `static-page-shell-kit`: stage mount, story panel, hotspot list, Notebook, hover label, interlude, initial Loading copy.
+- `aspect-frame-kit`: fixed design aspect, window-fit calculation, DOM frame placement.
+- `story-data-kit`: scene descriptors, hotspots, clue grants, completion rules, camera, materials, post descriptors.
+- `browser-story-runtime-kit`: state boot, scene resolution, inspection, continue, reset, UI projection, persistence calls.
 - `scene-route-kit`: scene ID resolution and authored-order advancement.
-- `inspection-ledger-kit`: scene-keyed inspected hotspot state.
-- `clue-ledger-kit`: clue grant and clue query.
-- `notebook-log-kit`: prepend narrative log and bounded retention.
+- `inspection-ledger-kit`: scene-keyed inspected state.
+- `clue-ledger-kit`: clue grant and query.
+- `notebook-log-kit`: prepend log and bounded retention.
 - `interlude-timer-kit`: delayed completion interlude.
-- `terminal-route-kit`: prototype-complete DOM projection.
-- `localstorage-save-kit`: parse, shallow merge, whole-slot replacement and delete.
-- `stage-render-kit`: WebGL renderer, scene, camera, lights, offscreen target, callbacks and recursive RAF.
-- `scene-descriptor-consumer-kit`: camera, geometry, material, hotspot and post configuration.
+- `terminal-route-kit`: prototype-complete projection.
+- `localstorage-save-kit`: parse, shallow merge, whole-slot replacement, delete.
+- `stage-render-kit`: WebGL renderer, scene, camera, lights, target, callbacks, RAF.
+- `scene-descriptor-consumer-kit`: camera, geometry, materials, hotspots, fog, post configuration.
 - `anime-material-kit`: procedural shader materials and elapsed-time animation.
-- `post-process-kit`: animated grain, vignette, chromatic shift, distortion and scan lines.
+- `post-process-kit`: grain, vignette, chromatic shift, distortion, scan lines.
 - `hotspot-volume-kit`: invisible raycast volumes and descriptor attachment.
-- `hotspot-picking-kit`: coordinate normalization, raycast and hotspot dispatch.
-- `camera-parallax-kit`: pointer-driven fixed-camera offsets.
-- `render-target-composition-kit`: offscreen stage pass, post pass and target sizing.
-- `debug-json-projection-kit`: story-field serialization and Notebook projection.
-- `package-syntax-check-kit`: Node syntax checks.
+- `hotspot-picking-kit`: coordinate normalization, raycast, dispatch.
+- `camera-parallax-kit`: pointer-driven camera offsets.
+- `render-target-composition-kit`: offscreen stage pass, post pass, target sizing.
+- `debug-json-projection-kit`: story serialization and Notebook projection.
+- `package-syntax-check-kit`: syntax checks for four modules.
 - `static-pages-deploy-kit`: static Pages delivery.
 - `repo-local-agent-ledger-kit`: root pointers and timestamped audit records.
 - `central-ledger-sync-kit`: central selection mirror and findings history.
 
 ```txt
 implemented kits: 24
-planned save-writer authority surfaces: 20
+planned startup authority surfaces: 20
 ```
 
 ## Main findings
 
-- `SAVE_KEY` identifies one shared durable slot for every same-origin document.
-- `loadState()` reads the slot only during document boot.
-- `saveState()` returns no result and unconditionally replaces the whole slot.
-- Accepted first and repeated inspections call `saveState()`.
-- Accepted scene changes call `saveState()`.
-- Initial boot calls `saveState()` even when no gameplay action occurred.
-- KeyR deletes the shared slot, but no reset epoch prevents an older tab from recreating prior progress.
-- No `storage` listener or BroadcastChannel reconciles external head changes.
-- No writer ID, writer generation, lease, save revision, base revision or compare-and-swap token exists.
-- No stale-write, conflict, reset, retirement or durable-frame acknowledgement exists.
+- The shell has only a pending-looking `Loading` state.
+- Static import rejection can prevent all runtime error handling from running.
+- The external Three.js provider has no shell-owned admission result.
+- WebGLRenderer, render target, shaders, and first scene are constructed without a startup transaction.
+- No startup deadline distinguishes slow from failed.
+- No failure taxonomy distinguishes provider, policy, graphics, story, scene, or first-frame failures.
+- No semantic fallback or Retry action exists.
+- No attempt/generation identity rejects late work from a superseded retry.
+- No `FirstReadyUiAck` or `FirstPresentedStoryFrameAck` exists.
+- Syntax checks do not prove browser startup or deployed readiness.
 
 ## Required authority
 
-```txt
-the-unmapped-house-story-save-writer-lease-revision-authority-domain
-```
+`the-unmapped-house-browser-startup-readiness-failure-authority-domain`
 
 ```txt
-StorySaveCommitCommand
-  -> bind slot document writer generation lease commit and base revision
-  -> validate the candidate story envelope
-  -> classify active read-only retiring reset and conflicted writers
-  -> read and verify the current durable head
-  -> compare-and-swap one monotonic revision
-  -> reject stale duplicate expired reset-invalidated and superseded work
-  -> preserve and verify the predecessor
-  -> broadcast the accepted head
-  -> publish StorySaveCommitResult or StorySaveConflictResult
-  -> publish StorySaveResetResult with a durable reset epoch
-  -> publish FirstDurableStorySaveAck
+StartupAttemptCommand
+  -> bind document module provider capability story stage and render generations
+  -> publish monotonic phases
+  -> enforce a deadline
+  -> prepare story scene UI and renderer candidates
+  -> publish typed terminal result
+  -> project fallback and Retry when recoverable
+  -> reject stale duplicate and superseded attempts
+  -> retire failed resources
+  -> publish FirstReadyUiAck
+  -> publish FirstPresentedStoryFrameAck
 ```
 
 ## Validation boundary
 
-Documentation changed. Runtime JavaScript, HTML, CSS, story data, persistence behavior, rendering, dependencies, scripts, workflow and deployment did not change. No multi-tab, reset-resurrection, writer-lease, compare-and-swap, artifact or Pages fixture was run.
+Documentation changed. Runtime JavaScript, HTML, CSS, story data, provider URL, rendering, persistence, dependencies, scripts, workflows, and deployment did not change. No browser, failure-injection, artifact, or Pages fixture was run.
