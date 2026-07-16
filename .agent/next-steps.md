@@ -1,58 +1,63 @@
-# Next steps: The Unmapped House story save writer revision authority
+# Next steps: The Unmapped House browser startup readiness authority
 
-**Timestamp:** `2026-07-15T18-02-58-04-00`  
+**Timestamp:** `2026-07-15T23-00-03-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-The smallest safe implementation is a revisioned save envelope around the existing story payload, plus one browser-native writer authority that rejects stale bases and makes reset a durable epoch change rather than a key deletion.
+The smallest safe implementation is a shell-owned dynamic bootstrap that can catch module/provider failure before `game.js` runs, followed by one typed runtime startup transaction that prepares story, scene, renderer, UI, and first-frame state under a shared attempt identity.
 
 ## Plan ledger
 
-**Goal:** add cross-document save ordering without restructuring story, rendering or authored content.
+**Goal:** add bounded startup readiness and recovery without changing authored scenes or the active story loop.
 
-- [ ] Define `StorySaveSlotId`, `SaveWriterId`, `SaveWriterGeneration`, `SaveWriterLeaseId`, `StorySaveRevision`, `StorySaveCommitId` and `ResetEpoch`.
-- [ ] Wrap the existing payload in a versioned `StorySaveEnvelope`.
-- [ ] Include the candidate base revision and payload fingerprint in every save command.
-- [ ] Add one origin-scoped writer lock using `navigator.locks` when available.
-- [ ] Add a revisioned lease with expiry and post-write verification as the fallback.
-- [ ] Replace void `saveState()` calls with `StorySaveCommitCommand` and typed results.
-- [ ] Read and verify the durable head before every commit.
-- [ ] Reject stale-base, expired-lease, duplicate and reset-invalidated candidates.
-- [ ] Convert reset into an initial-state commit at a new reset epoch.
-- [ ] Add `storage` event reconciliation for external durable-head changes.
-- [ ] Add BroadcastChannel messages for low-latency head, lease, conflict and reset events.
-- [ ] Move stale documents to explicit reconcile or read-only state before their next write.
-- [ ] Retain one verified predecessor for recovery.
-- [ ] Publish `FirstDurableStorySaveAck` and `FirstDurableStorySaveFrameAck`.
-- [ ] Add two-tab, three-tab, crash, reset, conflict, recovery, artifact and Pages fixtures.
+- [ ] Replace the static module entry with a minimal shell bootstrap that dynamically imports the runtime.
+- [ ] Define `StartupAttemptId`, `DocumentGeneration`, `ProviderRevision`, `StagePreparationRevision`, and `RenderGeneration`.
+- [ ] Publish monotonic startup phases.
+- [ ] Add an explicit startup deadline.
+- [ ] Admit and verify the expected Three.js provider identity.
+- [ ] Observe WebGL/context/render-target capability before adopting the stage.
+- [ ] Prepare the restored story snapshot and first scene before enabling controls.
+- [ ] Convert StageKit construction into a typed preparation result.
+- [ ] Define stable failure classes for module, policy, provider, graphics, shader, target, story, scene, and first-frame failures.
+- [ ] Project a semantic fallback that does not depend on Three.js.
+- [ ] Add Retry as a new attempt rather than reusing failed mutable state.
+- [ ] Reject stale and duplicate callbacks from older attempts.
+- [ ] Retire renderer, target, material, geometry, listener, and RAF resources from failed attempts.
+- [ ] Publish `FirstReadyUiAck` and `FirstPresentedStoryFrameAck`.
+- [ ] Preserve valid save state across startup failure and retry.
+- [ ] Add source, artifact, and Pages fixtures for success, failure, retry, timeout, retirement, and parity.
 
 ## Ordered implementation
 
-### 1. Envelope and identities
+### 1. Shell bootstrap
 
-Add schema version, slot ID, save revision, base revision, reset epoch, commit ID, writer ID, writer generation, written timestamp and payload fingerprint around the existing story payload. Preserve the current payload fields and migration boundary.
+Keep the static HTML and CSS usable without Three.js. Dynamically import the game entry from a bootstrap module, catch rejection, enforce a deadline, and render a stable fallback with Retry.
 
-### 2. Writer admission
+### 2. Attempt and phase model
 
-Use a named `navigator.locks` lock when available. The fallback must use a revisioned lease record with expiry, heartbeat and read-back verification. Only one active writer generation may commit.
+Allocate a new attempt and document generation on navigation or retry. Permit only monotonic transitions from shell parsed through first frame. Reject all late work from superseded generations.
 
-### 3. Compare-and-swap save
+### 3. Provider and graphics admission
 
-Read the current head, compare the candidate base revision and reset epoch, assign the next revision, retain the predecessor, write once and verify the accepted revision and fingerprint. Do not silently merge stale whole-state objects.
+Resolve the expected Three.js provider, record the version/source, observe WebGL capability, and prepare renderer and render-target resources without exposing ready state.
 
-### 4. Cross-document settlement
+### 4. Story and first-scene preparation
 
-Observe storage events and BroadcastChannel messages. Cancel pending stale commits, update the known head, and enter reconcile/read-only mode when local state diverges.
+Restore and validate the story snapshot, resolve the current scene, and build the complete stage candidate. Do not enable hotspot controls until the candidate and semantic UI agree.
 
-### 5. Durable reset
+### 5. First-frame settlement
 
-Commit initial state at a new reset epoch. Reject all candidates based on older reset epochs so an open stale tab cannot resurrect prior progress.
+Present the stage and post passes, then publish the first-frame acknowledgement. Only then transition the shell to ready.
 
-### 6. Prove behavior
+### 6. Failure and retry
 
-Run source, built artifact and Pages fixtures for stale-write rejection, lease contention, writer retirement, reset resurrection, storage-event reconciliation, BroadcastChannel fallback, corrupt-head recovery and visible/durable convergence.
+Publish one stable terminal result, preserve save data, retire partial resources, expose authored failure copy, and admit Retry as a new attempt.
+
+### 7. Proof
+
+Inject module, provider, WebGL, shader, target, descriptor, and first-frame failures. Capture matching results, DOM snapshots, screenshots, provider identity, and commit/artifact correlation for source, artifact, and Pages.
 
 ## Do not combine yet
 
-Keep story audio, inspection-focus continuity, story announcements, interlude modal focus, motion preference, page lifecycle, save schema, WebGL recovery, viewport, hotspot picking and resource lifecycle as retained independent authorities.
+Keep save concurrency, story audio, focus continuity, motion preference, announcements, interlude routing, page lifecycle, terminal settlement, WebGL recovery, save schema, viewport, scene-transition composition, provider admission, hotspot picking, and resource lifecycle as retained independent authorities.
