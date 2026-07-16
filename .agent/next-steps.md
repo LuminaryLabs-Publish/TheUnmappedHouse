@@ -1,58 +1,56 @@
-# Next steps: The Unmapped House story content graph validation
+# Next steps: The Unmapped House hotspot availability and discovery projection
 
-**Timestamp:** `2026-07-16T04-02-40-04-00`  
+**Timestamp:** `2026-07-16T09-58-49-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-The smallest safe implementation is one pure validator that can run in Node and the browser, followed by a bootstrap admission gate that only exposes the validated story graph to the runtime and StageKit.
+The smallest safe implementation is a pure availability resolver that consumes accepted scene content and current story/modal state, then emits one immutable hotspot set for both DOM and canvas projections.
 
 ## Plan ledger
 
-**Goal:** add deterministic content admission without changing the current three scenes or player-facing story loop.
+**Goal:** add hotspot availability without changing current story outcomes or forcing occlusion rules before content needs them.
 
-- [ ] Add a versioned story manifest containing `schemaVersion` and `contentRevision`.
-- [ ] Define stable scene, hotspot, clue, route, and validation-result identities.
-- [ ] Require unique scene IDs across the story.
-- [ ] Require unique hotspot IDs within each scene.
-- [ ] Build a clue-grant index from all reachable hotspots.
-- [ ] Reject unknown, duplicate, or ungrantable completion references.
-- [ ] Prove every scene can complete before its authored transition.
-- [ ] Validate route order, initial scene, and exactly one terminal boundary.
-- [ ] Validate camera vectors, FOV, fog, stage layers, props, hotspots, materials, and post descriptors.
-- [ ] Reject missing arrays, invalid tuple lengths, unsupported prop kinds, empty color lists, and non-finite numbers.
-- [ ] Publish a typed `StoryContentValidationResult`.
-- [ ] Gate `browser-story-runtime-kit` and `scene-descriptor-consumer-kit` on accepted content.
-- [ ] Project a semantic invalid-content fallback without constructing StageKit.
-- [ ] Publish `FirstValidatedStoryFrameAck`.
-- [ ] Add source, built-artifact, and Pages fixtures for valid and invalid manifests.
+- [ ] Define `HotspotAvailabilityPolicyVersion` and `HotspotAvailabilityRevision`.
+- [ ] Build a scene-local hotspot identity index from accepted story content.
+- [ ] Add optional authored visibility, clue-gate and interaction-mode descriptors.
+- [ ] Represent discovered, visible, occluded, enabled, inspected and modal-suspended state explicitly.
+- [ ] Resolve one immutable `HotspotAvailabilityResult` per scene/state revision.
+- [ ] Derive the DOM button list from accepted availability entries.
+- [ ] Derive the canvas raycast candidate set from the same entries.
+- [ ] Decide and document the default occlusion policy; do not infer it accidentally from hotspot-only raycasting.
+- [ ] Clear hover identity and hide the hover label on scene, modal and availability-generation changes.
+- [ ] Reject stale DOM or canvas interaction evidence.
+- [ ] Publish `HotspotProjectionResult`, `HotspotParityResult` and `HotspotInteractionResult`.
+- [ ] Publish `FirstAvailableHotspotFrameAck` and `FirstHotspotInteractionAck`.
+- [ ] Add source, built-artifact and Pages browser fixtures.
 
 ## Ordered implementation
 
-### 1. Pure schema and identity validator
+### 1. Pure resolver
 
-Create a dependency-free module that accepts a story manifest and returns immutable issues plus normalized indexes. Do not mutate the authored objects while validating.
+Accept an immutable scene index, story snapshot, modal snapshot, policy and optional camera evidence. Return immutable entries plus exact rejection reasons. Do not mutate authored hotspot descriptors.
 
-### 2. Reference and reachability analysis
+### 2. Projection adapters
 
-Walk scenes in authored order. Track clues grantable before each transition and prove every `requiresToComplete` item is reachable. Report exact scene, hotspot, and clue paths for every failure.
+Replace direct iteration of `currentScene.hotspots` in the DOM path and direct use of all hotspot meshes in the canvas path with projections derived from the accepted result.
 
-### 3. Descriptor validation
+### 3. Occlusion policy
 
-Validate arrays, tuple lengths, finite values, supported geometry kinds, material color cardinality, camera ranges, hotspot bounds, and post-process ranges before Three.js receives a descriptor.
+Support an explicit policy such as `ignore`, `visible-geometry`, or `authored`. The current content can remain `ignore`; future content must not depend on an unstated default.
 
-### 4. Runtime admission
+### 4. Retirement
 
-Validate before restore adoption and StageKit construction. Expose only the accepted manifest and indexes. Reject stale results whose content revision no longer matches.
+On scene, interlude, terminal or policy transitions, retire previous candidate sets and hover evidence before presenting the next frame.
 
-### 5. Failure projection
+### 5. Admission
 
-Keep the HTML shell usable when content is invalid. Show a semantic error result and disable inspection/Continue instead of partially constructing a scene.
+Require expected scene and availability revisions on every interaction. Only accepted interactions may invoke the existing inspection mutation.
 
 ### 6. Proof
 
-Add deterministic fixtures for duplicate IDs, unknown clues, impossible completion, invalid route order, malformed camera/stage descriptors, non-finite values, stale content results, and valid source/artifact/Pages parity.
+Exercise current parity, hidden, clue-gated, occluded, list-only, canvas-only, modal-suspended, stale-hover and stale-revision rows at source, artifact and Pages origins.
 
 ## Do not combine yet
 
-Keep browser startup, save concurrency, audio, focus, motion preference, announcements, page lifecycle, terminal settlement, WebGL recovery, save schema, viewport, scene transitions, provider admission, hotspot picking, and resource lifecycle as independent retained authorities.
+Keep story-content validation, raw pointer normalization/picking, inspection outcomes, focus restoration, scene transitions, interlude progression and renderer recovery as independent retained authorities.
