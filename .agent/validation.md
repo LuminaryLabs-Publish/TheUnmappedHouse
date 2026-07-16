@@ -1,37 +1,37 @@
-# Validation: The Unmapped House browser startup readiness audit
+# Validation: The Unmapped House story content graph audit
 
-**Timestamp:** `2026-07-15T23-00-03-04-00`  
-**Scope:** documentation-only architecture, interaction, gameplay, render, startup, and deployment audit
+**Timestamp:** `2026-07-16T04-02-40-04-00`  
+**Scope:** documentation-only architecture, interaction, gameplay, render, story-content, and deployment audit
 
 ## Summary
 
-Source and retained audit state were inspected. The audit establishes that the public startup path has no attempt identity, phase model, deadline, typed failure result, semantic fallback, retry command, failed-attempt retirement, or first-frame acknowledgement. Runtime behavior and deployment were not changed or executed.
+Source and retained audit state were inspected. The audit establishes that story content is consumed without schema, identity, reference, reachability, descriptor, or adoption validation. The current authored content appears coherent by manual inspection, but no executable validator or deployment proof exists.
 
 ## Plan ledger
 
 **Goal:** state exactly what this audit proves and what remains unverified.
 
 - [x] Compare all 11 accessible Publish repositories.
-- [x] Account for ten eligible central ledgers and current heads.
+- [x] Exclude TheCavalryOfRome and account for ten eligible repositories.
+- [x] Confirm all ten eligible repositories have central ledgers, root `.agent` state, and synchronized documentation heads.
 - [x] Confirm TheUnmappedHouse is the oldest synchronized eligible entry.
-- [x] Verify the selected root `.agent` state and documented head before writing.
-- [x] Inspect `index.html`, `src/game.js`, `src/story-data.js`, `src/stage-kit.js`, `package.json`, and retained registry state.
-- [x] Confirm the shell begins at `Loading`.
-- [x] Confirm Three.js is a static external module dependency.
-- [x] Confirm StageKit and the first scene construct without a typed startup boundary.
-- [x] Confirm no fallback, retry, deadline, failure taxonomy, or first-frame acknowledgement exists.
+- [x] Verify the selected root `.agent` state and current head before writing.
+- [x] Inspect `src/game.js`, `src/story-data.js`, `src/stage-kit.js`, `package.json`, and the retained kit registry.
+- [x] Confirm scene/hotspot/clue identities and descriptors are trusted directly.
+- [x] Confirm completion and route advancement have no semantic validation result.
+- [x] Confirm the package command checks syntax only.
 - [x] Preserve all 24 implemented kit surfaces and services.
 - [x] Change documentation only.
-- [ ] Run executable startup and deployment fixtures after implementation.
+- [ ] Run executable content and deployment fixtures after implementation.
 
 ## Source checks performed
 
 ```txt
 full 11-repository Publish inventory compared
 ten eligible central ledger records compared
-current eligible heads compared with documented heads
-selected root .agent state inspected
-index.html inspected
+ten root .agent entry files confirmed
+current eligible documentation heads compared
+selected repository head confirmed
 src/game.js inspected
 src/story-data.js inspected
 src/stage-kit.js inspected
@@ -42,24 +42,23 @@ retained kit registry inspected
 ## Source facts established
 
 ```txt
-initial scene title: Loading
-entry mode: static module script
-game module imports StageKit and story data: yes
-StageKit imports Three.js from unpkg: yes
-Three.js version: 0.160.0
-shell-owned dynamic import boundary: absent
-startup attempt identity: absent
-startup phase state: absent
-startup deadline: absent
-provider failure result: absent
-WebGL capability result: absent
-stage preparation result: absent
-semantic failure fallback: absent
-retry command: absent
-stale attempt rejection: absent
-FirstReadyUiAck: absent
-FirstPresentedStoryFrameAck: absent
-validation command: syntax-only
+scene count: 3
+hotspot count: 9
+story storage: plain exported JavaScript array
+story schema version: absent
+content revision/fingerprint: absent
+scene-ID validation: absent
+hotspot-ID validation: absent
+clue-reference validation: absent
+completion satisfiability analysis: absent
+route reachability result: absent
+descriptor shape validation: absent
+non-finite numeric rejection: absent
+content adoption result: absent
+invalid-content fallback: absent
+FirstValidatedStoryFrameAck: absent
+package validation: syntax-only
+current content defect reproduced: no
 ```
 
 ## Documentation changed
@@ -70,7 +69,7 @@ new architecture audit
 new render audit
 new gameplay audit
 new interaction audit
-new startup contract audit
+new story-content contract audit
 new deploy fixture gate
 new central-sync audit
 START_HERE.md refreshed
@@ -86,8 +85,8 @@ kit-registry.json refreshed
 ```txt
 runtime JavaScript: no
 HTML or CSS: no
-story descriptors: no
-Three.js provider URL: no
+authored story content: no
+scene/hotspot/clue values: no
 persistence behavior: no
 render behavior: no
 package scripts: no
@@ -101,15 +100,12 @@ pull request: none
 
 ```txt
 npm run check: not run
-browser startup smoke: not run
-provider failure injection: unavailable
-WebGL unavailable fixture: unavailable
-shader/render-target fixture: unavailable
-first-scene construction failure fixture: unavailable
-first-frame timeout fixture: unavailable
-retry and stale-attempt fixture: unavailable
-production-artifact startup smoke: not run
-Pages startup smoke: not run
+content validator: not implemented
+valid/invalid story fixtures: unavailable
+browser invalid-content fallback fixture: unavailable
+first validated frame fixture: unavailable
+production-artifact content smoke: not run
+Pages content smoke: not run
 ```
 
-No public-startup resilience, failure classification, retry correctness, resource retirement, first-frame convergence, artifact parity, Pages parity, or production readiness is claimed.
+No content-schema correctness, identity uniqueness, reference integrity, route reachability, completion satisfiability, descriptor safety, fallback correctness, artifact parity, Pages parity, or production readiness is claimed.
