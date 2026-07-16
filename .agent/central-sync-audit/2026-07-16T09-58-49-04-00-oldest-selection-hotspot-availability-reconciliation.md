@@ -1,11 +1,11 @@
 # Central sync audit: oldest selection and hotspot availability reconciliation
 
 **Timestamp:** `2026-07-16T09-58-49-04-00`  
-**Status:** `audited`
+**Status:** `central-reconciled`
 
 ## Summary
 
-The full accessible `LuminaryLabs-Publish` inventory contains 11 repositories. `TheCavalryOfRome` is excluded. All ten eligible repositories have central ledger records and root `.agent` state. No eligible repository was new, ledger-missing, root-agent-missing, undocumented or runtime-ahead. TheUnmappedHouse had the oldest synchronized central timestamp and was the only repository changed.
+The full accessible `LuminaryLabs-Publish` inventory contains 11 repositories. `TheCavalryOfRome` is excluded. All ten eligible repositories have central ledger records and root `.agent` state. No eligible repository was new, ledger-missing, root-agent-missing, undocumented or runtime-ahead. TheUnmappedHouse had the oldest synchronized central timestamp and was the only Publish repository changed.
 
 ## Plan ledger
 
@@ -17,7 +17,7 @@ The full accessible `LuminaryLabs-Publish` inventory contains 11 repositories. `
 - [x] Exclude TheCavalryOfRome.
 - [x] Select TheUnmappedHouse only.
 - [x] Add timestamped repo-local documentation on `main`.
-- [ ] Bind the final repo-local documentation head in the central ledger and add the central change log.
+- [x] Bind the final repo-local documentation head in the central ledger and add the central change log.
 
 ## Selection snapshot
 
@@ -39,6 +39,13 @@ next timestamp: 2026-07-16T04-27-44-04-00
 
 ## Central result
 
-Expected central status: `hotspot-availability-discovery-projection-authority-central-reconciled`.
+Central status: `hotspot-availability-discovery-projection-authority-central-reconciled`.
 
-No branch or pull request was created.
+Central outputs:
+
+```txt
+repo-ledger/LuminaryLabs-Publish/TheUnmappedHouse.md
+internal-change-log/2026-07-16T09-58-49-04-00-the-unmapped-house-hotspot-availability-discovery.md
+```
+
+Only `main` was used. No branch or pull request was created.
