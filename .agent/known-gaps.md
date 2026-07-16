@@ -1,105 +1,94 @@
-# Known gaps: The Unmapped House browser startup readiness authority
+# Known gaps: The Unmapped House story content graph validation
 
-**Timestamp:** `2026-07-15T23-00-03-04-00`  
+**Timestamp:** `2026-07-16T04-02-40-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-The public shell exposes `Loading`, but startup has no owned attempt, phases, deadline, failure taxonomy, fallback, retry, retirement, or first-frame proof. Failure before or during StageKit construction can leave the document indefinitely pending or partially projected.
+The authored story graph is trusted as executable data. The product has no content revision, schema version, semantic validator, reachability proof, typed rejection result, invalid-content fallback, or validated-frame acknowledgement.
 
 ## Plan ledger
 
-**Goal:** make startup identity, readiness, terminal failure, recovery, and proof explicit.
+**Goal:** make content identity, reference integrity, descriptor safety, adoption, and proof explicit.
 
-- [x] Trace startup from HTML parse through first frame.
-- [x] Confirm missing startup results and fallback.
-- [x] Define missing identities, policies, and acknowledgements.
+- [x] Trace scene, hotspot, clue, route, completion, stage, material, and post consumption.
+- [x] Confirm the package check is syntax-only.
+- [x] Define missing identities, policies, results, and acknowledgements.
 - [ ] Implement and execute them.
 
-## Identity gaps
+## Identity and version gaps
 
 ```txt
-StartupAttemptId: absent
-DocumentGeneration: absent
-ModuleGraphRevision: absent
-ProviderRevision: absent
-GraphicsCapabilityRevision: absent
-StoryBootstrapRevision: absent
-StagePreparationRevision: absent
-FirstSceneRevision: absent
-RenderGeneration: absent
-StartupDeadline: absent
-FirstReadyUiAck: absent
-FirstPresentedStoryFrameAck: absent
-StartupFallbackFrameAck: absent
+StorySchemaVersion: absent
+ContentRevision: absent
+ValidationPolicyVersion: absent
+SceneIdentityRegistry: absent
+HotspotIdentityRegistry: absent
+ClueIdentityRegistry: absent
+ValidatedContentFingerprint: absent
+FirstValidatedStoryFrameAck: absent
 ```
 
-## Phase and admission gaps
+## Reference and reachability gaps
 
 ```txt
-explicit startup phase model: absent
-module graph admission result: absent
-provider identity/version result: absent
-provider integrity/policy result: absent
-WebGL capability result: absent
-renderer preparation result: absent
-render-target preparation result: absent
-story bootstrap result: absent
-first-scene preparation result: absent
-startup deadline/timeout: absent
-stale-attempt rejection: absent
-duplicate retry rejection: absent
+duplicate scene-ID rejection: absent
+duplicate hotspot-ID rejection: absent
+unknown clue-reference rejection: absent
+clue-grant index: absent
+completion satisfiability proof: absent
+initial-scene validation: absent
+route-order validation: absent
+terminal-boundary validation: absent
+unreachable-scene result: absent
 ```
 
-## Failure and recovery gaps
+## Descriptor gaps
 
 ```txt
-module network failure class: absent
-CSP/provider policy failure class: absent
-provider contract failure class: absent
-WebGL unavailable class: absent
-shader/program failure class: absent
-render-target allocation failure class: absent
-story restore failure class: absent
-scene descriptor failure class: absent
-first-frame timeout class: absent
-semantic fallback projection: absent
-retry command/result: absent
-save-preservation receipt: absent
-failed-attempt resource retirement: absent
+camera tuple validation: absent
+finite FOV/fog validation: absent
+stage layers/props shape validation: absent
+supported prop-kind validation: absent
+position/rotation/scale tuple validation: absent
+hotspot size/position validation: absent
+material color cardinality validation: absent
+post-process numeric validation: absent
+non-finite number rejection: absent
 ```
 
-## Render convergence gaps
+## Admission and fallback gaps
 
 ```txt
-prepared startup frame: absent
-DOM/story/stage revision binding: absent
-first render submission result: absent
-first public frame acknowledgement: absent
-fallback frame acknowledgement: absent
-late RAF/callback rejection by generation: absent
+StoryContentValidationCommand: absent
+StoryContentValidationResult: absent
+StoryContentAdoptionCommand: absent
+StoryContentAdoptionResult: absent
+stale content-result rejection: absent
+invalid-content semantic fallback: absent
+renderer adoption gate: absent
+interactive-control adoption gate: absent
 ```
 
 ## Proof gaps
 
 ```txt
-normal browser startup fixture: absent
-provider rejection fixture: absent
-CSP/policy rejection fixture: absent
-WebGL unavailable fixture: absent
-shader failure fixture: absent
-render-target failure fixture: absent
-first-scene failure fixture: absent
-first-frame timeout fixture: absent
-retry success fixture: absent
-stale attempt after retry fixture: absent
-pagehide during startup fixture: absent
+valid manifest fixture: absent
+duplicate scene fixture: absent
+duplicate hotspot fixture: absent
+unknown clue fixture: absent
+impossible completion fixture: absent
+invalid route fixture: absent
+malformed camera/stage fixture: absent
+non-finite descriptor fixture: absent
+stale validation-result fixture: absent
 source/artifact/Pages parity: absent
 ```
 
 ## Retained independent gaps
 
 ```txt
+browser startup readiness and retry
 story save writer lease and revision
 story audio event projection
 inspection control focus continuity
@@ -121,4 +110,4 @@ stage resource lifecycle
 
 ## Completion boundary
 
-Do not claim public startup readiness until every document generation produces one terminal startup result, recoverable failures expose Retry without losing save state, stale attempts cannot mutate the shell, and source, artifact, and Pages prove matching ready or fallback frames.
+Do not claim authored-content safety until every accepted content revision has a schema version, stable fingerprint, unique identities, valid references, satisfiable completion, valid render descriptors, one typed terminal result, and matching source/artifact/Pages proof.
