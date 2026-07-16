@@ -1,89 +1,88 @@
-# START HERE: The Unmapped House story content graph validation
+# START HERE: The Unmapped House hotspot availability and discovery projection
 
-**Last updated:** `2026-07-16T04-02-40-04-00`  
+**Last updated:** `2026-07-16T09-58-49-04-00`  
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`  
 **Branch:** `main`  
-**Reviewed pre-audit repository head:** `d578c8bdb7ee23f2cc4051f410aed528dfc24b2c`  
-**Status:** `story-content-graph-validation-authority-audited`
+**Reviewed pre-audit documentation head:** `a90e7e4fa7da0ecfe0863236608d0a397a9dad7d`  
+**Status:** `hotspot-availability-discovery-projection-authority-audited`
 
 ## Summary
 
-TheUnmappedHouse is a fixed-camera anime-horror point-and-click prototype with three ordered scenes, nine hotspots, clue-led completion, localStorage persistence, semantic DOM controls, and a descriptor-driven Three.js stage.
+TheUnmappedHouse is a fixed-camera anime-horror point-and-click prototype with three scenes, nine authored hotspots, clue-led completion, localStorage persistence, DOM inspection controls, and a descriptor-driven Three.js stage.
 
-The active audit isolates authored-content admission. `src/story-data.js` exports a plain mutable array, while `src/game.js` and `src/stage-kit.js` immediately trust scene IDs, hotspot IDs, clue references, camera vectors, stage descriptors, and array order. The package check proves JavaScript syntax only. There is no schema version, content revision, duplicate-ID rejection, reference validation, completion satisfiability analysis, route reachability result, invalid-content fallback, or first validated story-frame acknowledgement.
+The active audit isolates hotspot availability. Every authored hotspot is immediately listed as an enabled DOM button and installed as an invisible canvas-pick volume. The raycaster tests hotspot volumes without scene-geometry occlusion, and scene transitions do not explicitly retire the previous hover label. No shared result binds listed, visible, hoverable, pickable, discovered, enabled, modal-available, and current-generation state.
 
 ## Plan ledger
 
-**Goal:** require every authored story revision to pass deterministic identity, reference, descriptor, and reachability validation before runtime or renderer adoption.
+**Goal:** make all hotspot projections consume one revision-bound availability result before interaction or visible-frame acknowledgement.
 
 - [x] Compare the complete current Publish inventory against central ledgers.
 - [x] Exclude TheCavalryOfRome.
 - [x] Confirm ten eligible repositories have synchronized central ledgers and root `.agent` state.
 - [x] Select only TheUnmappedHouse by the oldest synchronized timestamp.
-- [x] Identify the complete interaction loop, all domains, all 24 implemented kits, and their services.
-- [x] Trace scene, hotspot, clue, completion, route, camera, stage, material, post, save, and validation assumptions.
-- [x] Define one parent story-content authority with 17 coordinating kits.
+- [x] Identify the complete interaction loop, all active domains, all 24 implemented kits, and their services.
+- [x] Trace authored hotspot creation, list projection, hover, picking, inspection, modal state, and scene transition.
+- [x] Define one parent authority with 17 coordinating surfaces.
 - [x] Add the timestamped audit family.
-- [x] Keep runtime, authored story data, rendering, and deployment unchanged.
-- [ ] Implement and execute content-graph validation and source/artifact/Pages fixtures.
+- [x] Keep runtime, content, rendering, persistence, package scripts, and deployment unchanged.
+- [ ] Implement and execute hotspot parity fixtures.
 
 ## Active gap
 
 ```txt
-story-data.js exports scenes[]
-  -> game resolves saved scene by ID or falls back to scenes[0]
-  -> StageKit consumes camera, stage, hotspot, material and post fields directly
-  -> inspection state keys by scene ID and hotspot ID
-  -> completion requires every listed clue
-  -> Continue advances by scenes[] array position
-
-no content admission occurs
-  -> duplicate IDs can alias runtime state
-  -> unknown or ungrantable clues can make completion impossible
-  -> malformed descriptors can fail during stage construction
-  -> route order has no explicit reachability proof
-  -> syntax checks still pass
+currentScene.hotspots
+  -> every record becomes an enabled DOM button
+  -> every record becomes an invisible raycast volume
+  -> raycaster intersects only hotspot volumes
+  -> no shared availability result
+  -> no explicit visible/occluded/discovered/modal policy
+  -> no listed/pickable/visible parity result
+  -> prior hover evidence is not explicitly retired on scene change
 ```
 
-The current three-scene content appears internally consistent by inspection. This audit documents the missing authority for future authored revisions; it does not claim a reproduced content defect.
+The current nine hotspots are simple and no player-facing defect was reproduced. This is an authority and future-content scalability gap.
 
 ## Required authority
 
-`the-unmapped-house-story-content-graph-validation-authority-domain`
+`the-unmapped-house-hotspot-availability-discovery-projection-authority-domain`
 
 ```txt
-StoryContentValidationCommand
-  -> bind ContentRevision and StorySchemaVersion
-  -> register scene, hotspot and clue identities
-  -> reject duplicate and unknown references
-  -> validate route order and terminal reachability
-  -> prove completion requirements are satisfiable
-  -> validate descriptor shapes and finite numeric values
-  -> publish StoryContentValidationResult
-  -> admit valid content or project an invalid-content fallback
-  -> publish FirstValidatedStoryFrameAck
+HotspotAvailabilityCommand
+  -> bind content, scene, story, clue, inspection, modal, camera and frame revisions
+  -> resolve discovery, visibility, occlusion, enablement and interaction mode
+  -> publish HotspotAvailabilityResult
+
+HotspotProjectionCommand
+  -> project one accepted set to DOM list, hover and canvas picking
+  -> retire stale hover/focus evidence
+  -> publish HotspotParityResult
+
+HotspotInteractionCommand
+  -> reject unavailable, occluded, modal-suspended or stale work
+  -> publish HotspotInteractionResult
+  -> publish FirstAvailableHotspotFrameAck
 ```
 
 ## Read this run first
 
 1. `current-audit.md`
 2. `known-gaps.md`
-3. `trackers/2026-07-16T04-02-40-04-00/project-breakdown.md`
-4. `architecture-audit/2026-07-16T04-02-40-04-00-story-content-graph-validation-dsk-map.md`
-5. `story-content-audit/2026-07-16T04-02-40-04-00-identity-reference-reachability-contract.md`
-6. `interaction-audit/2026-07-16T04-02-40-04-00-story-content-validation-command-result-map.md`
-7. `gameplay-audit/2026-07-16T04-02-40-04-00-unsatisfiable-story-route-loop.md`
-8. `render-audit/2026-07-16T04-02-40-04-00-invalid-content-first-frame-gap.md`
-9. `deploy-audit/2026-07-16T04-02-40-04-00-story-content-source-artifact-pages-fixture-gate.md`
-10. `central-sync-audit/2026-07-16T04-02-40-04-00-oldest-selection-story-content-reconciliation.md`
-11. `turn-ledger/2026-07-16T04-02-40-04-00.md`
+3. `trackers/2026-07-16T09-58-49-04-00/project-breakdown.md`
+4. `architecture-audit/2026-07-16T09-58-49-04-00-hotspot-availability-discovery-dsk-map.md`
+5. `hotspot-availability-audit/2026-07-16T09-58-49-04-00-listing-picking-occlusion-contract.md`
+6. `interaction-audit/2026-07-16T09-58-49-04-00-hotspot-availability-command-result-map.md`
+7. `gameplay-audit/2026-07-16T09-58-49-04-00-hotspot-discovery-bypass-loop.md`
+8. `render-audit/2026-07-16T09-58-49-04-00-listed-pickable-visible-hotspot-parity-gap.md`
+9. `deploy-audit/2026-07-16T09-58-49-04-00-hotspot-parity-browser-fixture-gate.md`
+10. `central-sync-audit/2026-07-16T09-58-49-04-00-oldest-selection-hotspot-availability-reconciliation.md`
+11. `turn-ledger/2026-07-16T09-58-49-04-00.md`
 12. `next-steps.md`
 13. `validation.md`
 
 ## Retained audits
 
-Browser startup readiness, story save concurrency, story audio, inspection focus, motion preference, story announcements, interlude focus/route, page lifecycle, terminal settlement, WebGL recovery, save schema, viewport, scene-transition composition, render-provider admission, hotspot picking, same-document save/reset convergence, interlude progression, and stage-resource lifecycle remain retained in `kit-registry.json`.
+Story-content validation, startup readiness, save concurrency/schema, audio, focus, motion preference, announcements, interlude progression, page lifecycle, terminal settlement, WebGL recovery, viewport, scene composition, provider admission, raw hotspot picking, save/reset convergence, and stage-resource lifecycle remain retained in `kit-registry.json`.
 
 ## Next safe ledge
 
-Add a pure story-content validator to the package check and runtime bootstrap, then gate StageKit and interactive controls on an accepted validation result.
+Introduce a pure availability resolver after accepted story-content adoption, then derive both DOM and canvas candidate sets from its immutable result.
