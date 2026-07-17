@@ -1,54 +1,48 @@
-# Next steps: The Unmapped House runtime frame fault containment
+# Next steps: The Unmapped House pointer presence retirement
 
-**Timestamp:** `2026-07-16T23-40-57-04-00`  
+**Timestamp:** `2026-07-17T05-03-18-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-The smallest safe implementation is to introduce a frame-attempt boundary and bounded failure settlement before changing the renderer or adding broad recovery behavior.
+The smallest safe implementation is one idempotent pointer-retirement path shared by canvas exit, cancellation, focus loss, document hiding and scene replacement.
 
 ## Checklist
 
-- [ ] Allocate `RuntimeGeneration`, `FrameGeneration` and `FrameAttemptId`.
-- [ ] Split camera, material, scene-render and post-render into named phases.
-- [ ] Return immutable `FrameAttemptResult` values.
-- [ ] Move successor scheduling behind accepted completion or retry admission.
-- [ ] Classify phase failures and compute a stable fault fingerprint.
-- [ ] Add a bounded retry budget and minimum backoff.
-- [ ] Deduplicate identical repeated failures.
-- [ ] Retire stale callbacks and suspend stage interactions after terminal failure.
-- [ ] Preserve accepted story/save state while the renderer is retired.
-- [ ] Project one bounded safe failure surface with an explicit restart action.
-- [ ] Make restart idempotent and bind it to the retired generation.
-- [ ] Publish `FirstSafeFaultFrameAck` and `FirstRecoveredFrameAck`.
-- [ ] Add source, staged-artifact and Pages fault fixtures.
+- [ ] Allocate `PointerSessionId`, `PointerGeneration`, `SceneGeneration` and `PointerSampleId`.
+- [ ] Replace direct mutable pointer writes with `PointerSampleAdmissionResult`.
+- [ ] Add canvas `pointerleave` or `mouseleave` handling.
+- [ ] Add `pointercancel`, window blur and document visibility retirement.
+- [ ] Retire predecessor pointer state before `loadScene()` commits a successor scene.
+- [ ] Clear `hovered` and hide the hover label exactly once.
+- [ ] Choose immediate or bounded parallax neutralization.
+- [ ] Reject stale predecessor samples and duplicate retirement.
+- [ ] Bind hover and parallax projection to one generation and digest.
+- [ ] Publish `FirstNeutralPointerFrameAck`.
+- [ ] Add source, artifact and Pages fixture parity.
 
 ## Ordered implementation
 
-### 1. Frame attempt
+### 1. Pointer identity
 
-Create one command that binds runtime, scene, renderer, target and frame generations. Execute named phases and produce one terminal result.
+Create a small pointer-session record bound to scene and viewport generations. Every accepted move produces a terminal result.
 
-### 2. Scheduling ownership
+### 2. Retirement path
 
-Do not request an unconditional successor before frame work. A completed attempt may admit the next normal frame; a failed attempt must enter retry or retirement policy.
+Add one `retirePointerPresence(reason)` path. It must be idempotent and used by leave, cancel, blur, hidden document, scene replacement and runtime retirement.
 
-### 3. Fault policy
+### 3. Projection settlement
 
-Classify the failed phase, deduplicate repeated evidence, consume a bounded retry budget and apply backoff. Unknown failures fail closed.
+Clear the hover target, hide the label and set a deterministic neutral parallax target. Do not let stale events reactivate the retired generation.
 
-### 4. Retirement
+### 4. Scene handoff
 
-Retire stale callbacks, suspend interaction, settle renderer/target ownership and retain the accepted story/save generation.
+Retire predecessor pointer state before scene geometry and hotspot identity are replaced. The successor scene starts with no inherited hover target.
 
-### 5. Safe projection and restart
+### 5. Proof
 
-Project one safe failure state. Restart must choose an explicit resume, reload or reset policy and must not replay story commands.
-
-### 6. Proof
-
-Inject failures into every named phase and prove bounded retries, retirement, safe projection, restart idempotency and the first recovered frame at source, artifact and Pages origins.
+Exercise each retirement reason and acknowledge the first frame with hidden hover UI and neutral camera projection at source, artifact and Pages origins.
 
 ## Do not combine yet
 
-Keep scene-entry narrative, hotspot availability/picking, save, interlude, focus, WebGL context recovery and stage-resource lifecycle as retained independent authorities.
+Keep runtime frame-fault containment, scene-entry narrative, hotspot activation, save, interlude, focus, WebGL recovery and stage-resource lifecycle as retained independent authorities.
