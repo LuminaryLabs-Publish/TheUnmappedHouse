@@ -1,45 +1,41 @@
-# Validation: The Unmapped House scene-entry narrative audit
+# Validation: The Unmapped House runtime frame fault audit
 
-**Timestamp:** `2026-07-16T16-58-39-04-00`  
-**Scope:** documentation-only architecture, interaction, gameplay, render, narrative-projection and deployment audit
+**Timestamp:** `2026-07-16T23-40-57-04-00`  
+**Scope:** documentation-only architecture, interaction, gameplay, render, runtime-fault and deployment audit
 
 ## Summary
 
-Source and retained audit state were inspected. The audit establishes that ordinary scene advancement can leave predecessor hotspot copy in the story paragraph while successor scene identity, stage, title, hotspot list and save are accepted. No runtime source was changed and no executable browser proof was run.
+Source and retained audit state were inspected. The audit establishes that `StageKit.animate()` schedules its successor before camera, material, offscreen-render and post-render work. A thrown phase has no typed settlement and does not retire the already-admitted successor callback. No runtime source was changed and no executable browser proof was run.
 
-## Plan ledger
-
-**Goal:** state exactly what this audit proves and what remains unverified.
+## Checklist
 
 - [x] Compare all 11 accessible Publish repositories.
 - [x] Exclude TheCavalryOfRome and account for ten eligible repositories.
 - [x] Confirm all ten eligible repositories have central ledgers and root `.agent` state.
-- [x] Confirm TheUnmappedHouse is the oldest synchronized eligible entry.
-- [x] Verify the selected repository documentation head before writing.
-- [x] Inspect `index.html`, `src/game.js`, `src/stage-kit.js`, `src/story-data.js`, `src/aspect-frame.js`, `package.json` and the kit registry.
-- [x] Confirm inspection writes non-empty hotspot copy into `scene-text`.
-- [x] Confirm `nextScene()` adopts the successor before UI projection.
-- [x] Confirm `renderUi()` applies opening copy only to empty or `Loading` text.
+- [x] Confirm all ten current heads match documented repo-local heads.
+- [x] Select TheUnmappedHouse as the oldest synchronized eligible entry.
+- [x] Inspect `index.html`, `src/game.js`, `src/stage-kit.js`, `src/story-data.js`, `src/aspect-frame.js`, `src/styles.css`, `package.json` and `kit-registry.json`.
+- [x] Confirm successor RAF scheduling occurs before frame phases.
+- [x] Confirm camera, material, scene-render and post-render phases have no frame result boundary.
 - [x] Preserve all 24 implemented kit surfaces and services.
+- [x] Add 20 proposed runtime-frame-fault surfaces.
 - [x] Change documentation only.
-- [ ] Run executable interaction and deployment fixtures after implementation.
+- [ ] Run executable fault and deployment fixtures after implementation.
 
 ## Source facts established
 
 ```txt
-scene count: 3
-hotspot count: 9
-inspection copy assignment: direct hotspot.text
-scene transition: currentScene and stage adopted before renderUi
-opening copy condition: scene-text empty or exactly Loading
-ordinary predecessor copy state: non-empty
-successor openingText projection: skipped in uninterrupted progression
-successor title projection: performed
-successor hotspot-list projection: performed
-successor stage projection: performed
-successor save state: performed
-SceneEntryNarrativeResult: absent
-FirstSceneEntryFrameAck: absent
+successor RAF request: first operation in animate
+camera update: after successor request
+material updates: after successor request
+offscreen scene render: after successor request
+post render: after successor request
+frame try/catch: absent
+loop running/retired state: absent
+fault classification: absent
+retry budget/backoff: absent
+safe failure projection: absent
+restart result: absent
 package validation: syntax-only
 browser reproduction executed: no
 ```
@@ -52,7 +48,7 @@ new architecture audit
 new render audit
 new gameplay audit
 new interaction audit
-new narrative-projection contract audit
+new runtime-fault contract audit
 new deploy fixture gate
 new central-sync audit
 START_HERE.md refreshed
@@ -69,9 +65,8 @@ kit-registry.json refreshed
 runtime JavaScript: no
 HTML or CSS: no
 authored story content: no
-stage rendering: no
-hotspot behavior: no
-focus behavior: no
+stage rendering behavior: no
+interaction behavior: no
 persistence behavior: no
 package scripts: no
 dependencies: no
@@ -84,13 +79,14 @@ pull request: none
 
 ```txt
 npm run check: not run
-scene 1 -> scene 2 browser fixture: unavailable
-scene 2 -> scene 3 browser fixture: unavailable
-same-scene refresh fixture: unavailable
-reload/resume policy fixture: unavailable
-stale narrative fixture: unavailable
+camera-phase throw fixture: unavailable
+material-phase throw fixture: unavailable
+scene-render throw fixture: unavailable
+post-render throw fixture: unavailable
+retry-budget/backoff fixture: unavailable
+retirement/restart fixture: unavailable
 production-artifact smoke: not run
 Pages smoke: not run
 ```
 
-No runtime fix, narrative convergence, reload/resume correctness, frame acknowledgement, artifact parity, Pages parity or production readiness is claimed.
+No runtime fix, bounded retry, fault retirement, safe fallback, recovered-frame acknowledgement, artifact parity, Pages parity or production readiness is claimed.
