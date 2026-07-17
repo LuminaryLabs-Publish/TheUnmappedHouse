@@ -1,120 +1,46 @@
-# Current audit: The Unmapped House pointer presence retirement
+# Current audit: The Unmapped House custom-material lighting and shadows
 
-**Timestamp:** `2026-07-17T05-03-18-04-00`  
+**Timestamp:** `2026-07-17T10-16-33-04-00`  
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`  
-**Status:** `pointer-presence-hover-parallax-retirement-authority-audited`  
+**Status:** `custom-material-shadow-lighting-projection-authority-audited`  
 **Branch:** `main`
 
 ## Summary
 
-`StageKit.handlePointer()` is the only path that updates pointer coordinates, `hovered`, the hover label and camera-parallax input. The canvas has no leave/cancel handler, and scene replacement does not clear pointer-derived state. Stale hover text and parallax can therefore survive after their pointer or scene evidence is invalid.
+`StageKit` declares scene lighting and shadow work through Three.js light objects, renderer shadow-map enablement and geometry cast/receive flags. The visible anime material is a custom shader that uses a fixed `lightDir` uniform and does not consume the scene lights or shadow map.
 
 ## Intent
 
-Bind every hover-label and parallax projection to one accepted pointer, scene and viewport generation, then retire it exactly once when presence ends or the scene changes.
+Make lighting intent, shadow cost and visible material output belong to one accepted scene/render generation.
 
-## Complete interaction loop
-
-```txt
-boot
-  -> construct StageKit
-  -> register mousemove and click
-  -> load scene and start RAF
-
-mousemove
-  -> normalize pointer coordinates
-  -> update parallax coordinates
-  -> raycast hotspot volumes
-  -> cache hovered target
-  -> project hover label
-
-RAF
-  -> consume retained parallax coordinates
-  -> render camera-offset frame
-
-pointer/scene retirement gap
-  -> leave, cancel, blur, hidden document or scene replacement
-  -> no pointer retirement result
-  -> stale hover/parallax remain eligible
-```
-
-## Domains in use
+## Source-backed finding
 
 ```txt
-browser shell, document lifecycle and public DOM
-fixed-aspect viewport and resize projection
-story content, state, route, inspection, interlude, terminal and persistence
-pointer presence, sample identity, picking, hover, focus and scene retirement
-Three.js camera, scene, materials, raycasting and render targets
-hover-label and camera-parallax projection
-syntax validation, static artifact, Pages and audit governance
+DirectionalLight and HemisphereLight: present
+renderer shadowMap: enabled
+DirectionalLight castShadow: enabled
+prop castShadow/receiveShadow: enabled
+layer receiveShadow: enabled
+custom ShaderMaterial on visible surfaces: present
+fixed lightDir shading: present
+Three.js light binding: absent
+shadow-map sampling: absent
+visible-lighting digest: absent
+first light-bound frame acknowledgement: absent
 ```
-
-## Implemented kits and services
-
-The implemented census remains 24 source-backed kits:
-
-```txt
-static-page-shell-kit
-aspect-frame-kit
-story-data-kit
-browser-story-runtime-kit
-scene-route-kit
-inspection-ledger-kit
-clue-ledger-kit
-notebook-log-kit
-interlude-timer-kit
-terminal-route-kit
-localstorage-save-kit
-stage-render-kit
-scene-descriptor-consumer-kit
-anime-material-kit
-post-process-kit
-hotspot-volume-kit
-hotspot-picking-kit
-camera-parallax-kit
-render-target-composition-kit
-debug-json-projection-kit
-package-syntax-check-kit
-static-pages-deploy-kit
-repo-local-agent-ledger-kit
-central-ledger-sync-kit
-```
-
-Their complete offered-service table is in `trackers/2026-07-17T05-03-18-04-00/project-breakdown.md` and `kit-registry.json`.
-
-## Source-backed findings
-
-- Canvas `mousemove` mutates pointer, parallax, hover target and hover-label DOM.
-- Canvas `click` consumes the current raycast result.
-- No canvas `mouseleave` or `pointerleave` listener exists.
-- No `pointercancel`, window blur or document visibility retirement exists.
-- `loadScene()` replaces hotspots and materials but does not clear `hovered`, hide the hover label or neutralize parallax.
-- RAF consumes the retained parallax vector every frame.
-- No pointer generation, retirement result or first neutral frame acknowledgement exists.
-
-No production incident was reproduced.
 
 ## Required authority
 
-`the-unmapped-house-pointer-presence-hover-parallax-retirement-authority-domain`
+`the-unmapped-house-custom-material-shadow-lighting-projection-authority-domain`
 
-```txt
-PointerSampleAdmissionCommand
-  -> validate scene, viewport and pointer generations
-  -> publish PointerSampleAdmissionResult
+## Smallest safe implementation
 
-PointerPresenceRetirementCommand
-  -> classify leave/cancel/blur/hidden/scene replacement
-  -> clear hover and neutralize parallax exactly once
-  -> reject stale samples
-  -> publish PointerPresenceRetirementResult
+1. Declare whether each scene uses scene-bound custom lighting or fixed unshadowed anime lighting.
+2. For scene-bound lighting, bind accepted light descriptors and a compatible shadow receiver into the custom shader.
+3. For fixed lighting, disable unused scene-light and shadow-map work.
+4. Publish typed admission/projection results, a visible-lighting digest and `FirstLightBoundFrameAck`.
+5. Prove frame response and render cost in source, artifact and Pages fixtures.
 
-PointerProjectionCommitCommand
-  -> publish PointerProjectionCommitResult
-  -> publish FirstNeutralPointerFrameAck
-```
+## Boundary
 
-## Validation boundary
-
-Documentation changed. Runtime JavaScript, HTML, CSS, story content, rendering, interaction, persistence, tests, workflows and deployment did not change. No browser or deployed-origin pointer-presence fixture was run.
+Documentation only. No shader, renderer, light, shadow, story, input, save, build or deployment behavior changed.
