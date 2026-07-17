@@ -1,41 +1,43 @@
-# Validation: The Unmapped House runtime frame fault audit
+# Validation: The Unmapped House pointer presence audit
 
-**Timestamp:** `2026-07-16T23-40-57-04-00`  
-**Scope:** documentation-only architecture, interaction, gameplay, render, runtime-fault and deployment audit
+**Timestamp:** `2026-07-17T05-03-18-04-00`  
+**Scope:** documentation-only architecture, interaction, gameplay, render, pointer-presence and deployment audit
 
 ## Summary
 
-Source and retained audit state were inspected. The audit establishes that `StageKit.animate()` schedules its successor before camera, material, offscreen-render and post-render work. A thrown phase has no typed settlement and does not retire the already-admitted successor callback. No runtime source was changed and no executable browser proof was run.
+Source and retained audit state were inspected. The audit establishes that `StageKit.handlePointer()` is the only hover/parallax update path, while canvas exit, pointer cancellation, focus loss, document hiding and scene replacement have no retirement result. No runtime source was changed and no executable browser proof was run.
 
 ## Checklist
 
 - [x] Compare all 11 accessible Publish repositories.
 - [x] Exclude TheCavalryOfRome and account for ten eligible repositories.
 - [x] Confirm all ten eligible repositories have central ledgers and root `.agent` state.
-- [x] Confirm all ten current heads match documented repo-local heads.
+- [x] Confirm no new, missing, undocumented or runtime-ahead priority repository.
 - [x] Select TheUnmappedHouse as the oldest synchronized eligible entry.
-- [x] Inspect `index.html`, `src/game.js`, `src/stage-kit.js`, `src/story-data.js`, `src/aspect-frame.js`, `src/styles.css`, `package.json` and `kit-registry.json`.
-- [x] Confirm successor RAF scheduling occurs before frame phases.
-- [x] Confirm camera, material, scene-render and post-render phases have no frame result boundary.
+- [x] Inspect `index.html`, `src/game.js`, `src/stage-kit.js`, `src/story-data.js`, `package.json` and retained audit records.
+- [x] Confirm pointer, hover and parallax state is updated from canvas `mousemove`.
+- [x] Confirm no leave/cancel/blur/visibility/scene retirement path exists.
 - [x] Preserve all 24 implemented kit surfaces and services.
-- [x] Add 20 proposed runtime-frame-fault surfaces.
+- [x] Add 18 proposed pointer-presence surfaces.
 - [x] Change documentation only.
-- [ ] Run executable fault and deployment fixtures after implementation.
+- [ ] Run executable pointer-retirement and deployment fixtures after implementation.
 
 ## Source facts established
 
 ```txt
-successor RAF request: first operation in animate
-camera update: after successor request
-material updates: after successor request
-offscreen scene render: after successor request
-post render: after successor request
-frame try/catch: absent
-loop running/retired state: absent
-fault classification: absent
-retry budget/backoff: absent
-safe failure projection: absent
-restart result: absent
+canvas mousemove listener: present
+canvas click listener: present
+hovered cache: present
+hover-label show/position: present
+parallax cache consumed by RAF: present
+loadScene clears hotspot/material arrays: present
+loadScene pointer-state reset: absent
+canvas leave listener: absent
+pointercancel listener: absent
+window blur retirement: absent
+document visibility retirement: absent
+PointerPresenceRetirementResult: absent
+FirstNeutralPointerFrameAck: absent
 package validation: syntax-only
 browser reproduction executed: no
 ```
@@ -48,7 +50,7 @@ new architecture audit
 new render audit
 new gameplay audit
 new interaction audit
-new runtime-fault contract audit
+new pointer-presence contract audit
 new deploy fixture gate
 new central-sync audit
 START_HERE.md refreshed
@@ -79,14 +81,13 @@ pull request: none
 
 ```txt
 npm run check: not run
-camera-phase throw fixture: unavailable
-material-phase throw fixture: unavailable
-scene-render throw fixture: unavailable
-post-render throw fixture: unavailable
-retry-budget/backoff fixture: unavailable
-retirement/restart fixture: unavailable
+hover/leave fixture: unavailable
+pointercancel fixture: unavailable
+blur/visibility fixture: unavailable
+scene-transition pointer fixture: unavailable
+first neutral frame fixture: unavailable
 production-artifact smoke: not run
 Pages smoke: not run
 ```
 
-No runtime fix, bounded retry, fault retirement, safe fallback, recovered-frame acknowledgement, artifact parity, Pages parity or production readiness is claimed.
+No runtime fix, pointer retirement correctness, stale-sample rejection, hover-label convergence, parallax convergence, artifact parity, Pages parity or production readiness is claimed.
