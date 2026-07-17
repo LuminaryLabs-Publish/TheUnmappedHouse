@@ -1,55 +1,54 @@
-# Next steps: The Unmapped House scene-entry narrative projection
+# Next steps: The Unmapped House runtime frame fault containment
 
-**Timestamp:** `2026-07-16T16-58-39-04-00`  
+**Timestamp:** `2026-07-16T23-40-57-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-The smallest safe implementation is to make scene entry select and project narrative copy explicitly. Do not infer entry semantics from the current text inside the DOM paragraph.
+The smallest safe implementation is to introduce a frame-attempt boundary and bounded failure settlement before changing the renderer or adding broad recovery behavior.
 
-## Plan ledger
+## Checklist
 
-**Goal:** fix scene-entry copy convergence without changing authored prose, clue outcomes, hotspot behavior or stage composition.
-
-- [ ] Add `SceneEntryGeneration` and `StoryTextProjectionRevision`.
-- [ ] Define entry reasons: boot, transition, resume and re-entry.
-- [ ] Add a pure `resolveSceneEntryNarrative(scene, reason, priorNarrative)` function.
-- [ ] Make ordinary scene transitions select `currentScene.openingText` unconditionally.
-- [ ] Preserve inspection copy only for same-scene UI refreshes.
-- [ ] Return immutable `SceneEntryNarrativeResult` and `SceneEntryProjectionResult` values.
-- [ ] Bind title, opening text, stage and hotspot list to one scene-entry generation.
-- [ ] Reject predecessor narrative results after route revision changes.
-- [ ] Publish `FirstSceneEntryFrameAck` after one matching frame is visible.
-- [ ] Add uninterrupted scene-one-to-two and scene-two-to-three fixtures.
-- [ ] Add reload/resume policy fixtures.
-- [ ] Add source, artifact and Pages parity proof.
+- [ ] Allocate `RuntimeGeneration`, `FrameGeneration` and `FrameAttemptId`.
+- [ ] Split camera, material, scene-render and post-render into named phases.
+- [ ] Return immutable `FrameAttemptResult` values.
+- [ ] Move successor scheduling behind accepted completion or retry admission.
+- [ ] Classify phase failures and compute a stable fault fingerprint.
+- [ ] Add a bounded retry budget and minimum backoff.
+- [ ] Deduplicate identical repeated failures.
+- [ ] Retire stale callbacks and suspend stage interactions after terminal failure.
+- [ ] Preserve accepted story/save state while the renderer is retired.
+- [ ] Project one bounded safe failure surface with an explicit restart action.
+- [ ] Make restart idempotent and bind it to the retired generation.
+- [ ] Publish `FirstSafeFaultFrameAck` and `FirstRecoveredFrameAck`.
+- [ ] Add source, staged-artifact and Pages fault fixtures.
 
 ## Ordered implementation
 
-### 1. Pure copy policy
+### 1. Frame attempt
 
-Accept the target scene, entry reason, expected scene revision and optional same-scene narrative snapshot. Return the exact narrative source and copy. Do not inspect DOM contents.
+Create one command that binds runtime, scene, renderer, target and frame generations. Execute named phases and produce one terminal result.
 
-### 2. Scene-entry result
+### 2. Scheduling ownership
 
-Create the accepted scene-entry generation before mutating the story panel. Include scene ID, title, opening text, entry reason and expected projection revisions.
+Do not request an unconditional successor before frame work. A completed attempt may admit the next normal frame; a failed attempt must enter retry or retirement policy.
 
-### 3. Projection binding
+### 3. Fault policy
 
-Project title, text and hotspot list from the accepted result. Bind the stage generation to the same scene ID before acknowledging readiness.
+Classify the failed phase, deduplicate repeated evidence, consume a bounded retry budget and apply backoff. Unknown failures fail closed.
 
-### 4. Same-scene refresh
+### 4. Retirement
 
-Allow inspection and re-read copy to persist across `renderUi()` only while the route and scene-entry generation remain unchanged.
+Retire stale callbacks, suspend interaction, settle renderer/target ownership and retain the accepted story/save generation.
 
-### 5. Stale rejection
+### 5. Safe projection and restart
 
-Reject any narrative projection carrying the predecessor scene ID or predecessor entry generation after Continue is accepted.
+Project one safe failure state. Restart must choose an explicit resume, reload or reset policy and must not replay story commands.
 
 ### 6. Proof
 
-Run all three scenes without reload and assert that each successor opening copy is visible before any successor hotspot inspection. Repeat at source, staged artifact and Pages origins.
+Inject failures into every named phase and prove bounded retries, retirement, safe projection, restart idempotency and the first recovered frame at source, artifact and Pages origins.
 
 ## Do not combine yet
 
-Keep hotspot availability, raw pointer picking, focus restoration, scene-transition atomicity, interlude progression, save settlement, renderer recovery and stage-resource lifecycle as independent retained authorities.
+Keep scene-entry narrative, hotspot availability/picking, save, interlude, focus, WebGL context recovery and stage-resource lifecycle as retained independent authorities.
