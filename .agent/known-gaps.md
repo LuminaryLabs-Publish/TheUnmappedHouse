@@ -1,82 +1,74 @@
-# Known gaps: The Unmapped House scene-entry narrative projection
+# Known gaps: The Unmapped House runtime frame fault containment
 
-**Timestamp:** `2026-07-16T16-58-39-04-00`  
+**Timestamp:** `2026-07-16T23-40-57-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-Scene entry has no explicit narrative generation, copy policy, projection result, stale-copy rejection or first matching frame acknowledgement. The current DOM-content heuristic can preserve predecessor hotspot copy after the successor scene is otherwise accepted.
+The recursive frame loop has no explicit attempt, failure, retry, retirement or recovery state. Because the successor callback is scheduled before frame work, a persistent failure can continue receiving display-refresh callbacks.
 
-## Plan ledger
-
-**Goal:** make the story paragraph's semantic scene identity explicit and verifiable.
-
-- [x] Trace predecessor inspection copy into successor entry.
-- [x] Confirm title, stage, hotspot list and save can advance independently of opening copy.
-- [x] Define missing identities, policy, results and proof.
-- [ ] Implement and execute them.
-
-## Identity and revision gaps
+## Identity gaps
 
 ```txt
-SceneEntryGeneration: absent
-SceneEntryCommandId: absent
-EntryReason: implicit
-NarrativeSourceId: absent
-StoryTextProjectionRevision: absent
-SceneEntryProjectionRevision: absent
-FirstSceneEntryFrameAck: absent
+RuntimeGeneration: absent
+FrameGeneration: absent
+FrameAttemptId: absent
+FramePhasePlanRevision: absent
+RendererGeneration: absent
+TargetGeneration: absent
+FaultId and FaultFingerprint: absent
+RecoveryId: absent
+FirstSafeFaultFrameAck: absent
+FirstRecoveredFrameAck: absent
 ```
 
-## Policy gaps
+## Settlement gaps
 
 ```txt
-boot opening-copy policy: implicit
-transition opening-copy policy: implicit and defective
-resume/reload copy policy: implicit
-same-scene inspection-copy preservation policy: implicit
-cross-scene predecessor-copy rejection: absent
-terminal copy policy result: absent
+FrameAttemptResult: absent
+phase-specific failure result: absent
+fault retryability classification: absent
+fault deduplication: absent
+bounded retry budget: absent
+retry backoff: absent
+runtime retirement result: absent
+interaction suspension result: absent
+renderer/target settlement result: absent
+safe failure projection result: absent
+restart command/result: absent
 ```
 
-## Projection gaps
+## Current scheduling mismatch
 
 ```txt
-SceneEntryNarrativeResult: absent
-SceneEntryProjectionResult: absent
-title/text/stage/hotspot scene binding: absent
-stale narrative revision rejection: absent
-previous-scene copy retirement receipt: absent
-matching story-panel/stage frame result: absent
-```
-
-## Current deterministic mismatch
-
-```txt
-scene N final hotspot text: visible
-scene N+1 identity: accepted
-scene N+1 stage: loaded
-scene N+1 title: projected
-scene N+1 hotspots: projected
-scene N+1 openingText: skipped
-scene N hotspot text: remains visible
+successor callback: admitted first
+frame attempt result: nonexistent
+camera/material/render failure: may throw later
+callback cancellation: unavailable
+persistent-fault cadence: potentially every RAF
+terminal fallback: unavailable
 ```
 
 ## Proof gaps
 
 ```txt
-scene 1 -> scene 2 uninterrupted fixture: absent
-scene 2 -> scene 3 uninterrupted fixture: absent
-same-scene refresh fixture: absent
-reload/resume policy fixture: absent
-stale predecessor narrative fixture: absent
-FirstSceneEntryFrameAck fixture: absent
+camera-phase fault fixture: absent
+material-phase fault fixture: absent
+scene-render fault fixture: absent
+post-render fault fixture: absent
+retry-budget fixture: absent
+backoff fixture: absent
+stale callback fixture: absent
+safe fallback fixture: absent
+restart idempotency fixture: absent
+first recovered frame fixture: absent
 source/artifact/Pages parity: absent
 ```
 
 ## Retained independent gaps
 
 ```txt
+scene-entry narrative projection
 hotspot availability and discovery projection
 story content graph validation
 browser startup readiness and retry
@@ -101,4 +93,4 @@ stage resource lifecycle
 
 ## Completion boundary
 
-Do not claim scene-entry narrative correctness until boot, uninterrupted transition, reload and resume policies are explicit; predecessor copy is rejected after route advancement; title, opening text, stage and hotspots share one accepted generation; and source, artifact and Pages fixtures pass.
+Do not claim runtime fault containment until each named frame phase produces a terminal result; repeated failures are bounded and backed off; stale callbacks and interactions are rejected after retirement; one safe fallback is visible; restart is idempotent; and source, artifact and Pages fixtures acknowledge the recovered frame.
