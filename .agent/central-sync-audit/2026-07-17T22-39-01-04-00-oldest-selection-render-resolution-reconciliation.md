@@ -1,7 +1,7 @@
 # Central sync audit: oldest selection and render-resolution reconciliation
 
 **Timestamp:** `2026-07-17T22-39-01-04-00`  
-**Status:** `repo-local-complete-central-sync-pending`
+**Status:** `central-reconciled`
 
 ## Selection
 
@@ -22,22 +22,22 @@ next oldest: LuminaryLabs-Publish/PhantomCommand
 
 The prior custom-material lighting/shadow audit remains retained. This run adds render-resolution, DPR, framebuffer-area, offscreen-sample, resize, fallback, cost-observation and presented-frame ownership.
 
-## Central record required
+## Central reconciliation
 
-Update:
-
-```txt
-repo-ledger/LuminaryLabs-Publish/TheUnmappedHouse.md
-```
-
-Add:
+Updated:
 
 ```txt
-internal-change-log/2026-07-17T22-39-01-04-00-the-unmapped-house-render-resolution-framebuffer-budget.md
+LuminaryLabs-Dev/LuminaryLabs/repo-ledger/LuminaryLabs-Publish/TheUnmappedHouse.md
 ```
 
-The central entry must record the final repo-local documentation head after all `.agent` writes settle.
+Added:
+
+```txt
+LuminaryLabs-Dev/LuminaryLabs/internal-change-log/2026-07-17T22-39-01-04-00-the-unmapped-house-render-resolution-framebuffer-budget.md
+```
+
+The central ledger records the final repo-local documentation head from this run.
 
 ## Boundary
 
-No other Publish repository is modified.
+No other Publish repository was modified. No branch or pull request was created.
