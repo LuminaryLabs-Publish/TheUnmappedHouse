@@ -1,61 +1,58 @@
-# Known gaps: The Unmapped House render resolution and framebuffer budget
+# Known gaps: The Unmapped House render-loop frame allocation and scratch ownership
 
-**Timestamp:** `2026-07-17T22-39-01-04-00`  
+**Timestamp:** `2026-07-18T09-40-39-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-Viewport dimensions and device pixel ratio directly authorize both the default drawing buffer and a multisampled offscreen target. No explicit quality, capacity or fallback contract reconciles that workload with the presented frame.
+The permanent RAF loop creates a new scheduling callback every invocation and a new camera-position vector every loaded-scene frame. No explicit frame scratch, callback lease, source-allocation observation or presented-frame work digest reconciles that recurring work.
 
 ## Authority gaps
 
 ```txt
-render-quality manifest: absent
-DPR admission result: absent
-render scale policy: absent
-drawing-buffer pixel budget: absent
-offscreen sample budget: absent
-resize generation: absent
-allocation fallback result: absent
-RenderResolutionDigest: absent
-FirstResolutionBoundFrameAck: absent
+render-frame-work manifest: absent
+retained RAF callback lease: absent
+camera scratch lease: absent
+source-owned allocation observation: absent
+allocation budget result: absent
+stale frame-work rejection: absent
+RenderFrameWorkDigest: absent
+FirstFrameWorkBoundPresentationAck: absent
 ```
 
 ## Render gaps
 
 ```txt
-maximum physical dimension: absent
-maximum physical pixel area: absent
-maximum target sample area: absent
-rapid-resize coalescing: absent
-stale-resize rejection: absent
-scene-pass timing observation: absent
-post-pass timing observation: absent
-quality degradation/recovery evidence: absent
+per-frame RAF closure construction: present
+per-frame camera Vector3 clone: present
+reused camera scratch: absent
+callback identity readback: absent
+scratch identity readback: absent
+heap/GC observation: absent
+camera-parallax equivalence fixture: unavailable
 ```
 
 ## Semantic gaps
 
-- CSS layout scale and physical render scale are not independently declared.
-- A browser DPR sample can change physical work without a typed admission result.
-- Offscreen sample count is fixed rather than budget-admitted.
-- A resize is not complete through a matching presented-frame acknowledgement.
-- Allocation failure has no deterministic quality fallback contract.
+- Persistent stage resources and transient frame scratch are not separately owned.
+- Callback and scratch identity are not bound to the StageKit generation.
+- Source-owned allocations are not distinguished from Three.js/browser allocations.
+- An accepted frame has no typed work-settlement result.
+- A presented frame does not acknowledge the work and scratch generation used to create it.
 
 ## Proof gaps
 
 ```txt
-DPR1 fixture: unavailable
-DPR2 fixture: unavailable
-large-window capped-area fixture: unavailable
-rapid-resize fixture: unavailable
-allocation-failure fixture: unavailable
-quality recovery fixture: unavailable
-frame-cost observation: unavailable
+steady-state allocation fixture: unavailable
+camera-parallax scratch fixture: unavailable
+scene-transition scratch retirement fixture: unavailable
+hidden/resume fixture: unavailable
+terminal-state fixture: unavailable
+browser heap observation: unavailable
 artifact parity: not run
 Pages parity: not run
 ```
 
 ## Retained gaps
 
-The prior custom-material lighting/shadow gap and all earlier pointer, runtime-fault, narrative, hotspot, story, save, audio, focus, lifecycle, progression, WebGL recovery and deployment gaps remain retained in `kit-registry.json`.
+The prior render-resolution and all earlier lighting, pointer, runtime-fault, narrative, hotspot, story, save, audio, focus, lifecycle, WebGL recovery, progression and deployment gaps remain retained in `kit-registry.json`.
