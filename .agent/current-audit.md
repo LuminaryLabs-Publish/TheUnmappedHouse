@@ -1,50 +1,55 @@
-# Current audit: The Unmapped House render resolution and framebuffer budget
+# Current audit: The Unmapped House render-loop frame allocation and scratch ownership
 
-**Timestamp:** `2026-07-17T22-39-01-04-00`  
+**Timestamp:** `2026-07-18T09-40-39-04-00`  
 **Repository:** `LuminaryLabs-Publish/TheUnmappedHouse`  
-**Status:** `render-resolution-framebuffer-budget-authority-audited`  
+**Status:** `render-loop-frame-allocation-scratch-authority-audited`  
 **Branch:** `main`
 
 ## Summary
 
-`StageKit` derives physical render dimensions directly from the full aspect-fitted CSS viewport and admitted device pixel ratio up to `2`. It applies those dimensions to the renderer drawing buffer and a separate offscreen target with `samples: 2`, then executes both scene and post passes every RAF.
+`StageKit.animate()` creates a new arrow callback for every recursive `requestAnimationFrame` request. Once `baseCamera` exists, the same frame clones its position into a new `THREE.Vector3`, applies pointer parallax and copies the result into the active camera.
 
 ## Intent
 
-Make viewport evidence, DPR, render scale, sample count, physical buffer limits, quality fallback and the visible frame belong to one accepted render generation.
+Make callback identity, reusable frame scratch, source-owned allocation evidence, budget settlement and the matching presented frame belong to one accepted stage and frame-work generation.
 
 ## Source-backed finding
 
 ```txt
-design surface: 1920x1080
-CSS viewport: full browser-fit 16:9 area
-pixel ratio: min(devicePixelRatio, 2)
-renderer antialias: enabled
-offscreen target samples: 2
-offscreen size: viewport x pixelRatio
-scene pass every RAF: present
-post pass every RAF: present
-render scale: absent
-pixel/sample budget: absent
-allocation fallback: absent
-resolution digest: absent
-first resolution-bound frame acknowledgement: absent
+RAF scheduling: requestAnimationFrame(() => this.animate())
+retained callback identity: absent
+camera position work: this.baseCamera.position.clone()
+reusable camera scratch: absent
+source-owned allocations after scene load: at least 2 objects per animate invocation
+allocation counters: absent
+heap or GC evidence: absent
+frame-work budget result: absent
+RenderFrameWorkDigest: absent
+FirstFrameWorkBoundPresentationAck: absent
+```
+
+Conditional arithmetic at 60 accepted frames per second:
+
+```txt
+callback closures: 60 / second
+Vector3 clones: 60 / second
+source-visible minimum: 120 objects / second
 ```
 
 ## Required authority
 
-`the-unmapped-house-render-resolution-framebuffer-budget-authority-domain`
+`the-unmapped-house-render-loop-frame-allocation-scratch-authority-domain`
 
 ## Smallest safe implementation
 
-1. Declare a render-quality manifest with DPR ceiling, render scale, target sample policy and explicit dimension/area budgets.
-2. Separate CSS layout dimensions from physical renderer and target dimensions.
-3. Add generation-bound resolution admission and resize results.
-4. Coalesce rapid resize samples and reject stale allocations.
-5. Add deterministic fallback for target allocation failure.
-6. Publish `RenderResolutionDigest` and `FirstResolutionBoundFrameAck`.
-7. Prove size, DPR, fallback, frame cost and deployment parity in browser fixtures.
+1. Retain a single RAF callback identity for each StageKit generation.
+2. Allocate one `THREE.Vector3` camera scratch value for each StageKit generation.
+3. Use `scratch.copy(baseCamera.position)` instead of `clone()`.
+4. Retire callback and scratch leases through the existing stage lifecycle boundary.
+5. Observe source-owned allocation counts separately from provider/browser heap behavior.
+6. Bind the frame-work result and digest to stage, frame and presentation generations.
+7. Prove camera/parallax equivalence and steady-state construction behavior in a browser fixture.
 
 ## Boundary
 
-Documentation only. No renderer, target, resize, shader, story, input, save, build or deployment behavior changed.
+Documentation only. No scheduler, camera, renderer, shader, scene, story, input, save, build or deployment behavior changed. No performance improvement or regression is claimed.
