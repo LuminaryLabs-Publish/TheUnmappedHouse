@@ -1,25 +1,25 @@
-# Validation: The Unmapped House custom-material lighting and shadow audit
+# Validation: The Unmapped House render resolution and framebuffer budget audit
 
-**Timestamp:** `2026-07-17T10-16-33-04-00`  
-**Scope:** documentation-only architecture, render, gameplay, interaction, lighting-shadow and deployment audit
+**Timestamp:** `2026-07-17T22-39-01-04-00`  
+**Scope:** documentation-only architecture, render, gameplay, interaction, render-resolution and deployment audit
 
 ## Summary
 
-Source and retained audit state were inspected. The audit establishes that Three.js scene lights and shadow configuration are not consumed by the visible custom anime material, which uses a fixed `lightDir` uniform. No runtime source was changed and no executable browser or performance proof was run.
+Source and retained audit state were inspected. The audit establishes that the renderer drawing buffer and two-sample offscreen target are sized from the full aspect-fitted viewport at device pixel ratio up to `2`, without a render scale, pixel/sample budget, resize-generation settlement, fallback contract or visible-frame resolution digest. No runtime source changed and no executable browser or performance proof ran.
 
 ## Checklist
 
 - [x] Compare all 11 accessible Publish repositories.
 - [x] Exclude TheCavalryOfRome and account for ten eligible repositories.
 - [x] Confirm all ten eligible repositories have central ledgers and root `.agent` state.
-- [x] Confirm all ten eligible `main` heads match documented repo-local heads.
+- [x] Compare all ten documented heads to `main`; all were identical.
 - [x] Select only TheUnmappedHouse by oldest synchronized timestamp.
-- [x] Read `index.html`, `src/game.js`, `src/stage-kit.js`, `src/story-data.js`, `src/styles.css`, `package.json` and current `.agent` routing/registry records.
+- [x] Read `package.json`, `src/aspect-frame.js`, `src/game.js`, `src/stage-kit.js`, `src/story-data.js` and current `.agent` routing/registry records.
 - [x] Identify the complete interaction loop, all domains, all 24 kits and their services.
-- [x] Trace renderer shadow enablement, lights, caster/receiver flags and custom shader inputs.
+- [x] Trace CSS viewport, DPR, renderer buffer, offscreen target, samples and frame passes.
 - [x] Add the timestamped tracker and audit family.
 - [x] Refresh all required root `.agent` files.
-- [x] Change no runtime, shader, light, shadow, story, persistence, package or deployment behavior.
+- [x] Change no runtime, render target, story, persistence, package or deployment behavior.
 - [x] Create no branch or pull request.
 
 ## Changed
@@ -28,8 +28,8 @@ Source and retained audit state were inspected. The audit establishes that Three
 documentation: yes
 runtime JavaScript: no
 HTML/CSS/story content: no
-custom shaders: no
-scene lights and shadows: no
+renderer and target allocation: no
+shaders, lights and shadows: no
 interaction and gameplay: no
 persistence: no
 packages and dependencies: no
@@ -41,13 +41,14 @@ deployment: no
 
 ```txt
 npm run check
-browser lighting fixtures
-shadow receiver fixtures
-frame/GPU cost observations
+browser DPR and dimension fixtures
+rapid-resize fixture
+allocation-failure fallback fixture
+frame-cost observations
 production artifact smoke
-Pages lighting smoke
+Pages resolution smoke
 ```
 
 ## Claims not made
 
-No visible lighting defect, shadow correctness, performance regression, performance improvement, artifact parity, Pages parity or production readiness is claimed.
+No current device failure, visual defect, performance regression, performance improvement, memory amount, artifact parity, Pages parity or production readiness is claimed.
