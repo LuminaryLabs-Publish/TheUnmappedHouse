@@ -1,54 +1,61 @@
-# Known gaps: The Unmapped House custom-material lighting and shadows
+# Known gaps: The Unmapped House render resolution and framebuffer budget
 
-**Timestamp:** `2026-07-17T10-16-33-04-00`  
+**Timestamp:** `2026-07-17T22-39-01-04-00`  
 **Status:** `audited`
 
 ## Summary
 
-The stage declares two lighting authorities: Three.js scene lights/shadows and a fixed-direction custom shader. No result reconciles them.
+Viewport dimensions and device pixel ratio directly authorize both the default drawing buffer and a multisampled offscreen target. No explicit quality, capacity or fallback contract reconciles that workload with the presented frame.
 
 ## Authority gaps
 
 ```txt
-scene lighting model manifest: absent
-light/material generation binding: absent
-shadow consumer admission: absent
-shadow work budget: absent
-visible-lighting digest: absent
-FirstLightBoundFrameAck: absent
+render-quality manifest: absent
+DPR admission result: absent
+render scale policy: absent
+drawing-buffer pixel budget: absent
+offscreen sample budget: absent
+resize generation: absent
+allocation fallback result: absent
+RenderResolutionDigest: absent
+FirstResolutionBoundFrameAck: absent
 ```
 
 ## Render gaps
 
 ```txt
-DirectionalLight transform binding to custom shader: absent
-DirectionalLight color/intensity binding: absent
-HemisphereLight contribution binding: absent
-shadow-map sampling in custom material: absent
-caster/receiver effectiveness proof: absent
-shadow-map cost observation: absent
+maximum physical dimension: absent
+maximum physical pixel area: absent
+maximum target sample area: absent
+rapid-resize coalescing: absent
+stale-resize rejection: absent
+scene-pass timing observation: absent
+post-pass timing observation: absent
+quality degradation/recovery evidence: absent
 ```
 
 ## Semantic gaps
 
-- Scene authors can change lights without changing visible authored materials.
-- `castShadow` and `receiveShadow` imply a capability the material does not consume.
-- Fixed anime lighting is not declared as an intentional compatibility mode.
-- The visible frame exposes no proof of which lighting policy it used.
+- CSS layout scale and physical render scale are not independently declared.
+- A browser DPR sample can change physical work without a typed admission result.
+- Offscreen sample count is fixed rather than budget-admitted.
+- A resize is not complete through a matching presented-frame acknowledgement.
+- Allocation failure has no deterministic quality fallback contract.
 
 ## Proof gaps
 
 ```txt
-light transform frame fixture: unavailable
-light color/intensity frame fixture: unavailable
-hemisphere frame fixture: unavailable
-shadow receiver fixture: unavailable
-fixed-unshadowed fixture: unavailable
-frame/GPU cost comparison: unavailable
+DPR1 fixture: unavailable
+DPR2 fixture: unavailable
+large-window capped-area fixture: unavailable
+rapid-resize fixture: unavailable
+allocation-failure fixture: unavailable
+quality recovery fixture: unavailable
+frame-cost observation: unavailable
 artifact parity: not run
 Pages parity: not run
 ```
 
 ## Retained gaps
 
-All earlier pointer, runtime-fault, narrative, hotspot, story, save, audio, focus, lifecycle, progression, WebGL recovery and deployment gaps remain retained in `kit-registry.json`.
+The prior custom-material lighting/shadow gap and all earlier pointer, runtime-fault, narrative, hotspot, story, save, audio, focus, lifecycle, progression, WebGL recovery and deployment gaps remain retained in `kit-registry.json`.
