@@ -1,7 +1,7 @@
 # Central sync audit: oldest selection and frame-allocation reconciliation
 
 **Timestamp:** `2026-07-18T09-40-39-04-00`  
-**Status:** `repo-local-complete-central-sync-pending`
+**Status:** `central-reconciled`
 
 ## Selection
 
@@ -22,22 +22,22 @@ next oldest: LuminaryLabs-Publish/PhantomCommand
 
 The prior render-resolution audit remains retained. This run adds render-frame callback identity, camera scratch ownership, source-allocation observation, budget settlement and presented-frame proof.
 
-## Central record required
+## Central reconciliation
 
-Update:
+Updated:
 
 ```txt
 LuminaryLabs-Dev/LuminaryLabs/repo-ledger/LuminaryLabs-Publish/TheUnmappedHouse.md
 ```
 
-Add:
+Added:
 
 ```txt
 LuminaryLabs-Dev/LuminaryLabs/internal-change-log/2026-07-18T09-40-39-04-00-the-unmapped-house-render-loop-frame-allocation.md
 ```
 
-The central ledger must record the final repo-local documentation head after the repo-local and central reconciliation commits settle.
+The central ledger records the final repo-local documentation head from this run.
 
 ## Boundary
 
-No other Publish repository is modified. No branch or pull request is created.
+No other Publish repository was modified. No branch or pull request was created.
